@@ -3,10 +3,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Sparkles, Send, ArrowLeft, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import { Sparkles, Send, ArrowLeft, CheckCircle, AlertTriangle, XCircle, History } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -40,14 +51,29 @@ const Oracle = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [userContext, setUserContext] = useState<UserContext | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [chatHistory, setChatHistory] = useState<Array<{
+    id: string;
+    created_at: string;
+    history: Message[];
+  }>>([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     loadUserContext();
+    loadChatHistory();
+    createNewSession();
   }, []);
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (currentSessionId && messages.length > 1) {
+      saveCurrentSession();
+    }
+  }, [messages, currentSessionId]);
   const loadUserContext = async () => {
     try {
       const {
@@ -101,6 +127,80 @@ const Oracle = () => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth"
     });
+  };
+
+  const createNewSession = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("chat_sessions")
+        .insert({
+          user_id: user.id,
+          history: [] as any
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      setCurrentSessionId(data.id);
+    } catch (error: any) {
+      console.error("Error creating session:", error);
+    }
+  };
+
+  const saveCurrentSession = async () => {
+    if (!currentSessionId) return;
+
+    try {
+      await supabase
+        .from("chat_sessions")
+        .update({
+          history: messages as any,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", currentSessionId);
+    } catch (error: any) {
+      console.error("Error saving session:", error);
+    }
+  };
+
+  const loadChatHistory = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("chat_sessions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      setChatHistory((data || []).map(session => ({
+        ...session,
+        history: session.history as any as Message[]
+      })));
+    } catch (error: any) {
+      console.error("Error loading history:", error);
+    }
+  };
+
+  const loadHistoricalSession = (session: any) => {
+    setMessages(session.history || []);
+    setCurrentSessionId(session.id);
+    setIsHistoryOpen(false);
+  };
+
+  const startNewChat = () => {
+    setMessages([{
+      role: "assistant",
+      content: `Oi ${userContext?.name}! 👋 Eu sou O Oráculo, seu amigo financeiro. Estou aqui para ajudar você a tomar decisões inteligentes de dinheiro enquanto economiza para seu ${userContext?.goalTitle}!\n\nO que você está pensando em comprar hoje?`
+    }]);
+    createNewSession();
+    setIsHistoryOpen(false);
   };
   const sendMessage = async () => {
     if (!input.trim() || !userContext) return;
@@ -297,19 +397,77 @@ const Oracle = () => {
       {/* Header */}
       <div className="sticky top-0 z-10 glass-card border-b border-border">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" onClick={() => navigate("/dashboard")} className="rounded-2xl">
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold">Oráculo</h1>
-                <p className="text-sm text-muted-foreground">Seu Amigo Financeiro de IA</p>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Button variant="outline" size="icon" onClick={() => navigate("/dashboard")} className="rounded-2xl">
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold">Oráculo</h1>
+                  <p className="text-sm text-muted-foreground">Seu Amigo Financeiro de IA</p>
+                </div>
               </div>
             </div>
+            
+            <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="rounded-2xl">
+                  <History className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="w-[400px] sm:w-[540px]">
+                <SheetHeader>
+                  <SheetTitle>Histórico de Conversas</SheetTitle>
+                  <SheetDescription>
+                    Suas consultas anteriores com o Oráculo
+                  </SheetDescription>
+                </SheetHeader>
+                <ScrollArea className="h-[calc(100vh-200px)] mt-6">
+                  <div className="space-y-3">
+                    <Button 
+                      onClick={startNewChat}
+                      className="w-full justify-start gradient-primary"
+                      size="lg"
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Nova Conversa
+                    </Button>
+                    
+                    {chatHistory.map((session) => {
+                      const firstUserMessage = session.history.find(m => m.role === "user");
+                      const preview = firstUserMessage?.content.slice(0, 60) || "Conversa sem mensagens";
+                      
+                      return (
+                        <Card
+                          key={session.id}
+                          className={`p-4 cursor-pointer transition-colors hover:bg-accent/50 ${
+                            session.id === currentSessionId ? "border-primary" : ""
+                          }`}
+                          onClick={() => loadHistoricalSession(session)}
+                        >
+                          <p className="text-sm font-medium line-clamp-2 mb-2">
+                            {preview}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(session.created_at), "d 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+                          </p>
+                        </Card>
+                      );
+                    })}
+                    
+                    {chatHistory.length === 0 && (
+                      <p className="text-sm text-muted-foreground text-center py-8">
+                        Nenhuma conversa anterior encontrada
+                      </p>
+                    )}
+                  </div>
+                </ScrollArea>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
