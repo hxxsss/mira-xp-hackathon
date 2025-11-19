@@ -52,6 +52,7 @@ export type Database = {
           current_amount: number
           id: string
           is_active: boolean
+          target_date: string | null
           title: string
           total_amount: number
           updated_at: string
@@ -62,6 +63,7 @@ export type Database = {
           current_amount?: number
           id?: string
           is_active?: boolean
+          target_date?: string | null
           title: string
           total_amount: number
           updated_at?: string
@@ -72,6 +74,7 @@ export type Database = {
           current_amount?: number
           id?: string
           is_active?: boolean
+          target_date?: string | null
           title?: string
           total_amount?: number
           updated_at?: string
