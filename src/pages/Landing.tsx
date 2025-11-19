@@ -2,9 +2,19 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Target, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Landing = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/dashboard");
+      }
+    });
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
@@ -52,12 +62,21 @@ const Landing = () => {
             Planeje suas metas, acompanhe seu progresso e conquiste o que mais importa.
           </motion.p>
 
-          {/* CTA Button */}
+          {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
           >
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => navigate("/login")}
+              className="text-lg px-8 py-6 rounded-3xl hover-lift"
+            >
+              Entrar
+            </Button>
             <Button
               size="lg"
               onClick={() => navigate("/onboarding")}
