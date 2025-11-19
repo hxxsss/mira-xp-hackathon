@@ -250,6 +250,7 @@ const Dashboard = () => {
                 <Button
                   size="lg"
                   variant="outline"
+                  onClick={() => navigate("/oracle")}
                   className="rounded-2xl h-20 text-lg hover-lift"
                 >
                   <MessageSquare className="w-6 h-6 mr-2" />
