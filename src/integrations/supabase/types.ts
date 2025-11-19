@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      active_sessions: {
+        Row: {
+          created_at: string | null
+          device_info: string | null
+          id: string
+          ip_address: string | null
+          last_activity: string | null
+          revoked: boolean | null
+          session_token_hash: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          device_info?: string | null
+          id?: string
+          ip_address?: string | null
+          last_activity?: string | null
+          revoked?: boolean | null
+          session_token_hash: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          device_info?: string | null
+          id?: string
+          ip_address?: string | null
+          last_activity?: string | null
+          revoked?: boolean | null
+          session_token_hash?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "active_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_sessions: {
         Row: {
           created_at: string
@@ -90,16 +134,46 @@ export type Database = {
           },
         ]
       }
+      password_reset_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          expires_at: string
+          id: string
+          used: boolean | null
+          user_email: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          used?: boolean | null
+          user_email: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          used?: boolean | null
+          user_email?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
           avatar_id: number
+          avatar_url: string | null
           created_at: string
           current_xp: number
           dream_points: number
           email: string
+          has_completed_tutorial: boolean | null
           id: string
           income_type: string
+          monthly_income: number | null
           name: string
           updated_at: string
           weekly_xp: number
@@ -107,12 +181,15 @@ export type Database = {
         Insert: {
           age?: number | null
           avatar_id?: number
+          avatar_url?: string | null
           created_at?: string
           current_xp?: number
           dream_points?: number
           email: string
+          has_completed_tutorial?: boolean | null
           id: string
           income_type: string
+          monthly_income?: number | null
           name: string
           updated_at?: string
           weekly_xp?: number
@@ -120,12 +197,15 @@ export type Database = {
         Update: {
           age?: number | null
           avatar_id?: number
+          avatar_url?: string | null
           created_at?: string
           current_xp?: number
           dream_points?: number
           email?: string
+          has_completed_tutorial?: boolean | null
           id?: string
           income_type?: string
+          monthly_income?: number | null
           name?: string
           updated_at?: string
           weekly_xp?: number
