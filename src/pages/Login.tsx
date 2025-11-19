@@ -8,10 +8,12 @@ import { Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSessionTracking } from "@/hooks/useSessionTracking";
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  useSessionTracking();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -101,6 +103,14 @@ const Login = () => {
               >
                 {loading ? "Entrando..." : "Entrar"}
               </Button>
+
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                className="text-sm text-primary hover:underline text-center w-full block mt-2"
+              >
+                Esqueceu sua senha?
+              </button>
             </form>
 
             <div className="mt-6 text-center text-sm text-muted-foreground">

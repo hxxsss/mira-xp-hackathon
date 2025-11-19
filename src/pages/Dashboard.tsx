@@ -3,10 +3,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Target, Plus, MessageSquare, TrendingUp, LogOut } from "lucide-react";
+import { Sparkles, Target, Plus, MessageSquare, TrendingUp, LogOut, User, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSessionTracking } from "@/hooks/useSessionTracking";
+
 const avatars = [{
   id: 1,
   emoji: "🦄"
@@ -23,6 +25,7 @@ const avatars = [{
   id: 5,
   emoji: "🌈"
 }];
+
 interface Profile {
   name: string;
   avatar_id: number;
@@ -30,18 +33,21 @@ interface Profile {
   weekly_xp: number;
   dream_points: number;
 }
-  interface Goal {
-    id: string;
-    title: string;
-    total_amount: number;
-    current_amount: number;
-    target_date?: string;
-  }
+
+interface Goal {
+  id: string;
+  title: string;
+  total_amount: number;
+  current_amount: number;
+  target_date?: string;
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const {
     toast
   } = useToast();
+  useSessionTracking();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [goal, setGoal] = useState<Goal | null>(null);
   const [loading, setLoading] = useState(true);
@@ -120,9 +126,17 @@ const Dashboard = () => {
             </div>
             <h1 className="text-3xl font-bold text-gradient">DreamUp</h1>
           </div>
-          <Button variant="outline" size="icon" onClick={handleLogout} className="rounded-2xl">
-            <LogOut className="w-5 h-5" />
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" onClick={() => navigate("/profile")} className="rounded-2xl">
+              <User className="w-5 h-5" />
+            </Button>
+            <Button variant="outline" size="icon" onClick={() => navigate("/sessions")} className="rounded-2xl">
+              <Shield className="w-5 h-5" />
+            </Button>
+            <Button variant="outline" size="icon" onClick={handleLogout} className="rounded-2xl">
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </div>
         </motion.div>
 
         {/* Welcome Message */}
