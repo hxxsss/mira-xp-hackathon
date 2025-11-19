@@ -150,6 +150,10 @@ const Oracle = () => {
       let buffer = "";
       let toolCallBuffer = "";
       let isCollectingToolCall = false;
+      let hasToolCall = false;
+
+      // Add initial 1.5s delay before first message appears
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       while (true) {
         const { done, value } = await reader.read();
@@ -169,9 +173,20 @@ const Oracle = () => {
           try {
             const parsed = JSON.parse(jsonStr);
             
-            // Handle regular content
+            // Handle tool calls first to detect if we should stop content streaming
+            const toolCalls = parsed.choices?.[0]?.delta?.tool_calls;
+            if (toolCalls && toolCalls[0]) {
+              hasToolCall = true;
+              const toolCall = toolCalls[0];
+              if (toolCall.function?.arguments) {
+                isCollectingToolCall = true;
+                toolCallBuffer += toolCall.function.arguments;
+              }
+            }
+
+            // Handle regular content - but only if no tool call is being processed
             const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
+            if (content && !hasToolCall) {
               assistantMessage += content;
               setMessages((prev) => {
                 const newMessages = [...prev];
@@ -188,16 +203,6 @@ const Oracle = () => {
               });
             }
 
-            // Handle tool calls
-            const toolCalls = parsed.choices?.[0]?.delta?.tool_calls;
-            if (toolCalls && toolCalls[0]) {
-              const toolCall = toolCalls[0];
-              if (toolCall.function?.arguments) {
-                isCollectingToolCall = true;
-                toolCallBuffer += toolCall.function.arguments;
-              }
-            }
-
             // Check if tool call is complete
             if (parsed.choices?.[0]?.finish_reason === "tool_calls" && isCollectingToolCall) {
               try {
@@ -209,7 +214,7 @@ const Oracle = () => {
                   content: verdictData.empathy_message,
                 }]);
 
-                // Add delay and then analysis message
+                // Add 1.5s delay and then analysis message
                 setTimeout(() => {
                   setMessages((prev) => [...prev, {
                     role: "assistant",
@@ -224,12 +229,16 @@ const Oracle = () => {
                       math_summary: verdictData.math_summary,
                     }
                   }]);
-                }, 800);
+                  setIsTyping(false);
+                  setIsLoading(false);
+                }, 1500);
                 
                 isCollectingToolCall = false;
                 toolCallBuffer = "";
               } catch (e) {
                 console.error("Failed to parse verdict:", e);
+                setIsTyping(false);
+                setIsLoading(false);
               }
             }
           } catch (e) {
@@ -237,13 +246,18 @@ const Oracle = () => {
           }
         }
       }
+      
+      // Only set loading/typing to false if no tool call was processed
+      if (!hasToolCall) {
+        setIsLoading(false);
+        setIsTyping(false);
+      }
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "Failed to send message",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
       setIsTyping(false);
     }
