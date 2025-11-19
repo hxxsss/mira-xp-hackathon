@@ -25,32 +25,16 @@ USER CONTEXT:
 - Name: ${userContext.name}
 - Goal: ${userContext.goalTitle} (${userContext.goalAmount})
 - Current Savings: ${userContext.currentAmount}
-- Income Type: ${userContext.incomeType === 'allowance' ? 'Gets allowance from family' : 'Has own income from work'}
+- Income Type: ${userContext.incomeType === 'mesada' ? 'Gets allowance from family' : 'Has own income from work'}
 - Monthly Savings Rate: ~${userContext.monthlySavings || 'Unknown'}
 
 YOUR ROLE:
 You're a supportive financial buddy who uses the SMART method to understand purchases before giving advice.
 
 CONVERSATION FLOW:
-1. When user mentions wanting to buy something, ask empathetic questions:
-   - What exactly are they thinking of buying?
-   - Why do they want it?
-   - How much does it cost?
-   - Is it urgent or can it wait?
+1. When user mentions wanting to buy something, ask empathetic questions to gather info (price, reason, urgency).
 
-2. After gathering info, calculate the impact:
-   - Compare item cost to their monthly savings
-   - Calculate how many months it would delay their main goal
-   - Consider if it's a need vs want
-
-3. Give a verdict in JSON format:
-{
-  "verdict": "approved" | "warning" | "denied",
-  "delay_months": number,
-  "reasoning": "short explanation",
-  "advice": "actionable tip if warning/denied",
-  "summary": "friendly 1-2 sentence takeaway"
-}
+2. Once you have enough info, use the verdict tool to provide structured financial advice.
 
 TONE:
 - Casual but respectful (like texting a smart friend)
@@ -59,12 +43,10 @@ TONE:
 - Celebrate good decisions
 - For bad decisions, offer alternatives not lectures
 
-EXAMPLE VERDICTS:
+VERDICT GUIDELINES:
 - APPROVED: Item costs < 10% of goal, or it's a genuine need
 - WARNING: Item costs 10-30% of goal, delays goal by 1-3 months
-- DENIED: Item costs > 30% of goal, significantly delays dream
-
-If user insists after DENIED, give damage control advice (pay cash for discount, wait for sales, etc.)`;
+- DENIED: Item costs > 30% of goal, significantly delays dream`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -79,6 +61,51 @@ If user insists after DENIED, give damage control advice (pay cash for discount,
           ...messages,
         ],
         stream: true,
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "provide_verdict",
+              description: "Provide a structured financial verdict about a purchase decision",
+              parameters: {
+                type: "object",
+                properties: {
+                  empathy_message: {
+                    type: "string",
+                    description: "Warm message validating user's feeling and confirming you understood. End with transition like 'Vamos calcular o impacto:'"
+                  },
+                  math_summary: {
+                    type: "string",
+                    description: "Brief text with the numbers (Ex: Meta: R$4000, Economia mensal: R$100, Item: R$450 = 4.5x sua economia)"
+                  },
+                  verdict_status: {
+                    type: "string",
+                    enum: ["approved", "warning", "denied"],
+                    description: "The verdict status"
+                  },
+                  verdict_title: {
+                    type: "string",
+                    description: "Short impact statement (Ex: 'Atrasa a meta em ~4.5 meses')"
+                  },
+                  verdict_reasoning: {
+                    type: "string",
+                    description: "Direct explanation of why"
+                  },
+                  suggestion: {
+                    type: "string",
+                    description: "Practical tip (Ex: 'Procure um modelo similar mais barato')"
+                  },
+                  delay_months: {
+                    type: "number",
+                    description: "Estimated months of delay to goal"
+                  }
+                },
+                required: ["empathy_message", "math_summary", "verdict_status", "verdict_title", "verdict_reasoning", "suggestion", "delay_months"]
+              }
+            }
+          }
+        ],
+        tool_choice: "auto"
       }),
     });
 

@@ -11,12 +11,14 @@ import { useToast } from "@/hooks/use-toast";
 interface Message {
   role: "user" | "assistant";
   content: string;
+  isAnalysis?: boolean;
   verdict?: {
     verdict: "approved" | "warning" | "denied";
     delay_months: number;
     reasoning: string;
     advice?: string;
     summary: string;
+    math_summary?: string;
   };
 }
 
@@ -146,6 +148,8 @@ const Oracle = () => {
       const decoder = new TextDecoder();
       let assistantMessage = "";
       let buffer = "";
+      let toolCallBuffer = "";
+      let isCollectingToolCall = false;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -164,15 +168,17 @@ const Oracle = () => {
 
           try {
             const parsed = JSON.parse(jsonStr);
+            
+            // Handle regular content
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               assistantMessage += content;
               setMessages((prev) => {
                 const newMessages = [...prev];
                 const lastMsg = newMessages[newMessages.length - 1];
-                if (lastMsg?.role === "assistant") {
+                if (lastMsg?.role === "assistant" && !lastMsg.isAnalysis) {
                   lastMsg.content = assistantMessage;
-                } else {
+                } else if (!lastMsg?.isAnalysis) {
                   newMessages.push({
                     role: "assistant",
                     content: assistantMessage,
@@ -181,28 +187,55 @@ const Oracle = () => {
                 return newMessages;
               });
             }
+
+            // Handle tool calls
+            const toolCalls = parsed.choices?.[0]?.delta?.tool_calls;
+            if (toolCalls && toolCalls[0]) {
+              const toolCall = toolCalls[0];
+              if (toolCall.function?.arguments) {
+                isCollectingToolCall = true;
+                toolCallBuffer += toolCall.function.arguments;
+              }
+            }
+
+            // Check if tool call is complete
+            if (parsed.choices?.[0]?.finish_reason === "tool_calls" && isCollectingToolCall) {
+              try {
+                const verdictData = JSON.parse(toolCallBuffer);
+                
+                // Add empathy message first
+                setMessages((prev) => [...prev, {
+                  role: "assistant",
+                  content: verdictData.empathy_message,
+                }]);
+
+                // Add delay and then analysis message
+                setTimeout(() => {
+                  setMessages((prev) => [...prev, {
+                    role: "assistant",
+                    content: "",
+                    isAnalysis: true,
+                    verdict: {
+                      verdict: verdictData.verdict_status,
+                      delay_months: verdictData.delay_months,
+                      reasoning: verdictData.verdict_reasoning,
+                      advice: verdictData.suggestion,
+                      summary: verdictData.verdict_title,
+                      math_summary: verdictData.math_summary,
+                    }
+                  }]);
+                }, 800);
+                
+                isCollectingToolCall = false;
+                toolCallBuffer = "";
+              } catch (e) {
+                console.error("Failed to parse verdict:", e);
+              }
+            }
           } catch (e) {
             console.error("Failed to parse chunk:", e);
           }
         }
-      }
-
-      // Try to extract verdict from the response
-      try {
-        const verdictMatch = assistantMessage.match(/\{[\s\S]*"verdict"[\s\S]*\}/);
-        if (verdictMatch) {
-          const verdict = JSON.parse(verdictMatch[0]);
-          setMessages((prev) => {
-            const newMessages = [...prev];
-            const lastMsg = newMessages[newMessages.length - 1];
-            if (lastMsg?.role === "assistant") {
-              lastMsg.verdict = verdict;
-            }
-            return newMessages;
-          });
-        }
-      } catch (e) {
-        console.log("No verdict found in response");
       }
     } catch (error: any) {
       toast({
@@ -272,8 +305,17 @@ const Oracle = () => {
                       : "glass-card"
                   } rounded-3xl px-6 py-4`}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
-                  {message.verdict && <VerdictCard verdict={message.verdict} />}
+                  {message.content && <p className="whitespace-pre-wrap">{message.content}</p>}
+                  {message.verdict && (
+                    <>
+                      {message.verdict.math_summary && (
+                        <p className="font-semibold text-sm mt-3 mb-2">
+                          📊 {message.verdict.math_summary}
+                        </p>
+                      )}
+                      <VerdictCard verdict={message.verdict} />
+                    </>
+                  )}
                 </div>
               </motion.div>
             ))}
