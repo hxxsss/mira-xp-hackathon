@@ -27,6 +27,8 @@ interface UserContext {
   currentAmount: string;
   incomeType: string;
   monthlySavings: string;
+  goalId: string;
+  targetDate?: string;
 }
 const Oracle = () => {
   const navigate = useNavigate();
@@ -76,7 +78,9 @@ const Oracle = () => {
           goalAmount: goal.total_amount.toString(),
           currentAmount: goal.current_amount.toString(),
           incomeType: profile.income_type,
-          monthlySavings: "100" // This could be calculated from transaction history
+          monthlySavings: "100", // This could be calculated from transaction history
+          goalId: goal.id,
+          targetDate: goal.target_date
         });
 
         // Add welcome message
@@ -159,6 +163,18 @@ const Oracle = () => {
             const toolCalls = parsed.choices?.[0]?.delta?.tool_calls;
             if (toolCalls && toolCalls[0]) {
               hasToolCall = true;
+              
+              // Remove any previously streamed assistant message to prevent duplication
+              if (!isCollectingToolCall) {
+                setMessages(prev => {
+                  const lastMsg = prev[prev.length - 1];
+                  if (lastMsg?.role === "assistant" && !lastMsg.isAnalysis && !lastMsg.verdict) {
+                    return prev.slice(0, -1);
+                  }
+                  return prev;
+                });
+              }
+              
               const toolCall = toolCalls[0];
               if (toolCall.function?.arguments) {
                 isCollectingToolCall = true;
@@ -189,35 +205,63 @@ const Oracle = () => {
             if (parsed.choices?.[0]?.finish_reason === "tool_calls" && isCollectingToolCall) {
               try {
                 const verdictData = JSON.parse(toolCallBuffer);
+                
+                // Detect tool name from the parsed data structure
+                const toolName = parsed.choices?.[0]?.delta?.tool_calls?.[0]?.function?.name || 
+                                 (verdictData.empathy_message ? 'provide_verdict' : 'update_goal_deadline');
 
-                // Add empathy message first
-                setMessages(prev => [...prev, {
-                  role: "assistant",
-                  content: verdictData.empathy_message
-                }]);
-
-                // Add 1.5s delay and then analysis message
-                setTimeout(() => {
+                if (toolName === 'provide_verdict' || verdictData.empathy_message) {
+                  // Add empathy message first
                   setMessages(prev => [...prev, {
                     role: "assistant",
-                    content: "",
-                    isAnalysis: true,
-                    verdict: {
-                      verdict: verdictData.verdict_status,
-                      delay_months: verdictData.delay_months,
-                      reasoning: verdictData.verdict_reasoning,
-                      advice: verdictData.suggestion,
-                      summary: verdictData.verdict_title,
-                      math_summary: verdictData.math_summary
-                    }
+                    content: verdictData.empathy_message
                   }]);
-                  setIsTyping(false);
-                  setIsLoading(false);
-                }, 1500);
+
+                  // Add 1.5s delay and then analysis message
+                  setTimeout(() => {
+                    setMessages(prev => [...prev, {
+                      role: "assistant",
+                      content: "",
+                      isAnalysis: true,
+                      verdict: {
+                        verdict: verdictData.verdict_status,
+                        delay_months: verdictData.delay_months,
+                        reasoning: verdictData.verdict_reasoning,
+                        advice: verdictData.suggestion,
+                        summary: verdictData.verdict_title,
+                        math_summary: verdictData.math_summary
+                      }
+                    }]);
+                    setIsTyping(false);
+                    setIsLoading(false);
+                  }, 1500);
+                } else if (toolName === 'update_goal_deadline' || verdictData.additional_months !== undefined) {
+                  // Handle update_goal_deadline tool call
+                  const updateDeadline = async () => {
+                    try {
+                      const { error: updateError } = await supabase.functions.invoke('update-goal-deadline', {
+                        body: {
+                          goalId: userContext?.goalId,
+                          additionalMonths: verdictData.additional_months,
+                        }
+                      });
+
+                      if (updateError) {
+                        console.error('Failed to update goal deadline:', updateError);
+                      } else {
+                        console.log('Goal deadline updated successfully:', verdictData.reasoning);
+                      }
+                    } catch (e) {
+                      console.error('Failed to call update-goal-deadline:', e);
+                    }
+                  };
+                  updateDeadline();
+                }
+                
                 isCollectingToolCall = false;
                 toolCallBuffer = "";
               } catch (e) {
-                console.error("Failed to parse verdict:", e);
+                console.error("Failed to parse tool call:", e);
                 setIsTyping(false);
                 setIsLoading(false);
               }

@@ -30,12 +30,13 @@ interface Profile {
   weekly_xp: number;
   dream_points: number;
 }
-interface Goal {
-  id: string;
-  title: string;
-  total_amount: number;
-  current_amount: number;
-}
+  interface Goal {
+    id: string;
+    title: string;
+    total_amount: number;
+    current_amount: number;
+    target_date?: string;
+  }
 const Dashboard = () => {
   const navigate = useNavigate();
   const {
@@ -176,6 +177,11 @@ const Dashboard = () => {
                       </span>
                     </div>
                     <Progress value={progress} className="h-4 rounded-full" />
+                    {goal.target_date && (
+                      <p className="text-sm text-muted-foreground mt-3">
+                        Meta prevista para: {new Date(goal.target_date).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2 text-sm">
