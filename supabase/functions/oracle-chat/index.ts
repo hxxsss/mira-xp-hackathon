@@ -19,34 +19,35 @@ serve(async (req) => {
     }
 
     // Build the system prompt based on user context
-    const systemPrompt = `You are The Oracle, a friendly Gen Z financial advisor helping ${userContext.name} manage their money.
+    const systemPrompt = `Você é O Oráculo, um conselheiro financeiro amigável da Geração Z ajudando ${userContext.name} a gerenciar seu dinheiro.
 
-USER CONTEXT:
-- Name: ${userContext.name}
-- Goal: ${userContext.goalTitle} (${userContext.goalAmount})
-- Current Savings: ${userContext.currentAmount}
-- Income Type: ${userContext.incomeType === 'mesada' ? 'Gets allowance from family' : 'Has own income from work'}
-- Monthly Savings Rate: ~${userContext.monthlySavings || 'Unknown'}
+CONTEXTO DO USUÁRIO:
+- Nome: ${userContext.name}
+- Meta: ${userContext.goalTitle} (${userContext.goalAmount})
+- Economia Atual: ${userContext.currentAmount}
+- Tipo de Renda: ${userContext.incomeType === 'mesada' ? 'Recebe mesada da família' : 'Tem renda própria do trabalho'}
+- Taxa de Economia Mensal: ~${userContext.monthlySavings || 'Desconhecido'}
 
-YOUR ROLE:
-You're a supportive financial buddy who uses the SMART method to understand purchases before giving advice.
+SEU PAPEL:
+Você é um amigo financeiro que usa o método SMART para entender compras antes de dar conselhos.
 
-CONVERSATION FLOW:
-1. When user mentions wanting to buy something, ask empathetic questions to gather info (price, reason, urgency).
+FLUXO DE CONVERSA:
+1. Quando o usuário mencionar querer comprar algo, faça perguntas empáticas para reunir informações (preço, motivo, urgência).
 
-2. Once you have enough info, use the verdict tool to provide structured financial advice.
+2. Quando tiver informações suficientes, use a ferramenta verdict para fornecer conselhos financeiros estruturados.
 
-TONE:
-- Casual but respectful (like texting a smart friend)
-- Use emojis sparingly
-- Be empathetic, not preachy
-- Celebrate good decisions
-- For bad decisions, offer alternatives not lectures
+TOM:
+- Casual mas respeitoso (como conversar com um amigo inteligente)
+- Use emojis com moderação
+- Seja empático, não moralista
+- Celebre boas decisões
+- Para decisões ruins, ofereça alternativas, não sermões
+- Você SEMPRE responde em português brasileiro (PT-BR)
 
-VERDICT GUIDELINES:
-- APPROVED: Item costs < 10% of goal, or it's a genuine need
-- WARNING: Item costs 10-30% of goal, delays goal by 1-3 months
-- DENIED: Item costs > 30% of goal, significantly delays dream`;
+DIRETRIZES DE VEREDITO:
+- APPROVED: Item custa < 10% da meta, ou é uma necessidade genuína
+- WARNING: Item custa 10-30% da meta, atrasa meta em 1-3 meses
+- DENIED: Item custa > 30% da meta, atrasa significativamente o sonho`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -72,32 +73,32 @@ VERDICT GUIDELINES:
                 properties: {
                   empathy_message: {
                     type: "string",
-                    description: "Warm message validating user's feeling and confirming you understood. End with transition like 'Vamos calcular o impacto:'"
+                    description: "Mensagem calorosa validando o sentimento do usuário e confirmando que você entendeu. Termine com transição tipo 'Vamos calcular o impacto:' (SEMPRE EM PT-BR)"
                   },
                   math_summary: {
                     type: "string",
-                    description: "Brief text with the numbers (Ex: Meta: R$4000, Economia mensal: R$100, Item: R$450 = 4.5x sua economia)"
+                    description: "Texto breve com os números (Ex: Meta: R$4000, Economia mensal: R$100, Item: R$450 = 4.5x sua economia) (SEMPRE EM PT-BR)"
                   },
                   verdict_status: {
                     type: "string",
                     enum: ["approved", "warning", "denied"],
-                    description: "The verdict status"
+                    description: "O status do veredito"
                   },
                   verdict_title: {
                     type: "string",
-                    description: "Short impact statement (Ex: 'Atrasa a meta em ~4.5 meses')"
+                    description: "Declaração curta de impacto (Ex: 'Atrasa a meta em ~4.5 meses') (SEMPRE EM PT-BR)"
                   },
                   verdict_reasoning: {
                     type: "string",
-                    description: "Direct explanation of why"
+                    description: "Explicação direta do porquê (SEMPRE EM PT-BR)"
                   },
                   suggestion: {
                     type: "string",
-                    description: "Practical tip (Ex: 'Procure um modelo similar mais barato')"
+                    description: "Dica prática (Ex: 'Procure um modelo similar mais barato') (SEMPRE EM PT-BR)"
                   },
                   delay_months: {
                     type: "number",
-                    description: "Estimated months of delay to goal"
+                    description: "Meses estimados de atraso na meta"
                   }
                 },
                 required: ["empathy_message", "math_summary", "verdict_status", "verdict_title", "verdict_reasoning", "suggestion", "delay_months"]

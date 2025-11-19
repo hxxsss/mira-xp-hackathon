@@ -88,16 +88,16 @@ const Oracle = () => {
         });
 
         // Add welcome message
-        setMessages([
-          {
-            role: "assistant",
-            content: `Hey ${profile.name}! 👋 I'm The Oracle, your financial buddy. I'm here to help you make smart money decisions while you save for your ${goal.title}!\n\nWhat are you thinking about buying today?`,
-          },
-        ]);
+      setMessages([
+        {
+          role: "assistant",
+          content: `Oi ${profile.name}! 👋 Eu sou O Oráculo, seu amigo financeiro. Estou aqui para ajudar você a tomar decisões inteligentes de dinheiro enquanto economiza para seu ${goal.title}!\n\nO que você está pensando em comprar hoje?`,
+        },
+      ]);
       }
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Erro",
         description: error.message,
         variant: "destructive",
       });
@@ -254,8 +254,8 @@ const Oracle = () => {
       }
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to send message",
+        title: "Erro",
+        description: error.message || "Falha ao enviar mensagem",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -363,7 +363,7 @@ const Oracle = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder="Digite sua mensagem..."
               disabled={isLoading}
               className="flex-1 rounded-3xl px-6 py-6 text-base"
             />
@@ -400,21 +400,21 @@ const VerdictCard = ({
           bg: "bg-success/10",
           border: "border-success",
           icon: <CheckCircle className="w-6 h-6 text-success" />,
-          title: "✅ Approved",
+          title: "✅ Aprovado",
         };
       case "warning":
         return {
           bg: "bg-accent/10",
           border: "border-accent",
           icon: <AlertTriangle className="w-6 h-6 text-accent" />,
-          title: "⚠️ Warning",
+          title: "⚠️ Atenção",
         };
       case "denied":
         return {
           bg: "bg-destructive/10",
           border: "border-destructive",
           icon: <XCircle className="w-6 h-6 text-destructive" />,
-          title: "🚫 Not Recommended",
+          title: "🚫 Não Recomendado",
         };
     }
   };
@@ -433,7 +433,7 @@ const VerdictCard = ({
           <h3 className="font-bold text-lg">{style.title}</h3>
           {verdict.delay_months > 0 && (
             <p className="text-sm text-muted-foreground">
-              Delays goal by ~{verdict.delay_months} month{verdict.delay_months !== 1 ? "s" : ""}
+              Atrasa meta em ~{verdict.delay_months} {verdict.delay_months !== 1 ? "meses" : "mês"}
             </p>
           )}
         </div>

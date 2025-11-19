@@ -36,9 +36,9 @@ const Landing = () => {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="text-5xl lg:text-7xl font-bold mb-6 leading-tight"
           >
-            Turn Your Dreams
+            Transforme Seus Sonhos
             <br />
-            <span className="text-gradient">Into Reality</span>
+            <span className="text-gradient">Em Realidade</span>
           </motion.h2>
 
           {/* Value Prop */}
@@ -48,8 +48,8 @@ const Landing = () => {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-xl lg:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto"
           >
-            Financial organization that speeds up your dreams.
-            Plan your goals, track your progress, and achieve what matters most.
+            Organização financeira que acelera seus sonhos.
+            Planeje suas metas, acompanhe seu progresso e conquiste o que mais importa.
           </motion.p>
 
           {/* CTA Button */}
@@ -64,7 +64,7 @@ const Landing = () => {
               className="text-lg px-8 py-6 rounded-3xl gradient-primary hover:opacity-90 transition-opacity shadow-lg hover-lift"
             >
               <Sparkles className="w-5 h-5 mr-2" />
-              Start Your Journey
+              Começar Jornada
             </Button>
           </motion.div>
 
@@ -77,20 +77,20 @@ const Landing = () => {
           >
             <FeatureCard
               icon={<Target className="w-8 h-8" />}
-              title="Set Your Goal"
-              description="Define what you're saving for and watch your dreams become achievable targets"
+              title="Defina Sua Meta"
+              description="Defina o que você está economizando e veja seus sonhos se tornarem metas alcançáveis"
               delay={0.7}
             />
             <FeatureCard
               icon={<TrendingUp className="w-8 h-8" />}
-              title="Track Progress"
-              description="See your savings grow with visual progress bars and gamified milestones"
+              title="Acompanhe o Progresso"
+              description="Veja suas economias crescerem com barras de progresso visuais e marcos gamificados"
               delay={0.8}
             />
             <FeatureCard
               icon={<Sparkles className="w-8 h-8" />}
-              title="Get Smarter"
-              description="AI-powered insights help you make better financial decisions"
+              title="Fique Mais Inteligente"
+              description="Insights com IA ajudam você a tomar melhores decisões financeiras"
               delay={0.9}
             />
           </motion.div>

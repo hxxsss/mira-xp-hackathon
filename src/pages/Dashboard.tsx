@@ -83,7 +83,7 @@ const Dashboard = () => {
       setGoal(goalData);
     } catch (error: any) {
       toast({
-        title: "Error loading data",
+        title: "Erro ao carregar dados",
         description: error.message,
         variant: "destructive",
       });
@@ -104,7 +104,7 @@ const Dashboard = () => {
           <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4">
             <Sparkles className="w-8 h-8 text-primary-foreground animate-pulse" />
           </div>
-          <p className="text-muted-foreground">Loading your dashboard...</p>
+          <p className="text-muted-foreground">Carregando seu painel...</p>
         </div>
       </div>
     );
@@ -149,10 +149,10 @@ const Dashboard = () => {
           className="mb-8"
         >
           <h2 className="text-2xl font-bold mb-2">
-            Welcome back, {profile?.name}! 👋
+            Bem-vindo de volta, {profile?.name}! 👋
           </h2>
           <p className="text-muted-foreground">
-            Keep up the great work on your savings journey
+            Continue o ótimo trabalho na sua jornada de economia
           </p>
         </motion.div>
 
@@ -168,9 +168,9 @@ const Dashboard = () => {
             <Card className="glass-card p-8 rounded-3xl h-full">
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h3 className="text-xl font-semibold mb-1">Your Dream Goal</h3>
+                  <h3 className="text-xl font-semibold mb-1">Sua Meta dos Sonhos</h3>
                   <p className="text-muted-foreground">
-                    {goal ? goal.title : "No active goal"}
+                    {goal ? goal.title : "Nenhuma meta ativa"}
                   </p>
                 </div>
                 <Target className="w-8 h-8 text-primary" />
@@ -193,13 +193,13 @@ const Dashboard = () => {
                   <div className="flex items-center gap-2 text-sm">
                     <TrendingUp className="w-4 h-4 text-success" />
                     <span className="text-muted-foreground">
-                      {progress.toFixed(0)}% completed
+                      {progress.toFixed(0)}% concluído
                     </span>
                   </div>
                 </>
               ) : (
                 <p className="text-muted-foreground">
-                  Create your first goal to start tracking!
+                  Crie sua primeira meta para começar a acompanhar!
                 </p>
               )}
             </Card>
@@ -212,14 +212,14 @@ const Dashboard = () => {
             transition={{ delay: 0.3 }}
           >
             <Card className="glass-card p-8 rounded-3xl h-full">
-              <h3 className="text-xl font-semibold mb-6">Your Mascot</h3>
+              <h3 className="text-xl font-semibold mb-6">Seu Mascote</h3>
               <div className="flex flex-col items-center">
                 <div className="text-8xl mb-4">
                   {avatars.find((a) => a.id === profile?.avatar_id)?.emoji}
                 </div>
                 <div className="w-full">
                   <div className="flex justify-between mb-2 text-sm">
-                    <span className="font-semibold">Level {level}</span>
+                    <span className="font-semibold">Nível {level}</span>
                     <span className="text-muted-foreground">
                       {profile?.current_xp}XP
                     </span>
@@ -238,14 +238,14 @@ const Dashboard = () => {
             className="lg:col-span-3"
           >
             <Card className="glass-card p-8 rounded-3xl">
-              <h3 className="text-xl font-semibold mb-6">Quick Actions</h3>
+              <h3 className="text-xl font-semibold mb-6">Ações Rápidas</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button
                   size="lg"
                   className="rounded-2xl gradient-primary hover:opacity-90 transition-opacity h-20 text-lg"
                 >
                   <Plus className="w-6 h-6 mr-2" />
-                  Add Savings
+                  Adicionar Economia
                 </Button>
                 <Button
                   size="lg"
@@ -254,7 +254,7 @@ const Dashboard = () => {
                   className="rounded-2xl h-20 text-lg hover-lift"
                 >
                   <MessageSquare className="w-6 h-6 mr-2" />
-                  Consult Oracle
+                  Consultar Oráculo
                 </Button>
               </div>
             </Card>
