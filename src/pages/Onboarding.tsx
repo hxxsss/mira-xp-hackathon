@@ -10,11 +10,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const avatars = [
-  { id: 1, emoji: "🦄", name: "Unicorn" },
-  { id: 2, emoji: "🚀", name: "Rocket" },
-  { id: 3, emoji: "🎯", name: "Target" },
-  { id: 4, emoji: "⭐", name: "Star" },
-  { id: 5, emoji: "🌈", name: "Rainbow" },
+  { id: 1, emoji: "🦄", name: "Unicórnio" },
+  { id: 2, emoji: "🚀", name: "Foguete" },
+  { id: 3, emoji: "🎯", name: "Alvo" },
+  { id: 4, emoji: "⭐", name: "Estrela" },
+  { id: 5, emoji: "🌈", name: "Arco-íris" },
 ];
 
 const Onboarding = () => {
@@ -49,11 +49,12 @@ const Onboarding = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      // Sign up the user
+      // Criar conta do usuário
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
           data: {
             name: formData.name,
           },
@@ -61,22 +62,28 @@ const Onboarding = () => {
       });
 
       if (authError) throw authError;
-      if (!authData.user) throw new Error("No user returned");
+      if (!authData.user) throw new Error("Usuário não foi criado");
 
-      // Update profile with onboarding data
+      // Aguardar um pouco para garantir que o trigger criou o perfil
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Atualizar perfil com dados do onboarding (usando upsert para garantir)
       const { error: profileError } = await supabase
         .from("profiles")
-        .update({
+        .upsert({
+          id: authData.user.id,
           name: formData.name,
+          email: formData.email,
           age: parseInt(formData.age),
           income_type: formData.incomeType,
           avatar_id: formData.avatarId,
-        })
-        .eq("id", authData.user.id);
+        }, {
+          onConflict: 'id'
+        });
 
       if (profileError) throw profileError;
 
-      // Create the initial goal
+      // Criar a meta inicial
       const { error: goalError } = await supabase.from("goals").insert({
         user_id: authData.user.id,
         title: formData.goalName,
@@ -86,15 +93,16 @@ const Onboarding = () => {
       if (goalError) throw goalError;
 
       toast({
-        title: "Welcome to DreamUp! 🎉",
-        description: "Your journey begins now.",
+        title: "Bem-vindo ao DreamUp! 🎉",
+        description: "Sua jornada começa agora.",
       });
 
       navigate("/dashboard");
     } catch (error: any) {
+      console.error("Erro no cadastro:", error);
       toast({
-        title: "Error",
-        description: error.message || "Something went wrong",
+        title: "Erro no cadastro",
+        description: error.message || "Algo deu errado. Tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -141,7 +149,7 @@ const Onboarding = () => {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between mb-2 text-sm text-muted-foreground">
-            <span>Step {step} of 6</span>
+            <span>Etapa {step} de 6</span>
             <span>{Math.round((step / 6) * 100)}%</span>
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -184,7 +192,7 @@ const Onboarding = () => {
               className="rounded-2xl"
             >
               <ChevronLeft className="w-5 h-5 mr-1" />
-              Back
+              Voltar
             </Button>
           )}
           <Button
@@ -194,12 +202,12 @@ const Onboarding = () => {
             className="flex-1 rounded-2xl gradient-primary hover:opacity-90 transition-opacity"
           >
             {loading ? (
-              "Loading..."
+              "Carregando..."
             ) : step === 6 ? (
-              "Start Journey"
+              "Começar Jornada 🚀"
             ) : (
               <>
-                Next
+                Próximo
                 <ChevronRight className="w-5 h-5 ml-1" />
               </>
             )}
@@ -212,27 +220,27 @@ const Onboarding = () => {
 
 const Step1 = ({ formData, updateField }: any) => (
   <div className="space-y-6">
-    <h2 className="text-3xl font-bold mb-2">Let's get to know you!</h2>
-    <p className="text-muted-foreground mb-6">Tell us a bit about yourself</p>
+    <h2 className="text-3xl font-bold mb-2">Vamos te conhecer!</h2>
+    <p className="text-muted-foreground mb-6">Conte um pouco sobre você</p>
     <div className="space-y-4">
       <div>
-        <Label htmlFor="name">What's your name?</Label>
+        <Label htmlFor="name">Qual é o seu nome?</Label>
         <Input
           id="name"
           value={formData.name}
           onChange={(e) => updateField("name", e.target.value)}
-          placeholder="Enter your name"
+          placeholder="Digite seu nome"
           className="rounded-2xl mt-2"
         />
       </div>
       <div>
-        <Label htmlFor="age">How old are you?</Label>
+        <Label htmlFor="age">Quantos anos você tem?</Label>
         <Input
           id="age"
           type="number"
           value={formData.age}
           onChange={(e) => updateField("age", e.target.value)}
-          placeholder="Your age"
+          placeholder="Sua idade"
           className="rounded-2xl mt-2"
         />
       </div>
@@ -243,7 +251,7 @@ const Step1 = ({ formData, updateField }: any) => (
           type="email"
           value={formData.email}
           onChange={(e) => updateField("email", e.target.value)}
-          placeholder="your.email@example.com"
+          placeholder="seu.email@exemplo.com"
           className="rounded-2xl mt-2"
         />
       </div>
@@ -253,14 +261,14 @@ const Step1 = ({ formData, updateField }: any) => (
 
 const Step2 = ({ formData, updateField }: any) => (
   <div className="space-y-6">
-    <h2 className="text-3xl font-bold mb-2">What's your dream?</h2>
+    <h2 className="text-3xl font-bold mb-2">Qual é o seu sonho?</h2>
     <p className="text-muted-foreground mb-6">
-      What are you saving for? Be specific!
+      Para o que você está economizando? Seja específico!
     </p>
     <Input
       value={formData.goalName}
       onChange={(e) => updateField("goalName", e.target.value)}
-      placeholder="e.g., PlayStation 5, New Laptop, Concert Tickets"
+      placeholder="ex: PlayStation 5, Notebook Novo, Ingresso de Show"
       className="rounded-2xl text-lg p-6"
     />
   </div>
@@ -268,19 +276,19 @@ const Step2 = ({ formData, updateField }: any) => (
 
 const Step3 = ({ formData, updateField }: any) => (
   <div className="space-y-6">
-    <h2 className="text-3xl font-bold mb-2">How much does it cost?</h2>
+    <h2 className="text-3xl font-bold mb-2">Quanto custa?</h2>
     <p className="text-muted-foreground mb-6">
-      Enter the total amount you need to save
+      Digite o valor total que você precisa economizar
     </p>
     <div className="relative">
       <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl text-muted-foreground">
-        $
+        R$
       </span>
       <Input
         type="number"
         value={formData.goalAmount}
         onChange={(e) => updateField("goalAmount", e.target.value)}
-        placeholder="0.00"
+        placeholder="0,00"
         className="rounded-2xl text-2xl p-6 pl-12"
         step="0.01"
       />
@@ -290,34 +298,34 @@ const Step3 = ({ formData, updateField }: any) => (
 
 const Step4 = ({ formData, updateField }: any) => (
   <div className="space-y-6">
-    <h2 className="text-3xl font-bold mb-2">Where does your money come from?</h2>
+    <h2 className="text-3xl font-bold mb-2">De onde vem seu dinheiro?</h2>
     <p className="text-muted-foreground mb-6">
-      This helps us give you better advice
+      Isso nos ajuda a dar melhores conselhos
     </p>
     <div className="grid grid-cols-2 gap-4">
       <button
-        onClick={() => updateField("incomeType", "allowance")}
+        onClick={() => updateField("incomeType", "mesada")}
         className={`p-6 rounded-2xl border-2 transition-all hover-lift ${
-          formData.incomeType === "allowance"
+          formData.incomeType === "mesada"
             ? "border-primary bg-primary/10"
             : "border-border glass-card"
         }`}
       >
         <div className="text-4xl mb-2">💸</div>
-        <div className="font-semibold">Allowance</div>
-        <div className="text-sm text-muted-foreground">From parents/family</div>
+        <div className="font-semibold">Mesada</div>
+        <div className="text-sm text-muted-foreground">Dos pais/família</div>
       </button>
       <button
-        onClick={() => updateField("incomeType", "work")}
+        onClick={() => updateField("incomeType", "trabalho")}
         className={`p-6 rounded-2xl border-2 transition-all hover-lift ${
-          formData.incomeType === "work"
+          formData.incomeType === "trabalho"
             ? "border-primary bg-primary/10"
             : "border-border glass-card"
         }`}
       >
         <div className="text-4xl mb-2">💼</div>
-        <div className="font-semibold">Own Income</div>
-        <div className="text-sm text-muted-foreground">From work/job</div>
+        <div className="font-semibold">Renda Própria</div>
+        <div className="text-sm text-muted-foreground">De trabalho/freela</div>
       </button>
     </div>
   </div>
@@ -325,9 +333,9 @@ const Step4 = ({ formData, updateField }: any) => (
 
 const Step5 = ({ formData, updateField }: any) => (
   <div className="space-y-6">
-    <h2 className="text-3xl font-bold mb-2">Choose your mascot!</h2>
+    <h2 className="text-3xl font-bold mb-2">Escolha seu mascote!</h2>
     <p className="text-muted-foreground mb-6">
-      Pick a buddy to accompany you on your journey
+      Escolha um companheiro para sua jornada
     </p>
     <div className="grid grid-cols-5 gap-3">
       {avatars.map((avatar) => (
@@ -350,22 +358,22 @@ const Step5 = ({ formData, updateField }: any) => (
 
 const Step6 = ({ formData, updateField }: any) => (
   <div className="space-y-6">
-    <h2 className="text-3xl font-bold mb-2">Almost there!</h2>
+    <h2 className="text-3xl font-bold mb-2">Quase lá!</h2>
     <p className="text-muted-foreground mb-6">
-      Create a password to secure your account
+      Crie uma senha para proteger sua conta
     </p>
     <div>
-      <Label htmlFor="password">Password</Label>
+      <Label htmlFor="password">Senha</Label>
       <Input
         id="password"
         type="password"
         value={formData.password}
         onChange={(e) => updateField("password", e.target.value)}
-        placeholder="At least 6 characters"
+        placeholder="Pelo menos 6 caracteres"
         className="rounded-2xl mt-2"
       />
       <p className="text-xs text-muted-foreground mt-2">
-        Make it memorable but secure!
+        Faça algo memorável, mas seguro!
       </p>
     </div>
   </div>
