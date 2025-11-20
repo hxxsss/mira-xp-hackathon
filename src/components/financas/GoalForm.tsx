@@ -131,9 +131,9 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[650px] max-h-[75vh]">
+      <DialogContent className="sm:max-w-[650px] max-h-[75vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
+          <DialogTitle className="flex items-center justify-center gap-2 text-xl">
             <Target className="w-5 h-5 text-primary" />
             {isEditing ? "Editar Meta" : "Criar Nova Meta"}
           </DialogTitle>
