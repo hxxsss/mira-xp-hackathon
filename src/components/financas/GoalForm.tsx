@@ -261,7 +261,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
               </Button>
             )}
 
-            {/* Preview "Antes vs Depois" */}
+{/* Preview "Antes vs Depois" */}
             {isEditing && goal && (
               <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border">
                 <h4 className="text-sm font-semibold text-foreground">📊 Comparação</h4>
@@ -277,7 +277,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
                     <span className="text-muted-foreground block">Nova Meta</span>
                     <span className="font-bold text-primary">{watchedValues.title || "..."}</span>
                     <span className="block text-xs text-primary">
-                      R$ {watchedValues.total_amount.toFixed(2)}
+                      R$ {Number(watchedValues.total_amount || 0).toFixed(2)}
                     </span>
                   </div>
                 </div>
