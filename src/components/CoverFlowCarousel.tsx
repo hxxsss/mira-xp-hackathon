@@ -93,6 +93,7 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
       opts={{
         align: "center",
         loop: false,
+        containScroll: false,
       }}
       setApi={setApi}
       className="w-full max-w-7xl mx-auto"
