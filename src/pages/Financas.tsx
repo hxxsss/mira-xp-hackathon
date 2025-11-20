@@ -4,13 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, TrendingUp, TrendingDown, CreditCard, Wallet } from "lucide-react";
+import { ArrowLeft, TrendingUp, CreditCard, Wallet, Target } from "lucide-react";
 import { FinancialSummaryCards } from "@/components/financas/FinancialSummaryCards";
 import { TransactionList } from "@/components/financas/TransactionList";
 import { DebtCard } from "@/components/financas/DebtCard";
 import { TransactionForm } from "@/components/financas/TransactionForm";
 import { DebtForm } from "@/components/financas/DebtForm";
 import { BudgetCategoryForm } from "@/components/financas/BudgetCategoryForm";
+import { GoalCard } from "@/components/financas/GoalCard";
+import { GoalForm } from "@/components/financas/GoalForm";
+import { AddValueDialog } from "@/components/financas/AddValueDialog";
+import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { toast } from "sonner";
 
 const Financas = () => {
@@ -19,11 +23,17 @@ const Financas = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [debts, setDebts] = useState<any[]>([]);
   const [budgetCategories, setBudgetCategories] = useState<any[]>([]);
+  const [goals, setGoals] = useState<any[]>([]);
   const [showTransactionForm, setShowTransactionForm] = useState(false);
   const [showDebtForm, setShowDebtForm] = useState(false);
   const [showBudgetForm, setShowBudgetForm] = useState(false);
+  const [showGoalForm, setShowGoalForm] = useState(false);
+  const [showAddValueDialog, setShowAddValueDialog] = useState(false);
+  const [showGoalDetailsModal, setShowGoalDetailsModal] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<any>(null);
   const [editingDebt, setEditingDebt] = useState<any>(null);
+  const [editingGoal, setEditingGoal] = useState<any>(null);
+  const [selectedGoal, setSelectedGoal] = useState<any>(null);
 
   useEffect(() => {
     checkAuth();
@@ -40,19 +50,25 @@ const Financas = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [transactionsRes, debtsRes, categoriesRes] = await Promise.all([
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const [transactionsRes, debtsRes, categoriesRes, goalsRes] = await Promise.all([
         supabase.from("transactions").select("*").order("date", { ascending: false }),
         supabase.from("debts").select("*").order("due_date", { ascending: true }),
         supabase.from("budget_categories").select("*"),
+        supabase.from("goals").select("*").eq("user_id", user.id).order("is_active", { ascending: false }),
       ]);
 
       if (transactionsRes.error) throw transactionsRes.error;
       if (debtsRes.error) throw debtsRes.error;
       if (categoriesRes.error) throw categoriesRes.error;
+      if (goalsRes.error) throw goalsRes.error;
 
       setTransactions(transactionsRes.data || []);
       setDebts(debtsRes.data || []);
       setBudgetCategories(categoriesRes.data || []);
+      setGoals(goalsRes.data || []);
     } catch (error: any) {
       toast.error("Erro ao carregar dados financeiros");
       console.error(error);
@@ -109,7 +125,7 @@ const Financas = () => {
         />
 
         <Tabs defaultValue="transacoes" className="mt-8">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="transacoes">
               <Wallet className="h-4 w-4 mr-2" />
               Transações
@@ -117,6 +133,10 @@ const Financas = () => {
             <TabsTrigger value="dividas">
               <CreditCard className="h-4 w-4 mr-2" />
               Dívidas
+            </TabsTrigger>
+            <TabsTrigger value="metas">
+              <Target className="h-4 w-4 mr-2" />
+              Metas
             </TabsTrigger>
             <TabsTrigger value="orcamento">
               <TrendingUp className="h-4 w-4 mr-2" />
@@ -171,6 +191,64 @@ const Financas = () => {
                         setShowDebtForm(true);
                       }}
                       onDelete={() => handleDeleteDebt(debt.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="metas" className="mt-6">
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="text-2xl font-semibold">Minhas Metas</h2>
+                  <p className="text-sm text-muted-foreground">Planeje e alcance seus sonhos financeiros</p>
+                </div>
+                <Button onClick={() => {
+                  setEditingGoal(null);
+                  setShowGoalForm(true);
+                }}>
+                  <Target className="w-4 h-4 mr-2" />
+                  Criar Nova Meta
+                </Button>
+              </div>
+              {loading ? (
+                <Card className="p-6">
+                  <p className="text-center text-muted-foreground">Carregando...</p>
+                </Card>
+              ) : goals.length === 0 ? (
+                <Card className="p-12 text-center">
+                  <Target className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">Nenhuma meta criada ainda</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Comece a planejar seus objetivos financeiros agora!
+                  </p>
+                  <Button onClick={() => {
+                    setEditingGoal(null);
+                    setShowGoalForm(true);
+                  }}>
+                    Criar Primeira Meta
+                  </Button>
+                </Card>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2">
+                  {goals.map((goal) => (
+                    <GoalCard
+                      key={goal.id}
+                      goal={goal}
+                      onEdit={() => {
+                        setEditingGoal(goal);
+                        setShowGoalForm(true);
+                      }}
+                      onAddValue={() => {
+                        setSelectedGoal(goal);
+                        setShowAddValueDialog(true);
+                      }}
+                      onViewDetails={() => {
+                        setSelectedGoal(goal);
+                        setShowGoalDetailsModal(true);
+                      }}
                     />
                   ))}
                 </div>
@@ -267,6 +345,46 @@ const Financas = () => {
           onSuccess={() => {
             fetchData();
             setShowBudgetForm(false);
+          }}
+        />
+      )}
+
+      {showGoalForm && (
+        <GoalForm
+          goal={editingGoal}
+          open={showGoalForm}
+          onOpenChange={(open) => {
+            setShowGoalForm(open);
+            if (!open) setEditingGoal(null);
+          }}
+          onSuccess={fetchData}
+        />
+      )}
+
+      {showAddValueDialog && selectedGoal && (
+        <AddValueDialog
+          goal={selectedGoal}
+          open={showAddValueDialog}
+          onOpenChange={(open) => {
+            setShowAddValueDialog(open);
+            if (!open) setSelectedGoal(null);
+          }}
+          onSuccess={fetchData}
+        />
+      )}
+
+      {showGoalDetailsModal && selectedGoal && (
+        <GoalDetailsModal
+          goal={selectedGoal}
+          open={showGoalDetailsModal}
+          onOpenChange={(open) => {
+            setShowGoalDetailsModal(open);
+            if (!open) setSelectedGoal(null);
+          }}
+          onEdit={() => {
+            setShowGoalDetailsModal(false);
+            setEditingGoal(selectedGoal);
+            setShowGoalForm(true);
           }}
         />
       )}

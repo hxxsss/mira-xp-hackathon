@@ -308,38 +308,51 @@ const Dashboard = () => {
 
           {/* Right: Goal + Gamified Stats */}
           <div className="flex items-center gap-2">
-            {/* Compact Gamified Goal */}
-            {goal && (
+            {/* Enhanced Goal Display */}
+            {goal ? (
               <motion.button
                 onClick={() => setGoalModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all group relative"
+                className="relative flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-md rounded-2xl text-white hover:from-white/30 hover:to-white/20 transition-all group overflow-hidden"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Target className="w-4 h-4 text-accent animate-pulse" />
-                <div className="hidden lg:block text-left min-w-[160px]">
-                  <div className="text-[10px] text-white/70 leading-tight">{goal.title}</div>
-                  <div className="relative h-1.5 bg-white/20 rounded-full mt-0.5 overflow-hidden">
+                {/* Animated Background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                <Target className="w-5 h-5 text-accent animate-pulse relative z-10" />
+                <div className="hidden lg:block text-left min-w-[180px] relative z-10">
+                  <div className="text-xs text-white font-semibold leading-tight">{goal.title}</div>
+                  <div className="relative h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
                     <motion.div
-                      className="absolute inset-y-0 left-0 rounded-full"
+                      className="absolute inset-y-0 left-0 rounded-full shadow-lg"
                       style={{
                         background: progressPercentage > 80 
-                          ? 'linear-gradient(90deg, hsl(var(--success)), hsl(145 70% 65%))' 
+                          ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
                           : progressPercentage > 40
-                          ? 'linear-gradient(90deg, hsl(var(--accent)), hsl(45 95% 70%))'
-                          : 'linear-gradient(90deg, hsl(var(--secondary)), hsl(10 80% 75%))'
+                          ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
+                          : 'linear-gradient(90deg, hsl(280 80% 50%), hsl(320 80% 60%))'
                       }}
                       initial={{ width: 0 }}
                       animate={{ width: `${progressPercentage}%` }}
                       transition={{ duration: 1, ease: "easeOut" }}
                     />
                   </div>
-                  <div className="flex justify-between items-center text-[10px] mt-0.5">
-                    <span className="text-white/70">💰 {(goal.current_amount / 1000).toFixed(1)}k</span>
+                  <div className="flex justify-between items-center text-xs mt-1">
+                    <span className="text-white/80 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
                     <span className="font-bold text-accent">{Math.round(progressPercentage)}%</span>
                   </div>
                 </div>
-                <span className="lg:hidden font-bold text-accent text-sm">{Math.round(progressPercentage)}%</span>
+                <span className="lg:hidden font-bold text-accent text-lg relative z-10">{Math.round(progressPercentage)}%</span>
+              </motion.button>
+            ) : (
+              <motion.button
+                onClick={() => navigate('/financas')}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/30 to-primary/30 backdrop-blur-md rounded-full text-white hover:from-accent/40 hover:to-primary/40 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Target className="w-5 h-5" />
+                <span className="hidden lg:inline font-medium">Criar Meta</span>
               </motion.button>
             )}
 
@@ -432,6 +445,7 @@ const Dashboard = () => {
         goal={goal}
         open={goalModalOpen}
         onOpenChange={setGoalModalOpen}
+        onEdit={() => navigate('/financas')}
       />
 
     </div>
