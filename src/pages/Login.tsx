@@ -8,12 +8,10 @@ import { Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useSessionTracking } from "@/hooks/useSessionTracking";
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  useSessionTracking();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
