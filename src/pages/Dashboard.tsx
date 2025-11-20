@@ -259,19 +259,21 @@ const Dashboard = () => {
     <div 
       className="relative h-screen overflow-hidden flex flex-col gradient-background geometric-bg"
     >
-      {/* Neon Lines - Cyan (Meteoros) */}
-      <div className="neon-line neon-line-cyan" style={{ height: '500px', top: '0', left: '0', animationDelay: '0s' }} />
-      <div className="neon-line neon-line-cyan" style={{ height: '450px', top: '0', left: '0', animationDelay: '1.5s' }} />
-      <div className="neon-line neon-line-cyan" style={{ height: '550px', top: '0', left: '0', animationDelay: '3s' }} />
-      <div className="neon-line neon-line-cyan" style={{ height: '480px', top: '0', left: '0', animationDelay: '4.5s' }} />
-      <div className="neon-line neon-line-cyan" style={{ height: '520px', top: '0', left: '0', animationDelay: '2s' }} />
+      {/* Meteoros Neon - Cyan */}
+      <div className="neon-line neon-line-cyan" style={{ height: '300px', left: '-5%', animationDelay: '0s', animationDuration: '4.5s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '450px', left: '-8%', animationDelay: '1.2s', animationDuration: '5.2s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '350px', left: '-3%', animationDelay: '2.8s', animationDuration: '4.8s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '500px', left: '-10%', animationDelay: '4.1s', animationDuration: '5.5s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '280px', left: '-6%', animationDelay: '3.5s', animationDuration: '4.3s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '420px', left: '-7%', animationDelay: '5.3s', animationDuration: '5s' }} />
       
-      {/* Neon Lines - Pink (Meteoros) */}
-      <div className="neon-line neon-line-pink" style={{ height: '480px', top: '0', left: '0', animationDelay: '0.8s' }} />
-      <div className="neon-line neon-line-pink" style={{ height: '520px', top: '0', left: '0', animationDelay: '2.3s' }} />
-      <div className="neon-line neon-line-pink" style={{ height: '460px', top: '0', left: '0', animationDelay: '3.8s' }} />
-      <div className="neon-line neon-line-pink" style={{ height: '500px', top: '0', left: '0', animationDelay: '5.3s' }} />
-      <div className="neon-line neon-line-pink" style={{ height: '540px', top: '0', left: '0', animationDelay: '1.3s' }} />
+      {/* Meteoros Neon - Pink */}
+      <div className="neon-line neon-line-pink" style={{ height: '380px', left: '-4%', animationDelay: '0.6s', animationDuration: '4.7s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '320px', left: '-9%', animationDelay: '1.8s', animationDuration: '4.4s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '460px', left: '-5%', animationDelay: '3.2s', animationDuration: '5.3s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '340px', left: '-7%', animationDelay: '4.6s', animationDuration: '4.9s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '400px', left: '-6%', animationDelay: '2.1s', animationDuration: '5.1s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '290px', left: '-8%', animationDelay: '5.7s', animationDuration: '4.6s' }} />
 
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
