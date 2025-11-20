@@ -259,7 +259,7 @@ const Dashboard = () => {
 
   return (
     <div 
-      className="relative min-h-screen overflow-hidden transition-colors duration-700"
+      className="relative h-screen overflow-hidden transition-colors duration-700 flex flex-col"
       style={{ backgroundColor: currentBgColor }}
     >
       {/* Diagonal Lines Background - Rups Style */}
@@ -275,7 +275,7 @@ const Dashboard = () => {
       </div>
 
       {/* HUD - Top Navigation */}
-      <div className="absolute top-0 left-0 right-0 z-50 p-4">
+      <div className="flex-shrink-0 z-50 p-3">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
             <button 
@@ -296,7 +296,7 @@ const Dashboard = () => {
           </div>
 
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-white tracking-wider">
+            <h1 className="text-2xl font-bold text-white tracking-wider">
               DreamUp
             </h1>
           </div>
@@ -323,14 +323,14 @@ const Dashboard = () => {
       </div>
 
       {/* Track Navigation */}
-      <div className="absolute top-24 left-0 right-0 z-40">
+      <div className="flex-shrink-0 z-40">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center gap-4">
             {tracks.map((track, index) => (
               <button
                 key={track.id}
                 onClick={() => handleTrackChange(index)}
-                className={`relative px-6 py-3 rounded-full font-bold transition-all ${
+                className={`relative px-6 py-2 rounded-full font-bold transition-all ${
                   index === currentTrackIndex
                     ? 'bg-white text-gray-900 scale-110 shadow-xl'
                     : track.status === 'locked'
@@ -363,7 +363,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Stage - Learning Path Carousel */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center pt-32 pb-20">
+      <div className="relative z-10 flex-1 flex items-center justify-center">
         <div className="w-full max-w-[1400px] px-4">
           {currentTrack && (
             <Swiper
@@ -512,12 +512,12 @@ const Dashboard = () => {
       <style>{`
         .learning-swiper {
           width: 100%;
-          padding: 60px 0 !important;
+          padding: 30px 0 !important;
         }
 
         .learning-swiper .swiper-slide {
           width: 500px !important;
-          height: 600px !important;
+          height: 480px !important;
         }
 
         .learning-module-card {
@@ -567,7 +567,7 @@ const Dashboard = () => {
         @media (max-width: 768px) {
           .learning-swiper .swiper-slide {
             width: 350px !important;
-            height: 500px !important;
+            height: 420px !important;
           }
           
           .learning-swiper .swiper-button-prev,
