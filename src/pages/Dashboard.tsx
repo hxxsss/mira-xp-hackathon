@@ -449,114 +449,101 @@ const Dashboard = () => {
                 const isInProgress = module.status === 'in_progress';
                 
                 return (
-                <SwiperSlide key={module.id}>
-                  <Card
-                    className="learning-module-card group cursor-pointer"
-                    onClick={() => handleModuleClick(module.id, module.status, currentTrack.status)}
-                    style={{
-                    backgroundColor: module.card_color,
-                    boxShadow: module.status === 'in_progress' || module.status === 'unlocked'
-                      ? '0 40px 80px -20px rgba(0, 0, 0, 0.4), 0 20px 40px -10px rgba(124, 58, 237, 0.3)' 
-                      : '0 10px 20px -5px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  {/* Progress Bar */}
-                  {(module.status === 'in_progress' || module.status === 'completed') && (
-                    <div className="absolute bottom-0 left-0 right-0 h-2 bg-gray-200 rounded-b-[40px] overflow-hidden z-50">
-                      <div 
-                        className="h-full bg-[#F5A623] transition-all duration-500"
-                        style={{ width: `${module.progress_percent}%` }}
-                      />
-                    </div>
-                  )}
-
-                  {/* Completed Badge */}
-                  {module.status === 'completed' && (
-                    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 z-40">
-                      ✓ Completo
-                    </div>
-                  )}
-
-                  {/* New Badge for unlocked modules */}
-                  {module.status === 'unlocked' && module.progress_percent === 0 && (
-                    <div className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse z-40">
-                      NOVO!
-                    </div>
-                  )}
-
-                  {/* Number Badge - Rups Style */}
-                  <div 
-                    className="absolute -left-6 top-12 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold z-30 shadow-xl border-4 border-white"
-                    style={{
-                      backgroundColor: module.status === 'completed' ? '#10B981' : 
-                                     module.status === 'in_progress' || module.status === 'unlocked' ? '#7C3AED' : 
-                                     'rgba(124, 58, 237, 0.8)',
-                      color: 'white'
-                    }}
-                  >
-                    {module.number}
-                  </div>
-
-                  {/* Active/Unlocked Card Content */}
-                  {(module.status === "unlocked" || module.status === "in_progress") && (
-                    <div className="relative z-20 p-8 flex flex-col items-center justify-between h-full">
-                      <div className="w-full max-h-[50%] aspect-video rounded-[32px] flex items-center justify-center text-9xl transform transition-transform group-hover:scale-105 relative overflow-hidden" style={{
-                        background: module.icon_bg
-                      }}>
-                        <div className="text-[140px]">{module.icon}</div>
-                      </div>
-
-                      <div className="text-center flex-1 flex flex-col justify-center">
-                        <h3 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
-                          {module.title}
-                        </h3>
-                        <p className="text-gray-600 text-base">
-                          {module.description}
-                        </p>
-                      </div>
-
-                      <Button 
-                        size="lg" 
-                        className="w-full h-16 text-xl font-bold rounded-full text-gray-900 shadow-lg hover:shadow-xl transition-all border-0 uppercase tracking-wide"
-                        style={{
-                          backgroundColor: '#F5A623',
-                          backgroundImage: 'linear-gradient(180deg, #F5A623 0%, #F7B731 100%)'
-                        }}
+                  <SwiperSlide key={module.id}>
+                    <motion.div whileHover={!isLocked ? { y: -4 } : {}} className="w-full h-full">
+                      <Card 
+                        className={cn(
+                          'learning-module-card relative overflow-hidden transition-all cursor-pointer h-full flex flex-col bg-white shadow-lg rounded-3xl',
+                          isLocked && 'cursor-not-allowed'
+                        )}
+                        onClick={() => !isLocked && handleModuleClick(module.id, module.status, currentTrack.status)}
                       >
-                        {module.status === 'in_progress' ? 'CONTINUAR' : 'COMEÇAR AGORA'}
-                      </Button>
-                    </div>
-                  )}
+                        <div className="h-1 w-full" style={{ backgroundColor: isCompleted ? '#10b981' : module.card_color }} />
+                        
+                        <CardContent className="flex flex-col flex-1 justify-between p-6 relative">
+                          <div className="flex justify-between items-start mb-4">
+                            <Badge className={cn(
+                              'text-xs font-semibold',
+                              isCompleted && 'bg-green-100 text-green-700 border-green-200',
+                              isInProgress && 'bg-blue-100 text-blue-700 border-blue-200',
+                              module.status === 'unlocked' && 'bg-red-100 text-red-700 border-red-200 animate-pulse'
+                            )}>
+                              {isCompleted && '✓ COMPLETO'}
+                              {isInProgress && '🎯 EM PROGRESSO'}
+                              {module.status === 'unlocked' && '⭐ NOVO!'}
+                            </Badge>
+                            
+                            <div 
+                              className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2"
+                              style={{
+                                borderColor: isCompleted ? '#10b981' : module.card_color,
+                                backgroundColor: 'white',
+                                color: isCompleted ? '#10b981' : module.card_color
+                              }}
+                            >
+                              #{module.number}
+                            </div>
+                          </div>
 
-                  {/* Inactive/Locked/Completed Cards */}
-                  {module.status !== "unlocked" && module.status !== "in_progress" && (
-                    <div className="relative z-20 p-8 flex flex-col items-center justify-center h-full text-center">
-                      <div 
-                        className="w-32 h-32 rounded-3xl flex items-center justify-center text-7xl mb-6 transform transition-transform group-hover:scale-110 backdrop-blur-sm"
-                        style={{
-                          background: module.icon_bg
-                        }}
-                      >
-                        {module.icon}
-                      </div>
-                      <h3 className="text-2xl font-bold text-white leading-tight">
-                        {module.title}
-                      </h3>
-                    </div>
-                  )}
+                          <div className="flex-shrink-0 mb-6 flex justify-center">
+                            <div 
+                              className="w-32 h-32 rounded-2xl flex items-center justify-center"
+                              style={{ 
+                                backgroundColor: isCompleted ? 'rgba(16, 185, 129, 0.2)' : `${module.card_color}33` 
+                              }}
+                            >
+                              <span className="text-6xl">{module.icon}</span>
+                            </div>
+                          </div>
 
-                  {/* Locked Overlay */}
-                  {module.status === "locked" && (
-                    <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] z-30 rounded-[40px] flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-5xl mb-2">🔒</div>
-                        <p className="text-white font-bold text-base">Bloqueado</p>
-                      </div>
-                    </div>
-                  )}
-                  </Card>
-                </SwiperSlide>
-              ))}
+                          <div className="flex-1 flex flex-col justify-center text-center mb-6">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">{module.title}</h3>
+                            <p className="text-gray-600 text-sm line-clamp-2">{module.description}</p>
+                          </div>
+
+                          {module.progress_percent !== undefined && module.progress_percent > 0 && (
+                            <div className="mb-4">
+                              <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                <div 
+                                  className="h-full rounded-full transition-all duration-500"
+                                  style={{ 
+                                    width: `${module.progress_percent}%`,
+                                    backgroundColor: isCompleted ? '#10b981' : module.card_color 
+                                  }}
+                                />
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1 text-center">{module.progress_percent}% concluído</p>
+                            </div>
+                          )}
+
+                          <Button
+                            className="w-full font-semibold py-6 text-lg text-white"
+                            disabled={isLocked}
+                            style={{
+                              backgroundColor: isLocked ? '#9ca3af' : isCompleted ? '#6b7280' : module.card_color
+                            }}
+                          >
+                            {isCompleted && 'REVISAR'}
+                            {isInProgress && 'CONTINUAR'}
+                            {module.status === 'unlocked' && 'COMEÇAR AGORA'}
+                            {isLocked && '🔒 BLOQUEADO'}
+                          </Button>
+
+                          {isLocked && (
+                            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-3xl">
+                              <div className="text-center">
+                                <div className="text-5xl mb-3">🔒</div>
+                                <p className="text-gray-700 font-semibold">Bloqueado</p>
+                                <p className="text-gray-500 text-sm mt-1">Complete o módulo anterior</p>
+                              </div>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
           )}
         </div>
