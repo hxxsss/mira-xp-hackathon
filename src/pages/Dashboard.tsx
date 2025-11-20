@@ -430,12 +430,12 @@ const Dashboard = () => {
               <button
                 key={track.id}
                 onClick={() => handleTrackChange(index)}
-                className={`relative px-6 py-2 rounded-full font-bold transition-all ${
+                className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
                   index === currentTrackIndex
-                    ? 'bg-white text-gray-900 scale-110 shadow-xl'
+                    ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
                     : track.status === 'locked'
-                    ? 'bg-white/20 text-white/50 hover:bg-white/30'
-                    : 'bg-white/30 text-white hover:bg-white/40'
+                    ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10'
+                    : 'bg-white/10 text-white hover:bg-white/20 border-white/20'
                 }`}
               >
                 <span className="mr-2">{track.icon}</span>
