@@ -141,21 +141,21 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Target className="w-6 h-6 text-primary" />
+          <DialogTitle className="flex items-center gap-2 text-xl">
+            <Target className="w-5 h-5 text-primary" />
             {isEditing ? "Editar Meta" : "Criar Nova Meta"}
           </DialogTitle>
           {isEditing && (
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-gray-700">
               💡 <strong>Mudou de ideia?</strong> Você pode escolher uma meta completamente diferente!
             </p>
           )}
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="title"
@@ -170,7 +170,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <FormField
                 control={form.control}
                 name="total_amount"
@@ -263,18 +263,18 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
 
 {/* Preview "Antes vs Depois" */}
             {isEditing && goal && (
-              <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border">
-                <h4 className="text-sm font-semibold text-foreground">📊 Comparação</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="bg-muted/50 rounded-lg p-3 space-y-1 border border-border">
+                <h4 className="text-sm font-semibold text-black">📊 Comparação</h4>
+                <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <span className="text-muted-foreground block">Meta Atual</span>
-                    <span className="font-semibold text-foreground">{goal.title}</span>
-                    <span className="block text-xs text-muted-foreground">
+                    <span className="text-gray-600 block">Meta Atual</span>
+                    <span className="font-semibold text-black">{goal.title}</span>
+                    <span className="block text-xs text-gray-600">
                       R$ {goal.total_amount.toFixed(2)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground block">Nova Meta</span>
+                    <span className="text-gray-600 block">Nova Meta</span>
                     <span className="font-bold text-primary">{watchedValues.title || "..."}</span>
                     <span className="block text-xs text-primary">
                       R$ {Number(watchedValues.total_amount || 0).toFixed(2)}
@@ -285,19 +285,19 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
             )}
 
             {/* Preview de Cálculos */}
-            <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" />
+            <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-3 space-y-2">
+              <h3 className="font-semibold flex items-center gap-2 text-black">
+                <TrendingUp className="w-3 h-3" />
                 Previsão da Meta
               </h3>
               
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Progresso:</span>
+                  <span className="text-gray-700">Progresso:</span>
                   <span className="font-bold text-primary">{progress.toFixed(1)}%</span>
                 </div>
                 
-                <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
                     style={{ width: `${progress}%` }}
@@ -305,21 +305,21 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
                 </div>
 
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Faltam:</span>
-                  <span className="font-semibold">R$ {remaining.toFixed(2)}</span>
+                  <span className="text-gray-700">Faltam:</span>
+                  <span className="font-semibold text-black">R$ {remaining.toFixed(2)}</span>
                 </div>
 
                 {dailySuggestion && daysUntilTarget && daysUntilTarget > 0 && (
                   <>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground flex items-center gap-1">
+                      <span className="text-gray-700 flex items-center gap-1">
                         <CalendarLucide className="w-3 h-3" />
                         Dias até a meta:
                       </span>
-                      <span className="font-semibold">{daysUntilTarget} dias</span>
+                      <span className="font-semibold text-black">{daysUntilTarget} dias</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Sugestão diária:</span>
+                      <span className="text-gray-700">Sugestão diária:</span>
                       <span className="font-bold text-accent">R$ {dailySuggestion.toFixed(2)}/dia</span>
                     </div>
                   </>
@@ -327,7 +327,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <Button
                 type="button"
                 variant="outline"
