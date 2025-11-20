@@ -91,7 +91,38 @@ All colors MUST be HSL.
   }
   
   .gradient-background {
-    background: linear-gradient(135deg, hsl(270 70% 60%) 0%, hsl(220 80% 65%) 100%);
+    background: linear-gradient(180deg, hsl(300 70% 65%) 0%, hsl(270 80% 45%) 100%);
+  }
+  
+  .geometric-bg {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .geometric-bg::before,
+  .geometric-bg::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+  }
+  
+  .geometric-bg::before {
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(135deg, hsl(180 90% 60%), hsl(200 85% 65%));
+    top: -200px;
+    right: -100px;
+    animation: blob 15s infinite;
+  }
+  
+  .geometric-bg::after {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, hsl(190 80% 55%), hsl(210 75% 60%));
+    bottom: -100px;
+    left: -150px;
+    animation: blob 12s infinite reverse;
   }
   
   .gradient-success {
@@ -148,16 +179,32 @@ All colors MUST be HSL.
 
 @keyframes blob {
   0% {
-    transform: translate(0px, 0px) scale(1);
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
   }
   33% {
-    transform: translate(30px, -50px) scale(1.1);
+    transform: translate(30px, -50px) scale(1.1) rotate(120deg);
   }
   66% {
-    transform: translate(-20px, 20px) scale(0.9);
+    transform: translate(-20px, 20px) scale(0.9) rotate(240deg);
   }
   100% {
-    transform: translate(0px, 0px) scale(1);
+    transform: translate(0px, 0px) scale(1) rotate(360deg);
+  }
+}
+
+.geometric-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, hsl(180 90% 60%), transparent);
+  opacity: 0.2;
+  animation: slide 8s linear infinite;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(-100%) rotate(-45deg);
+  }
+  100% {
+    transform: translateX(200%) rotate(-45deg);
   }
 }
 

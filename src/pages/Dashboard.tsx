@@ -244,7 +244,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen gradient-background flex items-center justify-center">
+      <div className="min-h-screen gradient-background geometric-bg flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
       </div>
     );
@@ -257,19 +257,18 @@ const Dashboard = () => {
 
   return (
     <div 
-      className="relative h-screen overflow-hidden flex flex-col gradient-background"
+      className="relative h-screen overflow-hidden flex flex-col gradient-background geometric-bg"
     >
-      {/* Diagonal Lines Background - Rups Style */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="diagonal-lines" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-              <line x1="0" y1="0" x2="40" y2="40" stroke="white" strokeWidth="2" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#diagonal-lines)" />
-        </svg>
-      </div>
+      {/* Geometric shapes and lines */}
+      <div className="geometric-line" style={{ width: '2px', height: '300px', top: '10%', left: '15%' }} />
+      <div className="geometric-line" style={{ width: '2px', height: '400px', top: '30%', right: '20%', animationDelay: '2s' }} />
+      <div className="geometric-line" style={{ width: '3px', height: '250px', bottom: '20%', left: '40%', animationDelay: '4s' }} />
+      <div className="geometric-line" style={{ width: '2px', height: '350px', top: '5%', right: '45%', animationDelay: '6s' }} />
+      
+      {/* Abstract shapes */}
+      <div className="absolute w-32 h-32 rounded-full border-2 border-cyan-400/20 top-[15%] right-[10%] animate-pulse" />
+      <div className="absolute w-24 h-24 rounded-full border-2 border-blue-400/20 bottom-[25%] left-[8%] animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute w-40 h-40 rounded-full border-2 border-teal-400/20 top-[60%] right-[35%] animate-pulse" style={{ animationDelay: '2s' }} />
 
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
