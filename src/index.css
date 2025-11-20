@@ -116,6 +116,10 @@ All colors MUST be HSL.
   .animate-slide-up {
     animation: slideUp 0.5s ease-out;
   }
+  
+  .shadow-glow {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.5);
+  }
 }
 
 @keyframes fadeIn {
