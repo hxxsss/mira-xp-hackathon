@@ -417,6 +417,15 @@ const Dashboard = () => {
                 <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
               </div>
             </div>
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="p-2 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 transition-all group"
+              title="Sair da conta"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
