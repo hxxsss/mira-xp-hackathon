@@ -34,12 +34,8 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
   useEffect(() => {
     if (!api) return;
 
-    // Inicializa no primeiro card não completado ou no primeiro card
-    const firstIncompleteIndex = items.findIndex(
-      item => item.status !== 'completed' && item.status !== 'locked'
-    );
-    const startIndex = firstIncompleteIndex >= 0 ? firstIncompleteIndex : 0;
-    api.scrollTo(startIndex, true);
+    // Sempre inicializa no primeiro card
+    api.scrollTo(0, true);
   }, [api, items]);
 
   useEffect(() => {
