@@ -131,7 +131,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[650px] max-h-[75vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[650px] max-h-[85vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-center gap-2 text-xl">
             <Target className="w-5 h-5 text-primary" />
@@ -251,21 +251,21 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
               </Button>
             )}
 
-{/* Preview "Antes vs Depois" */}
+ {/* Preview "Antes vs Depois" */}
             {isEditing && goal && (
-              <div className="bg-muted/50 rounded-lg p-3 space-y-1 border border-border">
-                <h4 className="text-sm font-semibold text-black">📊 Comparação</h4>
-                <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="bg-muted/50 rounded-lg p-2 space-y-0.5 border border-border">
+                <h4 className="text-xs font-semibold text-black">📊 Comparação</h4>
+                <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <span className="text-gray-600 block">Meta Atual</span>
-                    <span className="font-semibold text-black">{goal.title}</span>
+                    <span className="font-semibold text-black text-sm">{goal.title}</span>
                     <span className="block text-xs text-gray-600">
                       R$ {goal.total_amount.toFixed(2)}
                     </span>
                   </div>
                   <div>
                     <span className="text-gray-600 block">Nova Meta</span>
-                    <span className="font-bold text-primary">{watchedValues.title || "..."}</span>
+                    <span className="font-bold text-primary text-sm">{watchedValues.title || "..."}</span>
                     <span className="block text-xs text-primary">
                       R$ {Number(watchedValues.total_amount || 0).toFixed(2)}
                     </span>
