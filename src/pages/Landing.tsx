@@ -59,7 +59,7 @@ const Landing = () => {
         }} className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
             Transforme Seus Sonhos
             <br />
-            <span className="text-gradient">Em Realidade</span>
+            <span className="text-white">Em Realidade</span>
           </motion.h2>
 
           {/* Value Prop */}
