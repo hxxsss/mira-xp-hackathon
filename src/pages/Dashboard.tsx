@@ -25,47 +25,57 @@ const avatars = [
   { id: 5, emoji: "🌈" }
 ];
 
-// Módulos de aprendizado
+// Módulos de aprendizado - Rups Style
 const learningModules = [
   {
     id: 1,
-    title: "Compreendendo Seu Dinheiro",
-    description: "Descubra de onde vem e para onde vai seu dinheiro",
+    title: "Entendendo Dinheiro",
+    description: "Descubra de onde vem seu dinheiro",
     icon: "💰",
-    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    status: "current"
+    cardColor: "#FCD34D", // Yellow
+    iconBg: "#FBBF24",
+    status: "locked",
+    number: "01"
   },
   {
     id: 2,
     title: "O Poder de Poupar",
-    description: "Aprenda técnicas simples para guardar dinheiro",
+    description: "Aprenda técnicas para guardar",
     icon: "🎯",
-    gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    status: "locked"
+    cardColor: "#FCD34D", // Yellow
+    iconBg: "#FBBF24",
+    status: "locked",
+    number: "02"
   },
   {
     id: 3,
-    title: "Gastos Inteligentes",
-    description: "Diferencie necessidades de desejos",
-    icon: "🧠",
-    gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    status: "locked"
+    title: "Compreendendo Seu Dinheiro",
+    description: "Descubra de onde vem e para onde vai seu dinheiro. Aprenda a controlar suas finanças de forma inteligente.",
+    icon: "💰",
+    cardColor: "#FFFFFF", // White - Active
+    iconBg: "linear-gradient(135deg, #F87171 0%, #FB923C 100%)",
+    status: "current",
+    number: "03"
   },
   {
     id: 4,
-    title: "Planejando Seu Futuro",
-    description: "Crie metas realistas e alcançáveis",
-    icon: "🚀",
-    gradient: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-    status: "locked"
+    title: "Gastos Inteligentes",
+    description: "Diferencie necessidades de desejos",
+    icon: "🧠",
+    cardColor: "#67E8F9", // Cyan
+    iconBg: "#22D3EE",
+    status: "locked",
+    number: "04"
   },
   {
     id: 5,
-    title: "Investindo Seus Sonhos",
-    description: "Faça seu dinheiro trabalhar por você",
+    title: "Investindo Sonhos",
+    description: "Faça seu dinheiro trabalhar",
     icon: "💎",
-    gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-    status: "locked"
+    cardColor: "#C084FC", // Purple
+    iconBg: "#A855F7",
+    status: "locked",
+    number: "05"
   }
 ];
 
@@ -177,33 +187,43 @@ const Dashboard = () => {
   const selectedAvatar = avatars.find(a => a.id === profile?.avatar_id) || avatars[0];
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Subtle background decoration */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-20 right-20 w-96 h-96 rounded-full blur-3xl gradient-primary opacity-20" />
-        <div className="absolute bottom-20 left-20 w-96 h-96 rounded-full blur-3xl gradient-secondary opacity-20" />
+    <div className="min-h-screen bg-[#7C3AED] relative overflow-hidden">
+      {/* Doodle Background - Rups Style */}
+      <div className="absolute inset-0 opacity-5">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10%" cy="15%" r="30" fill="none" stroke="white" strokeWidth="3" />
+          <path d="M 85% 20% Q 87% 22% 85% 24%" fill="none" stroke="white" strokeWidth="3" />
+          <circle cx="15%" cy="80%" r="20" fill="none" stroke="white" strokeWidth="3" />
+          <path d="M 90% 70% L 92% 68% L 94% 70% L 92% 72% Z" fill="white" />
+          <circle cx="5%" cy="50%" r="15" fill="white" />
+          <path d="M 95% 40% Q 96% 42% 95% 44%" fill="none" stroke="white" strokeWidth="3" />
+          <circle cx="20%" cy="25%" r="25" fill="none" stroke="white" strokeWidth="3" />
+          <path d="M 80% 85% L 82% 83% M 82% 85% L 80% 83%" stroke="white" strokeWidth="3" />
+          <circle cx="70%" cy="10%" r="18" fill="none" stroke="white" strokeWidth="3" />
+          <path d="M 10% 90% Q 12% 88% 14% 90%" fill="none" stroke="white" strokeWidth="3" />
+        </svg>
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen p-4 lg:p-8">
-        {/* A. Heads-Up Display (Top) */}
+        {/* A. Heads-Up Display (Top) - Rups Style */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card rounded-3xl p-4 mb-8 flex items-center justify-between"
+          className="bg-white/95 backdrop-blur-sm rounded-3xl p-4 mb-8 flex items-center justify-between shadow-xl"
         >
           {/* Left: Avatar + Level */}
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center text-2xl">
+              <div className="w-14 h-14 rounded-2xl bg-[#7C3AED] flex items-center justify-center text-2xl">
                 {selectedAvatar.emoji}
               </div>
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent text-accent-foreground text-xs font-bold flex items-center justify-center border-2 border-background">
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#FCD34D] text-gray-900 text-xs font-bold flex items-center justify-center border-2 border-white">
                 {level}
               </div>
             </div>
             <div>
-              <p className="font-semibold text-foreground">{profile?.name}</p>
-              <p className="text-sm text-muted-foreground">Nível {level}</p>
+              <p className="font-semibold text-gray-900">{profile?.name}</p>
+              <p className="text-sm text-gray-600">Nível {level}</p>
             </div>
           </div>
 
@@ -215,11 +235,11 @@ const Dashboard = () => {
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-foreground truncate">{goal.title}</p>
-                <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                <p className="text-sm font-medium text-gray-900 truncate">{goal.title}</p>
+                <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
               </div>
               <Progress value={progress} className="h-2 mb-1" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-600">
                 R$ {goal.current_amount.toFixed(2)} / R$ {goal.total_amount.toFixed(2)}
               </p>
             </motion.div>
@@ -228,7 +248,7 @@ const Dashboard = () => {
               variant="outline"
               size="sm"
               onClick={() => navigate("/profile")}
-              className="ml-4"
+              className="ml-4 border-gray-300 text-gray-900 hover:bg-gray-50"
             >
               Definir Meta
             </Button>
@@ -240,7 +260,7 @@ const Dashboard = () => {
               variant="ghost"
               size="icon"
               onClick={() => navigate("/profile")}
-              className="rounded-xl"
+              className="rounded-xl hover:bg-gray-100 text-gray-700"
             >
               <User className="w-4 h-4" />
             </Button>
@@ -248,7 +268,7 @@ const Dashboard = () => {
               variant="ghost"
               size="icon"
               onClick={() => navigate("/sessions")}
-              className="rounded-xl"
+              className="rounded-xl hover:bg-gray-100 text-gray-700"
             >
               <Shield className="w-4 h-4" />
             </Button>
@@ -256,28 +276,15 @@ const Dashboard = () => {
               variant="ghost"
               size="icon"
               onClick={handleLogout}
-              className="rounded-xl"
+              className="rounded-xl hover:bg-gray-100 text-gray-700"
             >
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </motion.div>
 
-        {/* B. Main Stage - 3D Carousel (Hero) */}
-        <div className="flex-1 flex flex-col items-center justify-center py-12 relative bg-gradient-to-b from-background via-primary/5 to-background">
-          {/* Background Blob */}
-          <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-            <div className="w-[1000px] h-[1000px] rounded-full bg-gradient-to-br from-primary/15 via-purple-500/10 to-transparent blur-3xl" />
-          </div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-5xl lg:text-7xl font-bold text-center mb-20 text-gradient relative z-10"
-          >
-            Sua Jornada Financeira
-          </motion.h2>
+        {/* B. Main Stage - 3D Carousel (Hero) - Rups Style */}
+        <div className="flex-1 flex flex-col items-center justify-center py-20 relative">
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -307,75 +314,89 @@ const Dashboard = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 + index * 0.1 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
                   >
-                    <Card
-                      onClick={() => handleModuleClick(module.id, module.status)}
-                      className="relative overflow-hidden cursor-pointer hover-lift group bg-white border-0 shadow-2xl transition-all duration-300"
-                      style={{ 
-                        minHeight: '780px',
-                        boxShadow: '0 25px 50px -12px rgba(124, 58, 237, 0.25)'
-                      }}
-                    >
-                      {module.status === "locked" && (
-                        <div className="absolute inset-0 bg-muted/40 backdrop-blur-md z-10 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="text-8xl mb-4">🔒</div>
-                            <p className="text-foreground font-bold text-xl">Bloqueado</p>
-                            <p className="text-muted-foreground text-sm mt-2">Complete o módulo anterior</p>
-                          </div>
-                        </div>
-                      )}
+                    <div className="relative">
+                      {/* Number Badge - Rups Style */}
+                      <div 
+                        className="absolute -left-6 top-12 w-16 h-16 rounded-full bg-white flex items-center justify-center text-2xl font-bold z-30 shadow-xl"
+                        style={{ color: module.status === 'current' ? '#7C3AED' : '#1F2937' }}
+                      >
+                        {module.number}
+                      </div>
 
-                      <div className="relative z-20 p-8 flex flex-col h-full justify-between">
-                        {/* Illustration Area */}
-                        <div className="flex-1 flex items-center justify-center mb-12">
-                          <div 
-                            className="w-80 h-80 rounded-3xl flex items-center justify-center text-9xl transform transition-transform group-hover:scale-110"
-                            style={{ background: module.gradient }}
-                          >
-                            {module.icon}
-                          </div>
-                        </div>
+                      <Card
+                        onClick={() => handleModuleClick(module.id, module.status)}
+                        className="relative overflow-hidden cursor-pointer hover-lift group border-0 transition-all duration-300"
+                        style={{ 
+                          minHeight: module.status === 'current' ? '700px' : '480px',
+                          backgroundColor: module.cardColor,
+                          boxShadow: module.status === 'current' 
+                            ? '0 30px 60px -15px rgba(0, 0, 0, 0.3)' 
+                            : '0 20px 40px -10px rgba(0, 0, 0, 0.2)',
+                          borderRadius: '40px'
+                        }}
+                      >
+                        {module.status === 'current' ? (
+                          // Active Card - Full Featured (Rups Style)
+                          <div className="relative z-20 p-10 flex flex-col h-full">
+                            {/* Illustration Area */}
+                            <div className="flex-1 flex items-center justify-center mb-8">
+                              <div 
+                                className="w-full h-[340px] rounded-[32px] flex items-center justify-center text-9xl transform transition-transform group-hover:scale-105 relative overflow-hidden"
+                                style={{ background: module.iconBg }}
+                              >
+                                <div className="text-[140px]">{module.icon}</div>
+                                {/* Decorative elements like in Rups */}
+                                <div className="absolute top-8 right-8 w-16 h-16 rounded-full bg-white/20" />
+                                <div className="absolute bottom-12 left-12 w-20 h-20 rounded-full bg-white/15" />
+                              </div>
+                            </div>
 
-                        {/* Content Area */}
-                        <div className="space-y-8">
-                          <div>
-                            <h3 className="text-5xl font-bold text-foreground mb-4">
+                            {/* Content Area */}
+                            <div className="space-y-6">
+                              <div>
+                                <h3 className="text-4xl font-bold text-gray-900 mb-3 leading-tight">
+                                  {module.title}
+                                </h3>
+                                <p className="text-gray-600 text-lg leading-relaxed">
+                                  {module.description}
+                                </p>
+                              </div>
+
+                              <Button 
+                                size="lg"
+                                className="w-full h-16 text-xl font-bold rounded-full bg-[#FCD34D] hover:bg-[#FBBF24] text-gray-900 shadow-lg hover:shadow-xl transition-all border-0"
+                              >
+                                COMEÇAR AGORA
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          // Inactive Cards - Simplified (Rups Style)
+                          <div className="relative z-20 p-8 flex flex-col items-center justify-center h-full text-center">
+                            <div 
+                              className="w-32 h-32 rounded-3xl flex items-center justify-center text-7xl mb-6 transform transition-transform group-hover:scale-110"
+                              style={{ background: module.iconBg }}
+                            >
+                              {module.icon}
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 leading-tight">
                               {module.title}
                             </h3>
-                            <p className="text-muted-foreground text-xl">
-                              {module.description}
-                            </p>
                           </div>
+                        )}
 
-                          {module.status === "current" ? (
-                            <Button 
-                              size="lg"
-                              className="w-full h-16 text-xl font-bold rounded-2xl gradient-primary hover:opacity-90 transition-opacity"
-                            >
-                              Começar Agora
-                            </Button>
-                          ) : module.status === "locked" ? (
-                            <Button 
-                              size="lg"
-                              disabled
-                              className="w-full h-16 text-xl font-bold rounded-2xl"
-                            >
-                              Bloqueado
-                            </Button>
-                          ) : (
-                            <Button 
-                              size="lg"
-                              variant="outline"
-                              className="w-full h-16 text-xl font-bold rounded-2xl"
-                            >
-                              Revisar
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
+                        {module.status === "locked" && (
+                          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm z-30 rounded-[40px] flex items-center justify-center">
+                            <div className="text-center">
+                              <div className="text-6xl mb-3">🔒</div>
+                              <p className="text-white font-bold text-lg">Bloqueado</p>
+                            </div>
+                          </div>
+                        )}
+                      </Card>
+                    </div>
                   </motion.div>
                 </SwiperSlide>
               ))}
@@ -384,117 +405,108 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* C. Floating Action Button - Oracle */}
+      {/* C. Floating Action Button - Oracle - Rups Style */}
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8, type: "spring" }}
+        transition={{ delay: 0.6, type: "spring" }}
         className="fixed bottom-8 right-8 z-50"
       >
         <Button
           onClick={() => navigate("/oracle")}
           size="lg"
-          className="w-16 h-16 lg:w-auto lg:h-auto lg:px-8 lg:py-6 rounded-full gradient-primary shadow-lg hover:shadow-glow transition-all duration-300 group relative overflow-hidden"
+          className="w-16 h-16 lg:w-auto lg:h-auto lg:px-8 lg:py-6 rounded-full bg-white hover:bg-gray-50 text-[#7C3AED] shadow-2xl hover:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.4)] transition-all duration-300 group relative overflow-hidden border-0"
         >
-          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
+          <div className="absolute inset-0 bg-[#FCD34D]/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
           <MessageSquare className="w-6 h-6 lg:mr-2" />
-          <span className="hidden lg:inline font-semibold">Falar com Oráculo</span>
+          <span className="hidden lg:inline font-bold">Falar com Oráculo</span>
         </Button>
       </motion.div>
 
       <style>{`
         .learning-swiper {
           width: 100%;
-          padding: 80px 0 120px 0;
+          padding: 60px 0 100px 0;
         }
 
         .learning-swiper .swiper-slide {
           background-position: center;
           background-size: cover;
-          width: 720px;
-          height: 800px;
-          transition: all 0.3s ease;
+          width: 640px;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .learning-swiper .swiper-slide-active {
           z-index: 3;
-        }
-
-        .learning-swiper .swiper-slide-active .relative {
-          box-shadow: 0 30px 60px -15px rgba(124, 58, 237, 0.35);
+          transform: scale(1) !important;
         }
 
         .learning-swiper .swiper-slide-next,
         .learning-swiper .swiper-slide-prev {
-          opacity: 0.65;
-          filter: blur(0.5px);
+          transform: scale(0.75) !important;
+          opacity: 0.85;
         }
 
         .learning-swiper .swiper-pagination {
-          bottom: 40px;
+          bottom: 30px;
         }
 
         .learning-swiper .swiper-pagination-bullet {
-          background: hsl(var(--primary));
-          opacity: 0.3;
-          width: 12px;
-          height: 12px;
+          background: white;
+          opacity: 0.5;
+          width: 10px;
+          height: 10px;
           transition: all 0.3s ease;
         }
 
         .learning-swiper .swiper-pagination-bullet-active {
           opacity: 1;
-          transform: scale(1.5);
-          background: hsl(var(--primary));
+          transform: scale(1.4);
+          background: white;
         }
 
         .learning-swiper .swiper-button-next,
         .learning-swiper .swiper-button-prev {
-          color: hsl(var(--primary));
+          color: #7C3AED;
           background: white;
-          width: 56px;
-          height: 56px;
+          width: 60px;
+          height: 60px;
           border-radius: 50%;
-          box-shadow: 0 10px 30px -5px hsl(260 30% 20% / 0.2);
+          box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
           transition: all 0.3s ease;
         }
 
         .learning-swiper .swiper-button-next:hover,
         .learning-swiper .swiper-button-prev:hover {
           transform: scale(1.1);
-          box-shadow: 0 15px 40px -5px hsl(260 80% 60% / 0.4);
+          box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.4);
         }
 
         .learning-swiper .swiper-button-next:after,
         .learning-swiper .swiper-button-prev:after {
-          font-size: 20px;
+          font-size: 22px;
           font-weight: bold;
         }
 
         @media (max-width: 1024px) {
           .learning-swiper .swiper-slide {
-            width: 500px;
-            height: 680px;
+            width: 480px;
           }
         }
 
         @media (max-width: 640px) {
           .learning-swiper {
-            padding: 40px 0 80px 0;
+            padding: 30px 0 70px 0;
           }
 
           .learning-swiper .swiper-slide {
-            width: 360px;
-            height: 580px;
+            width: 340px;
           }
-          
-          .learning-swiper .swiper-slide .w-80 {
-            width: 224px;
-            height: 224px;
-          }
-          
-          .learning-swiper .swiper-slide .text-5xl {
-            font-size: 2.25rem;
+
+          .learning-swiper .swiper-button-next,
+          .learning-swiper .swiper-button-prev {
+            width: 48px;
+            height: 48px;
           }
         }
 
