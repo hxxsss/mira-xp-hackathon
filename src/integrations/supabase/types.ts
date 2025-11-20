@@ -147,6 +147,7 @@ export type Database = {
           order_index: number
           points_reward: number | null
           title: string
+          track_id: string | null
           xp_reward: number | null
         }
         Insert: {
@@ -161,6 +162,7 @@ export type Database = {
           order_index: number
           points_reward?: number | null
           title: string
+          track_id?: string | null
           xp_reward?: number | null
         }
         Update: {
@@ -175,7 +177,46 @@ export type Database = {
           order_index?: number
           points_reward?: number | null
           title?: string
+          track_id?: string | null
           xp_reward?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_modules_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "learning_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_tracks: {
+        Row: {
+          background_color: string
+          created_at: string | null
+          description: string
+          icon: string
+          id: string
+          name: string
+          order_index: number
+        }
+        Insert: {
+          background_color: string
+          created_at?: string | null
+          description: string
+          icon: string
+          id?: string
+          name: string
+          order_index: number
+        }
+        Update: {
+          background_color?: string
+          created_at?: string | null
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+          order_index?: number
         }
         Relationships: []
       }
@@ -401,6 +442,44 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "learning_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_track_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          status: string
+          track_id: string
+          unlocked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string
+          track_id: string
+          unlocked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string
+          track_id?: string
+          unlocked_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_track_progress_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "learning_tracks"
             referencedColumns: ["id"]
           },
         ]
