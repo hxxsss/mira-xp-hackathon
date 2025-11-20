@@ -254,10 +254,22 @@ const Dashboard = () => {
   const progressPercentage = goal ? Math.min((Number(goal.current_amount) / Number(goal.total_amount)) * 100, 100) : 0;
   const currentTrack = tracks[currentTrackIndex];
   const currentBgColor = currentTrack?.background_color || '#7C3AED';
+  
+  // Determina a classe CSS baseada no nome da trilha
+  const getTrackClassName = () => {
+    if (!currentTrack) return '';
+    const trackName = currentTrack.name.toLowerCase();
+    if (trackName.includes('organização')) return 'track-organizacao';
+    if (trackName.includes('aceleração')) return 'track-aceleracao';
+    return ''; // Mentalidade (padrão)
+  };
 
   return (
     <div 
-      className="relative h-screen overflow-hidden flex flex-col gradient-background geometric-bg"
+      className={cn(
+        "relative h-screen overflow-hidden flex flex-col gradient-background geometric-bg",
+        getTrackClassName()
+      )}
     >
       {/* Meteoros Neon - Variação de espessura e distribuição */}
       {/* Linhas finas (2-4px) */}

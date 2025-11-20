@@ -108,6 +108,7 @@ All colors MUST be HSL.
     transform-origin: center;
   }
   
+  /* Mentalidade - Cyan & Pink (padrão) */
   .neon-line-cyan {
     background: linear-gradient(180deg, transparent, hsl(180 100% 70%), hsl(180 100% 70%), transparent);
     box-shadow: 0 0 30px hsl(180 100% 70%), 0 0 60px hsl(180 100% 70%), 0 0 90px hsl(180 100% 60%);
@@ -116,6 +117,47 @@ All colors MUST be HSL.
   .neon-line-pink {
     background: linear-gradient(180deg, transparent, hsl(330 100% 70%), hsl(330 100% 70%), transparent);
     box-shadow: 0 0 30px hsl(330 100% 70%), 0 0 60px hsl(330 100% 70%), 0 0 90px hsl(330 100% 60%);
+  }
+  
+  /* Organização - Amarelo Limão, Laranja, Rosa & Ciano */
+  .track-organizacao .gradient-background {
+    background: linear-gradient(180deg, hsl(45 100% 60%) 0%, hsl(30 100% 50%) 100%);
+  }
+  
+  .track-organizacao .neon-line-cyan {
+    background: linear-gradient(180deg, transparent, hsl(60 100% 60%), hsl(60 100% 60%), transparent);
+    box-shadow: 0 0 30px hsl(60 100% 60%), 0 0 60px hsl(60 100% 60%), 0 0 90px hsl(60 100% 50%);
+  }
+  
+  .track-organizacao .neon-line-pink {
+    background: linear-gradient(180deg, transparent, hsl(30 100% 55%), hsl(30 100% 55%), transparent);
+    box-shadow: 0 0 30px hsl(30 100% 55%), 0 0 60px hsl(30 100% 55%), 0 0 90px hsl(30 100% 50%);
+  }
+  
+  /* Linhas extras em rosa e ciano para Organização */
+  .track-organizacao .neon-line:nth-child(3n) {
+    background: linear-gradient(180deg, transparent, hsl(330 100% 65%), hsl(330 100% 65%), transparent);
+    box-shadow: 0 0 30px hsl(330 100% 65%), 0 0 60px hsl(330 100% 65%), 0 0 90px hsl(330 100% 60%);
+  }
+  
+  .track-organizacao .neon-line:nth-child(4n) {
+    background: linear-gradient(180deg, transparent, hsl(180 100% 60%), hsl(180 100% 60%), transparent);
+    box-shadow: 0 0 30px hsl(180 100% 60%), 0 0 60px hsl(180 100% 60%), 0 0 90px hsl(180 100% 55%);
+  }
+  
+  /* Aceleração - Verde Limão & Verde Brilhante */
+  .track-aceleracao .gradient-background {
+    background: linear-gradient(180deg, hsl(120 80% 55%) 0%, hsl(150 70% 45%) 100%);
+  }
+  
+  .track-aceleracao .neon-line-cyan {
+    background: linear-gradient(180deg, transparent, hsl(90 100% 60%), hsl(90 100% 60%), transparent);
+    box-shadow: 0 0 30px hsl(90 100% 60%), 0 0 60px hsl(90 100% 60%), 0 0 90px hsl(90 100% 50%);
+  }
+  
+  .track-aceleracao .neon-line-pink {
+    background: linear-gradient(180deg, transparent, hsl(140 100% 55%), hsl(140 100% 55%), transparent);
+    box-shadow: 0 0 30px hsl(140 100% 55%), 0 0 60px hsl(140 100% 55%), 0 0 90px hsl(140 100% 50%);
   }
   
   @keyframes fall-meteor {
