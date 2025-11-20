@@ -106,7 +106,7 @@ const Onboarding = () => {
       });
       if (goalError) throw goalError;
       toast({
-        title: "Bem-vindo ao DreamUp! 🎉",
+        title: "Bem-vindo ao MIRA! 🎉",
         description: "Sua jornada começa agora."
       });
       navigate("/dashboard");
@@ -153,7 +153,7 @@ const Onboarding = () => {
             <div className="w-10 h-10 rounded-2xl gradient-primary flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <h1 className="text-3xl font-bold text-gradient">DreamUp</h1>
+            <h1 className="text-3xl font-bold text-gradient">MIRA</h1>
           </div>
         </div>
 

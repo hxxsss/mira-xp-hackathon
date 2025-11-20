@@ -244,7 +244,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#7C3AED] flex items-center justify-center">
+      <div className="min-h-screen gradient-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
       </div>
     );
@@ -257,8 +257,7 @@ const Dashboard = () => {
 
   return (
     <div 
-      className="relative h-screen overflow-hidden transition-colors duration-700 flex flex-col"
-      style={{ backgroundColor: currentBgColor }}
+      className="relative h-screen overflow-hidden flex flex-col gradient-background"
     >
       {/* Diagonal Lines Background - Rups Style */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -305,7 +304,7 @@ const Dashboard = () => {
           {/* Center: Logo */}
           <div className="text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-white tracking-wider">
-              DreamUp
+              MIRA
             </h1>
           </div>
 

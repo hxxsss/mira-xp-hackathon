@@ -36,7 +36,7 @@ const Landing = () => {
             <div className="w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-primary-foreground" />
             </div>
-            <h1 className="text-4xl font-bold text-gradient">DreamUp</h1>
+            <h1 className="text-4xl font-bold text-gradient">MIRA</h1>
           </motion.div>
 
           {/* Hero Heading */}
