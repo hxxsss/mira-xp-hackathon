@@ -101,35 +101,36 @@ All colors MUST be HSL.
   
   .neon-line {
     position: absolute;
-    width: 4px;
-    opacity: 0.85;
+    width: 8px;
+    opacity: 0.9;
     animation: fall-meteor 5s linear infinite;
-    filter: blur(1px);
+    filter: blur(2px);
+    transform-origin: center;
   }
   
   .neon-line-cyan {
     background: linear-gradient(180deg, transparent, hsl(180 100% 70%), hsl(180 100% 70%), transparent);
-    box-shadow: 0 0 25px hsl(180 100% 70%), 0 0 50px hsl(180 100% 70%), 0 0 75px hsl(180 100% 60%);
+    box-shadow: 0 0 30px hsl(180 100% 70%), 0 0 60px hsl(180 100% 70%), 0 0 90px hsl(180 100% 60%);
   }
   
   .neon-line-pink {
     background: linear-gradient(180deg, transparent, hsl(330 100% 70%), hsl(330 100% 70%), transparent);
-    box-shadow: 0 0 25px hsl(330 100% 70%), 0 0 50px hsl(330 100% 70%), 0 0 75px hsl(330 100% 60%);
+    box-shadow: 0 0 30px hsl(330 100% 70%), 0 0 60px hsl(330 100% 70%), 0 0 90px hsl(330 100% 60%);
   }
   
   @keyframes fall-meteor {
     0% {
-      transform: translate(0, -150%);
+      transform: translate(0, -150%) rotate(45deg);
       opacity: 0;
     }
     10% {
-      opacity: 0.85;
+      opacity: 0.9;
     }
     90% {
-      opacity: 0.85;
+      opacity: 0.9;
     }
     100% {
-      transform: translate(100vw, calc(100vh + 150%));
+      transform: translate(100vw, calc(100vh + 150%)) rotate(45deg);
       opacity: 0;
     }
   }
