@@ -101,7 +101,7 @@ All colors MUST be HSL.
   
   .neon-line {
     position: absolute;
-    width: 8px;
+    /* Largura controlada via inline style para variação */
     opacity: 0.9;
     animation: fall-meteor 5s linear infinite;
     filter: blur(2px);
