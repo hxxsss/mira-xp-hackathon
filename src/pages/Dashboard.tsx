@@ -434,8 +434,8 @@ const Dashboard = () => {
                   index === currentTrackIndex
                     ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
                     : track.status === 'locked'
-                    ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10'
-                    : 'bg-white/10 text-white hover:bg-white/20 border-white/20'
+                    ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
+                    : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
                 }`}
               >
                 <span className="mr-2">{track.icon}</span>
