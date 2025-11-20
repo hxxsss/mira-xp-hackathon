@@ -101,35 +101,35 @@ All colors MUST be HSL.
   
   .neon-line {
     position: absolute;
-    width: 2px;
-    opacity: 0.6;
-    animation: fall-diagonal 8s linear infinite;
-    filter: blur(1px);
+    width: 3px;
+    opacity: 0.9;
+    animation: fall-diagonal 6s linear infinite;
+    filter: blur(1.5px);
   }
   
   .neon-line-cyan {
-    background: linear-gradient(180deg, transparent, hsl(180 100% 70%), transparent);
-    box-shadow: 0 0 10px hsl(180 100% 70%), 0 0 20px hsl(180 100% 70%);
+    background: linear-gradient(180deg, transparent, hsl(180 100% 70%), hsl(180 100% 70%), transparent);
+    box-shadow: 0 0 20px hsl(180 100% 70%), 0 0 40px hsl(180 100% 70%), 0 0 60px hsl(180 100% 60%);
   }
   
   .neon-line-pink {
-    background: linear-gradient(180deg, transparent, hsl(330 100% 70%), transparent);
-    box-shadow: 0 0 10px hsl(330 100% 70%), 0 0 20px hsl(330 100% 70%);
+    background: linear-gradient(180deg, transparent, hsl(330 100% 70%), hsl(330 100% 70%), transparent);
+    box-shadow: 0 0 20px hsl(330 100% 70%), 0 0 40px hsl(330 100% 70%), 0 0 60px hsl(330 100% 60%);
   }
   
   @keyframes fall-diagonal {
     0% {
-      transform: translateY(-100%) translateX(-50px) rotate(-20deg);
+      transform: translate(-100vw, -100vh) rotate(45deg);
       opacity: 0;
     }
-    10% {
-      opacity: 0.6;
+    5% {
+      opacity: 0.9;
     }
-    90% {
-      opacity: 0.6;
+    95% {
+      opacity: 0.9;
     }
     100% {
-      transform: translateY(100vh) translateX(50px) rotate(-20deg);
+      transform: translate(100vw, 100vh) rotate(45deg);
       opacity: 0;
     }
   }
