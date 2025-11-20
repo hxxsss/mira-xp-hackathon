@@ -114,11 +114,9 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                 <Card
                   className={cn(
                     "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[3/4]",
+                    "bg-white hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
                     isLocked && "cursor-not-allowed"
                   )}
-                  style={{
-                    backgroundColor: color,
-                  }}
                   onClick={() => !isLocked && onItemClick(item.id, item.status)}
                 >
                   <CardContent className="flex flex-col items-center justify-between h-full p-6 relative">
