@@ -39,9 +39,8 @@ const learningModules = [{
   title: "Entendendo Dinheiro",
   description: "Descubra de onde vem seu dinheiro",
   icon: "💰",
-  cardColor: "#FCD34D",
-  // Yellow
-  iconBg: "#FBBF24",
+  cardColor: "rgba(124, 58, 237, 0.15)",
+  iconBg: "rgba(255, 255, 255, 0.2)",
   status: "locked",
   number: "01"
 }, {
@@ -49,18 +48,16 @@ const learningModules = [{
   title: "O Poder de Poupar",
   description: "Aprenda técnicas para guardar",
   icon: "🎯",
-  cardColor: "#FCD34D",
-  // Yellow
-  iconBg: "#FBBF24",
+  cardColor: "rgba(124, 58, 237, 0.15)",
+  iconBg: "rgba(255, 255, 255, 0.2)",
   status: "locked",
   number: "02"
 }, {
   id: 3,
   title: "Compreendendo Seu Dinheiro",
-  description: "Descubra de onde vem e para onde vai seu dinheiro. Aprenda a controlar suas finanças de forma inteligente.",
+  description: "Descubra de onde vem e para onde vai seu dinheiro.",
   icon: "💰",
   cardColor: "#FFFFFF",
-  // White - Active
   iconBg: "linear-gradient(135deg, #F87171 0%, #FB923C 100%)",
   status: "current",
   number: "03"
@@ -69,9 +66,8 @@ const learningModules = [{
   title: "Gastos Inteligentes",
   description: "Diferencie necessidades de desejos",
   icon: "🧠",
-  cardColor: "#67E8F9",
-  // Cyan
-  iconBg: "#22D3EE",
+  cardColor: "rgba(124, 58, 237, 0.15)",
+  iconBg: "rgba(255, 255, 255, 0.2)",
   status: "locked",
   number: "04"
 }, {
@@ -79,9 +75,8 @@ const learningModules = [{
   title: "Investindo Sonhos",
   description: "Faça seu dinheiro trabalhar",
   icon: "💎",
-  cardColor: "#C084FC",
-  // Purple
-  iconBg: "#A855F7",
+  cardColor: "rgba(124, 58, 237, 0.15)",
+  iconBg: "rgba(255, 255, 255, 0.2)",
   status: "locked",
   number: "05"
 }];
@@ -182,19 +177,15 @@ const Dashboard = () => {
   const level = Math.floor((profile?.current_xp || 0) / 100) + 1;
   const selectedAvatar = avatars.find(a => a.id === profile?.avatar_id) || avatars[0];
   return <div className="h-screen w-screen overflow-hidden bg-[#7C3AED] relative">
-      {/* Doodle Background - Rups Style */}
-      <div className="absolute inset-0 opacity-5">
+      {/* Decorative background - Diagonal lines Rups style */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="10%" cy="15%" r="30" fill="none" stroke="white" strokeWidth="3" />
-          <path d="M 85% 20% Q 87% 22% 85% 24%" fill="none" stroke="white" strokeWidth="3" />
-          <circle cx="15%" cy="80%" r="20" fill="none" stroke="white" strokeWidth="3" />
-          <path d="M 90% 70% L 92% 68% L 94% 70% L 92% 72% Z" fill="white" />
-          <circle cx="5%" cy="50%" r="15" fill="white" />
-          <path d="M 95% 40% Q 96% 42% 95% 44%" fill="none" stroke="white" strokeWidth="3" />
-          <circle cx="20%" cy="25%" r="25" fill="none" stroke="white" strokeWidth="3" />
-          <path d="M 80% 85% L 82% 83% M 82% 85% L 80% 83%" stroke="white" strokeWidth="3" />
-          <circle cx="70%" cy="10%" r="18" fill="none" stroke="white" strokeWidth="3" />
-          <path d="M 10% 90% Q 12% 88% 14% 90%" fill="none" stroke="white" strokeWidth="3" />
+          <defs>
+            <pattern id="diagonal-lines" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="40" y2="40" stroke="white" strokeWidth="2" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#diagonal-lines)" />
         </svg>
       </div>
 
@@ -280,9 +271,10 @@ const Dashboard = () => {
                 delay: 0.4 + index * 0.1
               }}>
                     <div className="relative">
-                      {/* Number Badge - Rups Style */}
-                      <div className="absolute -left-6 top-12 w-16 h-16 rounded-full bg-white flex items-center justify-center text-2xl font-bold z-30 shadow-xl" style={{
-                    color: module.status === 'current' ? '#7C3AED' : '#1F2937'
+                      {/* Number Badge - Rups Style with White Border */}
+                      <div className="absolute -left-6 top-12 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold z-30 shadow-xl border-4 border-white" style={{
+                    backgroundColor: module.status === 'current' ? '#7C3AED' : 'rgba(124, 58, 237, 0.8)',
+                    color: 'white'
                   }}>
                         {module.number}
                       </div>
@@ -304,9 +296,6 @@ const Dashboard = () => {
                           background: module.iconBg
                         }}>
                                 <div className="text-[140px]">{module.icon}</div>
-                                {/* Decorative elements like in Rups */}
-                                <div className="absolute top-8 right-8 w-16 h-16 rounded-full bg-white/20" />
-                                <div className="absolute bottom-12 left-12 w-20 h-20 rounded-full bg-white/15" />
                               </div>
                             </div>
 
@@ -321,24 +310,27 @@ const Dashboard = () => {
                                 </p>
                               </div>
 
-                              <Button size="lg" className="w-full h-16 text-xl font-bold rounded-full bg-[#FCD34D] hover:bg-[#FBBF24] text-gray-900 shadow-lg hover:shadow-xl transition-all border-0">
+                              <Button size="lg" className="w-full h-16 text-xl font-bold rounded-full text-gray-900 shadow-lg hover:shadow-xl transition-all border-0 uppercase tracking-wide" style={{
+                          backgroundColor: '#F5A623',
+                          backgroundImage: 'linear-gradient(180deg, #F5A623 0%, #F7B731 100%)'
+                        }}>
                                 COMEÇAR AGORA
                               </Button>
                             </div>
                           </div> :
                     // Inactive Cards - Simplified (Rups Style)
                     <div className="relative z-20 p-8 flex flex-col items-center justify-center h-full text-center">
-                            <div className="w-32 h-32 rounded-3xl flex items-center justify-center text-7xl mb-6 transform transition-transform group-hover:scale-110" style={{
+                            <div className="w-32 h-32 rounded-3xl flex items-center justify-center text-7xl mb-6 transform transition-transform group-hover:scale-110 backdrop-blur-sm" style={{
                         background: module.iconBg
                       }}>
                               {module.icon}
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 leading-tight">
+                            <h3 className="text-2xl font-bold text-white leading-tight">
                               {module.title}
                             </h3>
                           </div>}
 
-                        {module.status === "locked" && <div className="absolute inset-0 bg-black/20 backdrop-blur-sm z-30 rounded-[40px] flex items-center justify-center">
+                        {module.status === "locked" && <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] z-30 rounded-[40px] flex items-center justify-center">
                             <div className="text-center">
                               <div className="text-6xl mb-3">🔒</div>
                               <p className="text-white font-bold text-lg">Bloqueado</p>
@@ -393,7 +385,7 @@ const Dashboard = () => {
         .learning-swiper .swiper-slide-next,
         .learning-swiper .swiper-slide-prev {
           transform: scale(0.75) !important;
-          opacity: 0.85;
+          opacity: 0.7;
         }
 
         .learning-swiper .swiper-pagination {
