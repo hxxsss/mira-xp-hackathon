@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, LogOut, User, Lock, Target, TrendingUp, Wallet } from "lucide-react";
+import { Sparkles, MessageSquare, LogOut, User, Lock, Target, TrendingUp, Wallet, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -272,7 +272,7 @@ const Dashboard = () => {
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
-          {/* Left: Profile & Financas */}
+          {/* Left: Profile, Ranking & Financas */}
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
@@ -280,6 +280,14 @@ const Dashboard = () => {
             >
               <span className="text-xl">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
               <span className="hidden md:inline font-medium">{profile?.name || 'Perfil'}</span>
+            </button>
+
+            <button 
+              onClick={() => navigate('/ranking')}
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
+            >
+              <Trophy className="w-5 h-5" />
+              <span className="hidden md:inline font-medium">Ranking</span>
             </button>
 
             <button 

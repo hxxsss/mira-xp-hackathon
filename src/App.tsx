@@ -11,6 +11,7 @@ import Oracle from "./pages/Oracle";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
+import Ranking from "./pages/Ranking";
 import ModulePage from "./pages/ModulePage";
 import NotFound from "./pages/NotFound";
 import Financas from "./pages/Financas";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/ranking" element={<Ranking />} />
           <Route path="/financas" element={<Financas />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
