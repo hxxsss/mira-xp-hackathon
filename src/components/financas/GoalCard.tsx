@@ -30,9 +30,9 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
     : null;
 
   const getGradient = () => {
-    if (progress >= 80) return "from-green-500 to-emerald-500";
-    if (progress >= 40) return "from-yellow-500 to-amber-500";
-    return "from-purple-500 to-pink-500";
+    if (progress >= 80) return "from-green-500 via-emerald-500 to-teal-500";
+    if (progress >= 40) return "from-orange-500 via-amber-500 to-yellow-500";
+    return "from-purple-600 via-pink-500 to-rose-500";
   };
 
   const getProgressColor = () => {
@@ -63,18 +63,33 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
         <div className="relative p-6 space-y-4">
           {/* Header */}
           <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                <span className="text-2xl">{getMotivationalIcon()}</span>
+            <div className="flex items-center gap-4">
+              {/* Container do ícone MAIOR com glow */}
+              <div className="relative">
+                {/* Glow effect */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${getGradient()} rounded-full blur-2xl opacity-50 animate-pulse`} />
+                
+                {/* Ícone principal GIGANTE */}
+                <div className={`relative w-20 h-20 rounded-full bg-gradient-to-br ${getGradient()} flex items-center justify-center shadow-2xl ring-4 ring-white/50`}>
+                  <span className="text-5xl drop-shadow-lg">{getMotivationalIcon()}</span>
+                </div>
               </div>
+              
               <div>
-                <h3 className="text-xl font-bold text-foreground">{goal.title}</h3>
+                <h3 className="text-2xl font-bold text-foreground">{goal.title}</h3>
                 {goal.is_active && (
-                  <span className="text-xs font-medium text-primary">Meta Ativa</span>
+                  <span className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 animate-pulse">
+                    ⭐ Meta Ativa
+                  </span>
                 )}
               </div>
             </div>
-            <Target className="w-6 h-6 text-primary animate-pulse" />
+            
+            {/* Target MAIOR e animado */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/30 rounded-full blur-lg animate-pulse" />
+              <Target className="relative w-10 h-10 text-primary drop-shadow-lg" strokeWidth={2.5} />
+            </div>
           </div>
 
           {/* Progress Bar */}

@@ -78,6 +78,23 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
   const onSubmit = async (data: GoalFormData) => {
     try {
       setLoading(true);
+      
+      // Detectar mudanças drásticas
+      if (isEditing && goal) {
+        const titleChanged = data.title.toLowerCase() !== goal.title.toLowerCase();
+        const valueChangePercent = Math.abs(data.total_amount - goal.total_amount) / goal.total_amount * 100;
+        
+        if (titleChanged && valueChangePercent > 30) {
+          const confirmed = window.confirm(
+            `Você está mudando de "${goal.title}" para "${data.title}" com uma diferença de ${valueChangePercent.toFixed(0)}% no valor.\n\nTem certeza que deseja continuar?`
+          );
+          if (!confirmed) {
+            setLoading(false);
+            return;
+          }
+        }
+      }
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
@@ -130,6 +147,11 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
             <Target className="w-6 h-6 text-primary" />
             {isEditing ? "Editar Meta" : "Criar Nova Meta"}
           </DialogTitle>
+          {isEditing && (
+            <p className="text-sm text-muted-foreground mt-2">
+              💡 <strong>Mudou de ideia?</strong> Você pode escolher uma meta completamente diferente!
+            </p>
+          )}
         </DialogHeader>
 
         <Form {...form}>
@@ -139,7 +161,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Título da Meta</FormLabel>
+                  <FormLabel>Qual é sua meta?</FormLabel>
                   <FormControl>
                     <Input placeholder="Ex: Viagem dos Sonhos, Carro Novo..." {...field} />
                   </FormControl>
@@ -154,7 +176,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
                 name="total_amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Valor Total</FormLabel>
+                    <FormLabel>Quanto você precisa?</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" placeholder="0.00" {...field} />
                     </FormControl>
@@ -218,6 +240,49 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
                 </FormItem>
               )}
             />
+
+            {/* Botão "Começar Meta do Zero" */}
+            {isEditing && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  form.reset({
+                    title: "",
+                    total_amount: 0,
+                    current_amount: 0,
+                    target_date: undefined,
+                  });
+                  toast.info("Formulário resetado! Agora você pode criar uma nova meta.");
+                }}
+                className="w-full"
+              >
+                🔄 Começar Meta do Zero
+              </Button>
+            )}
+
+            {/* Preview "Antes vs Depois" */}
+            {isEditing && goal && (
+              <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border">
+                <h4 className="text-sm font-semibold text-foreground">📊 Comparação</h4>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground block">Meta Atual</span>
+                    <span className="font-semibold text-foreground">{goal.title}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      R$ {goal.total_amount.toFixed(2)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">Nova Meta</span>
+                    <span className="font-bold text-primary">{watchedValues.title || "..."}</span>
+                    <span className="block text-xs text-primary">
+                      R$ {watchedValues.total_amount.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Preview de Cálculos */}
             <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 space-y-3">

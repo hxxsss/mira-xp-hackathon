@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
+import { GoalForm } from "@/components/financas/GoalForm";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -72,6 +73,8 @@ const Dashboard = () => {
   const [tracks, setTracks] = useState<LearningTrack[]>([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [goalModalOpen, setGoalModalOpen] = useState(false);
+  const [goalFormOpen, setGoalFormOpen] = useState(false);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 
   useEffect(() => {
     loadData();
@@ -319,7 +322,22 @@ const Dashboard = () => {
                 {/* Animated Background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 
-                <Target className="w-5 h-5 text-accent animate-pulse relative z-10" />
+                {/* Ícone MAIOR e mais vibrante */}
+                <div className="relative">
+                  {/* Glow effect pulsante */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-full blur-2xl opacity-60 animate-pulse" />
+                  
+                  {/* Container do ícone */}
+                  <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
+                    <Target className="w-8 h-8 text-white" strokeWidth={3} />
+                  </div>
+                  
+                  {/* Badge de porcentagem */}
+                  <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
+                    {Math.round(progressPercentage)}%
+                  </div>
+                </div>
+                
                 <div className="hidden lg:block text-left min-w-[180px] relative z-10">
                   <div className="text-xs text-white font-semibold leading-tight">{goal.title}</div>
                   <div className="relative h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
@@ -346,7 +364,10 @@ const Dashboard = () => {
               </motion.button>
             ) : (
               <motion.button
-                onClick={() => navigate('/financas')}
+                onClick={() => {
+                  setEditingGoal(null);
+                  setGoalFormOpen(true);
+                }}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/30 to-primary/30 backdrop-blur-md rounded-full text-white hover:from-accent/40 hover:to-primary/40 transition-all"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -445,7 +466,22 @@ const Dashboard = () => {
         goal={goal}
         open={goalModalOpen}
         onOpenChange={setGoalModalOpen}
-        onEdit={() => navigate('/financas')}
+        onEdit={() => {
+          setEditingGoal(goal);
+          setGoalModalOpen(false);
+          setGoalFormOpen(true);
+        }}
+      />
+
+      {/* Goal Form Modal */}
+      <GoalForm
+        goal={editingGoal}
+        open={goalFormOpen}
+        onOpenChange={setGoalFormOpen}
+        onSuccess={() => {
+          loadData();
+          setEditingGoal(null);
+        }}
       />
 
     </div>
