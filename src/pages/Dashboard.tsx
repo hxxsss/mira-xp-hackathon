@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, LogOut, User, Shield } from "lucide-react";
+import { Sparkles, MessageSquare, LogOut, User, Shield, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -34,10 +34,22 @@ interface LearningModule {
   card_color: string;
   icon_bg: string;
   order_index: number;
+  track_id: string;
   status: 'locked' | 'unlocked' | 'in_progress' | 'completed';
   progress_percent: number;
   xp_reward: number;
   points_reward: number;
+}
+
+interface LearningTrack {
+  id: string;
+  name: string;
+  description: string;
+  order_index: number;
+  background_color: string;
+  icon: string;
+  status: 'locked' | 'unlocked' | 'completed';
+  modules: LearningModule[];
 }
 
 interface Profile {
@@ -63,7 +75,8 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [goal, setGoal] = useState<Goal | null>(null);
   const [loading, setLoading] = useState(true);
-  const [learningModules, setLearningModules] = useState<LearningModule[]>([]);
+  const [tracks, setTracks] = useState<LearningTrack[]>([]);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -95,56 +108,67 @@ const Dashboard = () => {
         .eq("is_active", true)
         .maybeSingle();
 
+      // Load learning tracks
+      const { data: tracksData } = await supabase
+        .from('learning_tracks')
+        .select('*')
+        .order('order_index');
+
       // Load learning modules
       const { data: modules } = await supabase
         .from('learning_modules')
         .select('*')
         .order('order_index');
 
-      // Load user progress
-      const { data: progress } = await supabase
+      // Load user module progress
+      const { data: moduleProgress } = await supabase
         .from('user_module_progress')
         .select('*')
         .eq('user_id', user.id);
 
-      // Initialize first module if no progress exists
-      if (modules && modules.length > 0 && (!progress || progress.length === 0)) {
+      // Load user track progress
+      const { data: trackProgress } = await supabase
+        .from('user_track_progress')
+        .select('*')
+        .eq('user_id', user.id);
+
+      // Initialize first track and module if no progress exists
+      if (tracksData && tracksData.length > 0 && (!trackProgress || trackProgress.length === 0)) {
+        // Unlock first track
         await supabase
-          .from('user_module_progress')
+          .from('user_track_progress')
           .insert({
             user_id: user.id,
-            module_id: modules[0].id,
+            track_id: tracksData[0].id,
             status: 'unlocked'
           });
+
+        // Unlock first module
+        const firstModule = modules?.find(m => m.track_id === tracksData[0].id);
+        if (firstModule) {
+          await supabase
+            .from('user_module_progress')
+            .insert({
+              user_id: user.id,
+              module_id: firstModule.id,
+              status: 'unlocked'
+            });
+        }
         
-        // Reload progress
-        const { data: newProgress } = await supabase
+        // Reload data
+        const { data: newTrackProgress } = await supabase
+          .from('user_track_progress')
+          .select('*')
+          .eq('user_id', user.id);
+
+        const { data: newModuleProgress } = await supabase
           .from('user_module_progress')
           .select('*')
           .eq('user_id', user.id);
-        
-        const modulesWithStatus = modules.map(module => {
-          const userProgress = newProgress?.find(p => p.module_id === module.id);
-          return {
-            ...module,
-            status: userProgress?.status || 'locked',
-            progress_percent: userProgress?.progress_percent || 0
-          } as LearningModule;
-        });
-        
-        setLearningModules(modulesWithStatus);
+
+        buildTracksWithModules(tracksData, modules, newModuleProgress, newTrackProgress);
       } else {
-        // Combine modules with progress
-        const modulesWithStatus = modules?.map(module => {
-          const userProgress = progress?.find(p => p.module_id === module.id);
-          return {
-            ...module,
-            status: userProgress?.status || 'locked',
-            progress_percent: userProgress?.progress_percent || 0
-          } as LearningModule;
-        }) || [];
-        
-        setLearningModules(modulesWithStatus);
+        buildTracksWithModules(tracksData, modules, moduleProgress, trackProgress);
       }
 
       setProfile(profileData);
@@ -156,12 +180,54 @@ const Dashboard = () => {
     }
   };
 
+  const buildTracksWithModules = (
+    tracksData: any[],
+    modules: any[],
+    moduleProgress: any[],
+    trackProgress: any[]
+  ) => {
+    const tracksWithModules = tracksData?.map(track => {
+      const trackUserProgress = trackProgress?.find(p => p.track_id === track.id);
+      const trackModules = modules?.filter(m => m.track_id === track.id).map(module => {
+        const userProgress = moduleProgress?.find(p => p.module_id === module.id);
+        return {
+          ...module,
+          status: userProgress?.status || 'locked',
+          progress_percent: userProgress?.progress_percent || 0
+        } as LearningModule;
+      }) || [];
+
+      return {
+        ...track,
+        status: trackUserProgress?.status || 'locked',
+        modules: trackModules
+      } as LearningTrack;
+    }) || [];
+
+    setTracks(tracksWithModules);
+
+    // Set current track to first unlocked/in-progress track
+    const activeTrackIndex = tracksWithModules.findIndex(
+      t => t.status === 'unlocked' || t.modules.some(m => m.status === 'in_progress' || m.status === 'unlocked')
+    );
+    setCurrentTrackIndex(activeTrackIndex >= 0 ? activeTrackIndex : 0);
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
 
-  const handleModuleClick = (moduleId: string, status: string) => {
+  const handleModuleClick = (moduleId: string, status: string, trackStatus: string) => {
+    if (trackStatus === "locked") {
+      toast({
+        title: "🔒 Trilha Bloqueada",
+        description: "Complete a trilha anterior para desbloquear!",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (status === "locked") {
       toast({
         title: "🔒 Módulo Bloqueado",
@@ -174,6 +240,19 @@ const Dashboard = () => {
     navigate(`/module/${moduleId}`);
   };
 
+  const handleTrackChange = (trackIndex: number) => {
+    const track = tracks[trackIndex];
+    if (track.status === 'locked') {
+      toast({
+        title: "🔒 Trilha Bloqueada",
+        description: "Complete todas as trilhas anteriores para desbloquear!",
+        variant: "destructive"
+      });
+      return;
+    }
+    setCurrentTrackIndex(trackIndex);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#7C3AED] flex items-center justify-center">
@@ -184,9 +263,14 @@ const Dashboard = () => {
 
   const selectedAvatar = avatars.find(a => a.id === profile?.avatar_id) || avatars[0];
   const progressPercentage = goal ? Math.min((Number(goal.current_amount) / Number(goal.total_amount)) * 100, 100) : 0;
+  const currentTrack = tracks[currentTrackIndex];
+  const currentBgColor = currentTrack?.background_color || '#7C3AED';
 
   return (
-    <div className="relative min-h-screen bg-[#7C3AED] overflow-hidden">
+    <div 
+      className="relative min-h-screen overflow-hidden transition-colors duration-700"
+      style={{ backgroundColor: currentBgColor }}
+    >
       {/* Diagonal Lines Background - Rups Style */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -247,33 +331,76 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Track Navigation */}
+      <div className="absolute top-24 left-0 right-0 z-40">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-center gap-4">
+            {tracks.map((track, index) => (
+              <button
+                key={track.id}
+                onClick={() => handleTrackChange(index)}
+                className={`relative px-6 py-3 rounded-full font-bold transition-all ${
+                  index === currentTrackIndex
+                    ? 'bg-white text-gray-900 scale-110 shadow-xl'
+                    : track.status === 'locked'
+                    ? 'bg-white/20 text-white/50 cursor-not-allowed'
+                    : 'bg-white/30 text-white hover:bg-white/40'
+                }`}
+                disabled={track.status === 'locked'}
+              >
+                <span className="mr-2">{track.icon}</span>
+                {track.name}
+                {track.status === 'locked' && (
+                  <Lock className="inline-block ml-2 w-4 h-4" />
+                )}
+                {track.status === 'completed' && (
+                  <span className="ml-2">✓</span>
+                )}
+              </button>
+            ))}
+          </div>
+          {currentTrack && (
+            <motion.div
+              key={currentTrack.id}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mt-4"
+            >
+              <p className="text-white/90 text-lg">{currentTrack.description}</p>
+            </motion.div>
+          )}
+        </div>
+      </div>
+
       {/* Main Stage - Learning Path Carousel */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center pt-20 pb-20">
+      <div className="relative z-10 min-h-screen flex items-center justify-center pt-32 pb-20">
         <div className="w-full max-w-[1400px] px-4">
-          <Swiper
-            effect={'coverflow'}
-            grabCursor={true}
-            centeredSlides={true}
-            slidesPerView={'auto'}
-            initialSlide={learningModules.findIndex(m => m.status === 'unlocked' || m.status === 'in_progress') || 0}
-            coverflowEffect={{
-              rotate: 0,
-              stretch: 0,
-              depth: 200,
-              modifier: 2,
-              slideShadows: false,
-            }}
-            pagination={{ clickable: true }}
-            navigation={true}
-            modules={[EffectCoverflow, Pagination, Navigation]}
-            className="learning-swiper"
-          >
-            {learningModules.map((module, index) => (
-              <SwiperSlide key={module.id}>
-                <Card
-                  className="learning-module-card group cursor-pointer"
-                  onClick={() => handleModuleClick(module.id, module.status)}
-                  style={{
+          {currentTrack && (
+            <Swiper
+              key={currentTrack.id}
+              effect={'coverflow'}
+              grabCursor={true}
+              centeredSlides={true}
+              slidesPerView={'auto'}
+              initialSlide={currentTrack.modules.findIndex(m => m.status === 'unlocked' || m.status === 'in_progress') || 0}
+              coverflowEffect={{
+                rotate: 0,
+                stretch: 0,
+                depth: 200,
+                modifier: 2,
+                slideShadows: false,
+              }}
+              pagination={{ clickable: true }}
+              navigation={true}
+              modules={[EffectCoverflow, Pagination, Navigation]}
+              className="learning-swiper"
+            >
+              {currentTrack.modules.map((module, index) => (
+                <SwiperSlide key={module.id}>
+                  <Card
+                    className="learning-module-card group cursor-pointer"
+                    onClick={() => handleModuleClick(module.id, module.status, currentTrack.status)}
+                    style={{
                     backgroundColor: module.card_color,
                     boxShadow: module.status === 'in_progress' || module.status === 'unlocked'
                       ? '0 40px 80px -20px rgba(0, 0, 0, 0.4), 0 20px 40px -10px rgba(124, 58, 237, 0.3)' 
@@ -374,10 +501,11 @@ const Dashboard = () => {
                       </div>
                     </div>
                   )}
-                </Card>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                  </Card>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
         </div>
       </div>
 
