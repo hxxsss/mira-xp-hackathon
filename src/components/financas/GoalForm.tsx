@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, TrendingUp, Target, Calendar as CalendarLucide } from "lucide-react";
+import { CalendarIcon, Target } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -64,16 +64,6 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
   }, [goal, open, form]);
 
   const watchedValues = form.watch();
-  const progress = watchedValues.total_amount > 0 
-    ? Math.min((watchedValues.current_amount / watchedValues.total_amount) * 100, 100)
-    : 0;
-  const remaining = watchedValues.total_amount - watchedValues.current_amount;
-  const daysUntilTarget = watchedValues.target_date 
-    ? differenceInDays(watchedValues.target_date, new Date())
-    : null;
-  const dailySuggestion = daysUntilTarget && daysUntilTarget > 0
-    ? remaining / daysUntilTarget
-    : null;
 
   const onSubmit = async (data: GoalFormData) => {
     try {
@@ -141,7 +131,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[650px] max-h-[75vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Target className="w-5 h-5 text-primary" />
@@ -283,49 +273,6 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
                 </div>
               </div>
             )}
-
-            {/* Preview de Cálculos */}
-            <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-3 space-y-2">
-              <h3 className="font-semibold flex items-center gap-2 text-black">
-                <TrendingUp className="w-3 h-3" />
-                Previsão da Meta
-              </h3>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-700">Progresso:</span>
-                  <span className="font-bold text-primary">{progress.toFixed(1)}%</span>
-                </div>
-                
-                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-700">Faltam:</span>
-                  <span className="font-semibold text-black">R$ {remaining.toFixed(2)}</span>
-                </div>
-
-                {dailySuggestion && daysUntilTarget && daysUntilTarget > 0 && (
-                  <>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-700 flex items-center gap-1">
-                        <CalendarLucide className="w-3 h-3" />
-                        Dias até a meta:
-                      </span>
-                      <span className="font-semibold text-black">{daysUntilTarget} dias</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-700">Sugestão diária:</span>
-                      <span className="font-bold text-accent">R$ {dailySuggestion.toFixed(2)}/dia</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
 
             <div className="flex gap-2">
               <Button
