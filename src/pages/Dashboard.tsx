@@ -10,15 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionTracking } from "@/hooks/useSessionTracking";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Pagination, Navigation } from 'swiper/modules';
 import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
-
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/effect-coverflow';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
+import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -398,153 +391,23 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Main Stage - Learning Path Carousel */}
-      <div className="relative z-10 flex-1 flex items-center justify-center">
-        <div className="w-full max-w-[1400px] px-4">
+      {/* Main Stage - Cover Flow Carousel */}
+      <div className="relative z-10 flex-1 flex items-center justify-center py-8">
+        <div className="w-full px-4">
           {currentTrack && (
-            <Swiper
-              key={currentTrack.id}
-              effect={'coverflow'}
-              grabCursor={true}
-              centeredSlides={true}
-              slidesPerView={1.8}
-              initialSlide={currentTrack.modules.findIndex(m => m.status === 'unlocked' || m.status === 'in_progress') || 0}
-              coverflowEffect={{
-                rotate: 0,
-                stretch: 0,
-                depth: 200,
-                modifier: 1,
-                slideShadows: false,
-              }}
-              breakpoints={{
-                320: {
-                  slidesPerView: 1,
-                  spaceBetween: 20,
-                  centeredSlides: true
-                },
-                768: {
-                  slidesPerView: 1,
-                  spaceBetween: 30,
-                  centeredSlides: true
-                },
-                1024: {
-                  slidesPerView: 1.5,
-                  spaceBetween: 40,
-                  centeredSlides: true
-                },
-                1280: {
-                  slidesPerView: 1.8,
-                  spaceBetween: 50,
-                  centeredSlides: true
-                }
-              }}
-              pagination={{ clickable: true, dynamicBullets: true }}
-              navigation={true}
-              modules={[EffectCoverflow, Pagination, Navigation]}
-              className="learning-swiper"
-            >
-              {currentTrack.modules.map((module, index) => {
-                const isLocked = module.status === 'locked';
-                const isCompleted = module.status === 'completed';
-                const isInProgress = module.status === 'in_progress';
-                
-                return (
-                  <SwiperSlide key={module.id}>
-                    <motion.div whileHover={!isLocked ? { y: -4 } : {}} className="w-full h-full">
-                      <Card 
-                        className={cn(
-                          'learning-module-card relative overflow-hidden transition-all cursor-pointer h-full flex flex-col bg-white shadow-lg rounded-3xl',
-                          isLocked && 'cursor-not-allowed'
-                        )}
-                        onClick={() => !isLocked && handleModuleClick(module.id, module.status, currentTrack.status)}
-                      >
-                        <div className="h-1 w-full" style={{ backgroundColor: isCompleted ? '#10b981' : module.card_color }} />
-                        
-                        <CardContent className="flex flex-col flex-1 justify-between p-6 relative">
-                          <div className="flex justify-between items-start mb-4">
-                            <Badge className={cn(
-                              'text-xs font-semibold',
-                              isCompleted && 'bg-green-100 text-green-700 border-green-200',
-                              isInProgress && 'bg-blue-100 text-blue-700 border-blue-200',
-                              module.status === 'unlocked' && 'bg-red-100 text-red-700 border-red-200 animate-pulse'
-                            )}>
-                              {isCompleted && '✓ COMPLETO'}
-                              {isInProgress && '🎯 EM PROGRESSO'}
-                              {module.status === 'unlocked' && '⭐ NOVO!'}
-                            </Badge>
-                            
-                            <div 
-                              className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2"
-                              style={{
-                                borderColor: isCompleted ? '#10b981' : module.card_color,
-                                backgroundColor: 'white',
-                                color: isCompleted ? '#10b981' : module.card_color
-                              }}
-                            >
-                              #{module.number}
-                            </div>
-                          </div>
-
-                          <div className="flex-shrink-0 mb-6 flex justify-center">
-                            <div 
-                              className="w-32 h-32 rounded-2xl flex items-center justify-center"
-                              style={{ 
-                                backgroundColor: isCompleted ? 'rgba(16, 185, 129, 0.2)' : `${module.card_color}33` 
-                              }}
-                            >
-                              <span className="text-6xl">{module.icon}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex-1 flex flex-col justify-center text-center mb-6">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2">{module.title}</h3>
-                            <p className="text-gray-600 text-sm line-clamp-2">{module.description}</p>
-                          </div>
-
-                          {module.progress_percent !== undefined && module.progress_percent > 0 && (
-                            <div className="mb-4">
-                              <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                                <div 
-                                  className="h-full rounded-full transition-all duration-500"
-                                  style={{ 
-                                    width: `${module.progress_percent}%`,
-                                    backgroundColor: isCompleted ? '#10b981' : module.card_color 
-                                  }}
-                                />
-                              </div>
-                              <p className="text-xs text-gray-500 mt-1 text-center">{module.progress_percent}% concluído</p>
-                            </div>
-                          )}
-
-                          <Button
-                            className="w-full font-semibold py-6 text-lg text-white"
-                            disabled={isLocked}
-                            style={{
-                              backgroundColor: isLocked ? '#9ca3af' : isCompleted ? '#6b7280' : module.card_color
-                            }}
-                          >
-                            {isCompleted && 'REVISAR'}
-                            {isInProgress && 'CONTINUAR'}
-                            {module.status === 'unlocked' && 'COMEÇAR AGORA'}
-                            {isLocked && '🔒 BLOQUEADO'}
-                          </Button>
-
-                          {isLocked && (
-                            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-3xl">
-                              <div className="text-center">
-                                <div className="text-5xl mb-3">🔒</div>
-                                <p className="text-gray-700 font-semibold">Bloqueado</p>
-                                <p className="text-gray-500 text-sm mt-1">Complete o módulo anterior</p>
-                              </div>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
+            <CoverFlowCarousel
+              items={currentTrack.modules.map(module => ({
+                id: module.id,
+                number: module.number,
+                title: module.title,
+                description: module.description,
+                icon: module.icon,
+                color: module.card_color,
+                status: module.status,
+                progress: module.progress_percent
+              }))}
+              onItemClick={(id, status) => handleModuleClick(id, status, currentTrack.status)}
+            />
           )}
         </div>
       </div>
@@ -565,99 +428,6 @@ const Dashboard = () => {
         onOpenChange={setGoalModalOpen}
       />
 
-      {/* Swiper Custom Styles */}
-      <style>{`
-        .learning-swiper {
-          width: 100%;
-          padding: 60px 0 !important;
-          overflow: visible !important;
-        }
-
-        .learning-swiper .swiper-slide {
-          width: 450px !important;
-          height: 540px !important;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.4s ease;
-        }
-
-        .learning-swiper .swiper-slide-active {
-          transform: scale(1.08) translateZ(0);
-          z-index: 10;
-        }
-
-        .learning-swiper .swiper-slide-active .learning-module-card {
-          box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15), 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .learning-swiper .swiper-slide-next,
-        .learning-swiper .swiper-slide-prev {
-          transform: scale(0.88) translateZ(0);
-          opacity: 0.6;
-        }
-
-        .learning-swiper .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next):not(.swiper-slide-prev) {
-          opacity: 0.3;
-          transform: scale(0.7);
-        }
-
-        .learning-module-card:not(.cursor-not-allowed):hover {
-          box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
-        }
-
-        .learning-swiper .swiper-button-prev,
-        .learning-swiper .swiper-button-next {
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          background: white;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-          color: #1f2937;
-        }
-
-        .learning-swiper .swiper-button-prev:after,
-        .learning-swiper .swiper-button-next:after {
-          font-size: 20px;
-          font-weight: bold;
-        }
-
-        .learning-swiper .swiper-pagination {
-          bottom: 10px !important;
-        }
-
-        .learning-swiper .swiper-pagination-bullet {
-          width: 8px;
-          height: 8px;
-          background: rgba(0, 0, 0, 0.3);
-          opacity: 1;
-          transition: all 0.3s;
-        }
-
-        .learning-swiper .swiper-pagination-bullet-active {
-          width: 24px;
-          border-radius: 4px;
-          background: #1f2937;
-        }
-
-        @media (max-width: 768px) {
-          .learning-swiper .swiper-slide {
-            width: 340px !important;
-            height: 500px !important;
-          }
-          
-          .learning-swiper .swiper-button-prev,
-          .learning-swiper .swiper-button-next {
-            width: 40px;
-            height: 40px;
-          }
-          
-          .learning-swiper .swiper-button-prev:after,
-          .learning-swiper .swiper-button-next:after {
-            font-size: 16px;
-          }
-        }
-      `}</style>
     </div>
   );
 };
