@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { Sparkles, MessageSquare, LogOut, User, Shield, Lock, Target, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -405,31 +407,35 @@ const Dashboard = () => {
               effect={'coverflow'}
               grabCursor={true}
               centeredSlides={true}
-              slidesPerView={'auto'}
+              slidesPerView={1.8}
               initialSlide={currentTrack.modules.findIndex(m => m.status === 'unlocked' || m.status === 'in_progress') || 0}
               coverflowEffect={{
-                rotate: 35,
+                rotate: 0,
                 stretch: 0,
-                depth: 120,
-                modifier: 1.5,
-                slideShadows: true,
+                depth: 200,
+                modifier: 1,
+                slideShadows: false,
               }}
               breakpoints={{
                 320: {
                   slidesPerView: 1,
-                  spaceBetween: 20
+                  spaceBetween: 20,
+                  centeredSlides: true
                 },
-                640: {
-                  slidesPerView: 1.2,
-                  spaceBetween: 25
+                768: {
+                  slidesPerView: 1,
+                  spaceBetween: 30,
+                  centeredSlides: true
                 },
                 1024: {
                   slidesPerView: 1.5,
-                  spaceBetween: 30
+                  spaceBetween: 40,
+                  centeredSlides: true
                 },
                 1280: {
-                  slidesPerView: 2.2,
-                  spaceBetween: 40
+                  slidesPerView: 1.8,
+                  spaceBetween: 50,
+                  centeredSlides: true
                 }
               }}
               pagination={{ clickable: true, dynamicBullets: true }}
@@ -437,7 +443,12 @@ const Dashboard = () => {
               modules={[EffectCoverflow, Pagination, Navigation]}
               className="learning-swiper"
             >
-              {currentTrack.modules.map((module, index) => (
+              {currentTrack.modules.map((module, index) => {
+                const isLocked = module.status === 'locked';
+                const isCompleted = module.status === 'completed';
+                const isInProgress = module.status === 'in_progress';
+                
+                return (
                 <SwiperSlide key={module.id}>
                   <Card
                     className="learning-module-card group cursor-pointer"
@@ -571,86 +582,92 @@ const Dashboard = () => {
       <style>{`
         .learning-swiper {
           width: 100%;
-          padding: 40px 0 !important;
+          padding: 60px 0 !important;
+          overflow: visible !important;
         }
 
         .learning-swiper .swiper-slide {
-          width: 420px !important;
-          height: 380px !important;
-          margin-right: 40px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .learning-module-card {
-          width: 100%;
-          height: 100%;
-          border-radius: 40px;
-          position: relative;
-          overflow: hidden;
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          width: 450px !important;
+          height: 540px !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.4s ease;
         }
 
         .learning-swiper .swiper-slide-active {
-          transform: scale(1.05);
+          transform: scale(1.08) translateZ(0);
+          z-index: 10;
         }
 
         .learning-swiper .swiper-slide-active .learning-module-card {
-          border: 3px solid rgba(255, 255, 255, 0.5);
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15), 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .learning-swiper .swiper-slide-next,
         .learning-swiper .swiper-slide-prev {
-          transform: scale(0.85) !important;
-          opacity: 0.8;
+          transform: scale(0.88) translateZ(0);
+          opacity: 0.6;
         }
 
-        .learning-swiper .swiper-pagination-bullet {
-          background: white;
-          opacity: 0.5;
-          width: 10px;
-          height: 10px;
+        .learning-swiper .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next):not(.swiper-slide-prev) {
+          opacity: 0.3;
+          transform: scale(0.7);
         }
 
-        .learning-swiper .swiper-pagination-bullet-active {
-          opacity: 1;
-          background: white;
-          width: 12px;
-          height: 12px;
+        .learning-module-card:not(.cursor-not-allowed):hover {
+          box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
         }
 
         .learning-swiper .swiper-button-prev,
         .learning-swiper .swiper-button-next {
-          color: white;
-          background: rgba(255, 255, 255, 0.2);
-          width: 50px;
-          height: 50px;
+          width: 56px;
+          height: 56px;
           border-radius: 50%;
-          backdrop-filter: blur(10px);
-          transition: all 0.3s ease;
-        }
-
-        .learning-swiper .swiper-button-prev:hover,
-        .learning-swiper .swiper-button-next:hover {
-          background: rgba(255, 255, 255, 0.3);
-          transform: scale(1.1);
+          background: white;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+          color: #1f2937;
         }
 
         .learning-swiper .swiper-button-prev:after,
         .learning-swiper .swiper-button-next:after {
           font-size: 20px;
+          font-weight: bold;
+        }
+
+        .learning-swiper .swiper-pagination {
+          bottom: 10px !important;
+        }
+
+        .learning-swiper .swiper-pagination-bullet {
+          width: 8px;
+          height: 8px;
+          background: rgba(0, 0, 0, 0.3);
+          opacity: 1;
+          transition: all 0.3s;
+        }
+
+        .learning-swiper .swiper-pagination-bullet-active {
+          width: 24px;
+          border-radius: 4px;
+          background: #1f2937;
         }
 
         @media (max-width: 768px) {
           .learning-swiper .swiper-slide {
-            width: 320px !important;
-            height: 340px !important;
-            margin-right: 20px;
+            width: 340px !important;
+            height: 500px !important;
           }
           
           .learning-swiper .swiper-button-prev,
           .learning-swiper .swiper-button-next {
-            display: none;
+            width: 40px;
+            height: 40px;
+          }
+          
+          .learning-swiper .swiper-button-prev:after,
+          .learning-swiper .swiper-button-next:after {
+            font-size: 16px;
           }
         }
       `}</style>
