@@ -171,7 +171,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="h-screen w-screen overflow-hidden bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4">
             <Sparkles className="w-8 h-8 text-primary-foreground animate-pulse" />
@@ -187,7 +187,7 @@ const Dashboard = () => {
   const selectedAvatar = avatars.find(a => a.id === profile?.avatar_id) || avatars[0];
 
   return (
-    <div className="min-h-screen bg-[#7C3AED] relative overflow-hidden">
+    <div className="h-screen w-screen overflow-hidden bg-[#7C3AED] relative">
       {/* Doodle Background - Rups Style */}
       <div className="absolute inset-0 opacity-5">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -204,12 +204,12 @@ const Dashboard = () => {
         </svg>
       </div>
 
-      <div className="relative z-10 flex flex-col min-h-screen p-4 lg:p-8">
+      <div className="relative z-10 flex flex-col h-full p-4 lg:p-6">
         {/* A. Heads-Up Display (Top) - Rups Style */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/95 backdrop-blur-sm rounded-3xl p-4 mb-8 flex items-center justify-between shadow-xl"
+          className="flex-shrink-0 bg-white/95 backdrop-blur-sm rounded-3xl p-4 mb-4 flex items-center justify-between shadow-xl"
         >
           {/* Left: Avatar + Level */}
           <div className="flex items-center gap-4">
@@ -284,7 +284,7 @@ const Dashboard = () => {
         </motion.div>
 
         {/* B. Main Stage - 3D Carousel (Hero) - Rups Style */}
-        <div className="flex-1 flex flex-col items-center justify-center py-20 relative">
+        <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden">
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -329,7 +329,9 @@ const Dashboard = () => {
                         onClick={() => handleModuleClick(module.id, module.status)}
                         className="relative overflow-hidden cursor-pointer hover-lift group border-0 transition-all duration-300"
                         style={{ 
-                          minHeight: module.status === 'current' ? '700px' : '480px',
+                          minHeight: module.status === 'current' ? 'min(65vh, 700px)' : 'min(45vh, 480px)',
+                          maxHeight: module.status === 'current' ? '700px' : '480px',
+                          height: module.status === 'current' ? '65vh' : '45vh',
                           backgroundColor: module.cardColor,
                           boxShadow: module.status === 'current' 
                             ? '0 30px 60px -15px rgba(0, 0, 0, 0.3)' 
@@ -341,9 +343,9 @@ const Dashboard = () => {
                           // Active Card - Full Featured (Rups Style)
                           <div className="relative z-20 p-10 flex flex-col h-full">
                             {/* Illustration Area */}
-                            <div className="flex-1 flex items-center justify-center mb-8">
+                            <div className="flex-1 flex items-center justify-center mb-6">
                               <div 
-                                className="w-full h-[340px] rounded-[32px] flex items-center justify-center text-9xl transform transition-transform group-hover:scale-105 relative overflow-hidden"
+                                className="w-full max-h-[50%] aspect-video rounded-[32px] flex items-center justify-center text-9xl transform transition-transform group-hover:scale-105 relative overflow-hidden"
                                 style={{ background: module.iconBg }}
                               >
                                 <div className="text-[140px]">{module.icon}</div>
@@ -426,7 +428,8 @@ const Dashboard = () => {
       <style>{`
         .learning-swiper {
           width: 100%;
-          padding: 60px 0 100px 0;
+          padding: 20px 0 60px 0;
+          height: 100%;
         }
 
         .learning-swiper .swiper-slide {
@@ -496,7 +499,7 @@ const Dashboard = () => {
 
         @media (max-width: 640px) {
           .learning-swiper {
-            padding: 30px 0 70px 0;
+            padding: 10px 0 50px 0;
           }
 
           .learning-swiper .swiper-slide {
