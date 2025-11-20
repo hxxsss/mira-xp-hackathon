@@ -278,14 +278,15 @@ const Dashboard = () => {
 
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-6">
+        <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
+          {/* Left: Profile & Sessions */}
+          <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
               className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
             >
-              <User className="w-5 h-5" />
-              <span className="hidden sm:inline font-medium">{profile?.name || 'Perfil'}</span>
+              <span className="text-xl">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
+              <span className="hidden md:inline font-medium">{profile?.name || 'Perfil'}</span>
             </button>
             
             <button 
@@ -293,84 +294,67 @@ const Dashboard = () => {
               className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
             >
               <Shield className="w-5 h-5" />
-              <span className="hidden sm:inline font-medium">Sessões</span>
+              <span className="hidden md:inline font-medium">Sessões</span>
             </button>
           </div>
 
+          {/* Center: Logo */}
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white tracking-wider">
+            <h1 className="text-2xl md:text-3xl font-bold text-white tracking-wider">
               DreamUp
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all flex items-center gap-2"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="hidden sm:inline">Sair</span>
-            </button>
+          {/* Right: Goal + Gamified Stats */}
+          <div className="flex items-center gap-2">
+            {/* Compact Gamified Goal */}
+            {goal && (
+              <motion.button
+                onClick={() => setGoalModalOpen(true)}
+                className="flex items-center gap-2 px-3 py-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all group relative"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Target className="w-4 h-4 text-accent animate-pulse" />
+                <div className="hidden lg:block text-left min-w-[160px]">
+                  <div className="text-[10px] text-white/70 leading-tight">{goal.title}</div>
+                  <div className="relative h-1.5 bg-white/20 rounded-full mt-0.5 overflow-hidden">
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      style={{
+                        background: progressPercentage > 80 
+                          ? 'linear-gradient(90deg, hsl(var(--success)), hsl(145 70% 65%))' 
+                          : progressPercentage > 40
+                          ? 'linear-gradient(90deg, hsl(var(--accent)), hsl(45 95% 70%))'
+                          : 'linear-gradient(90deg, hsl(var(--secondary)), hsl(10 80% 75%))'
+                      }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progressPercentage}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center text-[10px] mt-0.5">
+                    <span className="text-white/70">💰 {(goal.current_amount / 1000).toFixed(1)}k</span>
+                    <span className="font-bold text-accent">{Math.round(progressPercentage)}%</span>
+                  </div>
+                </div>
+                <span className="lg:hidden font-bold text-accent text-sm">{Math.round(progressPercentage)}%</span>
+              </motion.button>
+            )}
+
+            {/* Gamified Stats */}
+            <div className="hidden sm:flex items-center gap-2">
+              <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
+                <span className="text-xs text-white font-bold">⚡ {profile?.current_xp || 0}</span>
+              </div>
+              <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
+                <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Goal Card - Expandido e Clicável */}
-      {goal && (
-        <div className="flex-shrink-0 z-40 px-4 py-3">
-          <div className="max-w-3xl mx-auto">
-            <motion.button
-              onClick={() => setGoalModalOpen(true)}
-              className="w-full bg-white/20 backdrop-blur-md rounded-2xl p-5 text-white hover:bg-white/30 hover:scale-[1.02] transition-all shadow-lg border border-white/30 cursor-pointer"
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                {/* Esquerda: Ícone e Título */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="bg-white/30 p-2 rounded-xl">
-                    <Target className="w-6 h-6" />
-                  </div>
-                  <div className="text-left min-w-0">
-                    <p className="text-xs font-medium text-white/80">Minha Meta</p>
-                    <p className="text-lg font-bold truncate">{goal.title}</p>
-                  </div>
-                </div>
-
-                {/* Centro: Barra de Progresso */}
-                <div className="flex-1 min-w-[200px] space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">Progresso</span>
-                    <span className="font-bold">{Math.round(progressPercentage)}%</span>
-                  </div>
-                  <Progress value={progressPercentage} className="h-3 bg-white/20" />
-                </div>
-
-                {/* Direita: Valores */}
-                <div className="text-right">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold">
-                      R$ {goal.current_amount.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
-                    </span>
-                    <span className="text-sm text-white/70">
-                      / R$ {goal.total_amount.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-end gap-1 text-xs text-white/80 mt-1">
-                    <TrendingUp className="w-3 h-3" />
-                    <span>Faltam R$ {(goal.total_amount - goal.current_amount).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Indicador de clique */}
-              <div className="text-center mt-3 text-xs text-white/60">
-                👆 Clique para ver detalhes completos
-              </div>
-            </motion.button>
-          </div>
-        </div>
-      )}
 
       {/* Track Navigation */}
       <div className="flex-shrink-0 z-40">
@@ -424,13 +408,31 @@ const Dashboard = () => {
               slidesPerView={'auto'}
               initialSlide={currentTrack.modules.findIndex(m => m.status === 'unlocked' || m.status === 'in_progress') || 0}
               coverflowEffect={{
-                rotate: 0,
+                rotate: 35,
                 stretch: 0,
-                depth: 200,
-                modifier: 2,
-                slideShadows: false,
+                depth: 120,
+                modifier: 1.5,
+                slideShadows: true,
               }}
-              pagination={{ clickable: true }}
+              breakpoints={{
+                320: {
+                  slidesPerView: 1,
+                  spaceBetween: 20
+                },
+                640: {
+                  slidesPerView: 1.2,
+                  spaceBetween: 25
+                },
+                1024: {
+                  slidesPerView: 1.5,
+                  spaceBetween: 30
+                },
+                1280: {
+                  slidesPerView: 2.2,
+                  spaceBetween: 40
+                }
+              }}
+              pagination={{ clickable: true, dynamicBullets: true }}
               navigation={true}
               modules={[EffectCoverflow, Pagination, Navigation]}
               className="learning-swiper"
@@ -569,12 +571,14 @@ const Dashboard = () => {
       <style>{`
         .learning-swiper {
           width: 100%;
-          padding: 30px 0 !important;
+          padding: 40px 0 !important;
         }
 
         .learning-swiper .swiper-slide {
           width: 420px !important;
           height: 380px !important;
+          margin-right: 40px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .learning-module-card {
@@ -586,24 +590,33 @@ const Dashboard = () => {
           transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .learning-swiper .swiper-slide-active .learning-module-card {
+        .learning-swiper .swiper-slide-active {
           transform: scale(1.05);
+        }
+
+        .learning-swiper .swiper-slide-active .learning-module-card {
+          border: 3px solid rgba(255, 255, 255, 0.5);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .learning-swiper .swiper-slide-next,
         .learning-swiper .swiper-slide-prev {
-          transform: scale(0.75) !important;
-          opacity: 0.7;
+          transform: scale(0.85) !important;
+          opacity: 0.8;
         }
 
         .learning-swiper .swiper-pagination-bullet {
           background: white;
           opacity: 0.5;
+          width: 10px;
+          height: 10px;
         }
 
         .learning-swiper .swiper-pagination-bullet-active {
           opacity: 1;
           background: white;
+          width: 12px;
+          height: 12px;
         }
 
         .learning-swiper .swiper-button-prev,
@@ -614,6 +627,13 @@ const Dashboard = () => {
           height: 50px;
           border-radius: 50%;
           backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        }
+
+        .learning-swiper .swiper-button-prev:hover,
+        .learning-swiper .swiper-button-next:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.1);
         }
 
         .learning-swiper .swiper-button-prev:after,
@@ -625,6 +645,7 @@ const Dashboard = () => {
           .learning-swiper .swiper-slide {
             width: 320px !important;
             height: 340px !important;
+            margin-right: 20px;
           }
           
           .learning-swiper .swiper-button-prev,
