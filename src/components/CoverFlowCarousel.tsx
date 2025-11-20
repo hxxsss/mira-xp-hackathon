@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { MoneyCircleIcon, TargetIcon, LockedIcon } from "@/components/modules/ModuleIcons";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -142,7 +143,14 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
 
                     {/* Centro: Ícone Grande */}
                     <div className="flex-1 flex flex-col items-center justify-center">
-                      <div className="text-8xl mb-4">{item.icon}</div>
+                      <div className="mb-4">
+                        {item.number === '01' && <MoneyCircleIcon />}
+                        {item.number === '02' && <TargetIcon />}
+                        {isLocked && item.number === '03' ? <LockedIcon /> : item.number === '03' && <div className="text-8xl">{item.icon}</div>}
+                        {item.number !== '01' && item.number !== '02' && item.number !== '03' && (
+                          <div className="text-8xl">{item.icon}</div>
+                        )}
+                      </div>
                       
                       {/* Módulo Label */}
                       <div className="text-center mb-2">
