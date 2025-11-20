@@ -124,32 +124,32 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                     <div className="w-full flex justify-between items-start">
                       <Badge
                         className={cn(
-                          "text-xs font-semibold border-white/30",
-                          isCompleted && "bg-white/20 text-white",
-                          isInProgress && "bg-white/30 text-white",
-                          item.status === 'unlocked' && "bg-white text-gray-900 animate-pulse"
+                          "text-xs font-semibold",
+                          isCompleted && "bg-purple-100 text-purple-700 border-purple-200",
+                          isInProgress && "bg-purple-500 text-white border-purple-600",
+                          item.status === 'unlocked' && "bg-purple-500 text-white animate-pulse border-purple-600"
                         )}
                       >
                         {isCompleted && '✓ COMPLETO'}
-                        {isInProgress && '🎯 EM ANDAMENTO'}
+                        {isInProgress && '🎯 NOVO'}
                         {item.status === 'unlocked' && '⭐ NOVO'}
                       </Badge>
                       
-                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center font-bold text-white text-sm border-2 border-white/30">
+                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-700 text-sm border-2 border-purple-200">
                         #{item.number}
                       </div>
                     </div>
 
                     {/* Centro: Ícone Grande */}
                     <div className="flex-1 flex flex-col items-center justify-center">
-                      <div className="text-8xl mb-4 drop-shadow-lg">{item.icon}</div>
+                      <div className="text-8xl mb-4">{item.icon}</div>
                       
                       {/* Módulo Label */}
                       <div className="text-center mb-2">
-                        <h3 className="text-2xl font-bold text-white drop-shadow-md">
+                        <h3 className="text-2xl font-bold text-gray-900">
                           Módulo {item.number}
                         </h3>
-                        <h4 className="text-xl font-semibold text-white/90 mt-1">
+                        <h4 className="text-xl font-semibold text-gray-900 mt-1">
                           {item.title}
                         </h4>
                       </div>
@@ -157,22 +157,22 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
 
                     {/* Footer: Descrição e Botão */}
                     <div className="w-full space-y-3">
-                      <p className="text-sm text-white/80 text-center line-clamp-2">
+                      <p className="text-sm text-gray-600 text-center line-clamp-2">
                         {item.description}
                       </p>
 
                       {/* Barra de Progresso */}
                       {item.progress !== undefined && item.progress > 0 && (
-                        <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                        <div className="w-full bg-purple-100 rounded-full h-2 overflow-hidden">
                           <div
-                            className="h-full bg-white rounded-full transition-all duration-500"
+                            className="h-full bg-purple-500 rounded-full transition-all duration-500"
                             style={{ width: `${item.progress}%` }}
                           />
                         </div>
                       )}
 
                       <Button
-                        className="w-full font-semibold bg-white text-gray-900 hover:bg-white/90"
+                        className="w-full font-semibold bg-purple-200 text-purple-700 hover:bg-purple-300"
                         disabled={isLocked}
                       >
                         {isCompleted && 'REVISAR'}
@@ -184,12 +184,12 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
 
                     {/* Overlay para cards bloqueados */}
                     {isLocked && (
-                      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
+                      <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center z-10">
                         <div className="text-center">
                           <div className="text-6xl mb-3">🔒</div>
-                          <p className="text-white font-bold text-lg">Bloqueado</p>
-                          <p className="text-white/80 text-sm mt-1">
-                            Complete o anterior
+                          <p className="text-purple-600 font-bold text-lg">BLOQUEADO</p>
+                          <p className="text-purple-500 text-sm mt-1">
+                            Complete de anterior
                           </p>
                         </div>
                       </div>
