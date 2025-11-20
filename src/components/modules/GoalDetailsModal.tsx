@@ -54,9 +54,18 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Target className="w-6 h-6 text-primary" />
-            Minha Meta
+          <DialogTitle className="flex items-center gap-3 text-3xl">
+            <div className="relative">
+              {/* Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 rounded-full blur-xl opacity-60 animate-pulse" />
+              {/* Ícone em container vibrante */}
+              <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/20">
+                <Target className="w-8 h-8 text-white" strokeWidth={3} />
+              </div>
+            </div>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600">
+              Minha Meta
+            </span>
           </DialogTitle>
         </DialogHeader>
 
