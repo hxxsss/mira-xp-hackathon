@@ -52,7 +52,7 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-3xl">
             <div className="relative">
@@ -69,7 +69,7 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-4 py-3">
           {/* Título da Meta */}
           <div className="text-center">
             <h3 className="text-xl font-bold text-foreground">{goal.title}</h3>
@@ -78,8 +78,8 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
           {/* Barra de Progresso Principal */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Progresso</span>
-              <span className={`font-bold ${getProgressColor()}`}>
+              <span className="text-black font-medium">Progresso</span>
+              <span className="font-bold text-[#b8860b] text-lg">
                 {Math.round(progressPercentage)}%
               </span>
             </div>
@@ -87,14 +87,14 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
           </div>
 
           {/* Mensagem Motivacional */}
-          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 text-center">
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center">
             <p className="text-sm font-medium text-foreground">
               {getMotivationalMessage()}
             </p>
           </div>
 
           {/* Progresso Financeiro */}
-          <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+          <div className="bg-muted/50 rounded-lg p-3 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-semibold">
               <DollarSign className="w-5 h-5" />
               <span>Progresso Financeiro</span>
@@ -123,7 +123,7 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
           </div>
 
           {/* Estatísticas */}
-          <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+          <div className="bg-muted/50 rounded-lg p-3 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-semibold">
               <TrendingUp className="w-5 h-5" />
               <span>Estatísticas</span>
@@ -172,12 +172,12 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
           </div>
 
           {/* Dicas */}
-          <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-4 space-y-2">
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-3 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-semibold">
               <Sparkles className="w-5 h-5 text-primary" />
               <span>Dicas para alcançar sua meta</span>
             </div>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <ul className="space-y-1.5 text-sm text-black">
               <li className="flex gap-2">
                 <span>•</span>
                 <span>Complete módulos de aprendizado para ganhar pontos extras</span>
