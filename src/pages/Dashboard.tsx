@@ -200,56 +200,73 @@ const Dashboard = () => {
 
       <div className="relative z-10 flex flex-col h-full p-4 lg:p-6">
         {/* A. Heads-Up Display (Top) - Rups Style */}
-        <motion.div initial={{
-        opacity: 0,
-        y: -20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} className="flex-shrink-0 bg-white/95 backdrop-blur-sm rounded-3xl p-4 mb-4 flex items-center justify-between shadow-xl mx-[250px]">
-          {/* Left: Avatar + Level */}
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-14 h-14 rounded-2xl bg-[#7C3AED] flex items-center justify-center text-2xl">
-                {selectedAvatar.emoji}
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#FCD34D] text-gray-900 text-xs font-bold flex items-center justify-center border-2 border-white">
-                {level}
-              </div>
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="flex-shrink-0 bg-white/95 backdrop-blur-sm rounded-3xl p-4 mb-4 shadow-xl mx-6 lg:mx-12 border-b-4 border-[#7C3AED]/20"
+        >
+          <div className="grid grid-cols-3 gap-4 items-center">
+            {/* Left: Menu Items */}
+            <div className="justify-self-start flex items-center gap-4">
+              <button 
+                onClick={() => navigate("/profile")}
+                className="text-sm font-medium text-gray-700 hover:text-[#7C3AED] transition-colors uppercase tracking-wide"
+              >
+                Perfil
+              </button>
+              <button 
+                onClick={() => navigate("/sessions")}
+                className="text-sm font-medium text-gray-700 hover:text-[#7C3AED] transition-colors uppercase tracking-wide"
+              >
+                Sessões
+              </button>
             </div>
-            <div>
-              <p className="font-semibold text-gray-900">{profile?.name}</p>
-              <p className="text-sm text-gray-600">Nível {level}</p>
-            </div>
-          </div>
 
-          {/* Right: Goal Summary */}
-          {goal ? <motion.div onClick={() => navigate("/profile")} className="flex-1 max-w-md ml-4 cursor-pointer hover-lift" whileHover={{
-          scale: 1.02
-        }}>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-gray-900 truncate">{goal.title}</p>
-                <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
-              </div>
-              <Progress value={progress} className="h-2 mb-1" />
-              <p className="text-xs text-gray-600">
-                R$ {goal.current_amount.toFixed(2)} / R$ {goal.total_amount.toFixed(2)}
+            {/* Center: Site Logo/Name */}
+            <div className="justify-self-center flex flex-col items-center">
+              <h1 className="text-3xl font-bold text-[#7C3AED] flex items-center gap-2">
+                🎯 FinanceKids
+              </h1>
+              <p className="text-xs text-gray-600 uppercase tracking-widest">
+                Aprenda Brincando
               </p>
-            </motion.div> : <Button variant="outline" size="sm" onClick={() => navigate("/profile")} className="ml-4 border-gray-300 text-gray-900 hover:bg-gray-50">
-              Definir Meta
-            </Button>}
+            </div>
 
-          {/* User Actions */}
-          <div className="flex items-center gap-2 ml-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} className="rounded-xl hover:bg-gray-100 text-gray-700">
-              <User className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/sessions")} className="rounded-xl hover:bg-gray-100 text-gray-700">
-              <Shield className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-xl hover:bg-gray-100 text-gray-700">
-              <LogOut className="w-4 h-4" />
-            </Button>
+            {/* Right: Goal + Logout */}
+            <div className="justify-self-end flex items-center gap-3">
+              {goal ? (
+                <div 
+                  onClick={() => navigate("/profile")}
+                  className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-200 transition-colors"
+                >
+                  <span className="text-sm font-medium text-gray-900 truncate max-w-[120px]">
+                    {goal.title}
+                  </span>
+                  <div className="w-8 h-8 rounded-full bg-[#7C3AED] flex items-center justify-center">
+                    <span className="text-xs font-bold text-white">
+                      {Math.round(progress)}%
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <Button 
+                  onClick={() => navigate("/profile")}
+                  size="sm"
+                  className="text-xs"
+                >
+                  Definir Meta
+                </Button>
+              )}
+
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleLogout}
+                className="rounded-full hover:bg-red-100 text-gray-700 hover:text-red-600"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </motion.div>
 
