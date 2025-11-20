@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, LogOut, User, Shield, Lock, Target, TrendingUp } from "lucide-react";
+import { Sparkles, MessageSquare, LogOut, User, Shield, Lock, Target, TrendingUp, Wallet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -290,6 +290,14 @@ const Dashboard = () => {
             >
               <Shield className="w-5 h-5" />
               <span className="hidden md:inline font-medium">Sessões</span>
+            </button>
+
+            <button 
+              onClick={() => navigate('/financas')}
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
+            >
+              <Wallet className="w-5 h-5" />
+              <span className="hidden md:inline font-medium">Finanças</span>
             </button>
           </div>
 
