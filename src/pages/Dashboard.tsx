@@ -200,24 +200,20 @@ const Dashboard = () => {
 
       <div className="relative z-10 flex flex-col h-full p-4 lg:p-6">
         {/* A. Heads-Up Display (Top) - Rups Style */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="flex-shrink-0 bg-white/95 backdrop-blur-sm rounded-3xl p-4 mb-4 shadow-xl mx-6 lg:mx-12 border-b-4 border-[#7C3AED]/20"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: -20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} className="flex-shrink-0 bg-white/95 backdrop-blur-sm rounded-3xl p-4 mb-4 shadow-xl mx-6 border-b-4 border-[#7C3AED]/20 lg:mx-[100px] px-[50px]">
           <div className="grid grid-cols-3 gap-4 items-center">
             {/* Left: Menu Items */}
             <div className="justify-self-start flex items-center gap-4">
-              <button 
-                onClick={() => navigate("/profile")}
-                className="text-sm font-medium text-gray-700 hover:text-[#7C3AED] transition-colors uppercase tracking-wide"
-              >
+              <button onClick={() => navigate("/profile")} className="text-sm font-medium text-gray-700 hover:text-[#7C3AED] transition-colors uppercase tracking-wide">
                 Perfil
               </button>
-              <button 
-                onClick={() => navigate("/sessions")}
-                className="text-sm font-medium text-gray-700 hover:text-[#7C3AED] transition-colors uppercase tracking-wide"
-              >
+              <button onClick={() => navigate("/sessions")} className="text-sm font-medium text-gray-700 hover:text-[#7C3AED] transition-colors uppercase tracking-wide">
                 Sessões
               </button>
             </div>
@@ -225,20 +221,14 @@ const Dashboard = () => {
             {/* Center: Site Logo/Name */}
             <div className="justify-self-center flex flex-col items-center">
               <h1 className="text-3xl font-bold text-[#7C3AED] flex items-center gap-2">
-                🎯 FinanceKids
+                🎯 DreamUp   
               </h1>
-              <p className="text-xs text-gray-600 uppercase tracking-widest">
-                Aprenda Brincando
-              </p>
+              
             </div>
 
             {/* Right: Goal + Logout */}
             <div className="justify-self-end flex items-center gap-3">
-              {goal ? (
-                <div 
-                  onClick={() => navigate("/profile")}
-                  className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-200 transition-colors"
-                >
+              {goal ? <div onClick={() => navigate("/profile")} className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-200 transition-colors">
                   <span className="text-sm font-medium text-gray-900 truncate max-w-[120px]">
                     {goal.title}
                   </span>
@@ -247,23 +237,11 @@ const Dashboard = () => {
                       {Math.round(progress)}%
                     </span>
                   </div>
-                </div>
-              ) : (
-                <Button 
-                  onClick={() => navigate("/profile")}
-                  size="sm"
-                  className="text-xs"
-                >
+                </div> : <Button onClick={() => navigate("/profile")} size="sm" className="text-xs">
                   Definir Meta
-                </Button>
-              )}
+                </Button>}
 
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={handleLogout}
-                className="rounded-full hover:bg-red-100 text-gray-700 hover:text-red-600"
-              >
+              <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full hover:bg-red-100 text-gray-700 hover:text-red-600">
                 <LogOut className="w-4 h-4" />
               </Button>
             </div>
