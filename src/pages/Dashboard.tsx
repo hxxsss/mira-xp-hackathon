@@ -264,12 +264,17 @@ const Dashboard = () => {
         </motion.div>
 
         {/* B. Main Stage - 3D Carousel (Hero) */}
-        <div className="flex-1 flex flex-col items-center justify-center py-8">
+        <div className="flex-1 flex flex-col items-center justify-center py-12 relative">
+          {/* Background Blob */}
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+            <div className="w-[800px] h-[800px] rounded-full bg-gradient-to-br from-primary/10 via-primary-light/10 to-transparent blur-3xl" />
+          </div>
+
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl lg:text-5xl font-bold text-center mb-12 text-gradient"
+            className="text-4xl lg:text-6xl font-bold text-center mb-16 text-gradient relative z-10"
           >
             Sua Jornada Financeira
           </motion.h2>
@@ -278,7 +283,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 }}
-            className="w-full max-w-6xl"
+            className="w-full max-w-7xl relative z-10"
           >
             <Swiper
               effect={'coverflow'}
@@ -286,11 +291,11 @@ const Dashboard = () => {
               centeredSlides={true}
               slidesPerView={'auto'}
               coverflowEffect={{
-                rotate: 50,
+                rotate: 0,
                 stretch: 0,
                 depth: 100,
-                modifier: 1,
-                slideShadows: true,
+                modifier: 2.5,
+                slideShadows: false,
               }}
               pagination={{ clickable: true }}
               navigation={true}
@@ -306,44 +311,69 @@ const Dashboard = () => {
                   >
                     <Card
                       onClick={() => handleModuleClick(module.id, module.status)}
-                      className="relative overflow-hidden cursor-pointer hover-lift group"
+                      className="relative overflow-hidden cursor-pointer hover-lift group bg-white border-0 shadow-2xl"
                       style={{ 
-                        background: module.gradient,
-                        minHeight: '400px'
+                        minHeight: '600px',
+                        boxShadow: '0 25px 50px -12px rgba(124, 58, 237, 0.25)'
                       }}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
-                      
                       {module.status === "locked" && (
-                        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm z-10 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-muted/40 backdrop-blur-md z-10 flex items-center justify-center">
                           <div className="text-center">
-                            <div className="text-6xl mb-4">🔒</div>
-                            <p className="text-white font-semibold">Bloqueado</p>
+                            <div className="text-8xl mb-4">🔒</div>
+                            <p className="text-foreground font-bold text-xl">Bloqueado</p>
+                            <p className="text-muted-foreground text-sm mt-2">Complete o módulo anterior</p>
                           </div>
                         </div>
                       )}
 
-                      <div className="relative z-20 p-8 flex flex-col h-full justify-between">
-                        <div>
-                          <div className="text-7xl mb-6">{module.icon}</div>
-                          <h3 className="text-3xl font-bold text-white mb-4">
-                            {module.title}
-                          </h3>
-                          <p className="text-white/90 text-lg">
-                            {module.description}
-                          </p>
+                      <div className="relative z-20 p-10 flex flex-col h-full justify-between">
+                        {/* Illustration Area */}
+                        <div className="flex-1 flex items-center justify-center mb-8">
+                          <div 
+                            className="w-64 h-64 rounded-3xl flex items-center justify-center text-9xl transform transition-transform group-hover:scale-110"
+                            style={{ background: module.gradient }}
+                          >
+                            {module.icon}
+                          </div>
                         </div>
 
-                        {module.status === "current" && (
-                          <div className="mt-8">
+                        {/* Content Area */}
+                        <div className="space-y-6">
+                          <div>
+                            <h3 className="text-4xl font-bold text-foreground mb-3">
+                              {module.title}
+                            </h3>
+                            <p className="text-muted-foreground text-lg">
+                              {module.description}
+                            </p>
+                          </div>
+
+                          {module.status === "current" ? (
                             <Button 
                               size="lg"
-                              className="w-full bg-white text-foreground hover:bg-white/90"
+                              className="w-full h-14 text-lg font-bold rounded-2xl gradient-primary hover:opacity-90 transition-opacity"
                             >
                               Começar Agora
                             </Button>
-                          </div>
-                        )}
+                          ) : module.status === "locked" ? (
+                            <Button 
+                              size="lg"
+                              disabled
+                              className="w-full h-14 text-lg font-bold rounded-2xl"
+                            >
+                              Bloqueado
+                            </Button>
+                          ) : (
+                            <Button 
+                              size="lg"
+                              variant="outline"
+                              className="w-full h-14 text-lg font-bold rounded-2xl"
+                            >
+                              Revisar
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </Card>
                   </motion.div>
@@ -375,51 +405,94 @@ const Dashboard = () => {
       <style>{`
         .learning-swiper {
           width: 100%;
-          padding: 50px 0;
+          padding: 80px 0 120px 0;
         }
 
         .learning-swiper .swiper-slide {
           background-position: center;
           background-size: cover;
-          width: 400px;
-          height: 450px;
+          width: 500px;
+          height: 650px;
+          transition: all 0.3s ease;
         }
 
         .learning-swiper .swiper-slide-active {
-          transform: scale(1.05);
-          z-index: 2;
+          z-index: 3;
+        }
+
+        .learning-swiper .swiper-slide-next,
+        .learning-swiper .swiper-slide-prev {
+          opacity: 0.4;
+          filter: blur(1px);
+        }
+
+        .learning-swiper .swiper-pagination {
+          bottom: 40px;
         }
 
         .learning-swiper .swiper-pagination-bullet {
           background: hsl(var(--primary));
-          opacity: 0.5;
+          opacity: 0.3;
+          width: 12px;
+          height: 12px;
+          transition: all 0.3s ease;
         }
 
         .learning-swiper .swiper-pagination-bullet-active {
           opacity: 1;
-          transform: scale(1.2);
+          transform: scale(1.5);
+          background: hsl(var(--primary));
         }
 
         .learning-swiper .swiper-button-next,
         .learning-swiper .swiper-button-prev {
           color: hsl(var(--primary));
-          background: hsl(var(--background));
-          width: 44px;
-          height: 44px;
+          background: white;
+          width: 56px;
+          height: 56px;
           border-radius: 50%;
-          box-shadow: 0 4px 16px hsl(260 30% 20% / 0.1);
+          box-shadow: 0 10px 30px -5px hsl(260 30% 20% / 0.2);
+          transition: all 0.3s ease;
+        }
+
+        .learning-swiper .swiper-button-next:hover,
+        .learning-swiper .swiper-button-prev:hover {
+          transform: scale(1.1);
+          box-shadow: 0 15px 40px -5px hsl(260 80% 60% / 0.4);
         }
 
         .learning-swiper .swiper-button-next:after,
         .learning-swiper .swiper-button-prev:after {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: bold;
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 1024px) {
           .learning-swiper .swiper-slide {
-            width: 320px;
-            height: 400px;
+            width: 400px;
+            height: 550px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .learning-swiper {
+            padding: 40px 0 80px 0;
+          }
+
+          .learning-swiper .swiper-slide {
+            width: 340px;
+            height: 500px;
+          }
+
+          .learning-swiper .swiper-button-next,
+          .learning-swiper .swiper-button-prev {
+            width: 44px;
+            height: 44px;
+          }
+
+          .learning-swiper .swiper-button-next:after,
+          .learning-swiper .swiper-button-prev:after {
+            font-size: 16px;
           }
         }
       `}</style>
