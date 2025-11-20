@@ -111,10 +111,10 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
               key={item.id} 
               className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3"
             >
-              <div className="card-visual p-2">
+              <div className="card-visual p-2 h-full max-h-[70vh]">
                 <Card
                   className={cn(
-                    "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[3/4]",
+                    "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[2/3]",
                     "bg-white hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
                     isLocked && "cursor-not-allowed"
                   )}
