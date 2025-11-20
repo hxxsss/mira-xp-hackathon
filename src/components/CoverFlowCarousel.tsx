@@ -97,11 +97,12 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
       opts={{
         align: "center",
         loop: false,
+        containScroll: "trimSnaps",
       }}
       setApi={setApi}
-      className="w-full max-w-7xl mx-auto"
+      className="w-full max-w-7xl mx-auto px-4"
     >
-      <CarouselContent className="-ml-4">
+      <CarouselContent className="-ml-4 px-[33.333%]">
         {items.map((item, index) => {
           const isLocked = item.status === 'locked';
           const isCompleted = item.status === 'completed';
