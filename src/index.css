@@ -120,7 +120,7 @@ All colors MUST be HSL.
   
   @keyframes fall-meteor {
     0% {
-      transform: translate(0, -150%) rotate(45deg);
+      transform: translate(0, -150%) rotate(135deg);
       opacity: 0;
     }
     10% {
@@ -130,7 +130,7 @@ All colors MUST be HSL.
       opacity: 0.9;
     }
     100% {
-      transform: translate(100vw, calc(100vh + 150%)) rotate(45deg);
+      transform: translate(100vw, calc(100vh + 150%)) rotate(135deg);
       opacity: 0;
     }
   }
