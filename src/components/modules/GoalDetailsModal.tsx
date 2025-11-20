@@ -19,9 +19,10 @@ interface GoalDetailsModalProps {
   goal: Goal | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onEdit?: () => void;
 }
 
-export function GoalDetailsModal({ goal, open, onOpenChange }: GoalDetailsModalProps) {
+export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetailsModalProps) {
   if (!goal) return null;
 
   const progressPercentage = (goal.current_amount / goal.total_amount) * 100;
@@ -195,8 +196,8 @@ export function GoalDetailsModal({ goal, open, onOpenChange }: GoalDetailsModalP
             <Button 
               className="flex-1"
               onClick={() => {
-                // Navegar para editar meta (implementar depois)
                 onOpenChange(false);
+                if (onEdit) onEdit();
               }}
             >
               Editar Meta
