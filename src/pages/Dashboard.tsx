@@ -303,8 +303,22 @@ const Dashboard = () => {
       <div className="neon-line neon-line-cyan" style={{ width: '8px', height: '390px', left: '58%', animationDelay: '0.5s', animationDuration: '4.9s' }} />
       <div className="neon-line neon-line-pink" style={{ width: '11px', height: '510px', left: '85%', animationDelay: '3.9s', animationDuration: '5.2s' }} />
 
-      {/* HUD - Top Navigation */}
-      <div className="flex-shrink-0 z-50 p-3">
+      {/* MIRA Title - Centralizado e em destaque */}
+      <div className="flex-shrink-0 z-50 pt-8 pb-4">
+        <div className="text-center">
+          <motion.h1 
+            className="text-6xl md:text-8xl font-black text-white tracking-widest drop-shadow-2xl"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            MIRA
+          </motion.h1>
+        </div>
+      </div>
+
+      {/* HUD - Navigation & Stats */}
+      <div className="flex-shrink-0 z-50 px-3 pb-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
           {/* Left: Profile, Ranking & Financas */}
           <div className="flex items-center gap-3">
@@ -333,12 +347,8 @@ const Dashboard = () => {
             </button>
           </div>
 
-          {/* Center: Logo */}
-          <div className="text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-white tracking-wider">
-              MIRA
-            </h1>
-          </div>
+          {/* Center: Spacer */}
+          <div className="flex-1" />
 
           {/* Right: Goal + Gamified Stats */}
           <div className="flex items-center gap-2">
