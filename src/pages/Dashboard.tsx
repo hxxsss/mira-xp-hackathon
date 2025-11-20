@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, LogOut, User, Shield, ChevronRight } from "lucide-react";
+import { Sparkles, MessageSquare, LogOut, User, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -16,70 +16,30 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-const avatars = [{
-  id: 1,
-  emoji: "🦄"
-}, {
-  id: 2,
-  emoji: "🚀"
-}, {
-  id: 3,
-  emoji: "🎯"
-}, {
-  id: 4,
-  emoji: "⭐"
-}, {
-  id: 5,
-  emoji: "🌈"
-}];
 
-// Módulos de aprendizado - Rups Style
-const learningModules = [{
-  id: 1,
-  title: "Entendendo Dinheiro",
-  description: "Descubra de onde vem seu dinheiro",
-  icon: "💰",
-  cardColor: "rgba(124, 58, 237, 0.15)",
-  iconBg: "rgba(255, 255, 255, 0.2)",
-  status: "locked",
-  number: "01"
-}, {
-  id: 2,
-  title: "O Poder de Poupar",
-  description: "Aprenda técnicas para guardar",
-  icon: "🎯",
-  cardColor: "rgba(124, 58, 237, 0.15)",
-  iconBg: "rgba(255, 255, 255, 0.2)",
-  status: "locked",
-  number: "02"
-}, {
-  id: 3,
-  title: "Compreendendo Seu Dinheiro",
-  description: "Descubra de onde vem e para onde vai seu dinheiro.",
-  icon: "💰",
-  cardColor: "#FFFFFF",
-  iconBg: "linear-gradient(135deg, #F87171 0%, #FB923C 100%)",
-  status: "current",
-  number: "03"
-}, {
-  id: 4,
-  title: "Gastos Inteligentes",
-  description: "Diferencie necessidades de desejos",
-  icon: "🧠",
-  cardColor: "rgba(124, 58, 237, 0.15)",
-  iconBg: "rgba(255, 255, 255, 0.2)",
-  status: "locked",
-  number: "04"
-}, {
-  id: 5,
-  title: "Investindo Sonhos",
-  description: "Faça seu dinheiro trabalhar",
-  icon: "💎",
-  cardColor: "rgba(124, 58, 237, 0.15)",
-  iconBg: "rgba(255, 255, 255, 0.2)",
-  status: "locked",
-  number: "05"
-}];
+const avatars = [
+  { id: 1, emoji: "🦄" },
+  { id: 2, emoji: "🚀" },
+  { id: 3, emoji: "🎯" },
+  { id: 4, emoji: "⭐" },
+  { id: 5, emoji: "🌈" }
+];
+
+interface LearningModule {
+  id: string;
+  number: string;
+  title: string;
+  description: string;
+  icon: string;
+  card_color: string;
+  icon_bg: string;
+  order_index: number;
+  status: 'locked' | 'unlocked' | 'in_progress' | 'completed';
+  progress_percent: number;
+  xp_reward: number;
+  points_reward: number;
+}
+
 interface Profile {
   name: string;
   avatar_id: number;
@@ -87,6 +47,7 @@ interface Profile {
   weekly_xp: number;
   dream_points: number;
 }
+
 interface Goal {
   id: string;
   title: string;
@@ -94,90 +55,139 @@ interface Goal {
   current_amount: number;
   target_date?: string;
 }
+
 const Dashboard = () => {
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   useSessionTracking();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [goal, setGoal] = useState<Goal | null>(null);
   const [loading, setLoading] = useState(true);
+  const [learningModules, setLearningModules] = useState<LearningModule[]>([]);
+
   useEffect(() => {
     loadData();
   }, []);
+
   const loadData = async () => {
     try {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) {
         navigate("/login");
         return;
       }
 
       // Load profile
-      const {
-        data: profileData,
-        error: profileError
-      } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+      
       if (profileError) throw profileError;
-      setProfile(profileData);
 
       // Load active goal
-      const {
-        data: goalData,
-        error: goalError
-      } = await supabase.from("goals").select("*").eq("user_id", user.id).eq("is_active", true).order("created_at", {
-        ascending: false
-      }).limit(1).single();
-      if (goalError && goalError.code !== "PGRST116") throw goalError;
+      const { data: goalData } = await supabase
+        .from("goals")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      // Load learning modules
+      const { data: modules } = await supabase
+        .from('learning_modules')
+        .select('*')
+        .order('order_index');
+
+      // Load user progress
+      const { data: progress } = await supabase
+        .from('user_module_progress')
+        .select('*')
+        .eq('user_id', user.id);
+
+      // Initialize first module if no progress exists
+      if (modules && modules.length > 0 && (!progress || progress.length === 0)) {
+        await supabase
+          .from('user_module_progress')
+          .insert({
+            user_id: user.id,
+            module_id: modules[0].id,
+            status: 'unlocked'
+          });
+        
+        // Reload progress
+        const { data: newProgress } = await supabase
+          .from('user_module_progress')
+          .select('*')
+          .eq('user_id', user.id);
+        
+        const modulesWithStatus = modules.map(module => {
+          const userProgress = newProgress?.find(p => p.module_id === module.id);
+          return {
+            ...module,
+            status: userProgress?.status || 'locked',
+            progress_percent: userProgress?.progress_percent || 0
+          } as LearningModule;
+        });
+        
+        setLearningModules(modulesWithStatus);
+      } else {
+        // Combine modules with progress
+        const modulesWithStatus = modules?.map(module => {
+          const userProgress = progress?.find(p => p.module_id === module.id);
+          return {
+            ...module,
+            status: userProgress?.status || 'locked',
+            progress_percent: userProgress?.progress_percent || 0
+          } as LearningModule;
+        }) || [];
+        
+        setLearningModules(modulesWithStatus);
+      }
+
+      setProfile(profileData);
       setGoal(goalData);
-    } catch (error: any) {
-      toast({
-        title: "Erro ao carregar dados",
-        description: error.message,
-        variant: "destructive"
-      });
+    } catch (error) {
+      console.error("Error loading data:", error);
     } finally {
       setLoading(false);
     }
   };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
-  const handleModuleClick = (moduleId: number, status: string) => {
-    if (status === "current") {
+
+  const handleModuleClick = (moduleId: string, status: string) => {
+    if (status === "locked") {
       toast({
-        title: "Iniciando Módulo...",
-        description: "Preparando sua experiência de aprendizado"
-      });
-    } else {
-      toast({
-        title: "Módulo Bloqueado",
-        description: "Complete o módulo anterior para desbloquear",
+        title: "🔒 Módulo Bloqueado",
+        description: "Complete o módulo anterior para desbloquear!",
         variant: "destructive"
       });
+      return;
     }
+    
+    navigate(`/module/${moduleId}`);
   };
+
   if (loading) {
-    return <div className="h-screen w-screen overflow-hidden bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4">
-            <Sparkles className="w-8 h-8 text-primary-foreground animate-pulse" />
-          </div>
-          <p className="text-muted-foreground">Carregando seu painel...</p>
-        </div>
-      </div>;
+    return (
+      <div className="min-h-screen bg-[#7C3AED] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+      </div>
+    );
   }
-  const progress = goal ? Math.min(goal.current_amount / goal.total_amount * 100, 100) : 0;
-  const level = Math.floor((profile?.current_xp || 0) / 100) + 1;
+
   const selectedAvatar = avatars.find(a => a.id === profile?.avatar_id) || avatars[0];
-  return <div className="h-screen w-screen overflow-hidden bg-[#7C3AED] relative">
-      {/* Decorative background - Diagonal lines Rups style */}
+  const progressPercentage = goal ? Math.min((Number(goal.current_amount) / Number(goal.total_amount)) * 100, 100) : 0;
+
+  return (
+    <div className="relative min-h-screen bg-[#7C3AED] overflow-hidden">
+      {/* Diagonal Lines Background - Rups Style */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -189,197 +199,220 @@ const Dashboard = () => {
         </svg>
       </div>
 
-      <div className="relative z-10 flex flex-col h-full p-4 lg:p-6">
-        {/* A. Heads-Up Display (Top) - Rups Style */}
-        <motion.div initial={{
-        opacity: 0,
-        y: -20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} className="flex-shrink-0 bg-white/95 backdrop-blur-sm rounded-3xl p-4 mb-4 shadow-xl mx-6 border-b-4 border-[#7C3AED]/20 lg:mx-[100px] px-[50px]">
-          <div className="grid grid-cols-3 gap-4 items-center">
-            {/* Left: Menu Items */}
-            <div className="justify-self-start flex items-center gap-4">
-              <button onClick={() => navigate("/profile")} className="text-sm font-medium text-gray-700 hover:text-[#7C3AED] transition-colors uppercase tracking-wide">
-                Perfil
-              </button>
-              <button onClick={() => navigate("/sessions")} className="text-sm font-medium text-gray-700 hover:text-[#7C3AED] transition-colors uppercase tracking-wide">
-                Sessões
-              </button>
-            </div>
-
-            {/* Center: Site Logo/Name */}
-            <div className="justify-self-center flex flex-col items-center">
-              <h1 className="text-3xl font-bold text-[#7C3AED] flex items-center gap-2">
-                🎯 DreamUp   
-              </h1>
-              
-            </div>
-
-            {/* Right: Goal + Logout */}
-            <div className="justify-self-end flex items-center gap-3">
-              {goal ? <div onClick={() => navigate("/profile")} className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-200 transition-colors">
-                  <span className="text-sm font-medium text-gray-900 truncate max-w-[120px]">
-                    {goal.title}
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-[#7C3AED] flex items-center justify-center">
-                    <span className="text-xs font-bold text-white">
-                      {Math.round(progress)}%
-                    </span>
-                  </div>
-                </div> : <Button onClick={() => navigate("/profile")} size="sm" className="text-xs">
-                  Definir Meta
-                </Button>}
-
-              <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full hover:bg-red-100 text-gray-700 hover:text-red-600">
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
+      {/* HUD - Top Navigation */}
+      <div className="absolute top-0 left-0 right-0 z-50 p-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={() => navigate('/profile')}
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
+            >
+              <User className="w-5 h-5" />
+              <span className="hidden sm:inline font-medium">{profile?.name || 'Perfil'}</span>
+            </button>
+            
+            <button 
+              onClick={() => navigate('/sessions')}
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
+            >
+              <Shield className="w-5 h-5" />
+              <span className="hidden sm:inline font-medium">Sessões</span>
+            </button>
           </div>
-        </motion.div>
 
-        {/* B. Main Stage - 3D Carousel (Hero) - Rups Style */}
-        <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-white tracking-wider">
+              DreamUp
+            </h1>
+          </div>
 
-          <motion.div initial={{
-          opacity: 0,
-          scale: 0.9
-        }} animate={{
-          opacity: 1,
-          scale: 1
-        }} transition={{
-          delay: 0.4
-        }} className="w-full max-w-7xl relative z-10">
-            <Swiper effect={'coverflow'} grabCursor={true} centeredSlides={true} slidesPerView={'auto'} coverflowEffect={{
-            rotate: 0,
-            stretch: 0,
-            depth: 150,
-            modifier: 3,
-            slideShadows: false
-          }} pagination={{
-            clickable: true
-          }} navigation={true} modules={[EffectCoverflow, Pagination, Navigation]} className="learning-swiper">
-              {learningModules.map((module, index) => <SwiperSlide key={module.id}>
-                  <motion.div initial={{
-                opacity: 0,
-                y: 50
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: 0.4 + index * 0.1
-              }}>
-                    <div className="relative">
-                      {/* Number Badge - Rups Style with White Border */}
-                      <div className="absolute -left-6 top-12 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold z-30 shadow-xl border-4 border-white" style={{
-                    backgroundColor: module.status === 'current' ? '#7C3AED' : 'rgba(124, 58, 237, 0.8)',
-                    color: 'white'
-                  }}>
-                        {module.number}
-                      </div>
-
-                      <Card onClick={() => handleModuleClick(module.id, module.status)} className="relative overflow-hidden cursor-pointer hover-lift group border-0 transition-all duration-300" style={{
-                    minHeight: module.status === 'current' ? 'min(65vh, 700px)' : 'min(45vh, 480px)',
-                    maxHeight: module.status === 'current' ? '700px' : '480px',
-                    height: module.status === 'current' ? '65vh' : '45vh',
-                    backgroundColor: module.cardColor,
-                    boxShadow: module.status === 'current' ? '0 30px 60px -15px rgba(0, 0, 0, 0.3)' : '0 20px 40px -10px rgba(0, 0, 0, 0.2)',
-                    borderRadius: '40px'
-                  }}>
-                        {module.status === 'current' ?
-                    // Active Card - Full Featured (Rups Style)
-                    <div className="relative z-20 p-10 flex flex-col h-full">
-                            {/* Illustration Area */}
-                            <div className="flex-1 flex items-center justify-center mb-6">
-                              <div className="w-full max-h-[50%] aspect-video rounded-[32px] flex items-center justify-center text-9xl transform transition-transform group-hover:scale-105 relative overflow-hidden" style={{
-                          background: module.iconBg
-                        }}>
-                                <div className="text-[140px]">{module.icon}</div>
-                              </div>
-                            </div>
-
-                            {/* Content Area */}
-                            <div className="space-y-6">
-                              <div>
-                                <h3 className="text-4xl font-bold text-gray-900 mb-3 leading-tight">
-                                  {module.title}
-                                </h3>
-                                <p className="text-gray-600 text-lg leading-relaxed">
-                                  {module.description}
-                                </p>
-                              </div>
-
-                              <Button size="lg" className="w-full h-16 text-xl font-bold rounded-full text-gray-900 shadow-lg hover:shadow-xl transition-all border-0 uppercase tracking-wide" style={{
-                          backgroundColor: '#F5A623',
-                          backgroundImage: 'linear-gradient(180deg, #F5A623 0%, #F7B731 100%)'
-                        }}>
-                                COMEÇAR AGORA
-                              </Button>
-                            </div>
-                          </div> :
-                    // Inactive Cards - Simplified (Rups Style)
-                    <div className="relative z-20 p-8 flex flex-col items-center justify-center h-full text-center">
-                            <div className="w-32 h-32 rounded-3xl flex items-center justify-center text-7xl mb-6 transform transition-transform group-hover:scale-110 backdrop-blur-sm" style={{
-                        background: module.iconBg
-                      }}>
-                              {module.icon}
-                            </div>
-                            <h3 className="text-2xl font-bold text-white leading-tight">
-                              {module.title}
-                            </h3>
-                          </div>}
-
-                        {module.status === "locked" && <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] z-30 rounded-[40px] flex items-center justify-center">
-                            <div className="text-center">
-                              <div className="text-6xl mb-3">🔒</div>
-                              <p className="text-white font-bold text-lg">Bloqueado</p>
-                            </div>
-                          </div>}
-                      </Card>
-                    </div>
-                  </motion.div>
-                </SwiperSlide>)}
-            </Swiper>
-          </motion.div>
+          <div className="flex items-center gap-4">
+            {goal && (
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white">
+                <span className="text-sm font-medium">Meta:</span>
+                <div className="w-24">
+                  <Progress value={progressPercentage} className="h-2" />
+                </div>
+                <span className="text-sm font-bold">{Math.round(progressPercentage)}%</span>
+              </div>
+            )}
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all flex items-center gap-2"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="hidden sm:inline">Sair</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* C. Floating Action Button - Oracle - Rups Style */}
-      <motion.div initial={{
-      opacity: 0,
-      scale: 0.5
-    }} animate={{
-      opacity: 1,
-      scale: 1
-    }} transition={{
-      delay: 0.6,
-      type: "spring"
-    }} className="fixed bottom-8 right-8 z-50">
-        <Button onClick={() => navigate("/oracle")} size="lg" className="w-16 h-16 lg:w-auto lg:h-auto lg:px-8 lg:py-6 rounded-full bg-white hover:bg-gray-50 text-[#7C3AED] shadow-2xl hover:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.4)] transition-all duration-300 group relative overflow-hidden border-0">
-          <div className="absolute inset-0 bg-[#FCD34D]/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
-          <MessageSquare className="w-6 h-6 lg:mr-2" />
-          <span className="hidden lg:inline font-bold">Falar com Oráculo</span>
-        </Button>
-      </motion.div>
+      {/* Main Stage - Learning Path Carousel */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center pt-20 pb-20">
+        <div className="w-full max-w-[1400px] px-4">
+          <Swiper
+            effect={'coverflow'}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={'auto'}
+            initialSlide={learningModules.findIndex(m => m.status === 'unlocked' || m.status === 'in_progress') || 0}
+            coverflowEffect={{
+              rotate: 0,
+              stretch: 0,
+              depth: 200,
+              modifier: 2,
+              slideShadows: false,
+            }}
+            pagination={{ clickable: true }}
+            navigation={true}
+            modules={[EffectCoverflow, Pagination, Navigation]}
+            className="learning-swiper"
+          >
+            {learningModules.map((module, index) => (
+              <SwiperSlide key={module.id}>
+                <Card
+                  className="learning-module-card group cursor-pointer"
+                  onClick={() => handleModuleClick(module.id, module.status)}
+                  style={{
+                    backgroundColor: module.card_color,
+                    boxShadow: module.status === 'in_progress' || module.status === 'unlocked'
+                      ? '0 40px 80px -20px rgba(0, 0, 0, 0.4), 0 20px 40px -10px rgba(124, 58, 237, 0.3)' 
+                      : '0 10px 20px -5px rgba(0, 0, 0, 0.15)'
+                  }}
+                >
+                  {/* Progress Bar */}
+                  {(module.status === 'in_progress' || module.status === 'completed') && (
+                    <div className="absolute bottom-0 left-0 right-0 h-2 bg-gray-200 rounded-b-[40px] overflow-hidden z-50">
+                      <div 
+                        className="h-full bg-[#F5A623] transition-all duration-500"
+                        style={{ width: `${module.progress_percent}%` }}
+                      />
+                    </div>
+                  )}
 
+                  {/* Completed Badge */}
+                  {module.status === 'completed' && (
+                    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 z-40">
+                      ✓ Completo
+                    </div>
+                  )}
+
+                  {/* New Badge for unlocked modules */}
+                  {module.status === 'unlocked' && module.progress_percent === 0 && (
+                    <div className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse z-40">
+                      NOVO!
+                    </div>
+                  )}
+
+                  {/* Number Badge - Rups Style */}
+                  <div 
+                    className="absolute -left-6 top-12 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold z-30 shadow-xl border-4 border-white"
+                    style={{
+                      backgroundColor: module.status === 'completed' ? '#10B981' : 
+                                     module.status === 'in_progress' || module.status === 'unlocked' ? '#7C3AED' : 
+                                     'rgba(124, 58, 237, 0.8)',
+                      color: 'white'
+                    }}
+                  >
+                    {module.number}
+                  </div>
+
+                  {/* Active/Unlocked Card Content */}
+                  {(module.status === "unlocked" || module.status === "in_progress") && (
+                    <div className="relative z-20 p-8 flex flex-col items-center justify-between h-full">
+                      <div className="w-full max-h-[50%] aspect-video rounded-[32px] flex items-center justify-center text-9xl transform transition-transform group-hover:scale-105 relative overflow-hidden" style={{
+                        background: module.icon_bg
+                      }}>
+                        <div className="text-[140px]">{module.icon}</div>
+                      </div>
+
+                      <div className="text-center flex-1 flex flex-col justify-center">
+                        <h3 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">
+                          {module.title}
+                        </h3>
+                        <p className="text-gray-600 text-base">
+                          {module.description}
+                        </p>
+                      </div>
+
+                      <Button 
+                        size="lg" 
+                        className="w-full h-16 text-xl font-bold rounded-full text-gray-900 shadow-lg hover:shadow-xl transition-all border-0 uppercase tracking-wide"
+                        style={{
+                          backgroundColor: '#F5A623',
+                          backgroundImage: 'linear-gradient(180deg, #F5A623 0%, #F7B731 100%)'
+                        }}
+                      >
+                        {module.status === 'in_progress' ? 'CONTINUAR' : 'COMEÇAR AGORA'}
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Inactive/Locked/Completed Cards */}
+                  {module.status !== "unlocked" && module.status !== "in_progress" && (
+                    <div className="relative z-20 p-8 flex flex-col items-center justify-center h-full text-center">
+                      <div 
+                        className="w-32 h-32 rounded-3xl flex items-center justify-center text-7xl mb-6 transform transition-transform group-hover:scale-110 backdrop-blur-sm"
+                        style={{
+                          background: module.icon_bg
+                        }}
+                      >
+                        {module.icon}
+                      </div>
+                      <h3 className="text-2xl font-bold text-white leading-tight">
+                        {module.title}
+                      </h3>
+                    </div>
+                  )}
+
+                  {/* Locked Overlay */}
+                  {module.status === "locked" && (
+                    <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] z-30 rounded-[40px] flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-5xl mb-2">🔒</div>
+                        <p className="text-white font-bold text-base">Bloqueado</p>
+                      </div>
+                    </div>
+                  )}
+                </Card>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      </div>
+
+      {/* Floating Oracle Button */}
+      <button
+        onClick={() => navigate('/oracle')}
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group"
+      >
+        <MessageSquare className="w-8 h-8 group-hover:rotate-12 transition-transform" />
+        <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-300 animate-pulse" />
+      </button>
+
+      {/* Swiper Custom Styles */}
       <style>{`
         .learning-swiper {
           width: 100%;
-          padding: 20px 0 60px 0;
-          height: 100%;
+          padding: 60px 0 !important;
         }
 
         .learning-swiper .swiper-slide {
-          background-position: center;
-          background-size: cover;
-          width: 640px;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          width: 500px !important;
+          height: 600px !important;
         }
 
-        .learning-swiper .swiper-slide-active {
-          z-index: 3;
-          transform: scale(1) !important;
+        .learning-module-card {
+          width: 100%;
+          height: 100%;
+          border-radius: 40px;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .learning-swiper .swiper-slide-active .learning-module-card {
+          transform: scale(1.05);
         }
 
         .learning-swiper .swiper-slide-next,
@@ -388,81 +421,45 @@ const Dashboard = () => {
           opacity: 0.7;
         }
 
-        .learning-swiper .swiper-pagination {
-          bottom: 30px;
-        }
-
         .learning-swiper .swiper-pagination-bullet {
           background: white;
           opacity: 0.5;
-          width: 10px;
-          height: 10px;
-          transition: all 0.3s ease;
         }
 
         .learning-swiper .swiper-pagination-bullet-active {
           opacity: 1;
-          transform: scale(1.4);
           background: white;
         }
 
-        .learning-swiper .swiper-button-next,
-        .learning-swiper .swiper-button-prev {
-          color: #7C3AED;
-          background: white;
-          width: 60px;
-          height: 60px;
+        .learning-swiper .swiper-button-prev,
+        .learning-swiper .swiper-button-next {
+          color: white;
+          background: rgba(255, 255, 255, 0.2);
+          width: 50px;
+          height: 50px;
           border-radius: 50%;
-          box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
-          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
         }
 
-        .learning-swiper .swiper-button-next:hover,
-        .learning-swiper .swiper-button-prev:hover {
-          transform: scale(1.1);
-          box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.4);
+        .learning-swiper .swiper-button-prev:after,
+        .learning-swiper .swiper-button-next:after {
+          font-size: 20px;
         }
 
-        .learning-swiper .swiper-button-next:after,
-        .learning-swiper .swiper-button-prev:after {
-          font-size: 22px;
-          font-weight: bold;
-        }
-
-        @media (max-width: 1024px) {
+        @media (max-width: 768px) {
           .learning-swiper .swiper-slide {
-            width: 480px;
+            width: 350px !important;
+            height: 500px !important;
           }
-        }
-
-        @media (max-width: 640px) {
-          .learning-swiper {
-            padding: 10px 0 50px 0;
-          }
-
-          .learning-swiper .swiper-slide {
-            width: 340px;
-          }
-
-          .learning-swiper .swiper-button-next,
-          .learning-swiper .swiper-button-prev {
-            width: 48px;
-            height: 48px;
-          }
-        }
-
-          .learning-swiper .swiper-button-next,
-          .learning-swiper .swiper-button-prev {
-            width: 44px;
-            height: 44px;
-          }
-
-          .learning-swiper .swiper-button-next:after,
-          .learning-swiper .swiper-button-prev:after {
-            font-size: 16px;
+          
+          .learning-swiper .swiper-button-prev,
+          .learning-swiper .swiper-button-next {
+            display: none;
           }
         }
       `}</style>
-    </div>;
+    </div>
+  );
 };
+
 export default Dashboard;

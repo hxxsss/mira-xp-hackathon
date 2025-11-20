@@ -134,6 +134,51 @@ export type Database = {
           },
         ]
       }
+      learning_modules: {
+        Row: {
+          card_color: string
+          content: Json | null
+          created_at: string | null
+          description: string
+          icon: string
+          icon_bg: string
+          id: string
+          number: string
+          order_index: number
+          points_reward: number | null
+          title: string
+          xp_reward: number | null
+        }
+        Insert: {
+          card_color: string
+          content?: Json | null
+          created_at?: string | null
+          description: string
+          icon: string
+          icon_bg: string
+          id?: string
+          number: string
+          order_index: number
+          points_reward?: number | null
+          title: string
+          xp_reward?: number | null
+        }
+        Update: {
+          card_color?: string
+          content?: Json | null
+          created_at?: string | null
+          description?: string
+          icon?: string
+          icon_bg?: string
+          id?: string
+          number?: string
+          order_index?: number
+          points_reward?: number | null
+          title?: string
+          xp_reward?: number | null
+        }
+        Relationships: []
+      }
       password_reset_codes: {
         Row: {
           code: string
@@ -309,6 +354,53 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_module_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          last_accessed_at: string | null
+          module_id: string
+          progress_percent: number | null
+          quiz_score: number | null
+          started_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          module_id: string
+          progress_percent?: number | null
+          quiz_score?: number | null
+          started_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          module_id?: string
+          progress_percent?: number | null
+          quiz_score?: number | null
+          started_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_module_progress_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "learning_modules"
             referencedColumns: ["id"]
           },
         ]
