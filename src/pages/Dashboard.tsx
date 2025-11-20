@@ -264,17 +264,17 @@ const Dashboard = () => {
         </motion.div>
 
         {/* B. Main Stage - 3D Carousel (Hero) */}
-        <div className="flex-1 flex flex-col items-center justify-center py-12 relative">
+        <div className="flex-1 flex flex-col items-center justify-center py-12 relative bg-gradient-to-b from-background via-primary/5 to-background">
           {/* Background Blob */}
           <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-            <div className="w-[800px] h-[800px] rounded-full bg-gradient-to-br from-primary/10 via-primary-light/10 to-transparent blur-3xl" />
+            <div className="w-[1000px] h-[1000px] rounded-full bg-gradient-to-br from-primary/15 via-purple-500/10 to-transparent blur-3xl" />
           </div>
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl lg:text-6xl font-bold text-center mb-16 text-gradient relative z-10"
+            className="text-5xl lg:text-7xl font-bold text-center mb-20 text-gradient relative z-10"
           >
             Sua Jornada Financeira
           </motion.h2>
@@ -293,8 +293,8 @@ const Dashboard = () => {
               coverflowEffect={{
                 rotate: 0,
                 stretch: 0,
-                depth: 100,
-                modifier: 2.5,
+                depth: 150,
+                modifier: 3,
                 slideShadows: false,
               }}
               pagination={{ clickable: true }}
@@ -311,9 +311,9 @@ const Dashboard = () => {
                   >
                     <Card
                       onClick={() => handleModuleClick(module.id, module.status)}
-                      className="relative overflow-hidden cursor-pointer hover-lift group bg-white border-0 shadow-2xl"
+                      className="relative overflow-hidden cursor-pointer hover-lift group bg-white border-0 shadow-2xl transition-all duration-300"
                       style={{ 
-                        minHeight: '600px',
+                        minHeight: '780px',
                         boxShadow: '0 25px 50px -12px rgba(124, 58, 237, 0.25)'
                       }}
                     >
@@ -327,11 +327,11 @@ const Dashboard = () => {
                         </div>
                       )}
 
-                      <div className="relative z-20 p-10 flex flex-col h-full justify-between">
+                      <div className="relative z-20 p-8 flex flex-col h-full justify-between">
                         {/* Illustration Area */}
-                        <div className="flex-1 flex items-center justify-center mb-8">
+                        <div className="flex-1 flex items-center justify-center mb-12">
                           <div 
-                            className="w-64 h-64 rounded-3xl flex items-center justify-center text-9xl transform transition-transform group-hover:scale-110"
+                            className="w-80 h-80 rounded-3xl flex items-center justify-center text-9xl transform transition-transform group-hover:scale-110"
                             style={{ background: module.gradient }}
                           >
                             {module.icon}
@@ -339,12 +339,12 @@ const Dashboard = () => {
                         </div>
 
                         {/* Content Area */}
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                           <div>
-                            <h3 className="text-4xl font-bold text-foreground mb-3">
+                            <h3 className="text-5xl font-bold text-foreground mb-4">
                               {module.title}
                             </h3>
-                            <p className="text-muted-foreground text-lg">
+                            <p className="text-muted-foreground text-xl">
                               {module.description}
                             </p>
                           </div>
@@ -352,7 +352,7 @@ const Dashboard = () => {
                           {module.status === "current" ? (
                             <Button 
                               size="lg"
-                              className="w-full h-14 text-lg font-bold rounded-2xl gradient-primary hover:opacity-90 transition-opacity"
+                              className="w-full h-16 text-xl font-bold rounded-2xl gradient-primary hover:opacity-90 transition-opacity"
                             >
                               Começar Agora
                             </Button>
@@ -360,7 +360,7 @@ const Dashboard = () => {
                             <Button 
                               size="lg"
                               disabled
-                              className="w-full h-14 text-lg font-bold rounded-2xl"
+                              className="w-full h-16 text-xl font-bold rounded-2xl"
                             >
                               Bloqueado
                             </Button>
@@ -368,7 +368,7 @@ const Dashboard = () => {
                             <Button 
                               size="lg"
                               variant="outline"
-                              className="w-full h-14 text-lg font-bold rounded-2xl"
+                              className="w-full h-16 text-xl font-bold rounded-2xl"
                             >
                               Revisar
                             </Button>
@@ -411,8 +411,8 @@ const Dashboard = () => {
         .learning-swiper .swiper-slide {
           background-position: center;
           background-size: cover;
-          width: 500px;
-          height: 650px;
+          width: 720px;
+          height: 800px;
           transition: all 0.3s ease;
         }
 
@@ -420,10 +420,14 @@ const Dashboard = () => {
           z-index: 3;
         }
 
+        .learning-swiper .swiper-slide-active .relative {
+          box-shadow: 0 30px 60px -15px rgba(124, 58, 237, 0.35);
+        }
+
         .learning-swiper .swiper-slide-next,
         .learning-swiper .swiper-slide-prev {
-          opacity: 0.4;
-          filter: blur(1px);
+          opacity: 0.65;
+          filter: blur(0.5px);
         }
 
         .learning-swiper .swiper-pagination {
@@ -469,8 +473,8 @@ const Dashboard = () => {
 
         @media (max-width: 1024px) {
           .learning-swiper .swiper-slide {
-            width: 400px;
-            height: 550px;
+            width: 500px;
+            height: 680px;
           }
         }
 
@@ -480,9 +484,19 @@ const Dashboard = () => {
           }
 
           .learning-swiper .swiper-slide {
-            width: 340px;
-            height: 500px;
+            width: 360px;
+            height: 580px;
           }
+          
+          .learning-swiper .swiper-slide .w-80 {
+            width: 224px;
+            height: 224px;
+          }
+          
+          .learning-swiper .swiper-slide .text-5xl {
+            font-size: 2.25rem;
+          }
+        }
 
           .learning-swiper .swiper-button-next,
           .learning-swiper .swiper-button-prev {
