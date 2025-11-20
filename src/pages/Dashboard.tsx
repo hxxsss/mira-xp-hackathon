@@ -3,13 +3,14 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, LogOut, User, Shield, Lock } from "lucide-react";
+import { Sparkles, MessageSquare, LogOut, User, Shield, Lock, Target, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionTracking } from "@/hooks/useSessionTracking";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination, Navigation } from 'swiper/modules';
+import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 
 // Import Swiper styles
 import 'swiper/css';
@@ -77,6 +78,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [tracks, setTracks] = useState<LearningTrack[]>([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [goalModalOpen, setGoalModalOpen] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -302,15 +304,6 @@ const Dashboard = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            {goal && (
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white">
-                <span className="text-sm font-medium">Meta:</span>
-                <div className="w-24">
-                  <Progress value={progressPercentage} className="h-2" />
-                </div>
-                <span className="text-sm font-bold">{Math.round(progressPercentage)}%</span>
-              </div>
-            )}
             <button
               onClick={handleLogout}
               className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all flex items-center gap-2"
@@ -321,6 +314,63 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Goal Card - Expandido e Clicável */}
+      {goal && (
+        <div className="flex-shrink-0 z-40 px-4 py-3">
+          <div className="max-w-3xl mx-auto">
+            <motion.button
+              onClick={() => setGoalModalOpen(true)}
+              className="w-full bg-white/20 backdrop-blur-md rounded-2xl p-5 text-white hover:bg-white/30 hover:scale-[1.02] transition-all shadow-lg border border-white/30 cursor-pointer"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                {/* Esquerda: Ícone e Título */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="bg-white/30 p-2 rounded-xl">
+                    <Target className="w-6 h-6" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-xs font-medium text-white/80">Minha Meta</p>
+                    <p className="text-lg font-bold truncate">{goal.title}</p>
+                  </div>
+                </div>
+
+                {/* Centro: Barra de Progresso */}
+                <div className="flex-1 min-w-[200px] space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">Progresso</span>
+                    <span className="font-bold">{Math.round(progressPercentage)}%</span>
+                  </div>
+                  <Progress value={progressPercentage} className="h-3 bg-white/20" />
+                </div>
+
+                {/* Direita: Valores */}
+                <div className="text-right">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold">
+                      R$ {goal.current_amount.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
+                    </span>
+                    <span className="text-sm text-white/70">
+                      / R$ {goal.total_amount.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-end gap-1 text-xs text-white/80 mt-1">
+                    <TrendingUp className="w-3 h-3" />
+                    <span>Faltam R$ {(goal.total_amount - goal.current_amount).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Indicador de clique */}
+              <div className="text-center mt-3 text-xs text-white/60">
+                👆 Clique para ver detalhes completos
+              </div>
+            </motion.button>
+          </div>
+        </div>
+      )}
 
       {/* Track Navigation */}
       <div className="flex-shrink-0 z-40">
@@ -508,6 +558,13 @@ const Dashboard = () => {
         <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-300 animate-pulse" />
       </button>
 
+      {/* Goal Details Modal */}
+      <GoalDetailsModal 
+        goal={goal}
+        open={goalModalOpen}
+        onOpenChange={setGoalModalOpen}
+      />
+
       {/* Swiper Custom Styles */}
       <style>{`
         .learning-swiper {
@@ -516,8 +573,8 @@ const Dashboard = () => {
         }
 
         .learning-swiper .swiper-slide {
-          width: 500px !important;
-          height: 480px !important;
+          width: 420px !important;
+          height: 380px !important;
         }
 
         .learning-module-card {
@@ -566,8 +623,8 @@ const Dashboard = () => {
 
         @media (max-width: 768px) {
           .learning-swiper .swiper-slide {
-            width: 350px !important;
-            height: 420px !important;
+            width: 320px !important;
+            height: 340px !important;
           }
           
           .learning-swiper .swiper-button-prev,
