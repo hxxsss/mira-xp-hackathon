@@ -241,15 +241,6 @@ const Dashboard = () => {
   };
 
   const handleTrackChange = (trackIndex: number) => {
-    const track = tracks[trackIndex];
-    if (track.status === 'locked') {
-      toast({
-        title: "🔒 Trilha Bloqueada",
-        description: "Complete todas as trilhas anteriores para desbloquear!",
-        variant: "destructive"
-      });
-      return;
-    }
     setCurrentTrackIndex(trackIndex);
   };
 
@@ -343,10 +334,9 @@ const Dashboard = () => {
                   index === currentTrackIndex
                     ? 'bg-white text-gray-900 scale-110 shadow-xl'
                     : track.status === 'locked'
-                    ? 'bg-white/20 text-white/50 cursor-not-allowed'
+                    ? 'bg-white/20 text-white/50 hover:bg-white/30'
                     : 'bg-white/30 text-white hover:bg-white/40'
                 }`}
-                disabled={track.status === 'locked'}
               >
                 <span className="mr-2">{track.icon}</span>
                 {track.name}
