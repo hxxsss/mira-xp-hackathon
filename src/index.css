@@ -99,30 +99,39 @@ All colors MUST be HSL.
     overflow: hidden;
   }
   
-  .geometric-bg::before,
-  .geometric-bg::after {
-    content: '';
+  .neon-line {
     position: absolute;
-    border-radius: 50%;
-    opacity: 0.15;
+    width: 2px;
+    opacity: 0.6;
+    animation: fall-diagonal 8s linear infinite;
+    filter: blur(1px);
   }
   
-  .geometric-bg::before {
-    width: 600px;
-    height: 600px;
-    background: linear-gradient(135deg, hsl(180 90% 60%), hsl(200 85% 65%));
-    top: -200px;
-    right: -100px;
-    animation: blob 15s infinite;
+  .neon-line-cyan {
+    background: linear-gradient(180deg, transparent, hsl(180 100% 70%), transparent);
+    box-shadow: 0 0 10px hsl(180 100% 70%), 0 0 20px hsl(180 100% 70%);
   }
   
-  .geometric-bg::after {
-    width: 400px;
-    height: 400px;
-    background: linear-gradient(135deg, hsl(190 80% 55%), hsl(210 75% 60%));
-    bottom: -100px;
-    left: -150px;
-    animation: blob 12s infinite reverse;
+  .neon-line-pink {
+    background: linear-gradient(180deg, transparent, hsl(330 100% 70%), transparent);
+    box-shadow: 0 0 10px hsl(330 100% 70%), 0 0 20px hsl(330 100% 70%);
+  }
+  
+  @keyframes fall-diagonal {
+    0% {
+      transform: translateY(-100%) translateX(-50px) rotate(-20deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    90% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(100vh) translateX(50px) rotate(-20deg);
+      opacity: 0;
+    }
   }
   
   .gradient-success {
@@ -192,21 +201,6 @@ All colors MUST be HSL.
   }
 }
 
-.geometric-line {
-  position: absolute;
-  background: linear-gradient(90deg, transparent, hsl(180 90% 60%), transparent);
-  opacity: 0.2;
-  animation: slide 8s linear infinite;
-}
-
-@keyframes slide {
-  0% {
-    transform: translateX(-100%) rotate(-45deg);
-  }
-  100% {
-    transform: translateX(200%) rotate(-45deg);
-  }
-}
 
 .animate-blob {
   animation: blob 7s infinite;

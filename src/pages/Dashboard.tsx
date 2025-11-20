@@ -259,16 +259,19 @@ const Dashboard = () => {
     <div 
       className="relative h-screen overflow-hidden flex flex-col gradient-background geometric-bg"
     >
-      {/* Geometric shapes and lines */}
-      <div className="geometric-line" style={{ width: '2px', height: '300px', top: '10%', left: '15%' }} />
-      <div className="geometric-line" style={{ width: '2px', height: '400px', top: '30%', right: '20%', animationDelay: '2s' }} />
-      <div className="geometric-line" style={{ width: '3px', height: '250px', bottom: '20%', left: '40%', animationDelay: '4s' }} />
-      <div className="geometric-line" style={{ width: '2px', height: '350px', top: '5%', right: '45%', animationDelay: '6s' }} />
+      {/* Neon Lines - Cyan */}
+      <div className="neon-line neon-line-cyan" style={{ height: '400px', left: '10%', animationDelay: '0s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '350px', left: '25%', animationDelay: '2s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '450px', left: '50%', animationDelay: '4s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '380px', left: '75%', animationDelay: '6s' }} />
+      <div className="neon-line neon-line-cyan" style={{ height: '420px', left: '90%', animationDelay: '1s' }} />
       
-      {/* Abstract shapes */}
-      <div className="absolute w-32 h-32 rounded-full border-2 border-cyan-400/20 top-[15%] right-[10%] animate-pulse" />
-      <div className="absolute w-24 h-24 rounded-full border-2 border-blue-400/20 bottom-[25%] left-[8%] animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="absolute w-40 h-40 rounded-full border-2 border-teal-400/20 top-[60%] right-[35%] animate-pulse" style={{ animationDelay: '2s' }} />
+      {/* Neon Lines - Pink */}
+      <div className="neon-line neon-line-pink" style={{ height: '380px', left: '15%', animationDelay: '1.5s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '420px', left: '35%', animationDelay: '3.5s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '360px', left: '55%', animationDelay: '5.5s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '400px', left: '70%', animationDelay: '7.5s' }} />
+      <div className="neon-line neon-line-pink" style={{ height: '440px', left: '85%', animationDelay: '2.5s' }} />
 
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
