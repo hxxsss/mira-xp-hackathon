@@ -58,6 +58,36 @@ export type Database = {
           },
         ]
       }
+      budget_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          icon: string | null
+          id: string
+          monthly_limit: number
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          monthly_limit: number
+          name: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          monthly_limit?: number
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       chat_sessions: {
         Row: {
           created_at: string
@@ -89,6 +119,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      debts: {
+        Row: {
+          created_at: string | null
+          creditor: string | null
+          due_date: string | null
+          id: string
+          interest_rate: number | null
+          name: string
+          notes: string | null
+          paid_amount: number
+          total_amount: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          creditor?: string | null
+          due_date?: string | null
+          id?: string
+          interest_rate?: number | null
+          name: string
+          notes?: string | null
+          paid_amount?: number
+          total_amount: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          creditor?: string | null
+          due_date?: string | null
+          id?: string
+          interest_rate?: number | null
+          name?: string
+          notes?: string | null
+          paid_amount?: number
+          total_amount?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       goals: {
         Row: {
@@ -328,28 +400,37 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          category: string | null
           created_at: string
+          date: string | null
           description: string | null
           id: string
           is_impulse: boolean
+          is_recurring: boolean | null
           type: string
           user_id: string
         }
         Insert: {
           amount: number
+          category?: string | null
           created_at?: string
+          date?: string | null
           description?: string | null
           id?: string
           is_impulse?: boolean
+          is_recurring?: boolean | null
           type: string
           user_id: string
         }
         Update: {
           amount?: number
+          category?: string | null
           created_at?: string
+          date?: string | null
           description?: string | null
           id?: string
           is_impulse?: boolean
+          is_recurring?: boolean | null
           type?: string
           user_id?: string
         }

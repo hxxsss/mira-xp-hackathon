@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Sessions from "./pages/Sessions";
 import ModulePage from "./pages/ModulePage";
 import NotFound from "./pages/NotFound";
+import Financas from "./pages/Financas";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/sessions" element={<Sessions />} />
+          <Route path="/financas" element={<Financas />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
