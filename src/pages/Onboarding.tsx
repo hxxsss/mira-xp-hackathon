@@ -240,7 +240,7 @@ const Step2 = ({
   formData,
   updateField
 }: any) => <div className="space-y-6">
-    <h2 className="text-3xl font-bold mb-2">Qual é o seu sonho?</h2>
+    <h2 className="text-3xl font-bold mb-2">Qual é a sua meta?</h2>
     <p className="text-muted-foreground mb-6">
       Para o que você está economizando? Seja específico!
     </p>
