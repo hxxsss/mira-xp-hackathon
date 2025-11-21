@@ -3,6 +3,7 @@ import { Target, TrendingUp, Wallet, DollarSign, PiggyBank, CreditCard, BarChart
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 const Landing = () => {
   const navigate = useNavigate();
   useEffect(() => {
@@ -91,47 +92,34 @@ const Landing = () => {
             </button>
           </div>
 
-          {/* Gradient Glow */}
-          <div className="absolute left-1/2 -translate-x-1/2 mt-8 w-screen h-96 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 blur-3xl opacity-60 z-0"></div>
-
-          {/* Dashboard Mockup */}
-          <div className="relative z-10 mt-32 max-w-5xl mx-auto pb-32">
-            <div className="relative bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 rounded-3xl p-1 shadow-2xl">
-              <div className="bg-white rounded-3xl overflow-hidden">
-                {/* Browser Bar */}
-                <div className="bg-gray-100 px-6 py-4 flex items-center gap-2 border-b border-gray-200">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
+          {/* Scroll Animation Container */}
+          <div className="relative z-10 w-full">
+            <ContainerScroll
+              titleComponent={
+                <div className="text-center">
+                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <Target className="text-gray-600 w-5 h-5" />
                   </div>
+                  <span className="text-sm text-gray-500 uppercase tracking-wider font-semibold">
+                    Suas Metas Financeiras
+                  </span>
                 </div>
-
-                {/* Dashboard Preview */}
-                <div className="bg-white p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <Target className="text-gray-600 w-5 h-5" />
-                    </div>
-                    <span className="text-sm text-gray-500 uppercase tracking-wider font-semibold">
-                      Suas Metas Financeiras
-                    </span>
+              }
+            >
+              <div className="bg-white p-8 h-full w-full">
+                <div className="grid grid-cols-3 gap-4 h-full">
+                  <div className="h-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
+                    <PiggyBank className="w-12 h-12 text-blue-600" />
                   </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="h-32 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
-                      <PiggyBank className="w-12 h-12 text-blue-600" />
-                    </div>
-                    <div className="h-32 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl flex items-center justify-center">
-                      <TrendingUp className="w-12 h-12 text-purple-600" />
-                    </div>
-                    <div className="h-32 bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl flex items-center justify-center">
-                      <Sparkles className="w-12 h-12 text-cyan-600" />
-                    </div>
+                  <div className="h-full bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-12 h-12 text-purple-600" />
+                  </div>
+                  <div className="h-full bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl flex items-center justify-center">
+                    <Sparkles className="w-12 h-12 text-cyan-600" />
                   </div>
                 </div>
               </div>
-            </div>
+            </ContainerScroll>
           </div>
         </div>
       </section>
