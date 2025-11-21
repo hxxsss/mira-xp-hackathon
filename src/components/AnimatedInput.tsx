@@ -53,8 +53,10 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
         {/* Floating Label */}
         <motion.label
           animate={{
-            y: shouldFloat ? -8 : 12,
+            top: shouldFloat ? "0px" : "50%",
+            y: shouldFloat ? 0 : "-50%",
             scale: shouldFloat ? 0.85 : 1,
+            x: 0,
             color: isFocused 
               ? "hsl(220, 15%, 25%)" 
               : shouldFloat 
@@ -62,7 +64,7 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
               : "hsl(220, 10%, 50%)"
           }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="absolute left-3 pointer-events-none origin-left font-medium z-10"
+          className="absolute left-3 pointer-events-none origin-top-left font-medium z-10 bg-card px-1"
         >
           {label}
         </motion.label>
@@ -77,7 +79,8 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             className={cn(
-              "pt-6 pb-2 transition-all duration-300 bg-card border-border",
+              "pt-3 pb-3 transition-all duration-300 bg-card border-border",
+              shouldFloat && "pt-6 pb-2",
               isFocused && "ring-2 ring-primary/20 border-primary",
               showValidation && isValid && hasValue && "border-success ring-2 ring-success/20",
               showValidation && isValid === false && hasValue && "border-destructive ring-2 ring-destructive/20",
