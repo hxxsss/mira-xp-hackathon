@@ -346,92 +346,100 @@ const Dashboard = () => {
             </h1>
           </div>
 
-          {/* Right: Goal + Gamified Stats */}
-          <div className="flex items-center gap-2">
-            {/* Enhanced Goal Display */}
-            {goal ? (
-              <motion.button
-                onClick={() => setGoalModalOpen(true)}
-                className="relative flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-md rounded-2xl text-white hover:from-white/30 hover:to-white/20 transition-all group overflow-hidden"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {/* Animated Background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                {/* Ícone MAIOR e mais vibrante */}
-                <div className="relative">
-                  {/* Glow effect pulsante */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-full blur-2xl opacity-60 animate-pulse" />
+          {/* Right: Goal + Stats + Logout stacked */}
+          <div className="flex items-start gap-2 justify-end">
+            {/* Wrapper vertical para empilhar Meta e (Stats+Logout) */}
+            <div className="flex flex-col gap-2 items-end">
+              
+              {/* Enhanced Goal Display */}
+              {goal ? (
+                <motion.button
+                  onClick={() => setGoalModalOpen(true)}
+                  className="relative flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-md rounded-2xl text-white hover:from-white/30 hover:to-white/20 transition-all group overflow-hidden"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {/* Animated Background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                   
-                  {/* Container do ícone */}
-                  <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
-                    <Target className="w-8 h-8 text-white" strokeWidth={3} />
+                  {/* Ícone MAIOR e mais vibrante */}
+                  <div className="relative">
+                    {/* Glow effect pulsante */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-full blur-2xl opacity-60 animate-pulse" />
+                    
+                    {/* Container do ícone */}
+                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
+                      <Target className="w-8 h-8 text-white" strokeWidth={3} />
+                    </div>
+                    
+                    {/* Badge de porcentagem */}
+                    <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
+                      {Math.round(progressPercentage)}%
+                    </div>
                   </div>
                   
-                  {/* Badge de porcentagem */}
-                  <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
-                    {Math.round(progressPercentage)}%
+                  <div className="hidden lg:block text-left min-w-[180px] relative z-10">
+                    <div className="text-xs text-white font-semibold leading-tight">{goal.title}</div>
+                    <div className="relative h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
+                      <motion.div
+                        className="absolute inset-y-0 left-0 rounded-full shadow-lg"
+                        style={{
+                          background: progressPercentage > 80 
+                            ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
+                            : progressPercentage > 40
+                            ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
+                            : 'linear-gradient(90deg, hsl(280 80% 50%), hsl(320 80% 60%))'
+                        }}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progressPercentage}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                      />
+                    </div>
+                    <div className="flex justify-between items-center text-xs mt-1">
+                      <span className="text-white/80 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
+                      <span className="font-bold text-accent">{Math.round(progressPercentage)}%</span>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="hidden lg:block text-left min-w-[180px] relative z-10">
-                  <div className="text-xs text-white font-semibold leading-tight">{goal.title}</div>
-                  <div className="relative h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
-                    <motion.div
-                      className="absolute inset-y-0 left-0 rounded-full shadow-lg"
-                      style={{
-                        background: progressPercentage > 80 
-                          ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
-                          : progressPercentage > 40
-                          ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
-                          : 'linear-gradient(90deg, hsl(280 80% 50%), hsl(320 80% 60%))'
-                      }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${progressPercentage}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                    />
-                  </div>
-                  <div className="flex justify-between items-center text-xs mt-1">
-                    <span className="text-white/80 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
-                    <span className="font-bold text-accent">{Math.round(progressPercentage)}%</span>
-                  </div>
-                </div>
-                <span className="lg:hidden font-bold text-accent text-lg relative z-10">{Math.round(progressPercentage)}%</span>
-              </motion.button>
-            ) : (
-              <motion.button
-                onClick={() => {
-                  setEditingGoal(null);
-                  setGoalFormOpen(true);
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/30 to-primary/30 backdrop-blur-md rounded-full text-white hover:from-accent/40 hover:to-primary/40 transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Target className="w-5 h-5" />
-                <span className="hidden lg:inline font-medium">Criar Meta</span>
-              </motion.button>
-            )}
+                  <span className="lg:hidden font-bold text-accent text-lg relative z-10">{Math.round(progressPercentage)}%</span>
+                </motion.button>
+              ) : (
+                <motion.button
+                  onClick={() => {
+                    setEditingGoal(null);
+                    setGoalFormOpen(true);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/30 to-primary/30 backdrop-blur-md rounded-full text-white hover:from-accent/40 hover:to-primary/40 transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Target className="w-5 h-5" />
+                  <span className="hidden lg:inline font-medium">Criar Meta</span>
+                </motion.button>
+              )}
 
-            {/* Gamified Stats */}
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                <span className="text-xs text-white font-bold">⚡ {profile?.current_xp || 0}</span>
+              {/* Stats + Logout na mesma linha */}
+              <div className="flex items-center gap-2 justify-between w-full">
+                {/* Gamified Stats */}
+                <div className="flex items-center gap-2">
+                  <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
+                    <span className="text-xs text-white font-bold">⚡ {profile?.current_xp || 0}</span>
+                  </div>
+                  <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
+                    <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
+                  </div>
+                </div>
+
+                {/* Logout Button */}
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 hover:scale-110 transition-all"
+                  title="Sair da conta"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
               </div>
-              <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
-              </div>
+
             </div>
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="flex items-center justify-center w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 hover:scale-110 transition-all"
-              title="Sair da conta"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
           </div>
         </div>
       </div>
