@@ -203,15 +203,16 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
             >
               Fechar
             </Button>
-            <Button 
-              className="flex-1"
-              onClick={() => {
-                onOpenChange(false);
-                if (onEdit) onEdit();
-              }}
-            >
-              Editar Meta
-            </Button>
+              <Button 
+                variant="outline"
+                className="flex-1 hover:bg-yellow-400 hover:text-black hover:border-yellow-400 transition-colors"
+                onClick={() => {
+                  onOpenChange(false);
+                  if (onEdit) onEdit();
+                }}
+              >
+                Editar Meta
+              </Button>
           </div>
         </div>
       </DialogContent>
