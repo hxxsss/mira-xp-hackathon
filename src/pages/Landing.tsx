@@ -77,7 +77,7 @@ const Landing = () => {
           </div>
 
           {/* Hero Content */}
-          <div className="relative z-10 text-center max-w-2xl mx-auto">
+          <div className="relative z-10 text-center max-w-2xl mx-auto pt-20">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-3">
               Onde suas <span className="text-indigo-600">metas</span> se tornam{" "}
               <span className="text-indigo-600">realidade</span> com um clique
