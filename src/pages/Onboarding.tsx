@@ -233,7 +233,12 @@ const Step1 = ({
       </div>
       <div>
         <Label htmlFor="age">Quantos anos você tem?</Label>
-        <Input id="age" type="number" value={formData.age} onChange={e => updateField("age", e.target.value)} placeholder="Sua idade" className="rounded-2xl mt-2" />
+        <Input id="age" type="number" min="1" value={formData.age} onChange={e => {
+          const value = e.target.value;
+          if (value === "" || parseInt(value) > 0) {
+            updateField("age", value);
+          }
+        }} placeholder="Sua idade" className="rounded-2xl mt-2" />
       </div>
       <div>
         <Label htmlFor="email">Email</Label>
