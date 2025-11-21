@@ -213,18 +213,23 @@ const Oracle = () => {
     setIsLoading(true);
     setIsTyping(true);
     try {
+      // Get current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Not authenticated");
+      }
+
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/oracle-chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
+          Authorization: `Bearer ${session.access_token}`
         },
         body: JSON.stringify({
           messages: [...messages, userMessage].map(m => ({
             role: m.role,
             content: m.content
-          })),
-          userContext
+          }))
         })
       });
       if (!response.ok || !response.body) {
@@ -339,17 +344,21 @@ const Oracle = () => {
                   // Handle update_goal_deadline tool call
                   const updateDeadline = async () => {
                     try {
+                      const { data: { session } } = await supabase.auth.getSession();
+                      if (!session) return;
+
                       const { error: updateError } = await supabase.functions.invoke('update-goal-deadline', {
                         body: {
                           goalId: userContext?.goalId,
                           additionalMonths: verdictData.additional_months,
+                        },
+                        headers: {
+                          Authorization: `Bearer ${session.access_token}`
                         }
                       });
 
                       if (updateError) {
                         console.error('Failed to update goal deadline:', updateError);
-                      } else {
-                        console.log('Goal deadline updated successfully:', verdictData.reasoning);
                       }
                     } catch (e) {
                       console.error('Failed to call update-goal-deadline:', e);

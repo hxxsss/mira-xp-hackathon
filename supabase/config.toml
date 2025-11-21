@@ -1,7 +1,1 @@
 project_id = "lwghyetnojgexnzxmhxa"
-
-[functions.oracle-chat]
-verify_jwt = false
-
-[functions.update-goal-deadline]
-verify_jwt = false

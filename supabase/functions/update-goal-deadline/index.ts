@@ -6,14 +6,53 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Get JWT token from Authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Missing authorization header" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Create Supabase client with the user's JWT
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
+    );
+
+    // Verify user is authenticated
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const { goalId, additionalMonths } = await req.json();
 
+    // Validate inputs
     if (!goalId || additionalMonths === undefined) {
       return new Response(
         JSON.stringify({ error: "goalId and additionalMonths are required" }),
@@ -24,23 +63,40 @@ serve(async (req) => {
       );
     }
 
-    // Create Supabase client with service role key for admin access
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
+    // Validate goalId is a valid UUID
+    if (!UUID_REGEX.test(goalId)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid goalId format" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
 
-    // Get current goal
-    const { data: goal, error: fetchError } = await supabaseAdmin
+    // Validate additionalMonths is a number and within reasonable bounds
+    const months = Number(additionalMonths);
+    if (isNaN(months) || months < -12 || months > 120) {
+      return new Response(
+        JSON.stringify({ error: "additionalMonths must be between -12 and 120" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Get current goal and verify ownership
+    const { data: goal, error: fetchError } = await supabaseClient
       .from("goals")
       .select("target_date, user_id")
       .eq("id", goalId)
+      .eq("user_id", user.id)
       .single();
 
-    if (fetchError) {
-      console.error("Error fetching goal:", fetchError);
+    if (fetchError || !goal) {
       return new Response(
-        JSON.stringify({ error: "Goal not found" }),
+        JSON.stringify({ error: "Goal not found or access denied" }),
         {
           status: 404,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -50,16 +106,16 @@ serve(async (req) => {
 
     // Calculate new target date
     const currentDate = goal.target_date ? new Date(goal.target_date) : new Date();
-    currentDate.setMonth(currentDate.getMonth() + additionalMonths);
+    currentDate.setMonth(currentDate.getMonth() + months);
 
     // Update goal with new target date
-    const { error: updateError } = await supabaseAdmin
+    const { error: updateError } = await supabaseClient
       .from("goals")
       .update({ target_date: currentDate.toISOString().split('T')[0] })
-      .eq("id", goalId);
+      .eq("id", goalId)
+      .eq("user_id", user.id);
 
     if (updateError) {
-      console.error("Error updating goal:", updateError);
       return new Response(
         JSON.stringify({ error: "Failed to update goal deadline" }),
         {
@@ -69,22 +125,19 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Goal ${goalId} deadline updated: added ${additionalMonths} months`);
-
     return new Response(
       JSON.stringify({ 
         success: true, 
         newTargetDate: currentDate.toISOString().split('T')[0],
-        additionalMonths 
+        additionalMonths: months
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   } catch (error) {
-    console.error("Update goal deadline error:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
