@@ -180,7 +180,7 @@ const Onboarding = () => {
         </div>
 
         {/* Step Content */}
-        <Card className="glass-card p-8 rounded-3xl mb-6">
+        <Card className="glass-card backdrop-blur-xl p-8 rounded-3xl mb-6 border-border/50">
           <AnimatePresence mode="wait">
             <motion.div key={step} initial={{
             opacity: 0,
@@ -229,7 +229,7 @@ const Step1 = ({
     <div className="space-y-4">
       <div>
         <Label htmlFor="name">Qual é o seu nome?</Label>
-        <Input id="name" value={formData.name} onChange={e => updateField("name", e.target.value)} placeholder="Digite seu nome" className="rounded-2xl mt-2" />
+        <Input id="name" value={formData.name} onChange={e => updateField("name", e.target.value)} placeholder="Digite seu nome" className="rounded-2xl mt-2 bg-white/90 text-foreground border-border placeholder:text-muted-foreground" />
       </div>
       <div>
         <Label htmlFor="age">Quantos anos você tem?</Label>
@@ -238,11 +238,11 @@ const Step1 = ({
           if (value === "" || parseInt(value) > 0) {
             updateField("age", value);
           }
-        }} placeholder="Sua idade" className="rounded-2xl mt-2" />
+        }} placeholder="Sua idade" className="rounded-2xl mt-2 bg-white/90 text-foreground border-border placeholder:text-muted-foreground" />
       </div>
       <div>
         <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" value={formData.email} onChange={e => updateField("email", e.target.value)} placeholder="seu.email@exemplo.com" className="rounded-2xl mt-2" />
+        <Input id="email" type="email" value={formData.email} onChange={e => updateField("email", e.target.value)} placeholder="seu.email@exemplo.com" className="rounded-2xl mt-2 bg-white/90 text-foreground border-border placeholder:text-muted-foreground" />
       </div>
     </div>
   </div>;
@@ -254,7 +254,7 @@ const Step2 = ({
     <p className="text-muted-foreground mb-6">
       Para o que você está economizando? Seja específico!
     </p>
-    <Input value={formData.goalName} onChange={e => updateField("goalName", e.target.value)} placeholder="ex: PlayStation 5, Notebook Novo, Ingresso de Show" className="rounded-2xl text-lg p-6" />
+    <Input value={formData.goalName} onChange={e => updateField("goalName", e.target.value)} placeholder="ex: PlayStation 5, Notebook Novo, Ingresso de Show" className="rounded-2xl text-lg p-6 bg-white/90 text-foreground border-border placeholder:text-muted-foreground" />
   </div>;
 const Step3 = ({
   formData,
@@ -268,7 +268,7 @@ const Step3 = ({
       <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl text-muted-foreground">
         R$
       </span>
-      <Input type="number" value={formData.goalAmount} onChange={e => updateField("goalAmount", e.target.value)} placeholder="0,00" className="rounded-2xl text-2xl p-6 pl-12" step="0.01" />
+      <Input type="number" value={formData.goalAmount} onChange={e => updateField("goalAmount", e.target.value)} placeholder="0,00" className="rounded-2xl text-2xl p-6 pl-12 bg-white/90 text-foreground border-border placeholder:text-muted-foreground" step="0.01" />
     </div>
   </div>;
 const Step4 = ({
@@ -280,12 +280,12 @@ const Step4 = ({
       Isso nos ajuda a dar melhores conselhos
     </p>
     <div className="grid grid-cols-2 gap-4">
-      <button onClick={() => updateField("incomeType", "mesada")} className={`p-6 rounded-2xl border-2 transition-all hover-lift ${formData.incomeType === "mesada" ? "border-primary bg-primary/10" : "border-border glass-card"}`}>
+      <button onClick={() => updateField("incomeType", "mesada")} className={`p-6 rounded-2xl border-2 transition-all hover-lift ${formData.incomeType === "mesada" ? "border-primary bg-primary/20 text-foreground" : "border-border bg-white/5 text-foreground"}`}>
         <div className="text-4xl mb-2">💸</div>
         <div className="font-semibold">Mesada</div>
         <div className="text-sm text-muted-foreground">Dos pais/família</div>
       </button>
-      <button onClick={() => updateField("incomeType", "trabalho")} className={`p-6 rounded-2xl border-2 transition-all hover-lift ${formData.incomeType === "trabalho" ? "border-primary bg-primary/10" : "border-border glass-card"}`}>
+      <button onClick={() => updateField("incomeType", "trabalho")} className={`p-6 rounded-2xl border-2 transition-all hover-lift ${formData.incomeType === "trabalho" ? "border-primary bg-primary/20 text-foreground" : "border-border bg-white/5 text-foreground"}`}>
         <div className="text-4xl mb-2">💼</div>
         <div className="font-semibold">Renda Própria</div>
         <div className="text-sm text-muted-foreground">De trabalho/freela</div>
@@ -301,9 +301,9 @@ const Step5 = ({
       Escolha um companheiro para sua jornada
     </p>
     <div className="grid grid-cols-5 gap-3">
-      {avatars.map(avatar => <button key={avatar.id} onClick={() => updateField("avatarId", avatar.id)} className={`aspect-square rounded-2xl p-4 transition-all hover-lift ${formData.avatarId === avatar.id ? "border-4 border-primary bg-primary/10 scale-105" : "border-2 border-border glass-card"}`}>
+      {avatars.map(avatar => <button key={avatar.id} onClick={() => updateField("avatarId", avatar.id)} className={`aspect-square rounded-2xl p-4 transition-all hover-lift ${formData.avatarId === avatar.id ? "border-4 border-primary bg-primary/20 scale-105" : "border-2 border-border bg-white/5"}`}>
           <div className="text-5xl">{avatar.emoji}</div>
-          <div className="text-xs mt-2 font-medium">{avatar.name}</div>
+          <div className="text-xs mt-2 font-medium text-foreground">{avatar.name}</div>
         </button>)}
     </div>
   </div>;
@@ -317,7 +317,7 @@ const Step6 = ({
     </p>
     <div>
       <Label htmlFor="password">Senha</Label>
-      <Input id="password" type="password" value={formData.password} onChange={e => updateField("password", e.target.value)} placeholder="Pelo menos 6 caracteres" className="rounded-2xl mt-2" />
+      <Input id="password" type="password" value={formData.password} onChange={e => updateField("password", e.target.value)} placeholder="Pelo menos 6 caracteres" className="rounded-2xl mt-2 bg-white/90 text-foreground border-border placeholder:text-muted-foreground" />
       <p className="text-xs text-muted-foreground mt-2">Mínimo de 6 digitos</p>
     </div>
   </div>;
