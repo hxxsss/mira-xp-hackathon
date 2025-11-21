@@ -1,22 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Wallet, DollarSign, PiggyBank, CreditCard, BarChart3, Sparkles, PlayCircle } from "lucide-react";
+import {
+  Target,
+  TrendingUp,
+  Wallet,
+  DollarSign,
+  PiggyBank,
+  CreditCard,
+  BarChart3,
+  Sparkles,
+  PlayCircle,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 const Landing = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    supabase.auth.getSession().then(({
-      data: {
-        session
-      }
-    }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate("/dashboard");
       }
     });
   }, [navigate]);
-  return <div className="min-h-screen bg-white">
+  return (
+    <div className="min-h-screen bg-white">
       {/* Navbar */}
       <nav className="w-full bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -26,15 +33,26 @@ const Landing = () => {
             </div>
             <span className="text-2xl font-logo font-bold text-gray-900 tracking-wider">MIRA</span>
           </div>
-          
+
           <div className="hidden md:flex items-center gap-8">
-            <a href="#home" className="text-gray-700 hover:text-gray-900 font-medium">Início</a>
-            <a href="#recursos" className="text-gray-700 hover:text-gray-900 font-medium">Recursos</a>
-            <a href="#produto" className="text-gray-700 hover:text-gray-900 font-medium">Produto</a>
-            <a href="#precos" className="text-gray-700 hover:text-gray-900 font-medium">Preços</a>
+            <a href="#home" className="text-gray-700 hover:text-gray-900 font-medium">
+              Início
+            </a>
+            <a href="#recursos" className="text-gray-700 hover:text-gray-900 font-medium">
+              Recursos
+            </a>
+            <a href="#produto" className="text-gray-700 hover:text-gray-900 font-medium">
+              Produto
+            </a>
+            <a href="#precos" className="text-gray-700 hover:text-gray-900 font-medium">
+              Preços
+            </a>
           </div>
 
-          <Button onClick={() => navigate("/onboarding")} className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors">
+          <Button
+            onClick={() => navigate("/onboarding")}
+            className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
+          >
             Começar Agora
           </Button>
         </div>
@@ -43,7 +61,6 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="relative w-full pt-20 pb-0 px-6 overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto relative">
-          
           {/* Floating Icons - Left Side */}
           <div className="absolute top-24 left-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl animate-float z-20 flex-row flex items-center justify-center">
             <DollarSign className="text-indigo-600 w-10 h-10" />
@@ -54,7 +71,7 @@ const Landing = () => {
           <div className="absolute top-72 left-[18%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
             <Wallet className="text-purple-600 w-10 h-10" />
           </div>
-          
+
           {/* Floating Icons - Right Side */}
           <div className="absolute top-20 right-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
             <CreditCard className="text-blue-600 w-10 h-10" />
@@ -87,12 +104,15 @@ const Landing = () => {
               <br />
               <span className="text-indigo-600">realidade</span> com um clique
             </h1>
-            
+
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Transforme suas metas financeiras em conquistas reais. Alcance seus objetivos em menos tempo com gamificação e educação financeira.
+              Alcance seus objetivos em menos tempo com gamificação e educação financeira.
             </p>
 
-            <button onClick={() => navigate("/login")} className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors">
+            <button
+              onClick={() => navigate("/login")}
+              className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors"
+            >
               <PlayCircle className="w-6 h-6" />
               <span>Ver Demo</span>
               <span className="text-gray-400">2min</span>
@@ -114,16 +134,18 @@ const Landing = () => {
                     <div className="w-3 h-3 rounded-full bg-green-400"></div>
                   </div>
                 </div>
-                
+
                 {/* Dashboard Preview */}
                 <div className="bg-white p-8">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                       <Target className="text-gray-600 w-5 h-5" />
                     </div>
-                    <span className="text-sm text-gray-500 uppercase tracking-wider font-semibold">Suas Metas Financeiras</span>
+                    <span className="text-sm text-gray-500 uppercase tracking-wider font-semibold">
+                      Suas Metas Financeiras
+                    </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-3 gap-4">
                     <div className="h-32 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
                       <PiggyBank className="w-12 h-12 text-blue-600" />
@@ -150,6 +172,7 @@ const Landing = () => {
           </p>
         </div>
       </section>
-    </div>;
+    </div>
+  );
 };
 export default Landing;
