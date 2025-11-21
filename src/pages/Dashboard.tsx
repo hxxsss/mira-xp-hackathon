@@ -306,7 +306,7 @@ const Dashboard = () => {
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
-          {/* Left: Profile, Ranking & Financas */}
+          {/* Left: Profile, Ranking, Financas & Logout */}
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
@@ -331,11 +331,19 @@ const Dashboard = () => {
             >
               <Wallet className="w-6 h-6" />
             </button>
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center justify-center w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 hover:scale-110 transition-all"
+              title="Sair da conta"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Center: Logo */}
           <div className="text-center relative">
-            <h1 className="text-5xl md:text-6xl font-black tracking-widest relative">
+            <h1 className="text-7xl md:text-8xl font-black tracking-widest relative">
               {/* Glow neon effect */}
               <span className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-70 animate-pulse"></span>
               
@@ -346,9 +354,9 @@ const Dashboard = () => {
             </h1>
           </div>
 
-          {/* Right: Goal + Stats + Logout stacked */}
-          <div className="flex items-start gap-2 justify-end">
-            {/* Wrapper vertical para empilhar Meta e (Stats+Logout) */}
+          {/* Right: Goal + Stats */}
+          <div className="flex items-center gap-2 justify-end">
+            {/* Wrapper vertical para empilhar Meta e Stats */}
             <div className="flex flex-col gap-2 items-end">
               
               {/* Enhanced Goal Display */}
@@ -417,26 +425,14 @@ const Dashboard = () => {
                 </motion.button>
               )}
 
-              {/* Stats + Logout na mesma linha */}
-              <div className="flex items-center gap-2 justify-between w-full">
-                {/* Gamified Stats */}
-                <div className="flex items-center gap-2">
-                  <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                    <span className="text-xs text-white font-bold">⚡ {profile?.current_xp || 0}</span>
-                  </div>
-                  <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                    <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
-                  </div>
+              {/* Stats */}
+              <div className="flex items-center gap-2">
+                <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
+                  <span className="text-xs text-white font-bold">⚡ {profile?.current_xp || 0}</span>
                 </div>
-
-                {/* Logout Button */}
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center justify-center w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 hover:scale-110 transition-all"
-                  title="Sair da conta"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
+                <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
+                  <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
+                </div>
               </div>
 
             </div>
