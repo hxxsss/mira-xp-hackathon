@@ -98,16 +98,55 @@ const Landing = () => {
           {/* Scroll Animation Container */}
           <div className="relative z-10 w-full -mt-56">
             <ContainerScroll titleComponent={<></>}>
-              <div className="bg-white p-8 h-full w-full">
-                <div className="grid grid-cols-3 gap-4 h-full">
-                  <div className="h-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
-                    <PiggyBank className="w-12 h-12 text-blue-600" />
+              <div className="bg-white p-6 h-full w-full">
+                <div className="space-y-4 h-full">
+                  {/* Header Cards */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-3 flex flex-col items-center justify-center">
+                      <TrendingUp className="w-8 h-8 text-emerald-600 mb-2" />
+                      <div className="h-2 w-12 bg-emerald-300 rounded"></div>
+                    </div>
+                    <div className="bg-gradient-to-br from-rose-50 to-rose-100 rounded-xl p-3 flex flex-col items-center justify-center">
+                      <Wallet className="w-8 h-8 text-rose-600 mb-2" />
+                      <div className="h-2 w-12 bg-rose-300 rounded"></div>
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 flex flex-col items-center justify-center">
+                      <PiggyBank className="w-8 h-8 text-blue-600 mb-2" />
+                      <div className="h-2 w-12 bg-blue-300 rounded"></div>
+                    </div>
                   </div>
-                  <div className="h-full bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-12 h-12 text-purple-600" />
+
+                  {/* Main Content Area */}
+                  <div className="grid grid-cols-2 gap-3 flex-1">
+                    {/* Chart/Graph Area */}
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 flex items-end justify-between gap-1">
+                      <div className="w-full h-16 bg-purple-200 rounded-t"></div>
+                      <div className="w-full h-24 bg-purple-300 rounded-t"></div>
+                      <div className="w-full h-12 bg-purple-200 rounded-t"></div>
+                      <div className="w-full h-20 bg-purple-400 rounded-t"></div>
+                    </div>
+
+                    {/* Goals/Targets */}
+                    <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 flex flex-col gap-2">
+                      <Target className="w-8 h-8 text-amber-600 mb-1" />
+                      <div className="h-2 w-full bg-amber-200 rounded"></div>
+                      <div className="h-2 w-3/4 bg-amber-300 rounded"></div>
+                      <div className="h-2 w-1/2 bg-amber-200 rounded"></div>
+                    </div>
                   </div>
-                  <div className="h-full bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl flex items-center justify-center">
-                    <Sparkles className="w-12 h-12 text-cyan-600" />
+
+                  {/* Transaction List */}
+                  <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 bg-cyan-300 rounded-full"></div>
+                      <div className="h-2 flex-1 bg-cyan-200 rounded"></div>
+                      <div className="h-2 w-12 bg-cyan-300 rounded"></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 bg-cyan-400 rounded-full"></div>
+                      <div className="h-2 flex-1 bg-cyan-300 rounded"></div>
+                      <div className="h-2 w-12 bg-cyan-200 rounded"></div>
+                    </div>
                   </div>
                 </div>
               </div>
