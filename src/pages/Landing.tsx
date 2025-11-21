@@ -97,18 +97,7 @@ const Landing = () => {
 
           {/* Scroll Animation Container */}
           <div className="relative z-10 w-full -mt-48">
-            <ContainerScroll
-              titleComponent={
-                <>
-                  <h1 className="text-4xl font-semibold text-gray-900">
-                    Onde suas metas se tornam <br />
-                    <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none text-gray-900">
-                      realidade
-                    </span>
-                  </h1>
-                </>
-              }
-            >
+            <ContainerScroll titleComponent={<></>}>
               <div className="bg-white p-8 h-full w-full">
                 <div className="grid grid-cols-3 gap-4 h-full">
                   <div className="h-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
@@ -123,6 +112,16 @@ const Landing = () => {
                 </div>
               </div>
             </ContainerScroll>
+          </div>
+
+          {/* Text Below Tablet */}
+          <div className="relative z-10 text-center max-w-2xl mx-auto mt-16">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Onde suas metas se tornam
+            </h2>
+            <span className="text-6xl md:text-8xl font-bold text-gray-900">
+              realidade
+            </span>
           </div>
         </div>
       </section>
