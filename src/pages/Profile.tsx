@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles, ArrowLeft, Lock, Trash2 } from "lucide-react";
+import { Sparkles, ArrowLeft, Lock, Trash2, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -282,6 +282,30 @@ export default function Profile() {
                   </div>
                 </form>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Logout */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <LogOut className="w-5 h-5" />
+                Sair da Conta
+              </CardTitle>
+              <CardDescription>
+                Encerre sua sessão atual
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  navigate("/");
+                }}
+              >
+                Sair
+              </Button>
             </CardContent>
           </Card>
 
