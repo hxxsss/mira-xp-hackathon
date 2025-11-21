@@ -43,6 +43,7 @@ const ModulePage = () => {
   const [loading, setLoading] = useState(true);
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState<number[]>([]);
+  const [quizKey, setQuizKey] = useState(0);
 
   useEffect(() => {
     loadModule();
@@ -144,12 +145,16 @@ const ModulePage = () => {
         await completeModule(score);
       } else {
         toast({
-          title: "Tente novamente",
-          description: `Você acertou ${correctAnswers} de ${currentLesson.questions.length}. Tente conseguir pelo menos 60%!`,
-          variant: "destructive"
+          title: "Continue tentando! 💪",
+          description: `Você acertou ${correctAnswers} de ${currentLesson.questions.length}. Revise o conteúdo e tente novamente!`,
         });
       }
     }
+  };
+
+  const handleRetryQuiz = () => {
+    setQuizKey(prev => prev + 1);
+    setQuizAnswers([]);
   };
 
   const completeModule = async (quizScore: number) => {
@@ -234,8 +239,10 @@ const ModulePage = () => {
             <LessonContent lesson={currentLesson} />
           ) : (
             <QuizComponent 
+              key={quizKey}
               lesson={currentLesson} 
               onSubmit={handleQuizSubmit}
+              onRetry={handleRetryQuiz}
             />
           )}
 
