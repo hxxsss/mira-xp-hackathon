@@ -116,16 +116,16 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
             transition={{ duration: 0.3, ease: "easeOut" }}
           />
 
-          {/* Typing Indicator */}
+          {/* Character Counter */}
           <AnimatePresence>
-            {isFocused && (
+            {isFocused && hasValue && !errorMessage && (
               <motion.div
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 5 }}
                 className="absolute -bottom-6 left-0 text-xs text-muted-foreground"
               >
-                {hasValue ? `${value.length} caracteres` : "Digite algo..."}
+                {value.length} caracteres
               </motion.div>
             )}
           </AnimatePresence>
