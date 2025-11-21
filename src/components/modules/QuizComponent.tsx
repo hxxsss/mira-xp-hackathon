@@ -24,9 +24,10 @@ interface QuizComponentProps {
     questions?: Question[];
   };
   onSubmit: (answers: number[]) => void;
+  onRetry?: () => void;
 }
 
-export const QuizComponent = ({ lesson, onSubmit }: QuizComponentProps) => {
+export const QuizComponent = ({ lesson, onSubmit, onRetry }: QuizComponentProps) => {
   const [answers, setAnswers] = useState<number[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showHint, setShowHint] = useState(false);
@@ -120,7 +121,11 @@ export const QuizComponent = ({ lesson, onSubmit }: QuizComponentProps) => {
 
         <RadioGroup 
           value={selectedAnswer?.toString()} 
-          onValueChange={(value) => handleAnswerSelect(parseInt(value))}
+          onValueChange={(value) => {
+            if (!hasAnswered) {
+              handleAnswerSelect(parseInt(value));
+            }
+          }}
           disabled={hasAnswered}
         >
           <div className="space-y-3">
@@ -192,15 +197,7 @@ export const QuizComponent = ({ lesson, onSubmit }: QuizComponentProps) => {
         )}
       </Card>
 
-      <div className="flex justify-between">
-        <Button
-          onClick={handlePrevious}
-          disabled={currentQuestionIndex === 0}
-          variant="outline"
-        >
-          Anterior
-        </Button>
-
+      <div className="flex justify-end gap-2">
         {!hasAnswered ? (
           <Button
             onClick={handleConfirmAnswer}
@@ -210,12 +207,23 @@ export const QuizComponent = ({ lesson, onSubmit }: QuizComponentProps) => {
             Confirmar Resposta
           </Button>
         ) : (
-          <Button
-            onClick={handleNext}
-            className="bg-primary hover:bg-primary/90"
-          >
-            {isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}
-          </Button>
+          <>
+            {onRetry && (
+              <Button
+                onClick={onRetry}
+                variant="outline"
+                className="gap-2"
+              >
+                Tentar Novamente
+              </Button>
+            )}
+            <Button
+              onClick={handleNext}
+              className="bg-primary hover:bg-primary/90"
+            >
+              {isLastQuestion ? 'Finalizar Quiz' : 'Próxima Pergunta'}
+            </Button>
+          </>
         )}
       </div>
     </div>
