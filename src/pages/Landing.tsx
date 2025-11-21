@@ -169,40 +169,40 @@ const Landing = () => {
           </div>
 
           {/* Characters Section */}
-          <div className="relative z-10 w-full mt-24 overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+          <div className="relative z-10 w-screen mt-24 -mx-6 overflow-hidden">
+            <div className="w-full">
+              <h2 className="text-4xl font-bold text-center text-gray-900 mb-16 px-6">
                 Conheça nossos personagens
               </h2>
               <div className="grid grid-cols-5 gap-0">
                 {/* Character 1 - Blue */}
-                <div className="bg-gradient-to-br from-blue-400 to-blue-600 h-96 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
-                  <img src={metaCharacter} alt="Meta" className="w-48 h-48 object-contain mb-4" />
-                  <h3 className="text-white font-bold text-xl">Meta</h3>
+                <div className="bg-[#60A5FA] h-[500px] flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
+                  <img src={metaCharacter} alt="Meta" className="w-56 h-56 object-contain mb-6" />
+                  <h3 className="text-white font-bold text-2xl">Meta</h3>
                 </div>
 
                 {/* Character 2 - Purple */}
-                <div className="bg-gradient-to-br from-purple-400 to-purple-600 h-96 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
-                  <img src={poupadorCharacter} alt="Poupador" className="w-48 h-48 object-contain mb-4" />
-                  <h3 className="text-white font-bold text-xl">Poupador</h3>
+                <div className="bg-[#A78BFA] h-[500px] flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
+                  <img src={poupadorCharacter} alt="Poupador" className="w-56 h-56 object-contain mb-6" />
+                  <h3 className="text-white font-bold text-2xl">Poupador</h3>
                 </div>
 
                 {/* Character 3 - Pink */}
-                <div className="bg-gradient-to-br from-pink-400 to-pink-600 h-96 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
-                  <img src={gestorCharacter} alt="Gestor" className="w-48 h-48 object-contain mb-4" />
-                  <h3 className="text-white font-bold text-xl">Gestor</h3>
+                <div className="bg-[#F472B6] h-[500px] flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
+                  <img src={gestorCharacter} alt="Gestor" className="w-56 h-56 object-contain mb-6" />
+                  <h3 className="text-white font-bold text-2xl">Gestor</h3>
                 </div>
 
                 {/* Character 4 - Orange */}
-                <div className="bg-gradient-to-br from-orange-400 to-orange-600 h-96 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
-                  <img src={investidorCharacter} alt="Investidor" className="w-48 h-48 object-contain mb-4" />
-                  <h3 className="text-white font-bold text-xl">Investidor</h3>
+                <div className="bg-[#FB923C] h-[500px] flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
+                  <img src={investidorCharacter} alt="Investidor" className="w-56 h-56 object-contain mb-6" />
+                  <h3 className="text-white font-bold text-2xl">Investidor</h3>
                 </div>
 
                 {/* Character 5 - Green */}
-                <div className="bg-gradient-to-br from-green-400 to-green-600 h-96 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
-                  <img src={sonhadorCharacter} alt="Sonhador" className="w-48 h-48 object-contain mb-4" />
-                  <h3 className="text-white font-bold text-xl">Sonhador</h3>
+                <div className="bg-[#4ADE80] h-[500px] flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300 px-4">
+                  <img src={sonhadorCharacter} alt="Sonhador" className="w-56 h-56 object-contain mb-6" />
+                  <h3 className="text-white font-bold text-2xl">Sonhador</h3>
                 </div>
               </div>
             </div>
