@@ -162,6 +162,56 @@ const Landing = () => {
               realidade
             </span>
           </div>
+
+          {/* Characters Section */}
+          <div className="relative z-10 w-full mt-24 overflow-hidden">
+            <div className="max-w-7xl mx-auto px-6">
+              <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+                Conheça nossos personagens
+              </h2>
+              <div className="grid grid-cols-5 gap-0">
+                {/* Character 1 - Blue */}
+                <div className="bg-gradient-to-br from-blue-400 to-blue-600 h-80 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300">
+                  <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-4 shadow-2xl">
+                    <Target className="w-16 h-16 text-blue-600" />
+                  </div>
+                  <h3 className="text-white font-bold text-xl">Meta</h3>
+                </div>
+
+                {/* Character 2 - Purple */}
+                <div className="bg-gradient-to-br from-purple-400 to-purple-600 h-80 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300">
+                  <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-4 shadow-2xl">
+                    <PiggyBank className="w-16 h-16 text-purple-600" />
+                  </div>
+                  <h3 className="text-white font-bold text-xl">Poupador</h3>
+                </div>
+
+                {/* Character 3 - Pink */}
+                <div className="bg-gradient-to-br from-pink-400 to-pink-600 h-80 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300">
+                  <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-4 shadow-2xl">
+                    <Wallet className="w-16 h-16 text-pink-600" />
+                  </div>
+                  <h3 className="text-white font-bold text-xl">Gestor</h3>
+                </div>
+
+                {/* Character 4 - Orange */}
+                <div className="bg-gradient-to-br from-orange-400 to-orange-600 h-80 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300">
+                  <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-4 shadow-2xl">
+                    <TrendingUp className="w-16 h-16 text-orange-600" />
+                  </div>
+                  <h3 className="text-white font-bold text-xl">Investidor</h3>
+                </div>
+
+                {/* Character 5 - Green */}
+                <div className="bg-gradient-to-br from-green-400 to-green-600 h-80 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-105 transition-transform duration-300">
+                  <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-4 shadow-2xl">
+                    <Sparkles className="w-16 h-16 text-green-600" />
+                  </div>
+                  <h3 className="text-white font-bold text-xl">Sonhador</h3>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
