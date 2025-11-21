@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, LogOut, User, Lock, Target, TrendingUp, Wallet, Trophy } from "lucide-react";
+import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Wallet, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -211,11 +211,6 @@ const Dashboard = () => {
     setCurrentTrackIndex(activeTrackIndex >= 0 ? activeTrackIndex : 0);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
-  };
-
   const handleModuleClick = (moduleId: string, status: string, trackStatus: string) => {
     if (trackStatus === "locked") {
       toast({
@@ -316,29 +311,21 @@ const Dashboard = () => {
               <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
             </button>
 
-            <button 
-              onClick={() => navigate('/ranking')}
-              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
-              title="Ranking"
-            >
-              <Trophy className="w-6 h-6" />
-            </button>
+          <button 
+            onClick={() => navigate('/ranking')}
+            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
+            title="Ranking"
+          >
+            <Trophy className="w-6 h-6" />
+          </button>
 
-            <button 
-              onClick={() => navigate('/financas')}
-              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
-              title="Finanças"
-            >
-              <Wallet className="w-6 h-6" />
-            </button>
-
-            <button
-              onClick={handleLogout}
-              className="flex items-center justify-center w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 hover:scale-110 transition-all"
-              title="Sair da conta"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
+          <button 
+            onClick={() => navigate('/financas')}
+            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
+            title="Finanças"
+          >
+            <Wallet className="w-6 h-6" />
+          </button>
           </div>
 
           {/* Center: Logo */}
