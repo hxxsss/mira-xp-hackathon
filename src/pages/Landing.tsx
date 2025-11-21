@@ -82,15 +82,14 @@ const Landing = () => {
 
           {/* Hero Content */}
           <div className="relative z-10 text-center max-w-4xl mx-auto">
-            <h1 className="text-6xl font-bold text-gray-900 leading-tight mb-6 text-center md:text-6xl">
-              Onde suas metas se tornam
-realidade em menos tempo                   <span className="text-indigo-600">metas</span> se tornam
+            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 leading-tight mb-6">
+              Onde suas <span className="text-indigo-600">metas</span> se tornam
               <br />
               <span className="text-indigo-600">realidade</span> com um clique
             </h1>
             
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Transforme suas metas financeiras em conquistas reais. Alcance seus objetivos em menos t                        
+              Transforme suas metas financeiras em conquistas reais. Alcance seus objetivos em menos tempo com gamificação e educação financeira.
             </p>
 
             <button onClick={() => navigate("/login")} className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors">
