@@ -310,33 +310,39 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
+              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all group"
+              title="Perfil"
             >
-              <span className="text-xl">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
-              <span className="hidden md:inline font-medium">{profile?.name || 'Perfil'}</span>
+              <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
             </button>
 
             <button 
               onClick={() => navigate('/ranking')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
+              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
+              title="Ranking"
             >
-              <Trophy className="w-5 h-5" />
-              <span className="hidden md:inline font-medium">Ranking</span>
+              <Trophy className="w-6 h-6" />
             </button>
 
             <button 
               onClick={() => navigate('/financas')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all"
+              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
+              title="Finanças"
             >
-              <Wallet className="w-5 h-5" />
-              <span className="hidden md:inline font-medium">Finanças</span>
+              <Wallet className="w-6 h-6" />
             </button>
           </div>
 
           {/* Center: Logo */}
-          <div className="text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-white tracking-wider">
-              MIRA
+          <div className="text-center relative">
+            <h1 className="text-4xl md:text-5xl font-black text-white tracking-widest relative">
+              {/* Glow neon effect */}
+              <span className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-70 animate-pulse"></span>
+              
+              {/* Texto principal com sombras neon */}
+              <span className="relative bg-gradient-to-r from-cyan-300 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] drop-shadow-[0_0_50px_rgba(236,72,153,0.6)]">
+                MIRA
+              </span>
             </h1>
           </div>
 
@@ -421,10 +427,10 @@ const Dashboard = () => {
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="p-2 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 transition-all group"
+              className="flex items-center justify-center w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 hover:scale-110 transition-all"
               title="Sair da conta"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
         </div>
