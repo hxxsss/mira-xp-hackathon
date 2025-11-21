@@ -103,12 +103,24 @@ const Landing = () => {
           {/* Scroll Animation Container */}
           <div className="relative z-10 w-full -mt-56">
             <ContainerScroll titleComponent={<></>}>
-              <img
-                src="/placeholder.svg"
-                alt="Dashboard Preview"
-                className="mx-auto rounded-2xl object-cover h-full object-left-top"
-                draggable={false}
-              />
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 h-full w-full rounded-2xl">
+                <div className="grid grid-cols-3 gap-6 h-full max-w-5xl mx-auto">
+                  {/* Card 1 - Azul claro */}
+                  <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-3xl flex items-center justify-center">
+                    <PiggyBank className="w-20 h-20 text-blue-600" />
+                  </div>
+                  
+                  {/* Card 2 - Roxo claro */}
+                  <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-3xl flex items-center justify-center">
+                    <TrendingUp className="w-20 h-20 text-purple-600" />
+                  </div>
+                  
+                  {/* Card 3 - Cyan claro */}
+                  <div className="bg-gradient-to-br from-cyan-100 to-cyan-200 rounded-3xl flex items-center justify-center">
+                    <Sparkles className="w-20 h-20 text-cyan-600" />
+                  </div>
+                </div>
+              </div>
             </ContainerScroll>
           </div>
 
