@@ -48,9 +48,9 @@ const Landing = () => {
             </a>
           </div>
 
-          <Button onClick={() => navigate("/onboarding")} className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors">
-            Começar Agora
-          </Button>
+            <Button onClick={() => navigate("/login")} className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors">
+              Login
+            </Button>
         </div>
       </nav>
 
