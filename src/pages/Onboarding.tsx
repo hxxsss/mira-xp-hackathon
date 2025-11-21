@@ -468,7 +468,6 @@ const Onboarding = () => {
                               updateField("name", value);
                               setValidationErrors(prev => ({ ...prev, name: '' }));
                             }}
-                            placeholder="Digite seu nome"
                             isValid={validateField('name', formData.name).isValid}
                             showValidation={formData.name.length > 0}
                             errorMessage={validationErrors.name}
@@ -486,7 +485,6 @@ const Onboarding = () => {
                               updateField("age", value);
                               setValidationErrors(prev => ({ ...prev, age: '' }));
                             }}
-                            placeholder="Sua idade"
                             isValid={validateField('age', formData.age).isValid}
                             showValidation={formData.age.length > 0}
                             errorMessage={validationErrors.age}
@@ -504,7 +502,6 @@ const Onboarding = () => {
                               updateField("email", value);
                               setValidationErrors(prev => ({ ...prev, email: '' }));
                             }}
-                            placeholder="seu.email@exemplo.com"
                             isValid={validateField('email', formData.email).isValid}
                             showValidation={formData.email.length > 0}
                             errorMessage={validationErrors.email}
@@ -535,7 +532,6 @@ const Onboarding = () => {
                               updateField("goalName", value);
                               setValidationErrors(prev => ({ ...prev, goalName: '' }));
                             }}
-                            placeholder="ex: PlayStation 5, Notebook Novo, Ingresso de Show"
                             isValid={validateField('goalName', formData.goalName).isValid}
                             showValidation={formData.goalName.length > 0}
                             errorMessage={validationErrors.goalName}
@@ -558,10 +554,10 @@ const Onboarding = () => {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <motion.div custom={0} variants={fieldVariants as any}>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-muted-foreground z-10 pointer-events-none">
-                              R$
-                            </span>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground z-10 pointer-events-none">
+                      R$
+                    </span>
                             <AnimatedInput
                               id="goalAmount"
                               label="Valor da meta (R$)"
@@ -701,7 +697,6 @@ const Onboarding = () => {
                               updateField("password", value);
                               setValidationErrors(prev => ({ ...prev, password: '' }));
                             }}
-                            placeholder="Pelo menos 6 caracteres"
                             isValid={validateField('password', formData.password).isValid}
                             showValidation={formData.password.length > 0}
                             errorMessage={validationErrors.password}
