@@ -15,6 +15,21 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { z } from "zod";
+
+// Validation schemas
+const nameSchema = z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(100, "Nome muito longo");
+const ageSchema = z.string().refine((val) => {
+  const num = Number(val);
+  return !isNaN(num) && num >= 1 && num <= 120;
+}, "Idade deve estar entre 1 e 120 anos");
+const emailSchema = z.string().trim().email("Email inválido").max(255, "Email muito longo");
+const goalNameSchema = z.string().trim().min(3, "Meta deve ter pelo menos 3 caracteres").max(200, "Meta muito longa");
+const goalAmountSchema = z.string().refine((val) => {
+  const num = Number(val);
+  return !isNaN(num) && num > 0;
+}, "Valor deve ser maior que zero");
+const passwordSchema = z.string().min(6, "Senha deve ter pelo menos 6 caracteres").max(100, "Senha muito longa");
 const avatars = [{
   id: 1,
   emoji: "🦄",
@@ -149,6 +164,7 @@ const Onboarding = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
   const [shakeFields, setShakeFields] = useState<Record<string, boolean>>({});
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -168,25 +184,86 @@ const Onboarding = () => {
     }));
   };
 
+  const validateField = (field: string, value: string): { isValid: boolean; error?: string } => {
+    try {
+      switch (field) {
+        case 'name':
+          nameSchema.parse(value);
+          break;
+        case 'age':
+          ageSchema.parse(value);
+          break;
+        case 'email':
+          emailSchema.parse(value);
+          break;
+        case 'goalName':
+          goalNameSchema.parse(value);
+          break;
+        case 'goalAmount':
+          goalAmountSchema.parse(value);
+          break;
+        case 'password':
+          passwordSchema.parse(value);
+          break;
+      }
+      return { isValid: true };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return { isValid: false, error: error.errors[0].message };
+      }
+      return { isValid: false, error: "Valor inválido" };
+    }
+  };
+
   const nextStep = () => {
-    if (!isStepValid()) {
-      // Trigger shake animation on invalid fields
-      const invalidFields: Record<string, boolean> = {};
-      if (currentStep === 0) {
-        if (!formData.name.trim()) invalidFields.name = true;
-        if (!formData.age) invalidFields.age = true;
-        if (!formData.email.trim()) invalidFields.email = true;
-      } else if (currentStep === 1) {
-        if (!formData.goalName.trim()) invalidFields.goalName = true;
-      } else if (currentStep === 2) {
-        if (!formData.goalAmount) invalidFields.goalAmount = true;
-      } else if (currentStep === 5) {
-        if (formData.password.length < 6) invalidFields.password = true;
+    const invalidFields: Record<string, boolean> = {};
+    const errors: Record<string, string> = {};
+    
+    if (currentStep === 0) {
+      const nameValidation = validateField('name', formData.name);
+      if (!nameValidation.isValid) {
+        invalidFields.name = true;
+        errors.name = nameValidation.error || '';
       }
       
+      const ageValidation = validateField('age', formData.age);
+      if (!ageValidation.isValid) {
+        invalidFields.age = true;
+        errors.age = ageValidation.error || '';
+      }
+      
+      const emailValidation = validateField('email', formData.email);
+      if (!emailValidation.isValid) {
+        invalidFields.email = true;
+        errors.email = emailValidation.error || '';
+      }
+    } else if (currentStep === 1) {
+      const goalNameValidation = validateField('goalName', formData.goalName);
+      if (!goalNameValidation.isValid) {
+        invalidFields.goalName = true;
+        errors.goalName = goalNameValidation.error || '';
+      }
+    } else if (currentStep === 2) {
+      const goalAmountValidation = validateField('goalAmount', formData.goalAmount);
+      if (!goalAmountValidation.isValid) {
+        invalidFields.goalAmount = true;
+        errors.goalAmount = goalAmountValidation.error || '';
+      }
+    } else if (currentStep === 5) {
+      const passwordValidation = validateField('password', formData.password);
+      if (!passwordValidation.isValid) {
+        invalidFields.password = true;
+        errors.password = passwordValidation.error || '';
+      }
+    }
+    
+    if (Object.keys(invalidFields).length > 0) {
       setShakeFields(invalidFields);
+      setValidationErrors(errors);
       setTimeout(() => setShakeFields({}), 500);
-      toast.error("Preencha todos os campos corretamente");
+      toast.error("Preencha todos os campos corretamente", {
+        description: Object.values(errors)[0]
+      });
       return;
     }
 
@@ -387,9 +464,14 @@ const Onboarding = () => {
                             id="name"
                             label="Qual é o seu nome?"
                             value={formData.name}
-                            onValueChange={(value) => updateField("name", value)}
+                            onValueChange={(value) => {
+                              updateField("name", value);
+                              setValidationErrors(prev => ({ ...prev, name: '' }));
+                            }}
                             placeholder="Digite seu nome"
-                            isValid={formData.name.trim().length >= 2}
+                            isValid={validateField('name', formData.name).isValid}
+                            showValidation={formData.name.length > 0}
+                            errorMessage={validationErrors.name}
                             shouldShake={shakeFields.name}
                             required
                           />
@@ -400,9 +482,14 @@ const Onboarding = () => {
                             label="Quantos anos você tem?"
                             type="number"
                             value={formData.age}
-                            onValueChange={(value) => updateField("age", value)}
+                            onValueChange={(value) => {
+                              updateField("age", value);
+                              setValidationErrors(prev => ({ ...prev, age: '' }));
+                            }}
                             placeholder="Sua idade"
-                            isValid={Number(formData.age) >= 1 && Number(formData.age) <= 120}
+                            isValid={validateField('age', formData.age).isValid}
+                            showValidation={formData.age.length > 0}
+                            errorMessage={validationErrors.age}
                             shouldShake={shakeFields.age}
                             required
                           />
@@ -413,9 +500,14 @@ const Onboarding = () => {
                             label="Email"
                             type="email"
                             value={formData.email}
-                            onValueChange={(value) => updateField("email", value)}
+                            onValueChange={(value) => {
+                              updateField("email", value);
+                              setValidationErrors(prev => ({ ...prev, email: '' }));
+                            }}
                             placeholder="seu.email@exemplo.com"
-                            isValid={/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)}
+                            isValid={validateField('email', formData.email).isValid}
+                            showValidation={formData.email.length > 0}
+                            errorMessage={validationErrors.email}
                             shouldShake={shakeFields.email}
                             required
                           />
@@ -439,9 +531,14 @@ const Onboarding = () => {
                             id="goalName"
                             label="Sua meta"
                             value={formData.goalName}
-                            onValueChange={(value) => updateField("goalName", value)}
+                            onValueChange={(value) => {
+                              updateField("goalName", value);
+                              setValidationErrors(prev => ({ ...prev, goalName: '' }));
+                            }}
                             placeholder="ex: PlayStation 5, Notebook Novo, Ingresso de Show"
-                            isValid={formData.goalName.trim().length >= 3}
+                            isValid={validateField('goalName', formData.goalName).isValid}
+                            showValidation={formData.goalName.length > 0}
+                            errorMessage={validationErrors.goalName}
                             shouldShake={shakeFields.goalName}
                             required
                           />
@@ -470,9 +567,14 @@ const Onboarding = () => {
                               label="Valor da meta (R$)"
                               type="number"
                               value={formData.goalAmount}
-                              onValueChange={(value) => updateField("goalAmount", value)}
+                              onValueChange={(value) => {
+                                updateField("goalAmount", value);
+                                setValidationErrors(prev => ({ ...prev, goalAmount: '' }));
+                              }}
                               placeholder="0,00"
-                              isValid={Number(formData.goalAmount) > 0}
+                              isValid={validateField('goalAmount', formData.goalAmount).isValid}
+                              showValidation={formData.goalAmount.length > 0}
+                              errorMessage={validationErrors.goalAmount}
                               shouldShake={shakeFields.goalAmount}
                               className="pl-10"
                               required
@@ -595,11 +697,15 @@ const Onboarding = () => {
                             label="Senha"
                             type="password"
                             value={formData.password}
-                            onValueChange={(value) => updateField("password", value)}
+                            onValueChange={(value) => {
+                              updateField("password", value);
+                              setValidationErrors(prev => ({ ...prev, password: '' }));
+                            }}
                             placeholder="Pelo menos 6 caracteres"
-                            isValid={formData.password.length >= 6}
+                            isValid={validateField('password', formData.password).isValid}
+                            showValidation={formData.password.length > 0}
+                            errorMessage={validationErrors.password}
                             shouldShake={shakeFields.password}
-                            errorMessage={formData.password.length > 0 && formData.password.length < 6 ? "Mínimo de 6 caracteres" : undefined}
                             required
                           />
                         </motion.div>
