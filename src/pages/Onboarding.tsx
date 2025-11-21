@@ -206,11 +206,11 @@ const Onboarding = () => {
 
         {/* Navigation */}
         <div className="flex gap-4">
-          <Button variant="outline" size="lg" onClick={handleBack} className="flex-1 rounded-2xl">
+          <Button variant="outline" size="lg" onClick={handleBack} className="flex-1 rounded-2xl hover:bg-yellow-400 hover:text-black hover:border-yellow-400 transition-colors">
             <ChevronLeft className="w-5 h-5 mr-1" />
             Voltar
           </Button>
-          <Button size="lg" onClick={step === 6 ? handleSubmit : handleNext} disabled={!canProceed() || loading} className="flex-1 rounded-2xl gradient-primary hover:opacity-90 transition-opacity">
+          <Button variant="outline" size="lg" onClick={step === 6 ? handleSubmit : handleNext} disabled={!canProceed() || loading} className="flex-1 rounded-2xl hover:bg-yellow-400 hover:text-black hover:border-yellow-400 transition-colors disabled:hover:bg-transparent disabled:hover:text-muted-foreground disabled:hover:border-border">
             {loading ? "Carregando..." : step === 6 ? "Começar Jornada 🚀" : <>
                 Próximo
                 <ChevronRight className="w-5 h-5 ml-1" />
