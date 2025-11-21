@@ -52,7 +52,7 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full pt-20 pb-0 px-6 overflow-hidden bg-white">
+      <section className="relative w-full pt-12 pb-0 px-6 overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto relative">
           {/* Floating Icons - Left Side */}
           <div className="absolute top-24 left-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl animate-float z-20 flex items-center justify-center">
@@ -76,29 +76,15 @@ const Landing = () => {
             <TrendingUp className="text-emerald-600 w-10 h-10" />
           </div>
 
-          {/* Bottom Floating Icons */}
-          <div className="absolute bottom-[420px] left-[20%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
-            <Target className="text-pink-600 w-10 h-10" />
-          </div>
-          <div className="absolute bottom-[380px] left-[10%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
-            <Sparkles className="text-purple-600 w-10 h-10" />
-          </div>
-          <div className="absolute bottom-[420px] right-[20%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
-            <DollarSign className="text-red-500 w-10 h-10" />
-          </div>
-          <div className="absolute bottom-[380px] right-[10%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
-            <BarChart3 className="text-green-600 w-10 h-10" />
-          </div>
-
           {/* Hero Content */}
-          <div className="relative z-10 text-center max-w-4xl mx-auto">
-            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 leading-tight mb-6">
+          <div className="relative z-10 text-center max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">
               Onde suas <span className="text-indigo-600">metas</span> se tornam
               <br />
               <span className="text-indigo-600">realidade</span> com um clique
             </h1>
 
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
               Transforme suas metas financeiras em conquistas reais. Alcance seus objetivos em menos tempo com gamificação e educação financeira.
             </p>
 
@@ -113,7 +99,7 @@ const Landing = () => {
           </div>
 
           {/* Gradient Glow */}
-          <div className="absolute left-1/2 -translate-x-1/2 mt-16 w-screen h-80 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 blur-3xl opacity-50 z-0"></div>
+          <div className="absolute left-1/2 -translate-x-1/2 mt-8 w-screen h-96 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 blur-3xl opacity-60 z-0"></div>
 
           {/* Dashboard Mockup */}
           <div className="relative z-10 mt-32 max-w-5xl mx-auto pb-32">
