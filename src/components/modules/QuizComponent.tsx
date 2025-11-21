@@ -87,7 +87,7 @@ export const QuizComponent = ({ lesson, onSubmit, onRetry }: QuizComponentProps)
 
   return (
     <div className="space-y-6">
-      <Card className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 relative">
+      <Card className="p-6 bg-white dark:bg-gray-900 relative border-2">
         {/* Botão de Dica */}
         {currentQuestion.hint && (
           <Button
@@ -140,7 +140,7 @@ export const QuizComponent = ({ lesson, onSubmit, onRetry }: QuizComponentProps)
                       ? 'border-2 border-red-500 bg-red-50 dark:bg-red-950/20'
                       : 'border-2 border-transparent opacity-50'
                     : selectedAnswer === index 
-                      ? 'border-2 border-purple-500 bg-purple-50 dark:bg-purple-950/20' 
+                      ? 'border-2 border-primary bg-primary/10 dark:bg-primary/20'
                       : 'border-2 border-transparent hover:shadow-md'
                 }`}
                 onClick={() => !hasAnswered && handleAnswerSelect(index)}
