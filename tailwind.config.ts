@@ -55,6 +55,7 @@ export default {
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],
+        logo: ['Rajdhani', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
