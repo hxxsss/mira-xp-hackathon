@@ -17,6 +17,19 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 
+// Função para formatar número com pontos (1.000, 2.500, etc)
+const formatCurrency = (value: string): string => {
+  const numbers = value.replace(/\D/g, '');
+  if (!numbers) return '';
+  const number = parseInt(numbers);
+  return number.toLocaleString('pt-BR');
+};
+
+// Função para remover formatação e retornar número puro
+const unformatCurrency = (value: string): string => {
+  return value.replace(/\D/g, '');
+};
+
 // Validation schemas
 const nameSchema = z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(100, "Nome muito longo");
 const ageSchema = z.string().refine((val) => {
@@ -165,6 +178,7 @@ const Onboarding = () => {
   const [isChanging, setIsChanging] = useState(false);
   const [shakeFields, setShakeFields] = useState<Record<string, boolean>>({});
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [formattedAmount, setFormattedAmount] = useState("");
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -554,27 +568,29 @@ const Onboarding = () => {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <motion.div custom={0} variants={fieldVariants as any}>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground z-10 pointer-events-none">
-                      R$
-                    </span>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground z-30 pointer-events-none">
+                              R$
+                            </span>
                             <AnimatedInput
                               id="goalAmount"
                               label="Valor da meta (R$)"
-                              type="number"
-                              value={formData.goalAmount}
+                              type="text"
+                              value={formattedAmount}
                               onValueChange={(value) => {
-                                updateField("goalAmount", value);
+                                const formatted = formatCurrency(value);
+                                setFormattedAmount(formatted);
+                                const unformatted = unformatCurrency(value);
+                                updateField("goalAmount", unformatted);
                                 setValidationErrors(prev => ({ ...prev, goalAmount: '' }));
                               }}
-                              placeholder="0,00"
+                              placeholder="0"
                               isValid={validateField('goalAmount', formData.goalAmount).isValid}
                               showValidation={formData.goalAmount.length > 0}
                               errorMessage={validationErrors.goalAmount}
                               shouldShake={shakeFields.goalAmount}
-                              className="pl-10"
+                              className="pl-12"
                               required
-                              step="0.01"
                             />
                           </div>
                         </motion.div>
