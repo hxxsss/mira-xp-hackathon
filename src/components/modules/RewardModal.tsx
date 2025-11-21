@@ -36,7 +36,7 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
           <p className="text-xl font-semibold mb-2">{moduleTitle}</p>
           <p className="text-gray-600 mb-6">Módulo Completo</p>
 
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-6 mb-6">
+          <div className="bg-white rounded-lg p-6 mb-6 border border-gray-200">
             <p className="text-sm text-gray-600 mb-4">Você ganhou:</p>
             
             <div className="flex justify-center gap-8">
