@@ -343,7 +343,7 @@ const Dashboard = () => {
 
           {/* Center: Logo */}
           <div className="text-center relative">
-            <h1 className="text-6xl md:text-7xl font-logo font-black tracking-widest relative">
+            <h1 className="text-6xl md:text-7xl font-black tracking-widest relative">
               {/* Glow neon effect */}
               <span className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-70 animate-pulse"></span>
               

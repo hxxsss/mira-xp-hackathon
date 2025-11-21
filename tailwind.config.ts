@@ -55,7 +55,6 @@ export default {
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],
-        logo: ['Orbitron', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
