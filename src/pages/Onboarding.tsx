@@ -46,20 +46,109 @@ const steps = [
   { id: "password", title: "Senha" },
 ];
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+const contentVariants = {
+  hidden: { 
+    opacity: 0, 
+    x: 100,
+    filter: "blur(10px)",
+    scale: 0.95
+  },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    filter: "blur(0px)",
+    scale: 1,
+    transition: { 
+      duration: 0.4,
+      ease: [0.43, 0.13, 0.23, 0.96],
+      opacity: { duration: 0.3 },
+      filter: { duration: 0.35 }
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    x: -100,
+    filter: "blur(10px)",
+    scale: 0.95,
+    transition: { 
+      duration: 0.3,
+      ease: [0.43, 0.13, 0.23, 0.96]
+    }
+  }
 };
 
-const contentVariants = {
-  hidden: { opacity: 0, x: 50 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
-  exit: { opacity: 0, x: -50, transition: { duration: 0.2 } },
+const headerVariants = {
+  hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    filter: "blur(0px)",
+    transition: { 
+      duration: 0.5,
+      delay: 0.05,
+      ease: [0.43, 0.13, 0.23, 0.96]
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -20,
+    filter: "blur(8px)",
+    transition: { duration: 0.35 }
+  }
+};
+
+const fieldVariants = {
+  hidden: { opacity: 0, y: 15, filter: "blur(5px)" },
+  visible: (custom: number) => ({ 
+    opacity: 1, 
+    y: 0,
+    filter: "blur(0px)",
+    transition: { 
+      duration: 0.35,
+      delay: 0.1 + (custom * 0.08),
+      ease: [0.43, 0.13, 0.23, 0.96]
+    }
+  })
+};
+
+const cardWrapperVariants = {
+  initial: { 
+    rotateY: 0,
+    scale: 1,
+  },
+  changing: { 
+    rotateY: 2,
+    scale: 0.98,
+    transition: { duration: 0.2 }
+  },
+  changed: { 
+    rotateY: 0,
+    scale: 1,
+    transition: { 
+      duration: 0.3,
+      type: "spring",
+      stiffness: 120,
+      damping: 15
+    }
+  }
+};
+
+const buttonVariants = {
+  hover: { 
+    scale: 1.05,
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+    transition: { duration: 0.2 }
+  },
+  tap: { 
+    scale: 0.95,
+    transition: { duration: 0.1 }
+  }
 };
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isChanging, setIsChanging] = useState(false);
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -81,13 +170,21 @@ const Onboarding = () => {
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
+      setIsChanging(true);
+      setTimeout(() => {
+        setCurrentStep((prev) => prev + 1);
+        setIsChanging(false);
+      }, 200);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
+      setIsChanging(true);
+      setTimeout(() => {
+        setCurrentStep((prev) => prev - 1);
+        setIsChanging(false);
+      }, 200);
     } else {
       navigate('/login');
     }
@@ -217,23 +314,34 @@ const Onboarding = () => {
               </motion.div>
             ))}
           </div>
-          <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden mt-2">
-            <motion.div
-              className="h-full bg-primary"
-              initial={{ width: 0 }}
-              animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
+        <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden mt-2">
+          <motion.div
+            className="h-full bg-primary"
+            initial={{ width: 0 }}
+            animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+            transition={{ 
+              duration: 0.6,
+              type: "spring",
+              stiffness: 80,
+              damping: 20
+            }}
+          />
+        </div>
         </motion.div>
 
         {/* Form card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        style={{ perspective: "1000px", transformStyle: "preserve-3d" }}
+      >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          variants={cardWrapperVariants as any}
+          initial="initial"
+          animate={isChanging ? "changing" : "changed"}
         >
-          <Card className="border shadow-md rounded-3xl overflow-hidden">
+          <Card className="border shadow-md rounded-3xl overflow-hidden backdrop-blur-sm bg-card/95">
             <div>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -241,7 +349,7 @@ const Onboarding = () => {
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  variants={contentVariants}
+                  variants={contentVariants as any}
                 >
                   {/* Step 1: Personal Info */}
                   {currentStep === 0 && (
@@ -253,7 +361,7 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
                           <Label htmlFor="name">Qual é o seu nome?</Label>
                           <Input
                             id="name"
@@ -263,7 +371,7 @@ const Onboarding = () => {
                             className="transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:border-primary"
                           />
                         </motion.div>
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fieldVariants as any} custom={1} initial="hidden" animate="visible" className="space-y-2">
                           <Label htmlFor="age">Quantos anos você tem?</Label>
                           <Input
                             id="age"
@@ -280,7 +388,7 @@ const Onboarding = () => {
                             className="transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:border-primary"
                           />
                         </motion.div>
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fieldVariants as any} custom={2} initial="hidden" animate="visible" className="space-y-2">
                           <Label htmlFor="email">Email</Label>
                           <Input
                             id="email"
@@ -305,7 +413,7 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
                           <Label htmlFor="goalName">Sua meta</Label>
                           <Input
                             id="goalName"
@@ -329,7 +437,7 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
                           <Label htmlFor="goalAmount">Valor da meta (R$)</Label>
                           <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-muted-foreground">
@@ -360,7 +468,7 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
                           <div className="grid grid-cols-2 gap-4">
                             <motion.button
                               type="button"
@@ -410,7 +518,7 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
                           <div className="grid grid-cols-5 gap-3">
                             {avatars.map((avatar, index) => (
                               <motion.button
@@ -455,7 +563,7 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
                           <Label htmlFor="password">Senha</Label>
                           <Input
                             id="password"
@@ -474,7 +582,7 @@ const Onboarding = () => {
               </AnimatePresence>
 
               <CardFooter className="flex justify-between pt-6 pb-4">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <motion.div variants={buttonVariants as any} whileHover="hover" whileTap="tap">
                   <Button
                     type="button"
                     variant="outline"
@@ -485,7 +593,7 @@ const Onboarding = () => {
                     <ChevronLeft className="h-4 w-4" /> Voltar
                   </Button>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <motion.div variants={buttonVariants as any} whileHover="hover" whileTap="tap">
                   <Button
                     type="button"
                     onClick={currentStep === steps.length - 1 ? handleSubmit : nextStep}
@@ -511,9 +619,10 @@ const Onboarding = () => {
                   </Button>
                 </motion.div>
               </CardFooter>
-            </div>
-          </Card>
+          </div>
+        </Card>
         </motion.div>
+      </motion.div>
 
         {/* Step indicator */}
         <motion.div
