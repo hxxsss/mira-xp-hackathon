@@ -101,7 +101,7 @@ const Landing = () => {
           <div className="absolute left-1/2 -translate-x-1/2 mt-8 w-screen h-96 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 blur-3xl opacity-60 z-0"></div>
 
           {/* Scroll Animation Container */}
-          <div className="relative z-10 w-full -mt-32">
+          <div className="relative z-10 w-full mt-12">
             <ContainerScroll titleComponent={<></>}>
               <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 h-full w-full rounded-2xl">
                 <div className="grid grid-cols-3 gap-0 h-full max-w-5xl mx-auto overflow-hidden rounded-3xl">
