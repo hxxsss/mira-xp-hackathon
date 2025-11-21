@@ -96,14 +96,14 @@ const Landing = () => {
           <div className="relative z-10 w-full">
             <ContainerScroll
               titleComponent={
-                <div className="text-center">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Target className="text-gray-600 w-5 h-5" />
-                  </div>
-                  <span className="text-sm text-gray-500 uppercase tracking-wider font-semibold">
-                    Suas Metas Financeiras
-                  </span>
-                </div>
+                <>
+                  <h1 className="text-4xl font-semibold text-gray-900">
+                    Onde suas metas se tornam <br />
+                    <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none text-gray-900">
+                      realidade
+                    </span>
+                  </h1>
+                </>
               }
             >
               <div className="bg-white p-8 h-full w-full">
