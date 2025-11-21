@@ -57,10 +57,10 @@ const Login = () => {
       >
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-primary-foreground" />
+          <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center">
+            <Sparkles className="w-8 h-8 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold text-gradient">MIRA</h1>
+          <h1 className="text-7xl md:text-8xl font-bold text-white">MIRA</h1>
         </div>
 
         <Card className="glass-card">
