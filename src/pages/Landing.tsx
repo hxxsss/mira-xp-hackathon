@@ -1,32 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { 
-  Target, 
-  TrendingUp, 
-  Wallet, 
-  DollarSign, 
-  PiggyBank, 
-  CreditCard, 
-  BarChart3, 
-  Sparkles,
-  PlayCircle
-} from "lucide-react";
+import { Target, TrendingUp, Wallet, DollarSign, PiggyBank, CreditCard, BarChart3, Sparkles, PlayCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
 const Landing = () => {
   const navigate = useNavigate();
-
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       if (session) {
         navigate("/dashboard");
       }
     });
   }, [navigate]);
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       {/* Navbar */}
       <nav className="w-full bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -44,10 +34,7 @@ const Landing = () => {
             <a href="#precos" className="text-gray-700 hover:text-gray-900 font-medium">Preços</a>
           </div>
 
-          <Button 
-            onClick={() => navigate("/onboarding")}
-            className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
-          >
+          <Button onClick={() => navigate("/onboarding")} className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors">
             Começar Agora
           </Button>
         </div>
@@ -58,7 +45,7 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto relative">
           
           {/* Floating Icons - Left Side */}
-          <div className="absolute top-24 left-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
+          <div className="absolute top-24 left-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl animate-float z-20 flex-row flex items-center justify-center">
             <DollarSign className="text-indigo-600 w-10 h-10" />
           </div>
           <div className="absolute top-48 left-[12%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
@@ -95,20 +82,18 @@ const Landing = () => {
 
           {/* Hero Content */}
           <div className="relative z-10 text-center max-w-4xl mx-auto">
-            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 leading-tight mb-6">
-              Onde seus <span className="text-indigo-600">sonhos</span> se tornam
+            <h1 className="text-6xl font-bold text-gray-900 leading-tight mb-6 text-center md:text-6xl">
+              Onde suas metas se tornam
+realidade em menos tempo                   <span className="text-indigo-600">metas</span> se tornam
               <br />
               <span className="text-indigo-600">realidade</span> com um clique
             </h1>
             
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Transforme suas metas financeiras em conquistas reais. De conceito ao resultado em minutos, não meses.
+              Transforme suas metas financeiras em conquistas reais. Alcance seus objetivos em menos t                        
             </p>
 
-            <button 
-              onClick={() => navigate("/login")}
-              className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors"
-            >
+            <button onClick={() => navigate("/login")} className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors">
               <PlayCircle className="w-6 h-6" />
               <span>Ver Demo</span>
               <span className="text-gray-400">2min</span>
@@ -166,8 +151,6 @@ const Landing = () => {
           </p>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
