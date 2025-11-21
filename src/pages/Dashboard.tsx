@@ -415,7 +415,7 @@ const Dashboard = () => {
               {/* Stats */}
               <div className="flex items-center gap-2">
                 <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                  <span className="text-xs text-white font-bold">⚡ {profile?.current_xp || 0}</span>
+                  <span className="text-xs text-white font-bold">XP {profile?.current_xp || 0}</span>
                 </div>
                 <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
                   <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
