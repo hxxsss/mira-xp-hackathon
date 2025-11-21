@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,7 +12,118 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, userContext } = await req.json();
+    // Get JWT token from Authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Missing authorization header" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Create Supabase client with the user's JWT
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
+    );
+
+    // Verify user is authenticated
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const { messages } = await req.json();
+
+    // Validate messages input
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Invalid messages array" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (messages.length > 50) {
+      return new Response(
+        JSON.stringify({ error: "Too many messages. Maximum 50 allowed." }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Validate message content length
+    for (const msg of messages) {
+      if (msg.content && msg.content.length > 2000) {
+        return new Response(
+          JSON.stringify({ error: "Message content too long. Maximum 2000 characters." }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+    }
+
+    // Load user context from database using authenticated user ID
+    const { data: profile } = await supabaseClient
+      .from("profiles")
+      .select("name, income_type, monthly_income")
+      .eq("id", user.id)
+      .single();
+
+    const { data: goal } = await supabaseClient
+      .from("goals")
+      .select("id, title, total_amount, current_amount, target_date")
+      .eq("user_id", user.id)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (!profile || !goal) {
+      return new Response(
+        JSON.stringify({ error: "User profile or active goal not found" }),
+        {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Calculate monthly savings (simplified)
+    const monthlySavings = profile.monthly_income ? Math.round(profile.monthly_income * 0.1) : 100;
+
+    const userContext = {
+      name: profile.name,
+      goalTitle: goal.title,
+      goalAmount: goal.total_amount.toString(),
+      currentAmount: goal.current_amount.toString(),
+      incomeType: profile.income_type,
+      monthlySavings: monthlySavings.toString(),
+      goalId: goal.id,
+      targetDate: goal.target_date,
+    };
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -177,8 +289,6 @@ IMPORTANTE SOBRE update_goal_deadline:
         );
       }
 
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
       return new Response(
         JSON.stringify({ error: "AI gateway error" }),
         {
@@ -196,9 +306,8 @@ IMPORTANTE SOBRE update_goal_deadline:
       },
     });
   } catch (error) {
-    console.error("Oracle chat error:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
