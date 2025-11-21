@@ -31,6 +31,33 @@ interface CoverFlowCarouselProps {
 
 export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps) {
   const [api, setApi] = React.useState<CarouselApi>();
+  
+  // Limitar visualização: mostrar apenas módulos completos + atual + 2 bloqueados + mensagem
+  const visibleItems = React.useMemo(() => {
+    const firstUnlockedIndex = items.findIndex(item => 
+      item.status === 'unlocked' || item.status === 'in_progress'
+    );
+    
+    if (firstUnlockedIndex === -1) return items;
+    
+    const visibleEndIndex = firstUnlockedIndex + 3;
+    const visibleModules = items.slice(0, visibleEndIndex);
+    
+    if (visibleEndIndex < items.length) {
+      visibleModules.push({
+        id: 'continue-message',
+        number: '...',
+        title: 'Continue para desbloquear',
+        description: 'Complete os módulos anteriores',
+        icon: '🔒',
+        color: '#94a3b8',
+        status: 'locked' as const,
+        progress: 0
+      });
+    }
+    
+    return visibleModules;
+  }, [items]);
 
   useEffect(() => {
     if (!api) return;
@@ -100,7 +127,7 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
       className="w-full max-w-7xl mx-auto"
     >
       <CarouselContent className="-ml-4">
-        {items.map((item, index) => {
+        {visibleItems.map((item, index) => {
           const isLocked = item.status === 'locked';
           const isCompleted = item.status === 'completed';
           const isInProgress = item.status === 'in_progress';
@@ -118,7 +145,7 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                     "bg-white hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
                     isLocked && "cursor-not-allowed"
                   )}
-                  onClick={() => !isLocked && onItemClick(item.id, item.status)}
+                  onClick={() => !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
                 >
                   <CardContent className="flex flex-col items-center justify-between h-full p-6 relative">
                     {/* Header: Badge e Número */}
@@ -179,15 +206,17 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                         </div>
                       )}
 
-                      <Button
-                        className="w-full font-semibold bg-purple-200 text-purple-700 hover:bg-purple-300"
-                        disabled={isLocked}
-                      >
-                        {isCompleted && 'REVISAR'}
-                        {isInProgress && 'CONTINUAR'}
-                        {item.status === 'unlocked' && 'COMEÇAR'}
-                        {isLocked && '🔒 BLOQUEADO'}
-                      </Button>
+                      {item.id !== 'continue-message' && (
+                        <Button
+                          className="w-full font-semibold bg-purple-200 text-purple-700 hover:bg-purple-300"
+                          disabled={isLocked}
+                        >
+                          {isCompleted && 'REVISAR'}
+                          {isInProgress && 'CONTINUAR'}
+                          {item.status === 'unlocked' && 'COMEÇAR'}
+                          {isLocked && '🔒 BLOQUEADO'}
+                        </Button>
+                      )}
                     </div>
 
                     {/* Overlay para cards bloqueados */}
