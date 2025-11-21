@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { AnimatedInput } from "@/components/AnimatedInput";
 import {
   Card,
   CardContent,
@@ -149,6 +148,7 @@ const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
+  const [shakeFields, setShakeFields] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -169,6 +169,27 @@ const Onboarding = () => {
   };
 
   const nextStep = () => {
+    if (!isStepValid()) {
+      // Trigger shake animation on invalid fields
+      const invalidFields: Record<string, boolean> = {};
+      if (currentStep === 0) {
+        if (!formData.name.trim()) invalidFields.name = true;
+        if (!formData.age) invalidFields.age = true;
+        if (!formData.email.trim()) invalidFields.email = true;
+      } else if (currentStep === 1) {
+        if (!formData.goalName.trim()) invalidFields.goalName = true;
+      } else if (currentStep === 2) {
+        if (!formData.goalAmount) invalidFields.goalAmount = true;
+      } else if (currentStep === 5) {
+        if (formData.password.length < 6) invalidFields.password = true;
+      }
+      
+      setShakeFields(invalidFields);
+      setTimeout(() => setShakeFields({}), 500);
+      toast.error("Preencha todos os campos corretamente");
+      return;
+    }
+
     if (currentStep < steps.length - 1) {
       setIsChanging(true);
       setTimeout(() => {
@@ -361,42 +382,42 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
-                          <Label htmlFor="name">Qual é o seu nome?</Label>
-                          <Input
+                        <motion.div custom={0} variants={fieldVariants as any}>
+                          <AnimatedInput
                             id="name"
-                            placeholder="Digite seu nome"
+                            label="Qual é o seu nome?"
                             value={formData.name}
-                            onChange={(e) => updateField("name", e.target.value)}
-                            className="transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            onValueChange={(value) => updateField("name", value)}
+                            placeholder="Digite seu nome"
+                            isValid={formData.name.trim().length >= 2}
+                            shouldShake={shakeFields.name}
+                            required
                           />
                         </motion.div>
-                        <motion.div variants={fieldVariants as any} custom={1} initial="hidden" animate="visible" className="space-y-2">
-                          <Label htmlFor="age">Quantos anos você tem?</Label>
-                          <Input
+                        <motion.div custom={1} variants={fieldVariants as any}>
+                          <AnimatedInput
                             id="age"
+                            label="Quantos anos você tem?"
                             type="number"
-                            min="1"
-                            placeholder="Sua idade"
                             value={formData.age}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              if (value === "" || parseInt(value) > 0) {
-                                updateField("age", value);
-                              }
-                            }}
-                            className="transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            onValueChange={(value) => updateField("age", value)}
+                            placeholder="Sua idade"
+                            isValid={Number(formData.age) >= 1 && Number(formData.age) <= 120}
+                            shouldShake={shakeFields.age}
+                            required
                           />
                         </motion.div>
-                        <motion.div variants={fieldVariants as any} custom={2} initial="hidden" animate="visible" className="space-y-2">
-                          <Label htmlFor="email">Email</Label>
-                          <Input
+                        <motion.div custom={2} variants={fieldVariants as any}>
+                          <AnimatedInput
                             id="email"
+                            label="Email"
                             type="email"
-                            placeholder="seu.email@exemplo.com"
                             value={formData.email}
-                            onChange={(e) => updateField("email", e.target.value)}
-                            className="transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            onValueChange={(value) => updateField("email", value)}
+                            placeholder="seu.email@exemplo.com"
+                            isValid={/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)}
+                            shouldShake={shakeFields.email}
+                            required
                           />
                         </motion.div>
                       </CardContent>
@@ -413,14 +434,16 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
-                          <Label htmlFor="goalName">Sua meta</Label>
-                          <Input
+                        <motion.div custom={0} variants={fieldVariants as any}>
+                          <AnimatedInput
                             id="goalName"
-                            placeholder="ex: PlayStation 5, Notebook Novo, Ingresso de Show"
+                            label="Sua meta"
                             value={formData.goalName}
-                            onChange={(e) => updateField("goalName", e.target.value)}
-                            className="text-lg transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            onValueChange={(value) => updateField("goalName", value)}
+                            placeholder="ex: PlayStation 5, Notebook Novo, Ingresso de Show"
+                            isValid={formData.goalName.trim().length >= 3}
+                            shouldShake={shakeFields.goalName}
+                            required
                           />
                         </motion.div>
                       </CardContent>
@@ -437,19 +460,22 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
-                          <Label htmlFor="goalAmount">Valor da meta (R$)</Label>
+                        <motion.div custom={0} variants={fieldVariants as any}>
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-muted-foreground">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-muted-foreground z-10 pointer-events-none">
                               R$
                             </span>
-                            <Input
+                            <AnimatedInput
                               id="goalAmount"
+                              label="Valor da meta (R$)"
                               type="number"
-                              placeholder="0,00"
                               value={formData.goalAmount}
-                              onChange={(e) => updateField("goalAmount", e.target.value)}
-                              className="text-xl pl-10 transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                              onValueChange={(value) => updateField("goalAmount", value)}
+                              placeholder="0,00"
+                              isValid={Number(formData.goalAmount) > 0}
+                              shouldShake={shakeFields.goalAmount}
+                              className="pl-10"
+                              required
                               step="0.01"
                             />
                           </div>
@@ -563,17 +589,19 @@ const Onboarding = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <motion.div variants={fieldVariants as any} custom={0} initial="hidden" animate="visible" className="space-y-2">
-                          <Label htmlFor="password">Senha</Label>
-                          <Input
+                        <motion.div custom={0} variants={fieldVariants as any}>
+                          <AnimatedInput
                             id="password"
+                            label="Senha"
                             type="password"
-                            placeholder="Pelo menos 6 caracteres"
                             value={formData.password}
-                            onChange={(e) => updateField("password", e.target.value)}
-                            className="transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            onValueChange={(value) => updateField("password", value)}
+                            placeholder="Pelo menos 6 caracteres"
+                            isValid={formData.password.length >= 6}
+                            shouldShake={shakeFields.password}
+                            errorMessage={formData.password.length > 0 && formData.password.length < 6 ? "Mínimo de 6 caracteres" : undefined}
+                            required
                           />
-                          <p className="text-xs text-muted-foreground">Mínimo de 6 dígitos</p>
                         </motion.div>
                       </CardContent>
                     </>
