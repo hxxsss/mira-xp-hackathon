@@ -101,23 +101,23 @@ const Landing = () => {
           <div className="absolute left-1/2 -translate-x-1/2 mt-8 w-screen h-96 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 blur-3xl opacity-60 z-0"></div>
 
           {/* Scroll Animation Container */}
-          <div className="relative z-10 w-full mt-12">
+          <div className="relative z-10 w-full -mt-56">
             <ContainerScroll titleComponent={<></>}>
               <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 h-full w-full rounded-2xl">
-                <div className="grid grid-cols-3 gap-0 h-full max-w-5xl mx-auto overflow-hidden rounded-3xl">
-                  {/* Card 1 - Azul para Roxo */}
-                  <div className="bg-gradient-to-r from-blue-200 via-blue-300 to-purple-200 flex items-center justify-center">
-                    <PiggyBank className="w-20 h-20 text-blue-700" />
+                <div className="grid grid-cols-3 gap-6 h-full max-w-5xl mx-auto">
+                  {/* Card 1 - Azul claro */}
+                  <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-3xl flex items-center justify-center">
+                    <PiggyBank className="w-20 h-20 text-blue-600" />
                   </div>
                   
-                  {/* Card 2 - Roxo para Cyan */}
-                  <div className="bg-gradient-to-r from-purple-200 via-purple-300 to-cyan-200 flex items-center justify-center">
-                    <TrendingUp className="w-20 h-20 text-purple-700" />
+                  {/* Card 2 - Roxo claro */}
+                  <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-3xl flex items-center justify-center">
+                    <TrendingUp className="w-20 h-20 text-purple-600" />
                   </div>
                   
-                  {/* Card 3 - Cyan para Azul */}
-                  <div className="bg-gradient-to-r from-cyan-200 via-cyan-300 to-blue-200 flex items-center justify-center">
-                    <Sparkles className="w-20 h-20 text-cyan-700" />
+                  {/* Card 3 - Cyan claro */}
+                  <div className="bg-gradient-to-br from-cyan-100 to-cyan-200 rounded-3xl flex items-center justify-center">
+                    <Sparkles className="w-20 h-20 text-cyan-600" />
                   </div>
                 </div>
               </div>
