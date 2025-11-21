@@ -56,7 +56,12 @@ const Onboarding = () => {
     if (step < 6) setStep(step + 1);
   };
   const handleBack = () => {
-    if (step > 1) setStep(step - 1);
+    if (step > 1) {
+      setStep(step - 1);
+    } else {
+      // Se estiver no step 1, volta para o login
+      navigate('/login');
+    }
   };
   const handleSubmit = async () => {
     setLoading(true);
@@ -201,10 +206,10 @@ const Onboarding = () => {
 
         {/* Navigation */}
         <div className="flex gap-4">
-          {step > 1 && <Button variant="outline" size="lg" onClick={handleBack} className="rounded-2xl">
-              <ChevronLeft className="w-5 h-5 mr-1" />
-              Voltar
-            </Button>}
+          <Button variant="outline" size="lg" onClick={handleBack} className="flex-1 rounded-2xl">
+            <ChevronLeft className="w-5 h-5 mr-1" />
+            Voltar
+          </Button>
           <Button size="lg" onClick={step === 6 ? handleSubmit : handleNext} disabled={!canProceed() || loading} className="flex-1 rounded-2xl gradient-primary hover:opacity-90 transition-opacity">
             {loading ? "Carregando..." : step === 6 ? "Começar Jornada 🚀" : <>
                 Próximo
