@@ -1,147 +1,173 @@
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Target, TrendingUp } from "lucide-react";
+import { 
+  Target, 
+  TrendingUp, 
+  Wallet, 
+  DollarSign, 
+  PiggyBank, 
+  CreditCard, 
+  BarChart3, 
+  Sparkles,
+  PlayCircle
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+
 const Landing = () => {
   const navigate = useNavigate();
+
   useEffect(() => {
-    supabase.auth.getSession().then(({
-      data: {
-        session
-      }
-    }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate("/dashboard");
       }
     });
   }, [navigate]);
-  return <div className="min-h-screen bg-background overflow-hidden">
-      {/* Hero Section */}
-      <div className="container mx-auto px-4 py-12 lg:py-20">
-        <motion.div initial={{
-        opacity: 0,
-        y: 20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} transition={{
-        duration: 0.6
-      }} className="text-center max-w-4xl mx-auto">
-          {/* Logo/Brand */}
-          <motion.div initial={{
-          scale: 0.8,
-          opacity: 0
-        }} animate={{
-          scale: 1,
-          opacity: 1
-        }} transition={{
-          delay: 0.2,
-          duration: 0.5
-        }} className="inline-flex items-center gap-2 mb-8">
-            <div className="w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-primary-foreground" />
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Navbar */}
+      <nav className="w-full bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <Target className="text-white w-5 h-5" />
             </div>
-            <h1 className="text-4xl font-bold text-white">MIRA</h1>
-          </motion.div>
+            <span className="text-2xl font-logo font-bold text-gray-900 tracking-wider">MIRA</span>
+          </div>
+          
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#home" className="text-gray-700 hover:text-gray-900 font-medium">Início</a>
+            <a href="#recursos" className="text-gray-700 hover:text-gray-900 font-medium">Recursos</a>
+            <a href="#produto" className="text-gray-700 hover:text-gray-900 font-medium">Produto</a>
+            <a href="#precos" className="text-gray-700 hover:text-gray-900 font-medium">Preços</a>
+          </div>
 
-          {/* Hero Heading */}
-          <motion.h2 initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          delay: 0.3,
-          duration: 0.6
-        }} className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-            Transforme Seus Sonhos
-            <br />
-            <span className="text-white">Em Realidade</span>
-          </motion.h2>
+          <Button 
+            onClick={() => navigate("/onboarding")}
+            className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
+          >
+            Começar Agora
+          </Button>
+        </div>
+      </nav>
 
-          {/* Value Prop */}
-          <motion.p initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          delay: 0.4,
-          duration: 0.6
-        }} className="text-xl lg:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Organização financeira que acelera seus sonhos.
-            Planeje suas metas, acompanhe seu progresso e conquiste o que mais importa.
-          </motion.p>
+      {/* Hero Section */}
+      <section className="relative w-full pt-20 pb-0 px-6 overflow-hidden bg-white">
+        <div className="max-w-7xl mx-auto relative">
+          
+          {/* Floating Icons - Left Side */}
+          <div className="absolute top-24 left-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
+            <DollarSign className="text-indigo-600 w-10 h-10" />
+          </div>
+          <div className="absolute top-48 left-[12%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
+            <PiggyBank className="text-green-600 w-10 h-10" />
+          </div>
+          <div className="absolute top-72 left-[18%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
+            <Wallet className="text-purple-600 w-10 h-10" />
+          </div>
+          
+          {/* Floating Icons - Right Side */}
+          <div className="absolute top-20 right-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
+            <CreditCard className="text-blue-600 w-10 h-10" />
+          </div>
+          <div className="absolute top-44 right-[12%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
+            <BarChart3 className="text-orange-600 w-10 h-10" />
+          </div>
+          <div className="absolute top-68 right-[18%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
+            <TrendingUp className="text-emerald-600 w-10 h-10" />
+          </div>
 
-          {/* CTA Buttons */}
-          <motion.div initial={{
-          opacity: 0,
-          scale: 0.9
-        }} animate={{
-          opacity: 1,
-          scale: 1
-        }} transition={{
-          delay: 0.5,
-          duration: 0.5
-        }} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="outline" onClick={() => navigate("/login")} className="text-lg px-8 py-6 rounded-3xl hover-lift">
-              Entrar
-            </Button>
-            <Button size="lg" onClick={() => navigate("/onboarding")} className="text-lg px-8 py-6 rounded-3xl gradient-primary hover:opacity-90 transition-opacity shadow-lg hover-lift">
-              <Sparkles className="w-5 h-5 mr-2" />
-              Começar Jornada
-            </Button>
-          </motion.div>
+          {/* Bottom Floating Icons */}
+          <div className="absolute bottom-[420px] left-[20%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
+            <Target className="text-pink-600 w-10 h-10" />
+          </div>
+          <div className="absolute bottom-[380px] left-[10%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
+            <Sparkles className="text-purple-600 w-10 h-10" />
+          </div>
+          <div className="absolute bottom-[420px] right-[20%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
+            <DollarSign className="text-red-500 w-10 h-10" />
+          </div>
+          <div className="absolute bottom-[380px] right-[10%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
+            <BarChart3 className="text-green-600 w-10 h-10" />
+          </div>
 
-          {/* Feature Cards */}
-          <motion.div initial={{
-          opacity: 0,
-          y: 40
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          delay: 0.6,
-          duration: 0.6
-        }} className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
-            <FeatureCard icon={<Target className="w-8 h-8" />} title="Defina Sua Meta" description="Defina o que você está economizando e veja seus sonhos se tornarem metas alcançáveis" delay={0.7} />
-            <FeatureCard icon={<TrendingUp className="w-8 h-8" />} title="Acompanhe o Progresso" description="Veja suas economias crescerem com barras de progresso visuais e marcos gamificados" delay={0.8} />
-            <FeatureCard icon={<Sparkles className="w-8 h-8" />} title="Fique Mais Inteligente" description="Insights com IA ajudam você a tomar melhores decisões financeiras" delay={0.9} />
-          </motion.div>
-        </motion.div>
-      </div>
-    </div>;
+          {/* Hero Content */}
+          <div className="relative z-10 text-center max-w-4xl mx-auto">
+            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 leading-tight mb-6">
+              Onde seus <span className="text-indigo-600">sonhos</span> se tornam
+              <br />
+              <span className="text-indigo-600">realidade</span> com um clique
+            </h1>
+            
+            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+              Transforme suas metas financeiras em conquistas reais. De conceito ao resultado em minutos, não meses.
+            </p>
+
+            <button 
+              onClick={() => navigate("/login")}
+              className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors"
+            >
+              <PlayCircle className="w-6 h-6" />
+              <span>Ver Demo</span>
+              <span className="text-gray-400">2min</span>
+            </button>
+          </div>
+
+          {/* Gradient Glow */}
+          <div className="absolute left-1/2 -translate-x-1/2 mt-16 w-screen h-80 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 blur-3xl opacity-50 z-0"></div>
+
+          {/* Dashboard Mockup */}
+          <div className="relative z-10 mt-32 max-w-5xl mx-auto pb-32">
+            <div className="relative bg-gradient-to-br from-blue-400 via-purple-400 to-cyan-400 rounded-3xl p-1 shadow-2xl">
+              <div className="bg-white rounded-3xl overflow-hidden">
+                {/* Browser Bar */}
+                <div className="bg-gray-100 px-6 py-4 flex items-center gap-2 border-b border-gray-200">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  </div>
+                </div>
+                
+                {/* Dashboard Preview */}
+                <div className="bg-white p-8">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <Target className="text-gray-600 w-5 h-5" />
+                    </div>
+                    <span className="text-sm text-gray-500 uppercase tracking-wider font-semibold">Suas Metas Financeiras</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="h-32 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
+                      <PiggyBank className="w-12 h-12 text-blue-600" />
+                    </div>
+                    <div className="h-32 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl flex items-center justify-center">
+                      <TrendingUp className="w-12 h-12 text-purple-600" />
+                    </div>
+                    <div className="h-32 bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl flex items-center justify-center">
+                      <Sparkles className="w-12 h-12 text-cyan-600" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Section */}
+      <section className="py-16 px-6 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-lg text-gray-600">
+            Educação financeira com <span className="font-semibold text-indigo-600">gamificação</span>
+          </p>
+        </div>
+      </section>
+    </div>
+  );
 };
-const FeatureCard = ({
-  icon,
-  title,
-  description,
-  delay
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  delay: number;
-}) => {
-  return <motion.div initial={{
-    opacity: 0,
-    y: 20
-  }} animate={{
-    opacity: 1,
-    y: 0
-  }} transition={{
-    delay,
-    duration: 0.5
-  }} className="glass-card p-8 rounded-3xl hover-lift">
-      <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mb-4 mx-auto">
-        <div className="text-primary-foreground">{icon}</div>
-      </div>
-      <h3 className="text-xl font-semibold mb-3">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </motion.div>;
-};
+
 export default Landing;
