@@ -3,20 +3,20 @@ import { Target, TrendingUp, Wallet, DollarSign, PiggyBank, CreditCard, BarChart
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
 const Landing = () => {
   const navigate = useNavigate();
-
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       if (session) {
         navigate("/dashboard");
       }
     });
   }, [navigate]);
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       {/* Navbar */}
       <nav className="w-full bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -42,10 +42,7 @@ const Landing = () => {
             </a>
           </div>
 
-          <Button 
-            onClick={() => navigate("/onboarding")} 
-            className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
-          >
+          <Button onClick={() => navigate("/onboarding")} className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-indigo-700 transition-colors">
             Começar Agora
           </Button>
         </div>
@@ -78,7 +75,7 @@ const Landing = () => {
 
           {/* Hero Content */}
           <div className="relative z-10 text-center max-w-2xl mx-auto pt-32">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-3">
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-3 md:text-5xl">
               Onde suas <span className="text-indigo-600">metas</span> se tornam{" "}
               <span className="text-indigo-600">realidade</span> com um clique
             </h1>
@@ -87,10 +84,7 @@ const Landing = () => {
               Alcance seus objetivos financeiros em menos tempo com gamificação e educação financeira.
             </p>
 
-            <button 
-              onClick={() => navigate("/login")} 
-              className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors"
-            >
+            <button onClick={() => navigate("/login")} className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors">
               <PlayCircle className="w-6 h-6" />
               <span>Ver Demo</span>
               <span className="text-gray-400">2min</span>
@@ -150,8 +144,6 @@ const Landing = () => {
           </p>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
