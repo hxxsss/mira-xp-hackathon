@@ -13,6 +13,7 @@ import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 import { GoalForm } from "@/components/financas/GoalForm";
 import miraLogo from "@/assets/mira-logo.png";
+import mentalidadeBadge from "@/assets/mentalidade-badge.png";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -460,7 +461,15 @@ const Dashboard = () => {
                 }`}
               >
                 <span className="mr-2">{track.icon}</span>
-                {track.name}
+                {track.name.toLowerCase().includes('mentalidade') ? (
+                  <img 
+                    src={mentalidadeBadge} 
+                    alt="Mentalidade" 
+                    className="inline-block h-6 w-auto object-contain"
+                  />
+                ) : (
+                  track.name
+                )}
                 {track.status === 'locked' && (
                   <Lock className="inline-block ml-2 w-4 h-4" />
                 )}
