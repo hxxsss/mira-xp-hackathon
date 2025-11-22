@@ -191,7 +191,17 @@ const Oracle = () => {
     setIsHistoryOpen(false);
   };
   const sendMessage = async () => {
-    if (!input.trim() || !userContext) return;
+    if (!input.trim()) return;
+    
+    // Validate user context before sending
+    if (!userContext) {
+      toast({
+        title: "Contexto Incompleto",
+        description: "Configure seu perfil e uma meta ativa antes de usar o Oráculo.",
+        variant: "destructive"
+      });
+      return;
+    }
     const userMessage: Message = {
       role: "user",
       content: input.trim()
@@ -224,6 +234,50 @@ const Oracle = () => {
         })
       });
       if (!response.ok || !response.body) {
+        // Handle specific error codes with user-friendly messages
+        if (response.status === 401) {
+          toast({
+            title: "Sessão Expirada",
+            description: "Sua sessão expirou. Por favor, faça login novamente.",
+            variant: "destructive"
+          });
+          navigate("/login");
+          return;
+        }
+        
+        if (response.status === 429) {
+          toast({
+            title: "Muitas Requisições",
+            description: "Você está enviando muitas mensagens. Aguarde um momento e tente novamente.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          setIsTyping(false);
+          return;
+        }
+        
+        if (response.status === 402) {
+          toast({
+            title: "Créditos Insuficientes",
+            description: "Seus créditos esgotaram. Entre em contato com o suporte para adicionar mais créditos.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          setIsTyping(false);
+          return;
+        }
+        
+        if (response.status === 404) {
+          toast({
+            title: "Meta Não Encontrada",
+            description: "Configure uma meta ativa na seção Finanças para usar o Oráculo.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          setIsTyping(false);
+          return;
+        }
+        
         throw new Error("Failed to get response from Oracle");
       }
       const reader = response.body.getReader();
@@ -378,19 +432,14 @@ const Oracle = () => {
         setIsTyping(false);
       }
     } catch (error: any) {
+      console.error("Oracle chat error:", error);
       toast({
-        title: "Erro",
-        description: error.message || "Falha ao enviar mensagem",
+        title: "Erro ao Enviar Mensagem",
+        description: error.message || "Ocorreu um erro inesperado. Tente novamente.",
         variant: "destructive"
       });
       setIsLoading(false);
       setIsTyping(false);
-    }
-  };
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
     }
   };
   return <div className="min-h-screen bg-background flex flex-col">
