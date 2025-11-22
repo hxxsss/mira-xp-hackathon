@@ -240,18 +240,18 @@ const Dashboard = () => {
 
   // Variantes de animação para transição entre trilhas
   const carouselVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 100 : -100,
+    enter: {
       opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
+      scale: 0.95,
     },
-    exit: (direction: number) => ({
-      x: direction > 0 ? -100 : 100,
+    center: {
+      opacity: 1,
+      scale: 1,
+    },
+    exit: {
       opacity: 0,
-    }),
+      scale: 0.95,
+    },
   };
 
   const [direction, setDirection] = useState(0);
@@ -473,20 +473,19 @@ const Dashboard = () => {
       {/* Main Stage - Cover Flow Carousel */}
       <div className="relative z-10 flex-1 flex items-center justify-center py-4 overflow-hidden">
         <div className="w-full px-4">
-          <AnimatePresence initial={false} custom={direction}>
+          <AnimatePresence mode="wait" initial={false}>
             {currentTrack && (
               <motion.div
                 key={currentTrack.id}
-                custom={direction}
                 variants={carouselVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
                 transition={{
-                  x: { type: "spring", stiffness: 200, damping: 25 },
-                  opacity: { duration: 0.25 },
+                  duration: 0.3,
+                  ease: "easeInOut"
                 }}
-                className="w-full"
+                className="w-full h-full flex items-center justify-center"
               >
                 <CoverFlowCarousel
                   items={currentTrack.modules.map(module => ({
