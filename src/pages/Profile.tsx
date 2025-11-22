@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
-import { ProfileGameIcon } from "@/components/ui/game-icons";
 interface Profile {
   name: string;
   email: string;
@@ -182,14 +181,8 @@ export default function Profile() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-4">
-                <div className="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-sm border-2 border-purple-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.4)]">
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-600/10 to-pink-600/10 blur-xl" />
-                  <div className="absolute inset-2">
-                    <ProfileGameIcon className="w-full h-full" />
-                  </div>
-                  <div className="relative text-5xl z-10">
-                    {currentAvatar.emoji}
-                  </div>
+                <div className="w-20 h-20 rounded-2xl gradient-primary flex items-center justify-center text-4xl">
+                  {currentAvatar.emoji}
                 </div>
                 <div>
                   <CardTitle className="text-2xl">{profile?.name}</CardTitle>

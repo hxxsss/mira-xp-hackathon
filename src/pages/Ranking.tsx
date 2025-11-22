@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Crown, Medal } from "lucide-react";
+import { ArrowLeft, Crown, Medal, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { TrophyGameIcon, ProfileGameIcon } from "@/components/ui/game-icons";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -129,7 +128,7 @@ export default function Ranking() {
           </Button>
 
           <div className="flex items-center gap-3">
-            <TrophyGameIcon className="w-10 h-10" />
+            <Trophy className="w-8 h-8 text-yellow-400" />
             <h1 className="text-4xl font-bold text-white">Ranking</h1>
           </div>
 
@@ -169,17 +168,12 @@ export default function Ranking() {
 
                 {/* Avatar */}
                 <div className={`relative ${user.position === 1 ? 'w-28 h-28' : 'w-24 h-24'} mb-3`}>
-                  <div className={`relative w-full h-full rounded-full flex items-center justify-center
+                  <div className={`w-full h-full rounded-full flex items-center justify-center text-5xl
                     ${user.position === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-2xl shadow-yellow-500/50' : ''}
                     ${user.position === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500 shadow-xl shadow-gray-500/50' : ''}
                     ${user.position === 3 ? 'bg-gradient-to-br from-amber-600 to-amber-800 shadow-xl shadow-amber-700/50' : ''}
                   `}>
-                    <div className="absolute inset-0">
-                      <ProfileGameIcon className="w-full h-full" />
-                    </div>
-                    <span className="relative text-5xl z-10">
-                      {getAvatar(user.avatar_id)}
-                    </span>
+                    {getAvatar(user.avatar_id)}
                   </div>
                   {user.id === currentUserId && (
                     <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
@@ -227,13 +221,8 @@ export default function Ranking() {
                       </div>
 
                       {/* Avatar */}
-                      <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg">
-                        <div className="absolute inset-0">
-                          <ProfileGameIcon className="w-full h-full" />
-                        </div>
-                        <span className="relative text-3xl z-10">
-                          {getAvatar(user.avatar_id)}
-                        </span>
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-3xl">
+                        {getAvatar(user.avatar_id)}
                       </div>
 
                       {/* Name */}
@@ -259,9 +248,7 @@ export default function Ranking() {
 
         {rankings.length === 0 && (
           <div className="text-center py-12">
-            <div className="flex justify-center mb-4">
-              <TrophyGameIcon className="w-16 h-16 opacity-30" />
-            </div>
+            <Trophy className="w-16 h-16 text-white/30 mx-auto mb-4" />
             <p className="text-white/70 text-lg">Nenhum usuário no ranking ainda.</p>
           </div>
         )}

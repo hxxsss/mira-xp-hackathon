@@ -5,8 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Zap, Coins } from "lucide-react";
-import { TrophyGameIcon, WalletGameIcon, ProfileGameIcon } from "@/components/ui/game-icons";
+import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Wallet, Trophy, Zap, Coins } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -307,34 +306,26 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
-              className="relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-600/30 to-pink-600/30 backdrop-blur-md rounded-full hover:from-purple-600/40 hover:to-pink-600/40 hover:scale-110 transition-all group border-2 border-white/20 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all group"
               title="Perfil"
             >
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative flex items-center justify-center w-full h-full">
-                <div className="absolute inset-2">
-                  <ProfileGameIcon className="w-full h-full" />
-                </div>
-                <span className="relative text-xl group-hover:scale-110 transition-transform z-10">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
-              </div>
+              <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
             </button>
 
           <button 
             onClick={() => navigate('/ranking')}
-            className="relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-600/30 to-pink-600/30 backdrop-blur-md rounded-full hover:from-purple-600/40 hover:to-pink-600/40 hover:scale-110 transition-all group border-2 border-white/20 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
             title="Ranking"
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-            <TrophyGameIcon className="w-7 h-7 group-hover:scale-110 transition-transform relative z-10" />
+            <Trophy className="w-6 h-6" />
           </button>
 
           <button 
             onClick={() => navigate('/financas')}
-            className="relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-green-600/30 to-teal-600/30 backdrop-blur-md rounded-full hover:from-green-600/40 hover:to-teal-600/40 hover:scale-110 transition-all group border-2 border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
             title="Finanças"
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-600/20 to-teal-600/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-            <WalletGameIcon className="w-7 h-7 group-hover:scale-110 transition-transform relative z-10" />
+            <Wallet className="w-6 h-6" />
           </button>
           </div>
 
