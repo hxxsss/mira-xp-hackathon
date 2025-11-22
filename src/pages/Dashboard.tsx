@@ -448,36 +448,54 @@ const Dashboard = () => {
       <div className="flex-shrink-0 z-40">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center gap-4">
-            {tracks.map((track, index) => (
-              <button
-                key={track.id}
-                onClick={() => handleTrackChange(index)}
-                className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
-                  index === currentTrackIndex
-                    ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
-                    : track.status === 'locked'
-                    ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
-                    : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
-                }`}
-              >
-                <span className="mr-2">{track.icon}</span>
-                {track.name.toLowerCase().includes('mentalidade') ? (
+            {tracks.map((track, index) =>
+              track.name.toLowerCase().includes('mentalidade') ? (
+                <button
+                  key={track.id}
+                  onClick={() => handleTrackChange(index)}
+                  className="relative transition-all hover:scale-110"
+                >
                   <img 
                     src={mentalidadeBadge} 
                     alt="Mentalidade" 
-                    className="inline-block h-6 w-auto object-contain"
+                    className={`h-12 w-auto object-contain transition-all ${
+                      index === currentTrackIndex
+                        ? 'scale-110 drop-shadow-2xl'
+                        : track.status === 'locked'
+                        ? 'opacity-50 grayscale'
+                        : 'opacity-80'
+                    }`}
                   />
-                ) : (
-                  track.name
-                )}
-                {track.status === 'locked' && (
-                  <Lock className="inline-block ml-2 w-4 h-4" />
-                )}
-                {track.status === 'completed' && (
-                  <span className="ml-2">✓</span>
-                )}
-              </button>
-            ))}
+                  {track.status === 'locked' && (
+                    <Lock className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-white drop-shadow-lg" />
+                  )}
+                  {track.status === 'completed' && (
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
+                  )}
+                </button>
+              ) : (
+                <button
+                  key={track.id}
+                  onClick={() => handleTrackChange(index)}
+                  className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
+                    index === currentTrackIndex
+                      ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
+                      : track.status === 'locked'
+                      ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
+                      : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
+                  }`}
+                >
+                  <span className="mr-2">{track.icon}</span>
+                  {track.name}
+                  {track.status === 'locked' && (
+                    <Lock className="inline-block ml-2 w-4 h-4" />
+                  )}
+                  {track.status === 'completed' && (
+                    <span className="ml-2">✓</span>
+                  )}
+                </button>
+              )
+            )}
           </div>
           {currentTrack && (
             <motion.div
