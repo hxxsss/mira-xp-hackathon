@@ -11,7 +11,7 @@ interface Avatar {
   alt: string;
 }
 
-const avatars: Avatar[] = [
+export const avatars: Avatar[] = [
   {
     id: 1,
     svg: (

@@ -15,14 +15,6 @@ import { GoalForm } from "@/components/financas/GoalForm";
 import { NavigationDock } from "@/components/NavigationDock";
 import crystalBall from "@/assets/crystal-ball.png";
 
-const avatars = [
-  { id: 1, emoji: "🦄" },
-  { id: 2, emoji: "🚀" },
-  { id: 3, emoji: "🎯" },
-  { id: 4, emoji: "⭐" },
-  { id: 5, emoji: "🌈" }
-];
-
 interface LearningModule {
   id: string;
   number: string;
@@ -306,7 +298,6 @@ const Dashboard = () => {
     );
   }
 
-  const selectedAvatar = avatars.find(a => a.id === profile?.avatar_id) || avatars[0];
   const progressPercentage = goal ? Math.min((Number(goal.current_amount) / Number(goal.total_amount)) * 100, 100) : 0;
   const currentTrack = tracks[currentTrackIndex];
   const currentBgColor = currentTrack?.background_color || '#7C3AED';
@@ -358,7 +349,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4 relative">
           {/* Left: Navigation Dock */}
           <div className="flex items-center">
-            <NavigationDock avatarEmoji={selectedAvatar.emoji} />
+            <NavigationDock avatarId={profile?.avatar_id} />
           </div>
 
           {/* Center: Logo - positioned absolutely */}

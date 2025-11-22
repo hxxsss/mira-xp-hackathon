@@ -1,20 +1,33 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Trophy, Wallet } from "lucide-react";
+import { avatars } from "@/components/ui/avatar-picker";
+import { motion } from "framer-motion";
 
 interface NavigationDockProps {
-  avatarEmoji?: string;
+  avatarId?: number;
 }
 
-export function NavigationDock({ avatarEmoji = "🦄" }: NavigationDockProps) {
+export function NavigationDock({ avatarId = 1 }: NavigationDockProps) {
   const navigate = useNavigate();
   const location = useLocation();
   
   const isActive = (path: string) => location.pathname === path;
   
+  const selectedAvatar = avatars.find(a => a.id === avatarId) || avatars[0];
+  
   const navItems = [
     {
       title: "Perfil",
-      icon: <div className="text-2xl">{avatarEmoji}</div>,
+      icon: (
+        <motion.div 
+          className="w-8 h-8 flex items-center justify-center"
+          whileHover={{ scale: 1.15, rotate: 5 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
+          {selectedAvatar.svg}
+        </motion.div>
+      ),
       href: "/profile",
     },
     {
