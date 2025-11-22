@@ -376,6 +376,137 @@ export type Database = {
         }
         Relationships: []
       }
+      pvp_match_answers: {
+        Row: {
+          answered_at: string | null
+          id: string
+          is_correct: boolean
+          match_id: string
+          points_earned: number
+          question_index: number
+          selected_answer: number
+          time_taken_seconds: number
+          user_id: string
+        }
+        Insert: {
+          answered_at?: string | null
+          id?: string
+          is_correct: boolean
+          match_id: string
+          points_earned: number
+          question_index: number
+          selected_answer: number
+          time_taken_seconds: number
+          user_id: string
+        }
+        Update: {
+          answered_at?: string | null
+          id?: string
+          is_correct?: boolean
+          match_id?: string
+          points_earned?: number
+          question_index?: number
+          selected_answer?: number
+          time_taken_seconds?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pvp_match_answers_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "pvp_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pvp_match_answers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pvp_matches: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          host_score: number | null
+          host_user_id: string
+          id: string
+          match_code: string
+          module_id: string
+          opponent_score: number | null
+          opponent_user_id: string | null
+          questions_data: Json
+          started_at: string | null
+          status: string
+          winner_user_id: string | null
+          xp_bet: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          host_score?: number | null
+          host_user_id: string
+          id?: string
+          match_code: string
+          module_id: string
+          opponent_score?: number | null
+          opponent_user_id?: string | null
+          questions_data?: Json
+          started_at?: string | null
+          status?: string
+          winner_user_id?: string | null
+          xp_bet: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          host_score?: number | null
+          host_user_id?: string
+          id?: string
+          match_code?: string
+          module_id?: string
+          opponent_score?: number | null
+          opponent_user_id?: string | null
+          questions_data?: Json
+          started_at?: string | null
+          status?: string
+          winner_user_id?: string | null
+          xp_bet?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pvp_matches_host_user_id_fkey"
+            columns: ["host_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pvp_matches_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "learning_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pvp_matches_opponent_user_id_fkey"
+            columns: ["opponent_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pvp_matches_winner_user_id_fkey"
+            columns: ["winner_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shop_items: {
         Row: {
           cost_points: number
@@ -576,6 +707,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_speed_points: {
+        Args: { is_correct: boolean; time_seconds: number }
+        Returns: number
+      }
+      generate_match_code: { Args: never; Returns: string }
       reset_monthly_xp: { Args: never; Returns: undefined }
     }
     Enums: {
