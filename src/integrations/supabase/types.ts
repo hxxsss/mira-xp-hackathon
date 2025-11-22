@@ -166,6 +166,7 @@ export type Database = {
         Row: {
           created_at: string
           current_amount: number
+          estimated_timeline: string | null
           id: string
           is_active: boolean
           target_date: string | null
@@ -177,6 +178,7 @@ export type Database = {
         Insert: {
           created_at?: string
           current_amount?: number
+          estimated_timeline?: string | null
           id?: string
           is_active?: boolean
           target_date?: string | null
@@ -188,6 +190,7 @@ export type Database = {
         Update: {
           created_at?: string
           current_amount?: number
+          estimated_timeline?: string | null
           id?: string
           is_active?: boolean
           target_date?: string | null
