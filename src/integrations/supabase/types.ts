@@ -511,13 +511,14 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           current_round: number | null
+          difficulty_level: string | null
           host_score: number | null
           host_user_id: string
           id: string
           match_code: string
           match_mode: string | null
           max_groups: number | null
-          module_id: string
+          module_id: string | null
           opponent_score: number | null
           opponent_user_id: string | null
           questions_data: Json
@@ -530,13 +531,14 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           current_round?: number | null
+          difficulty_level?: string | null
           host_score?: number | null
           host_user_id: string
           id?: string
           match_code: string
           match_mode?: string | null
           max_groups?: number | null
-          module_id: string
+          module_id?: string | null
           opponent_score?: number | null
           opponent_user_id?: string | null
           questions_data?: Json
@@ -549,13 +551,14 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           current_round?: number | null
+          difficulty_level?: string | null
           host_score?: number | null
           host_user_id?: string
           id?: string
           match_code?: string
           match_mode?: string | null
           max_groups?: number | null
-          module_id?: string
+          module_id?: string | null
           opponent_score?: number | null
           opponent_user_id?: string | null
           questions_data?: Json
@@ -594,6 +597,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pvp_questions: {
+        Row: {
+          created_at: string | null
+          id: string
+          level: string
+          options: Json
+          question: string
+          question_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          level: string
+          options: Json
+          question: string
+          question_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          level?: string
+          options?: Json
+          question?: string
+          question_id?: string
+        }
+        Relationships: []
       }
       shop_items: {
         Row: {

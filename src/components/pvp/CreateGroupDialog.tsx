@@ -19,17 +19,15 @@ interface CreateGroupDialogProps {
 export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }: CreateGroupDialogProps) => {
   const [loading, setLoading] = useState(false);
   const [groupName, setGroupName] = useState("");
-  const [selectedModule, setSelectedModule] = useState<string>("");
+  const [selectedLevel, setSelectedLevel] = useState<string>("");
   const [xpBet, setXpBet] = useState(50);
   const [maxGroups, setMaxGroups] = useState(2);
   const [currentXp, setCurrentXp] = useState(0);
-  const [modules, setModules] = useState<any[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
     if (open) {
       loadUserXp();
-      loadModules();
     }
   }, [open]);
 
@@ -42,10 +40,6 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
     if (data) setCurrentXp(data.current_xp);
   };
 
-  const loadModules = async () => {
-    const { data } = await supabase.from("learning_modules").select("*").order("order_index");
-    if (data) setModules(data);
-  };
 
   const generateCode = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -57,8 +51,8 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
   };
 
   const handleCreate = async () => {
-    if (!selectedModule) {
-      toast({ title: "Erro", description: "Selecione um módulo" });
+    if (!selectedLevel) {
+      toast({ title: "Erro", description: "Selecione um nível" });
       return;
     }
     if (!groupName.trim()) {
@@ -72,20 +66,21 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
 
     setLoading(true);
     try {
-      // Get questions
-      const { data: questions } = await supabase
-        .from("learning_modules")
-        .select("content")
-        .eq("id", selectedModule)
-        .single();
+      // Buscar perguntas do nível selecionado
+      const { data: questionsFromDb, error: questionsError } = await supabase
+        .from('pvp_questions')
+        .select('*')
+        .eq('level', selectedLevel);
 
-      const quizContent = questions?.content as any;
-      if (!quizContent?.quiz) {
-        toast({ title: "Erro", description: "Módulo sem perguntas" });
+      if (questionsError) throw questionsError;
+
+      if (!questionsFromDb || questionsFromDb.length < 5) {
+        toast({ title: "Erro", description: "Nível sem perguntas suficientes" });
+        setLoading(false);
         return;
       }
 
-      const shuffledQuestions = [...quizContent.quiz]
+      const shuffledQuestions = [...questionsFromDb]
         .sort(() => Math.random() - 0.5)
         .slice(0, 5);
 
@@ -101,7 +96,8 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
         .from("pvp_matches")
         .insert({
           host_user_id: userId,
-          module_id: selectedModule,
+          module_id: null,
+          difficulty_level: selectedLevel,
           xp_bet: xpBet,
           match_code: matchCode,
           questions_data: shuffledQuestions,
@@ -171,17 +167,16 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
           </div>
 
           <div>
-            <Label className="text-purple-200">Módulo</Label>
-            <Select value={selectedModule} onValueChange={setSelectedModule}>
+            <Label className="text-purple-200">Nível de Dificuldade</Label>
+            <Select value={selectedLevel} onValueChange={setSelectedLevel}>
               <SelectTrigger className="bg-purple-950/50 border-purple-600 text-white">
-                <SelectValue placeholder="Selecione o módulo" />
+                <SelectValue placeholder="Selecione o nível" />
               </SelectTrigger>
               <SelectContent>
-                {modules.map((m) => (
-                  <SelectItem key={m.id} value={m.id}>
-                    {m.title}
-                  </SelectItem>
-                ))}
+                <SelectItem value="Iniciante">🌱 Iniciante</SelectItem>
+                <SelectItem value="Básico">📚 Básico</SelectItem>
+                <SelectItem value="Intermediário">🎯 Intermediário</SelectItem>
+                <SelectItem value="Avançado">🚀 Avançado</SelectItem>
               </SelectContent>
             </Select>
           </div>
