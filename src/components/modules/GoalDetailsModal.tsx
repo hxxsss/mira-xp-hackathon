@@ -190,10 +190,10 @@ export function GoalDetailsModal({
           {/* Botões de Ação */}
           <div className="flex gap-2 pt-2">
             
-              <Button variant="outline" className="flex-1 hover:bg-yellow-400 hover:text-black hover:border-yellow-400 transition-colors" onClick={() => {
+              <Button variant="outline" onClick={() => {
             onOpenChange(false);
             if (onEdit) onEdit();
-          }}>
+          }} className="flex-1 hover:border-yellow-400 transition-colors bg-indigo-600 hover:bg-indigo-500 text-slate-50">
                 Editar Meta
               </Button>
           </div>
