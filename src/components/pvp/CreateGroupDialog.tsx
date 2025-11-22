@@ -70,7 +70,12 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
       return;
     }
     if (xpBet > currentXp) {
-      toast({ title: "XP insuficiente", description: "Você não tem XP suficiente para esta aposta" });
+      toast({ 
+        title: "XP insuficiente 🎮", 
+        description: "Você precisa de mais XP! Complete módulos na aba Mentalidade para ganhar XP e voltar para batalhar.",
+        variant: "destructive",
+        duration: 6000
+      });
       return;
     }
 
@@ -148,8 +153,38 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
 
       onGroupCreated(match.id, group.id);
       onOpenChange(false);
+      
+      // Reset form states
+      setGroupName("");
+      setSelectedLevel("");
+      setXpBet(50);
+      setMaxGroups(2);
     } catch (error: any) {
-      toast({ title: "Erro", description: error.message });
+      console.error("❌ Erro ao criar grupo:", error);
+      
+      // Reverter XP se houve erro após dedução
+      if (error.code) {
+        await supabase
+          .from("profiles")
+          .update({ current_xp: currentXp })
+          .eq("id", userId);
+      }
+      
+      let errorMessage = "Não foi possível criar o grupo. Tente novamente.";
+      
+      if (error.message?.includes("permission")) {
+        errorMessage = "Você não tem permissão para criar grupos.";
+      } else if (error.message?.includes("questions")) {
+        errorMessage = "Erro ao carregar perguntas. Tente outro nível.";
+      } else if (error.code === "23505") {
+        errorMessage = "Código duplicado. Tente novamente.";
+      }
+      
+      toast({ 
+        title: "Erro ao criar grupo", 
+        description: errorMessage,
+        variant: "destructive" 
+      });
     } finally {
       setLoading(false);
     }
@@ -222,11 +257,23 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
 
           <Button
             onClick={handleCreate}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-6"
+            disabled={loading || xpBet > currentXp}
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-6 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "🎮 Criar Grupo"}
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : xpBet > currentXp ? (
+              "❌ XP Insuficiente"
+            ) : (
+              "🎮 Criar Grupo"
+            )}
           </Button>
+
+          {xpBet > currentXp && (
+            <p className="text-sm text-yellow-300 text-center mt-2 bg-yellow-900/30 p-3 rounded-lg">
+              💡 Complete módulos na aba <strong>Mentalidade</strong> para ganhar mais XP!
+            </p>
+          )}
         </div>
       </DialogContent>
     </Dialog>
