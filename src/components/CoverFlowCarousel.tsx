@@ -31,29 +31,31 @@ interface CoverFlowCarouselProps {
 }
 
 export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCarouselProps) {
-  // Determina a cor de fundo baseada no nome da trilha
-  const getTrackBackgroundColor = () => {
+  // Determina cores baseadas no nome da trilha
+  const getTrackColors = () => {
     const name = trackName.toLowerCase();
-    if (name.includes('mentalidade')) return 'bg-indigo-50';
-    if (name.includes('organização')) return 'bg-yellow-50';
-    if (name.includes('aceleração')) return 'bg-green-50';
-    return 'bg-white';
-  };
-
-  const getTrackBorderColor = () => {
-    const name = trackName.toLowerCase();
-    if (name.includes('mentalidade')) return 'border-indigo-200';
-    if (name.includes('organização')) return 'border-yellow-200';
-    if (name.includes('aceleração')) return 'border-green-200';
-    return 'border-gray-200';
-  };
-
-  const getTrackHoverBorderColor = () => {
-    const name = trackName.toLowerCase();
-    if (name.includes('mentalidade')) return 'hover:border-indigo-300';
-    if (name.includes('organização')) return 'hover:border-yellow-300';
-    if (name.includes('aceleração')) return 'hover:border-green-300';
-    return 'hover:border-indigo-300';
+    if (name.includes('mentalidade')) {
+      return {
+        badgeBg: '#8B5CF6', // Roxo
+        badgeBorder: '#C4B5FD', // Roxo claro
+      };
+    }
+    if (name.includes('organização')) {
+      return {
+        badgeBg: '#F59E0B', // Laranja/Amarelo
+        badgeBorder: '#FDE68A', // Amarelo claro
+      };
+    }
+    if (name.includes('aceleração')) {
+      return {
+        badgeBg: '#10B981', // Verde
+        badgeBorder: '#A7F3D0', // Verde claro
+      };
+    }
+    return {
+      badgeBg: '#8B5CF6',
+      badgeBorder: '#C4B5FD',
+    };
   };
   const [api, setApi] = React.useState<CarouselApi>();
   
@@ -157,6 +159,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
           const isCompleted = item.status === 'completed';
           const isInProgress = item.status === 'in_progress';
           const color = item.color || cardColors[index % cardColors.length];
+          const trackColors = getTrackColors();
 
           return (
             <CarouselItem 
@@ -222,14 +225,14 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                     <div className="px-8 pt-6 pb-8 text-center flex-1 flex flex-col justify-between relative">
                       {/* Badge com número na parte inferior */}
                       <div 
-                        className="absolute -left-5 top-1/2 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md z-20"
+                        className="absolute -left-5 top-1/2 w-12 h-12 rounded-full flex items-center justify-center shadow-md z-20"
                         style={{
-                          border: `4px solid ${color}40`
+                          backgroundColor: trackColors.badgeBg,
+                          border: `4px solid ${trackColors.badgeBorder}`
                         }}
                       >
                         <span 
-                          className="font-extrabold text-lg"
-                          style={{ color: color }}
+                          className="font-extrabold text-lg text-white"
                         >
                           {item.number}
                         </span>
