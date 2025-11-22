@@ -41,6 +41,8 @@ serve(async (req) => {
   }
 
   try {
+    safeLog("oracle-chat: Request received");
+    
     // Get JWT token from Authorization header
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
@@ -70,7 +72,7 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(jwt);
     
     if (userError || !user) {
-      safeError("oracle-chat unauthorized", { userError });
+      safeError("oracle-chat: JWT verification failed", { userError });
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         {
@@ -79,6 +81,8 @@ serve(async (req) => {
         }
       );
     }
+
+    safeLog("oracle-chat: User authenticated successfully");
 
     const { messages } = await req.json();
 
@@ -117,6 +121,8 @@ serve(async (req) => {
     }
 
     // Load user context from database using authenticated user ID
+    safeLog("oracle-chat: Loading user context");
+    
     const { data: profile } = await supabaseClient
       .from("profiles")
       .select("name, income_type, monthly_income")
@@ -133,6 +139,7 @@ serve(async (req) => {
       .single();
 
     if (!profile || !goal) {
+      safeError("oracle-chat: Missing profile or active goal");
       return new Response(
         JSON.stringify({ error: "User profile or active goal not found" }),
         {
@@ -141,6 +148,8 @@ serve(async (req) => {
         }
       );
     }
+
+    safeLog("oracle-chat: User context loaded successfully");
 
     // Calculate monthly savings (simplified)
     const monthlySavings = profile.monthly_income ? Math.round(profile.monthly_income * 0.1) : 100;
@@ -219,6 +228,8 @@ IMPORTANTE SOBRE update_goal_deadline:
 - NUNCA use se o usuário desistir da compra
 - O campo additional_months deve refletir o atraso calculado (delay_months do veredito)`;
 
+    safeLog("oracle-chat: Calling Lovable AI");
+    
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -302,6 +313,8 @@ IMPORTANTE SOBRE update_goal_deadline:
     });
 
     if (!response.ok) {
+      safeError("oracle-chat: AI gateway error", { status: response.status });
+      
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
@@ -330,6 +343,8 @@ IMPORTANTE SOBRE update_goal_deadline:
       );
     }
 
+    safeLog("oracle-chat: Streaming response to client");
+
     // Stream the response back to the client
     return new Response(response.body, {
       headers: {
@@ -338,6 +353,7 @@ IMPORTANTE SOBRE update_goal_deadline:
       },
     });
   } catch (error) {
+    safeError("oracle-chat: Unexpected error", { error });
     return new Response(
       JSON.stringify({ error: "Internal server error" }),
       {
