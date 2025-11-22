@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Play, Lock, CheckCircle2 } from "lucide-react";
 
 interface CoverFlowItem {
   id: string;
@@ -142,91 +143,111 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                 <Card
                   className={cn(
                     "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[2/3]",
-                    "bg-white hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
-                    isLocked && "cursor-not-allowed"
+                    "glass-card-heavy border-2 border-white/20",
+                    !isLocked && "hover:scale-105 hover:border-white/40 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]",
+                    isLocked && "cursor-not-allowed opacity-60"
                   )}
                   onClick={() => !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
                 >
                   <CardContent className="flex flex-col items-center justify-between h-full p-6 relative">
-                    {/* Header: Badge e Número */}
+                    {/* Header: Badge Status */}
                     <div className="w-full flex justify-between items-start">
-                      <Badge
-                        className={cn(
-                          "text-xs font-semibold",
-                          isCompleted && "bg-purple-100 text-purple-700 border-purple-200",
-                          isInProgress && "bg-purple-500 text-white border-purple-600",
-                          item.status === 'unlocked' && "bg-purple-500 text-white animate-pulse border-purple-600"
-                        )}
-                      >
-                        {isCompleted && '✓ COMPLETO'}
-                        {isInProgress && '🎯 NOVO'}
-                        {item.status === 'unlocked' && '⭐ NOVO'}
-                      </Badge>
+                      {!isLocked && (
+                        <Badge
+                          className={cn(
+                            "text-xs font-bold px-3 py-1 rounded-full",
+                            isCompleted && "bg-green-500/90 text-white backdrop-blur-sm",
+                            isInProgress && "bg-yellow-500/90 text-white backdrop-blur-sm animate-pulse",
+                            item.status === 'unlocked' && "bg-blue-500/90 text-white backdrop-blur-sm animate-pulse"
+                          )}
+                        >
+                          {isCompleted && <><CheckCircle2 className="w-3 h-3 inline mr-1" />COMPLETO</>}
+                          {isInProgress && '🎯 EM PROGRESSO'}
+                          {item.status === 'unlocked' && '✨ NOVO'}
+                        </Badge>
+                      )}
                       
-                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-700 text-sm border-2 border-purple-200">
-                        #{item.number}
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-black text-white text-base shadow-lg ring-2 ring-white/30">
+                        {isLocked ? <Lock className="w-5 h-5" /> : `#${item.number}`}
                       </div>
                     </div>
 
-                    {/* Centro: Ícone Grande */}
+                    {/* Centro: Ícone Grande (Fase do Jogo) */}
                     <div className="flex-1 flex flex-col items-center justify-center">
-                      <div className="mb-4">
-                        {item.number === '01' && <MoneyCircleIcon />}
-                        {item.number === '02' && <TargetIcon />}
-                        {isLocked && item.number === '03' ? <LockedIcon /> : item.number === '03' && <div className="text-8xl">{item.icon}</div>}
-                        {item.number !== '01' && item.number !== '02' && item.number !== '03' && (
-                          <div className="text-8xl">{item.icon}</div>
+                      <div className="mb-6 relative">
+                        {/* Glow effect */}
+                        {!isLocked && (
+                          <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 blur-3xl opacity-40 animate-pulse" />
                         )}
+                        
+                        <div className="relative">
+                          {item.number === '01' && <MoneyCircleIcon />}
+                          {item.number === '02' && <TargetIcon />}
+                          {isLocked && item.number === '03' ? <LockedIcon /> : item.number === '03' && <div className="text-7xl filter drop-shadow-lg">{item.icon}</div>}
+                          {item.number !== '01' && item.number !== '02' && item.number !== '03' && (
+                            <div className="text-7xl filter drop-shadow-lg">{isLocked ? '🔒' : item.icon}</div>
+                          )}
+                        </div>
                       </div>
                       
-                      {/* Módulo Label */}
-                      <div className="text-center mb-2">
-                        <h3 className="text-2xl font-bold text-gray-900">
-                          Módulo {item.number}
-                        </h3>
-                        <h4 className="text-xl font-semibold text-gray-900 mt-1">
+                      {/* Título da Fase */}
+                      <div className="text-center mb-4">
+                        <h3 className="text-xl font-black text-white drop-shadow-lg mb-1">
                           {item.title}
-                        </h4>
+                        </h3>
+                        <p className="text-sm text-white/80 font-semibold line-clamp-2 px-2">
+                          {item.description}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Footer: Descrição e Botão */}
+                    {/* Footer: Progresso e Botão */}
                     <div className="w-full space-y-3">
-                      <p className="text-sm text-gray-600 text-center line-clamp-2">
-                        {item.description}
-                      </p>
-
                       {/* Barra de Progresso */}
                       {item.progress !== undefined && item.progress > 0 && (
-                        <div className="w-full bg-purple-100 rounded-full h-2 overflow-hidden">
+                        <div className="w-full bg-white/20 backdrop-blur-sm rounded-full h-3 overflow-hidden ring-1 ring-white/30">
                           <div
-                            className="h-full bg-purple-500 rounded-full transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-500 shadow-lg"
                             style={{ width: `${item.progress}%` }}
                           />
                         </div>
                       )}
 
-                      {item.id !== 'continue-message' && (
+                      {/* Botão JOGAR (estilo mobile game) */}
+                      {item.id !== 'continue-message' && !isLocked && (
                         <Button
-                          className="w-full font-semibold bg-purple-200 text-purple-700 hover:bg-purple-300"
-                          disabled={isLocked}
+                          className={cn(
+                            "w-full font-black text-lg py-6 rounded-2xl transition-all duration-300 shadow-xl",
+                            isCompleted && "bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:scale-105",
+                            isInProgress && "bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600 hover:scale-105 animate-pulse",
+                            item.status === 'unlocked' && "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 hover:scale-105 animate-pulse"
+                          )}
                         >
-                          {isCompleted && 'REVISAR'}
+                          <Play className="w-6 h-6 mr-2 fill-white" />
+                          {isCompleted && 'JOGAR NOVAMENTE'}
                           {isInProgress && 'CONTINUAR'}
-                          {item.status === 'unlocked' && 'COMEÇAR'}
-                          {isLocked && '🔒 BLOQUEADO'}
+                          {item.status === 'unlocked' && 'JOGAR'}
+                        </Button>
+                      )}
+                      
+                      {isLocked && (
+                        <Button
+                          className="w-full font-black text-lg py-6 rounded-2xl bg-gray-600/50 text-white/50 cursor-not-allowed"
+                          disabled
+                        >
+                          <Lock className="w-5 h-5 mr-2" />
+                          BLOQUEADO
                         </Button>
                       )}
                     </div>
 
-                    {/* Overlay para cards bloqueados */}
+                    {/* Overlay decorativo para locked (sutil, não bloqueia tudo) */}
                     {isLocked && (
-                      <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center z-10">
+                      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center pointer-events-none z-10">
                         <div className="text-center">
-                          <div className="text-6xl mb-3">🔒</div>
-                          <p className="text-purple-600 font-bold text-lg">BLOQUEADO</p>
-                          <p className="text-purple-500 text-sm mt-1">
-                            Complete de anterior
+                          <Lock className="w-16 h-16 text-white/60 mx-auto mb-2" strokeWidth={2} />
+                          <p className="text-white/80 font-bold text-sm drop-shadow-lg">
+                            Complete o módulo anterior
                           </p>
                         </div>
                       </div>
@@ -239,8 +260,8 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
         })}
       </CarouselContent>
       
-      <CarouselPrevious className="hidden md:flex -left-12 bg-white/80 hover:bg-white" />
-      <CarouselNext className="hidden md:flex -right-12 bg-white/80 hover:bg-white" />
+      <CarouselPrevious className="hidden md:flex -left-12 glass-card-heavy text-white hover:bg-white/30 border-white/30" />
+      <CarouselNext className="hidden md:flex -right-12 glass-card-heavy text-white hover:bg-white/30 border-white/30" />
     </Carousel>
   );
 }
