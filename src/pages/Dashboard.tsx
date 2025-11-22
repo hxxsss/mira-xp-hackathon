@@ -501,6 +501,12 @@ const Dashboard = () => {
         <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
           <Star className="w-3 h-3 text-white" fill="white" />
         </div>
+        
+        {/* Label ao fazer hover */}
+        <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 px-4 py-2 bg-gray-900 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          <div className="font-bold">Oráculo</div>
+          <div className="text-xs text-gray-300">Converse com a IA!</div>
+        </div>
       </motion.button>
 
       {/* Floating PvP Button */}
