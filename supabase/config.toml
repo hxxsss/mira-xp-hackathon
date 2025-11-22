@@ -1,1 +1,4 @@
 project_id = "lwghyetnojgexnzxmhxa"
+
+[functions.oracle-chat]
+verify_jwt = true
