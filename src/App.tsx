@@ -15,6 +15,7 @@ import Ranking from "./pages/Ranking";
 import ModulePage from "./pages/ModulePage";
 import NotFound from "./pages/NotFound";
 import Financas from "./pages/Financas";
+import PvP from "./pages/PvP";
 const queryClient = new QueryClient();
 const App = () => <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -33,6 +34,7 @@ const App = () => <QueryClientProvider client={queryClient}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/financas" element={<Financas />} />
+          <Route path="/pvp" element={<PvP />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
