@@ -214,7 +214,7 @@ const Onboarding = () => {
                     index < currentStep
                       ? "bg-gradient-to-r from-indigo-600 to-purple-600"
                       : index === currentStep
-                        ? "bg-gradient-to-r from-purple-600 to-pink-600 ring-4 ring-purple-600/20"
+                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 ring-4 ring-indigo-600/20"
                         : "bg-gray-300",
                   )}
                   onClick={() => {
@@ -228,7 +228,7 @@ const Onboarding = () => {
                   className={cn(
                     "text-xs mt-1.5 hidden sm:block",
                     index === currentStep
-                      ? "text-purple-600 font-medium"
+                      ? "text-indigo-600 font-medium"
                       : "text-gray-500",
                   )}
                 >
@@ -239,7 +239,7 @@ const Onboarding = () => {
           </div>
           <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden mt-2">
             <motion.div
-              className="h-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600"
+              className="h-full bg-gradient-to-r from-indigo-600 to-purple-600"
               initial={{ width: 0 }}
               animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
               transition={{ duration: 0.3 }}
@@ -494,7 +494,7 @@ const Onboarding = () => {
                     type="button"
                     onClick={currentStep === steps.length - 1 ? handleSubmit : nextStep}
                     disabled={!isStepValid() || loading}
-                    className="flex items-center gap-1 transition-all duration-300 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700"
+                    className="flex items-center gap-2 transition-all duration-300 h-12 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl hover:shadow-indigo-200 active:scale-[0.98] px-6"
                   >
                     {loading ? (
                       <>
