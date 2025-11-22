@@ -32,13 +32,13 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
   const getGradient = () => {
     if (progress >= 80) return "from-green-500 via-emerald-500 to-teal-500";
     if (progress >= 40) return "from-orange-500 via-amber-500 to-yellow-500";
-    return "from-purple-600 via-pink-500 to-rose-500";
+    return "from-indigo-600 via-blue-500 to-cyan-500";
   };
 
   const getProgressColor = () => {
     if (progress >= 80) return "from-green-400 to-emerald-400";
     if (progress >= 40) return "from-yellow-400 to-amber-400";
-    return "from-purple-400 to-pink-400";
+    return "from-indigo-400 to-blue-400";
   };
 
   const getMotivationalIcon = () => {
