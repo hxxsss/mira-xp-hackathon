@@ -16,14 +16,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { AvatarPicker } from "@/components/ui/avatar-picker";
 
-const avatars = [
-  { id: 1, emoji: "🦄", name: "Unicórnio" },
-  { id: 2, emoji: "🚀", name: "Foguete" },
-  { id: 3, emoji: "🎯", name: "Alvo" },
-  { id: 4, emoji: "⭐", name: "Estrela" },
-  { id: 5, emoji: "🌈", name: "Arco-íris" },
-];
 
 const steps = [
   { id: "personal", title: "Informações" },
@@ -494,41 +488,17 @@ const Onboarding = () => {
 
                   {currentStep === 5 && (
                     <>
-                      <CardHeader className="pb-3">
+                      <CardHeader className="pb-2">
                         <CardTitle>Escolha seu mascote!</CardTitle>
                         <CardDescription>
                           Escolha um companheiro para sua jornada
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-3">
-                        <motion.div variants={fadeInUp} className="grid grid-cols-5 gap-2.5">
-                          {avatars.map((avatar, index) => (
-                            <motion.button
-                              key={avatar.id}
-                              onClick={() => updateField("avatarId", avatar.id)}
-                              className={cn(
-                                "aspect-square rounded-2xl p-2.5 transition-all",
-                                formData.avatarId === avatar.id
-                                  ? "border-3 border-purple-600 bg-purple-50 scale-105"
-                                  : "border-2 border-gray-200 hover:bg-gray-50"
-                              )}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{
-                                opacity: 1,
-                                y: 0,
-                                transition: {
-                                  delay: 0.1 * index,
-                                  duration: 0.3,
-                                },
-                              }}
-                            >
-                              <div className="text-3xl sm:text-4xl">{avatar.emoji}</div>
-                              <div className="text-[10px] mt-1 font-medium">{avatar.name}</div>
-                            </motion.button>
-                          ))}
-                        </motion.div>
+                      <CardContent className="space-y-2">
+                        <AvatarPicker
+                          selectedAvatarId={formData.avatarId}
+                          onAvatarChange={(id) => updateField("avatarId", id)}
+                        />
                       </CardContent>
                     </>
                   )}
