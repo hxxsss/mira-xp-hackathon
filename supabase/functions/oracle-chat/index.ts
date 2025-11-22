@@ -6,6 +6,35 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Sanitize sensitive data in logs (masks UUIDs and emails)
+const sanitizeForLog = (data: any): any => {
+  if (typeof data === 'string') {
+    return data
+      .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, 'UUID-****')
+      .replace(/[\w.-]+@[\w.-]+\.\w+/gi, 'email-****');
+  }
+  if (typeof data === 'object' && data !== null) {
+    const sanitized: any = Array.isArray(data) ? [] : {};
+    for (const key in data) {
+      if (key.toLowerCase().includes('id') || key.toLowerCase().includes('email')) {
+        sanitized[key] = '****';
+      } else {
+        sanitized[key] = sanitizeForLog(data[key]);
+      }
+    }
+    return sanitized;
+  }
+  return data;
+};
+
+const safeLog = (...args: any[]) => {
+  console.log(...args.map(sanitizeForLog));
+};
+
+const safeError = (...args: any[]) => {
+  console.error(...args.map(sanitizeForLog));
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
