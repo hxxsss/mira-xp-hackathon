@@ -26,10 +26,35 @@ interface CoverFlowItem {
 
 interface CoverFlowCarouselProps {
   items: CoverFlowItem[];
+  trackName: string;
   onItemClick: (id: string, status: string) => void;
 }
 
-export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps) {
+export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCarouselProps) {
+  // Determina a cor de fundo baseada no nome da trilha
+  const getTrackBackgroundColor = () => {
+    const name = trackName.toLowerCase();
+    if (name.includes('mentalidade')) return 'bg-purple-50';
+    if (name.includes('organização')) return 'bg-yellow-50';
+    if (name.includes('aceleração')) return 'bg-green-50';
+    return 'bg-white';
+  };
+
+  const getTrackBorderColor = () => {
+    const name = trackName.toLowerCase();
+    if (name.includes('mentalidade')) return 'border-purple-200';
+    if (name.includes('organização')) return 'border-yellow-200';
+    if (name.includes('aceleração')) return 'border-green-200';
+    return 'border-gray-200';
+  };
+
+  const getTrackHoverBorderColor = () => {
+    const name = trackName.toLowerCase();
+    if (name.includes('mentalidade')) return 'hover:border-purple-300';
+    if (name.includes('organização')) return 'hover:border-yellow-300';
+    if (name.includes('aceleração')) return 'hover:border-green-300';
+    return 'hover:border-purple-300';
+  };
   const [api, setApi] = React.useState<CarouselApi>();
   
   // Limitar visualização: mostrar apenas módulos completos + atual + 2 bloqueados + mensagem
@@ -142,8 +167,12 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                 <Card
                   className={cn(
                     "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[2/3]",
-                    "bg-white border-2 border-gray-200 hover:shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:border-purple-300",
-                    isLocked && "cursor-not-allowed"
+                    getTrackBackgroundColor(),
+                    "border-2",
+                    getTrackBorderColor(),
+                    "hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
+                    getTrackHoverBorderColor(),
+                    isLocked && "cursor-not-allowed opacity-60"
                   )}
                   onClick={() => !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
                 >

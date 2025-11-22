@@ -445,6 +445,7 @@ const Dashboard = () => {
                 status: module.status,
                 progress: module.progress_percent
               }))}
+              trackName={currentTrack.name}
               onItemClick={(id, status) => handleModuleClick(id, status, currentTrack.status)}
             />
           )}
