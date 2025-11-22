@@ -13,7 +13,7 @@ interface RewardModalProps {
 export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle }: RewardModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-white rounded-3xl border-0 shadow-2xl">
+      <DialogContent className="sm:max-w-md">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -33,11 +33,11 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
             Parabéns!
           </h2>
           
-          <p className="text-xl font-semibold mb-2 text-gray-800">{moduleTitle}</p>
-          <p className="text-gray-500 mb-6">Módulo Completo</p>
+          <p className="text-xl font-semibold mb-2">{moduleTitle}</p>
+          <p className="text-gray-600 mb-6">Módulo Completo</p>
 
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-6 mb-6 shadow-inner">
-            <p className="text-sm text-purple-700 font-bold mb-4">Você ganhou:</p>
+          <div className="bg-white rounded-lg p-6 mb-6 border border-gray-200">
+            <p className="text-sm text-gray-600 mb-4">Você ganhou:</p>
             
             <div className="flex justify-center gap-8">
               <motion.div
@@ -46,10 +46,10 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
                 transition={{ delay: 0.4 }}
                 className="text-center"
               >
-                <div className="text-4xl font-bold text-purple-600 mb-1">
+                <div className="text-4xl font-bold text-[#7C3AED] mb-1">
                   +{xpReward}
                 </div>
-                <div className="text-sm text-purple-500 font-medium">XP</div>
+                <div className="text-sm text-gray-600">XP</div>
               </motion.div>
               
               <motion.div
@@ -58,10 +58,10 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
                 transition={{ delay: 0.5 }}
                 className="text-center"
               >
-                <div className="text-4xl font-bold text-yellow-600 mb-1">
+                <div className="text-4xl font-bold text-[#F5A623] mb-1">
                   +{pointsReward}
                 </div>
-                <div className="text-sm text-yellow-500 font-medium">Pontos</div>
+                <div className="text-sm text-gray-600">Pontos</div>
               </motion.div>
             </div>
           </div>
@@ -73,7 +73,7 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
           >
             <Button 
               onClick={onClose} 
-              className="w-full bg-gradient-to-br from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white font-bold py-6 text-lg rounded-3xl shadow-lg border-0"
+              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-6 text-lg"
             >
               Continue Sua Jornada! 🚀
             </Button>

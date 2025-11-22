@@ -268,31 +268,58 @@ const Dashboard = () => {
   return (
     <div 
       className={cn(
-        "relative min-h-screen overflow-auto flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50",
+        "relative h-screen overflow-hidden flex flex-col gradient-background geometric-bg",
         getTrackClassName()
       )}
     >
-      {/* Floating decorative elements */}
-      <div className="absolute top-10 left-10 w-20 h-20 bg-purple-200 rounded-full opacity-20 blur-2xl animate-blob" />
-      <div className="absolute top-40 right-20 w-32 h-32 bg-pink-200 rounded-full opacity-20 blur-2xl animate-blob animation-delay-2000" />
-      <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-blue-200 rounded-full opacity-20 blur-2xl animate-blob animation-delay-4000" />
+      {/* Meteoros Neon - Variação de espessura e distribuição */}
+      {/* Linhas finas (2-4px) */}
+      <div className="neon-line neon-line-cyan" style={{ width: '3px', height: '220px', left: '5%', animationDelay: '0s', animationDuration: '4.2s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '2px', height: '280px', left: '15%', animationDelay: '1.5s', animationDuration: '5.8s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '4px', height: '240px', left: '60%', animationDelay: '3.2s', animationDuration: '4.5s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '3px', height: '200px', left: '75%', animationDelay: '2.1s', animationDuration: '5.2s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '2px', height: '260px', left: '-8%', animationDelay: '4.8s', animationDuration: '4.8s' }} />
+      
+      {/* Linhas médias (5-8px) */}
+      <div className="neon-line neon-line-pink" style={{ width: '6px', height: '350px', left: '10%', animationDelay: '0.8s', animationDuration: '5s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '7px', height: '420px', left: '25%', animationDelay: '2.5s', animationDuration: '4.3s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '5px', height: '380px', left: '35%', animationDelay: '1.2s', animationDuration: '5.5s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '8px', height: '400px', left: '50%', animationDelay: '3.8s', animationDuration: '4.7s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '6px', height: '340px', left: '65%', animationDelay: '5.2s', animationDuration: '5.3s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '7px', height: '360px', left: '-5%', animationDelay: '1.8s', animationDuration: '4.9s' }} />
+      
+      {/* Linhas grossas (10-14px) */}
+      <div className="neon-line neon-line-cyan" style={{ width: '12px', height: '500px', left: '20%', animationDelay: '0.3s', animationDuration: '5.8s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '14px', height: '550px', left: '40%', animationDelay: '2.9s', animationDuration: '4.2s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '10px', height: '480px', left: '55%', animationDelay: '4.5s', animationDuration: '5.6s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '13px', height: '520px', left: '70%', animationDelay: '1.1s', animationDuration: '4.4s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '11px', height: '460px', left: '80%', animationDelay: '3.5s', animationDuration: '5.1s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '14px', height: '600px', left: '0%', animationDelay: '5.8s', animationDuration: '3.8s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '12px', height: '540px', left: '45%', animationDelay: '6.5s', animationDuration: '4.6s' }} />
+      
+      {/* Linhas extras para densidade */}
+      <div className="neon-line neon-line-pink" style={{ width: '4px', height: '300px', left: '30%', animationDelay: '4.2s', animationDuration: '5.4s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '9px', height: '440px', left: '12%', animationDelay: '6.8s', animationDuration: '4.1s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '5px', height: '320px', left: '72%', animationDelay: '2.7s', animationDuration: '5.7s' }} />
+      <div className="neon-line neon-line-cyan" style={{ width: '8px', height: '390px', left: '58%', animationDelay: '0.5s', animationDuration: '4.9s' }} />
+      <div className="neon-line neon-line-pink" style={{ width: '11px', height: '510px', left: '85%', animationDelay: '3.9s', animationDuration: '5.2s' }} />
 
       {/* HUD - Top Navigation */}
-      <div className="flex-shrink-0 z-50 p-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center gap-4 bg-white/80 backdrop-blur-lg rounded-3xl p-4 shadow-lg">
-          {/* Left: Profile, Ranking, Financas */}
-          <div className="flex items-center gap-2">
+      <div className="flex-shrink-0 z-50 p-3">
+        <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
+          {/* Left: Profile, Ranking, Financas & Logout */}
+          <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
-              className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-100 to-purple-200 rounded-3xl hover:shadow-lg hover:scale-105 transition-all group"
+              className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all group"
               title="Perfil"
             >
-              <span className="text-3xl group-hover:scale-110 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
+              <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
             </button>
 
           <button 
             onClick={() => navigate('/ranking')}
-            className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-3xl text-yellow-700 hover:shadow-lg hover:scale-105 transition-all"
+            className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all"
             title="Ranking"
           >
             <Trophy className="w-6 h-6" />
@@ -300,7 +327,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/financas')}
-            className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-3xl text-green-700 hover:shadow-lg hover:scale-105 transition-all"
+            className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all"
             title="Finanças"
           >
             <Wallet className="w-6 h-6" />
@@ -308,12 +335,18 @@ const Dashboard = () => {
           </div>
 
           {/* Center: Logo */}
-          <div className="text-center">
-            <img 
-              src={miraLogo} 
-              alt="MIRA" 
-              className="h-12 md:h-14 w-auto object-contain"
-            />
+          <div className="text-center relative">
+            <div className="relative inline-block">
+              {/* Glow neon effect */}
+              <div className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-70 animate-pulse" />
+              
+              {/* Logo Image */}
+              <img 
+                src={miraLogo} 
+                alt="MIRA" 
+                className="relative h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] drop-shadow-[0_0_50px_rgba(236,72,153,0.6)]"
+              />
+            </div>
           </div>
 
           {/* Right: Goal + Stats */}
@@ -325,40 +358,52 @@ const Dashboard = () => {
               {goal ? (
                 <motion.button
                   onClick={() => setGoalModalOpen(true)}
-                  className="relative flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-pink-100 to-pink-200 rounded-3xl hover:shadow-lg transition-all group"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl border-4 border-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 transition-all group overflow-hidden"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-400 to-pink-500 flex items-center justify-center shadow-md">
-                    <Target className="w-6 h-6 text-white" strokeWidth={2.5} />
-                    <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-green-400 flex items-center justify-center text-[10px] font-black text-white shadow-md">
+                  {/* Animated Background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  
+                  {/* Ícone MAIOR e mais vibrante */}
+                  <div className="relative">
+                    {/* Glow effect pulsante */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-700 rounded-full blur-2xl opacity-40 animate-pulse" />
+                    
+                    {/* Container do ícone */}
+                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 via-purple-500 to-purple-700 flex items-center justify-center shadow-2xl ring-4 ring-[hsl(270,70%,35%)]/30">
+                      <Target className="w-8 h-8 text-white" strokeWidth={3} />
+                    </div>
+                    
+                    {/* Badge de porcentagem */}
+                    <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
                       {Math.round(progressPercentage)}%
                     </div>
                   </div>
                   
-                  <div className="hidden lg:block text-left min-w-[140px]">
-                    <div className="text-xs text-pink-700 font-bold leading-tight">{goal.title}</div>
-                    <div className="relative h-1.5 bg-white/60 rounded-full mt-1 overflow-hidden">
+                  <div className="hidden lg:block text-left min-w-[180px] relative z-10">
+                    <div className="text-xs text-[hsl(270,70%,35%)] font-bold leading-tight">{goal.title}</div>
+                    <div className="relative h-2 bg-[hsl(270,70%,35%)]/20 rounded-full mt-1 overflow-hidden">
                       <motion.div
-                        className="absolute inset-y-0 left-0 rounded-full"
+                        className="absolute inset-y-0 left-0 rounded-full shadow-lg"
                         style={{
                           background: progressPercentage > 80 
-                            ? 'linear-gradient(90deg, #4ade80, #22c55e)' 
+                            ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
                             : progressPercentage > 40
-                            ? 'linear-gradient(90deg, #fbbf24, #f59e0b)'
-                            : 'linear-gradient(90deg, #ec4899, #db2777)'
+                            ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
+                            : 'linear-gradient(90deg, hsl(270 70% 35%), hsl(270 70% 50%))'
                         }}
                         initial={{ width: 0 }}
                         animate={{ width: `${progressPercentage}%` }}
                         transition={{ duration: 1, ease: "easeOut" }}
                       />
                     </div>
-                    <div className="flex justify-between items-center text-[10px] mt-0.5">
-                      <span className="text-pink-600 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
-                      <span className="font-bold text-pink-700">{Math.round(progressPercentage)}%</span>
+                    <div className="flex justify-between items-center text-xs mt-1">
+                      <span className="text-[hsl(270,70%,35%)]/70 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
+                      <span className="font-bold text-[hsl(270,70%,35%)]">{Math.round(progressPercentage)}%</span>
                     </div>
                   </div>
-                  <span className="lg:hidden font-bold text-pink-700">{Math.round(progressPercentage)}%</span>
+                  <span className="lg:hidden font-bold text-[hsl(270,70%,35%)] text-lg relative z-10">{Math.round(progressPercentage)}%</span>
                 </motion.button>
               ) : (
                 <motion.button
@@ -366,31 +411,33 @@ const Dashboard = () => {
                     setEditingGoal(null);
                     setGoalFormOpen(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-pink-100 to-pink-200 rounded-3xl text-pink-700 hover:shadow-lg transition-all"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <Target className="w-5 h-5" />
-                  <span className="hidden lg:inline font-bold text-sm">Criar Meta</span>
+                  <span className="hidden lg:inline font-bold">Criar Meta</span>
                 </motion.button>
               )}
 
               {/* Stats */}
               <div className="flex items-center gap-2">
-                <div className="px-3 py-2 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl hover:shadow-md transition-all hover:scale-105">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-6 h-6 rounded-xl bg-gradient-to-br from-purple-400 to-purple-500 flex items-center justify-center shadow-sm">
-                      <Zap className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
+                <div className="group relative px-3 py-1.5 bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-md rounded-full hover:from-purple-500/40 hover:to-pink-500/40 transition-all hover:scale-105">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
+                  <div className="flex items-center gap-1.5 relative z-10">
+                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                      <Zap className="w-3 h-3 text-white" strokeWidth={3} />
                     </div>
-                    <span className="text-sm text-purple-700 font-bold">{profile?.current_xp || 0}</span>
+                    <span className="text-xs text-white font-bold">{profile?.current_xp || 0}</span>
                   </div>
                 </div>
-                <div className="px-3 py-2 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-2xl hover:shadow-md transition-all hover:scale-105">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-6 h-6 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center shadow-sm">
-                      <Coins className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
+                <div className="group relative px-3 py-1.5 bg-gradient-to-r from-yellow-500/30 to-orange-500/30 backdrop-blur-md rounded-full hover:from-yellow-500/40 hover:to-orange-500/40 transition-all hover:scale-105">
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
+                  <div className="flex items-center gap-1.5 relative z-10">
+                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
+                      <Coins className="w-3 h-3 text-white" strokeWidth={3} />
                     </div>
-                    <span className="text-sm text-yellow-700 font-bold">{profile?.dream_points || 0}</span>
+                    <span className="text-xs text-white font-bold">{profile?.dream_points || 0}</span>
                   </div>
                 </div>
               </div>
@@ -402,9 +449,9 @@ const Dashboard = () => {
 
 
       {/* Track Navigation */}
-      <div className="flex-shrink-0 z-40 mt-4">
+      <div className="flex-shrink-0 z-40">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center gap-4">
             {tracks.map((track, index) =>
               track.name.toLowerCase().includes('mentalidade') ? (
                 <button
@@ -501,9 +548,9 @@ const Dashboard = () => {
               key={currentTrack.id}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center mt-4 bg-white/60 backdrop-blur-sm rounded-3xl p-4 shadow-sm"
+              className="text-center mt-4"
             >
-              <p className="text-gray-700 text-base font-medium">{currentTrack.description}</p>
+              <p className="text-white/90 text-lg">{currentTrack.description}</p>
             </motion.div>
           )}
         </div>
@@ -533,11 +580,13 @@ const Dashboard = () => {
       {/* Floating Oracle Button */}
       <button
         onClick={() => navigate('/oracle')}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-300 to-pink-300 rounded-3xl shadow-xl hover:scale-110 transition-all flex items-center justify-center text-white group"
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group relative overflow-hidden"
       >
-        <Sparkles className="w-8 h-8 group-hover:rotate-12 transition-transform" strokeWidth={2} />
-        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-md animate-pulse">
-          <Sparkles className="w-3 h-3 text-white" strokeWidth={2.5} />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
+        <Sparkles className="w-8 h-8 relative z-10 group-hover:rotate-12 transition-transform" strokeWidth={2.5} />
+        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+          <Sparkles className="w-3 h-3 text-white" strokeWidth={3} />
         </div>
       </button>
 
