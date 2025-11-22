@@ -183,21 +183,6 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                         borderBottomRightRadius: '40px'
                       }}
                     >
-                      {/* Badge lateral com número */}
-                      <div 
-                        className="absolute -left-5 top-2/3 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md z-20"
-                        style={{
-                          border: `4px solid ${color}40`
-                        }}
-                      >
-                        <span 
-                          className="font-extrabold text-lg"
-                          style={{ color: color }}
-                        >
-                          {item.number}
-                        </span>
-                      </div>
-
                       {/* Status badge no topo */}
                       <div className="absolute top-4 right-4">
                         <Badge
@@ -234,7 +219,22 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                     </div>
 
                     {/* Texto */}
-                    <div className="px-8 pt-6 pb-8 text-center flex-1 flex flex-col justify-between">
+                    <div className="px-8 pt-6 pb-8 text-center flex-1 flex flex-col justify-between relative">
+                      {/* Badge com número na parte inferior */}
+                      <div 
+                        className="absolute -left-5 top-1/2 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md z-20"
+                        style={{
+                          border: `4px solid ${color}40`
+                        }}
+                      >
+                        <span 
+                          className="font-extrabold text-lg"
+                          style={{ color: color }}
+                        >
+                          {item.number}
+                        </span>
+                      </div>
+
                       <div>
                         <h2 className="text-indigo-950 font-extrabold text-xl tracking-wide uppercase mb-3">
                           {item.title}
@@ -294,8 +294,8 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
         })}
       </CarouselContent>
       
-      <CarouselPrevious className="hidden md:flex -left-12 bg-white/80 hover:bg-white" />
-      <CarouselNext className="hidden md:flex -right-12 bg-white/80 hover:bg-white" />
+      <CarouselPrevious className="-left-12 bg-white shadow-lg hover:bg-gray-50 border-2 border-gray-200" />
+      <CarouselNext className="-right-12 bg-white shadow-lg hover:bg-gray-50 border-2 border-gray-200" />
     </Carousel>
   );
 }
