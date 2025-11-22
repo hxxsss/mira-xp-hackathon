@@ -16,6 +16,8 @@ import miraLogo from "@/assets/mira-logo.png";
 import mentalidadeBadge from "@/assets/mentalidade-badge.png";
 import organizacaoLocked from "@/assets/organizacao-locked.png";
 import organizacaoUnlocked from "@/assets/organizacao-unlocked.png";
+import aceleracaoLocked from "@/assets/aceleracao-locked.png";
+import aceleracaoUnlocked from "@/assets/aceleracao-unlocked.png";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -460,7 +462,7 @@ const Dashboard = () => {
                   <img 
                     src={mentalidadeBadge} 
                     alt="Mentalidade" 
-                    className={`h-12 w-auto object-contain transition-all ${
+                    className={`h-16 w-auto object-contain transition-all ${
                       index === currentTrackIndex
                         ? 'scale-110 drop-shadow-2xl'
                         : track.status === 'locked'
@@ -484,7 +486,28 @@ const Dashboard = () => {
                   <img 
                     src={track.status === 'locked' ? organizacaoLocked : organizacaoUnlocked} 
                     alt="Organização" 
-                    className={`h-12 w-auto object-contain transition-all ${
+                    className={`h-16 w-auto object-contain transition-all ${
+                      index === currentTrackIndex
+                        ? 'scale-110 drop-shadow-2xl'
+                        : track.status === 'locked'
+                        ? 'opacity-50'
+                        : 'opacity-80'
+                    }`}
+                  />
+                  {track.status === 'completed' && (
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
+                  )}
+                </button>
+              ) : track.name.toLowerCase().includes('aceleração') || track.name.toLowerCase().includes('aceleracao') ? (
+                <button
+                  key={track.id}
+                  onClick={() => handleTrackChange(index)}
+                  className="relative transition-all hover:scale-110"
+                >
+                  <img 
+                    src={track.status === 'locked' ? aceleracaoLocked : aceleracaoUnlocked} 
+                    alt="Aceleração" 
+                    className={`h-16 w-auto object-contain transition-all ${
                       index === currentTrackIndex
                         ? 'scale-110 drop-shadow-2xl'
                         : track.status === 'locked'
