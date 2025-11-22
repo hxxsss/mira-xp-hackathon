@@ -30,9 +30,8 @@ const steps = [
   { id: "goal", title: "Meta" },
   { id: "amount", title: "Valor" },
   { id: "timeline", title: "Prazo" },
-  { id: "income", title: "Tipo de Renda" },
+  { id: "income", title: "Renda" },
   { id: "avatar", title: "Mascote" },
-  { id: "password", title: "Senha" },
 ];
 
 const timelineOptions = [
@@ -167,7 +166,7 @@ const Onboarding = () => {
   const isStepValid = () => {
     switch (currentStep) {
       case 0:
-        return formData.name && formData.age && formData.email;
+        return formData.name && formData.age && formData.email && formData.password.length >= 6;
       case 1:
         return formData.goalName;
       case 2:
@@ -178,15 +177,13 @@ const Onboarding = () => {
         return formData.incomeType;
       case 5:
         return formData.avatarId;
-      case 6:
-        return formData.password.length >= 6;
       default:
         return true;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-2 sm:p-4 relative overflow-hidden">
       {/* Back Button */}
       <button
         onClick={() => navigate("/")}
@@ -206,16 +203,15 @@ const Onboarding = () => {
             currentStep === 2 && "track-blur-aceleracao",
             currentStep === 3 && "track-blur-mentalidade",
             currentStep === 4 && "track-blur-organizacao",
-            currentStep === 5 && "track-blur-aceleracao",
-            currentStep === 6 && "track-blur-mentalidade"
+            currentStep === 5 && "track-blur-aceleracao"
           )}
         />
       </div>
 
-      <div className="w-full max-w-lg mx-auto py-8 relative z-10">
+      <div className="w-full max-w-lg mx-auto py-2 sm:py-4 relative z-10">
         {/* Logo */}
         <motion.div
-          className="text-center mb-6"
+          className="text-center mb-3 sm:mb-4"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -230,7 +226,7 @@ const Onboarding = () => {
 
         {/* Progress indicator */}
         <motion.div
-          className="mb-8"
+          className="mb-4 sm:mb-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -299,14 +295,14 @@ const Onboarding = () => {
                 >
                   {currentStep === 0 && (
                     <>
-                      <CardHeader>
+                      <CardHeader className="pb-3">
                         <CardTitle>Vamos te conhecer!</CardTitle>
                         <CardDescription>
                           Conte um pouco sobre você
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                      <CardContent className="space-y-3">
+                        <motion.div variants={fadeInUp} className="space-y-1.5">
                           <Label htmlFor="name">Qual é o seu nome?</Label>
                           <Input
                             id="name"
@@ -316,7 +312,7 @@ const Onboarding = () => {
                             className="transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
                           />
                         </motion.div>
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fadeInUp} className="space-y-1.5">
                           <Label htmlFor="age">Quantos anos você tem?</Label>
                           <Input
                             id="age"
@@ -332,7 +328,7 @@ const Onboarding = () => {
                             className="transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
                           />
                         </motion.div>
-                        <motion.div variants={fadeInUp} className="space-y-2">
+                        <motion.div variants={fadeInUp} className="space-y-1.5">
                           <Label htmlFor="email">Email</Label>
                           <Input
                             id="email"
@@ -343,25 +339,36 @@ const Onboarding = () => {
                             className="transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
                           />
                         </motion.div>
+                        <motion.div variants={fadeInUp} className="space-y-1.5">
+                          <Label htmlFor="password">Senha</Label>
+                          <Input
+                            id="password"
+                            type="password"
+                            placeholder="Pelo menos 6 caracteres"
+                            value={formData.password}
+                            onChange={(e) => updateField("password", e.target.value)}
+                            className="transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
+                          />
+                        </motion.div>
                       </CardContent>
                     </>
                   )}
 
                   {currentStep === 1 && (
                     <>
-                      <CardHeader>
+                      <CardHeader className="pb-3">
                         <CardTitle>Qual é a sua meta?</CardTitle>
                         <CardDescription>
                           Para o que você está economizando? Seja específico!
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-3">
                         <motion.div variants={fadeInUp} className="space-y-2">
                           <Input
                             value={formData.goalName}
                             onChange={(e) => updateField("goalName", e.target.value)}
                             placeholder="ex: PlayStation 5, Notebook Novo, Ingresso de Show"
-                            className="text-lg p-6 transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
+                            className="text-lg p-5 transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
                           />
                         </motion.div>
                       </CardContent>
@@ -370,16 +377,16 @@ const Onboarding = () => {
 
                   {currentStep === 2 && (
                     <>
-                      <CardHeader>
+                      <CardHeader className="pb-3">
                         <CardTitle>Quanto custa?</CardTitle>
                         <CardDescription>
                           Digite o valor total que você precisa economizar
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-3">
                         <motion.div variants={fadeInUp} className="space-y-2">
                           <div className="relative">
-                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl text-muted-foreground">
+                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xl text-muted-foreground">
                               R$
                             </span>
                             <Input
@@ -391,7 +398,7 @@ const Onboarding = () => {
                                 updateField("goalAmount", rawValue);
                               }}
                               placeholder="0"
-                              className="text-2xl p-6 pl-12 transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
+                              className="text-xl p-5 pl-11 transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
                             />
                           </div>
                           <p className="text-sm text-muted-foreground text-center">
@@ -404,20 +411,20 @@ const Onboarding = () => {
 
                   {currentStep === 3 && (
                     <>
-                      <CardHeader>
+                      <CardHeader className="pb-3">
                         <CardTitle>Você tem uma ideia de quanto tempo?</CardTitle>
                         <CardDescription>
                           Quanto tempo você acha que vai levar para alcançar sua meta?
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-3">
+                      <CardContent className="space-y-3">
+                        <motion.div variants={fadeInUp} className="space-y-2.5">
                           {timelineOptions.map((option) => (
                             <motion.button
                               key={option.value}
                               onClick={() => updateField("goalTimeline", option.value)}
                               className={cn(
-                                "w-full p-4 rounded-xl border-2 transition-all text-left",
+                                "w-full p-3 rounded-xl border-2 transition-all text-left",
                                 formData.goalTimeline === option.value
                                   ? "border-purple-600 bg-purple-50"
                                   : "border-gray-200 hover:bg-gray-50"
@@ -439,20 +446,20 @@ const Onboarding = () => {
                     </>
                   )}
 
-                  {currentStep === 6 && (
+                  {currentStep === 4 && (
                     <>
-                      <CardHeader>
+                      <CardHeader className="pb-3">
                         <CardTitle>De onde vem seu dinheiro?</CardTitle>
                         <CardDescription>
                           Isso nos ajuda a dar melhores conselhos
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-4">
+                      <CardContent className="space-y-3">
+                        <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-3">
                           <motion.button
                             onClick={() => updateField("incomeType", "mesada")}
                             className={cn(
-                              "p-6 rounded-2xl border-2 transition-all",
+                              "p-4 rounded-2xl border-2 transition-all",
                               formData.incomeType === "mesada"
                                 ? "border-purple-600 bg-purple-50"
                                 : "border-gray-200 hover:bg-gray-50"
@@ -467,7 +474,7 @@ const Onboarding = () => {
                           <motion.button
                             onClick={() => updateField("incomeType", "trabalho")}
                             className={cn(
-                              "p-6 rounded-2xl border-2 transition-all",
+                              "p-4 rounded-2xl border-2 transition-all",
                               formData.incomeType === "trabalho"
                                 ? "border-purple-600 bg-purple-50"
                                 : "border-gray-200 hover:bg-gray-50"
@@ -484,24 +491,24 @@ const Onboarding = () => {
                     </>
                   )}
 
-                  {currentStep === 4 && (
+                  {currentStep === 5 && (
                     <>
-                      <CardHeader>
+                      <CardHeader className="pb-3">
                         <CardTitle>Escolha seu mascote!</CardTitle>
                         <CardDescription>
                           Escolha um companheiro para sua jornada
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="grid grid-cols-5 gap-3">
+                      <CardContent className="space-y-3">
+                        <motion.div variants={fadeInUp} className="grid grid-cols-5 gap-2.5">
                           {avatars.map((avatar, index) => (
                             <motion.button
                               key={avatar.id}
                               onClick={() => updateField("avatarId", avatar.id)}
                               className={cn(
-                                "aspect-square rounded-2xl p-4 transition-all",
+                                "aspect-square rounded-2xl p-2.5 transition-all",
                                 formData.avatarId === avatar.id
-                                  ? "border-4 border-purple-600 bg-purple-50 scale-105"
+                                  ? "border-3 border-purple-600 bg-purple-50 scale-105"
                                   : "border-2 border-gray-200 hover:bg-gray-50"
                               )}
                               whileHover={{ scale: 1.05 }}
@@ -516,8 +523,8 @@ const Onboarding = () => {
                                 },
                               }}
                             >
-                              <div className="text-5xl">{avatar.emoji}</div>
-                              <div className="text-xs mt-2 font-medium">{avatar.name}</div>
+                              <div className="text-3xl sm:text-4xl">{avatar.emoji}</div>
+                              <div className="text-[10px] mt-1 font-medium">{avatar.name}</div>
                             </motion.button>
                           ))}
                         </motion.div>
@@ -525,36 +532,10 @@ const Onboarding = () => {
                     </>
                   )}
 
-                  {currentStep === 6 && (
-                    <>
-                      <CardHeader>
-                        <CardTitle>Quase lá!</CardTitle>
-                        <CardDescription>
-                          Crie uma senha para proteger sua conta
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <motion.div variants={fadeInUp} className="space-y-2">
-                          <Label htmlFor="password">Senha</Label>
-                          <Input
-                            id="password"
-                            type="password"
-                            value={formData.password}
-                            onChange={(e) => updateField("password", e.target.value)}
-                            placeholder="Pelo menos 6 caracteres"
-                            className="transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
-                          />
-                          <p className="text-xs text-muted-foreground mt-2">
-                            Mínimo de 6 caracteres
-                          </p>
-                        </motion.div>
-                      </CardContent>
-                    </>
-                  )}
                 </motion.div>
               </AnimatePresence>
 
-              <CardFooter className="flex justify-between pt-6 pb-4">
+              <CardFooter className="flex justify-between pt-4 pb-3">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
                     type="button"
