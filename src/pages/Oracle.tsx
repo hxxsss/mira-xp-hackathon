@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Sparkles, Send, ArrowLeft, CheckCircle, AlertTriangle, XCircle, History } from "lucide-react";
+import { Sparkles, ArrowLeft, CheckCircle, AlertTriangle, XCircle, History } from "lucide-react";
 import crystalBall from "@/assets/crystal-ball.png";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -504,14 +504,22 @@ const Oracle = () => {
       </div>
 
       {/* Input Area */}
-      <div className="sticky bottom-0 glass-card border-t border-border">
-        <div className="container mx-auto px-4 py-4 bg-purple-50">
-          <div className="max-w-3xl mx-auto flex gap-3">
-            <Input value={input} onChange={e => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder="Digite sua mensagem..." disabled={isLoading} className="flex-1 rounded-3xl px-6 py-6 text-base" />
-            <Button onClick={sendMessage} disabled={!input.trim() || isLoading} size="lg" className="rounded-3xl px-6 gradient-primary hover:opacity-90 transition-opacity">
-              <Send className="w-5 h-5" />
-            </Button>
-          </div>
+      <div className="sticky bottom-0 glass-card border-t border-border py-6">
+        <div className="container mx-auto px-4">
+          <PlaceholdersAndVanishInput
+            placeholders={[
+              "Quero comprar um tênis de R$ 350...",
+              "Estou pensando em comprar um celular novo...",
+              "Vale a pena comprar esse videogame?",
+              "Preciso de um notebook para estudar...",
+              "Vi uma promoção de roupas...",
+            ]}
+            onChange={(e) => setInput(e.target.value)}
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendMessage();
+            }}
+          />
         </div>
       </div>
     </div>;
