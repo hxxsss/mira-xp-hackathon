@@ -11,7 +11,6 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import oracleBall from "@/assets/oracle-ball.png";
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -472,14 +471,7 @@ const Oracle = () => {
           }} exit={{
             opacity: 0,
             y: -10
-          }} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} gap-3 items-start`}>
-                {message.role === "assistant" && (
-                  <img 
-                    src={oracleBall} 
-                    alt="Oráculo" 
-                    className="w-10 h-10 rounded-full flex-shrink-0 mt-1"
-                  />
-                )}
+          }} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[80%] ${message.role === "user" ? "bg-primary text-primary-foreground" : "glass-card"} rounded-3xl px-6 py-4`}>
                   {message.content && <p className="whitespace-pre-wrap">{message.content}</p>}
                   {message.verdict && <>
@@ -496,12 +488,7 @@ const Oracle = () => {
           opacity: 0
         }} animate={{
           opacity: 1
-        }} className="flex justify-start gap-3 items-start">
-              <img 
-                src={oracleBall} 
-                alt="Oráculo" 
-                className="w-10 h-10 rounded-full flex-shrink-0 mt-1"
-              />
+        }} className="flex justify-start">
               <div className="glass-card rounded-3xl px-6 py-4">
                 <div className="flex gap-2">
                   <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
