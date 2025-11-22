@@ -59,6 +59,16 @@ All colors MUST be HSL.
     --shadow-md: 0 4px 16px hsl(270 30% 20% / 0.08);
     --shadow-lg: 0 8px 32px hsl(270 30% 20% / 0.12);
     --shadow-glow: 0 0 40px hsl(270 70% 60% / 0.3);
+
+    /* Track-specific gradients (Mobile Game Style) */
+    --track-mentalidade-from: 260 100% 25%;
+    --track-mentalidade-to: 320 100% 50%;
+    
+    --track-organizacao-from: 220 100% 25%;
+    --track-organizacao-to: 190 100% 45%;
+    
+    --track-aceleracao-from: 0 85% 25%;
+    --track-aceleracao-to: 25 100% 50%;
   }
 }
 
@@ -75,11 +85,22 @@ All colors MUST be HSL.
 
 /* Glassmorphism utility classes */
 @layer utilities {
+  /* Heavy Glassmorphism for game modules */
   .glass-card {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(38, 38, 38, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-card-heavy {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      inset 0 2px 4px rgba(255, 255, 255, 0.2),
+      0 0 60px rgba(255, 255, 255, 0.1);
   }
   
   .gradient-primary {
@@ -90,8 +111,52 @@ All colors MUST be HSL.
     background: linear-gradient(135deg, hsl(330 80% 60%) 0%, hsl(45 95% 60%) 100%);
   }
   
+  /* Track-specific backgrounds (Mobile Game Premium) */
   .gradient-background {
-    background: linear-gradient(180deg, hsl(300 70% 65%) 0%, hsl(270 80% 45%) 100%);
+    background: linear-gradient(180deg, hsl(var(--track-mentalidade-from)) 0%, hsl(var(--track-mentalidade-to)) 100%);
+    transition: background 500ms ease;
+  }
+
+  .track-mentalidade .gradient-background,
+  .track-mentalidade.gradient-background {
+    background: linear-gradient(180deg, hsl(var(--track-mentalidade-from)) 0%, hsl(var(--track-mentalidade-to)) 100%);
+  }
+
+  .track-organizacao .gradient-background,
+  .track-organizacao.gradient-background {
+    background: linear-gradient(180deg, hsl(var(--track-organizacao-from)) 0%, hsl(var(--track-organizacao-to)) 100%);
+  }
+
+  .track-aceleracao .gradient-background,
+  .track-aceleracao.gradient-background {
+    background: linear-gradient(180deg, hsl(var(--track-aceleracao-from)) 0%, hsl(var(--track-aceleracao-to)) 100%);
+  }
+
+  /* Phone wrapper for desktop */
+  .phone-wrapper {
+    position: relative;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Desktop outer background blur */
+  .desktop-bg-blur {
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.15), transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.15), transparent 50%),
+      #0a0a0a;
+    z-index: -1;
+  }
+
+  @media (min-width: 768px) {
+    .phone-wrapper {
+      border-radius: 2.5rem;
+      overflow: hidden;
+    }
   }
   
   .geometric-bg {

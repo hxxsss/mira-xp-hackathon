@@ -52,6 +52,19 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Track-specific colors for mobile game themes
+        'track-mentalidade': {
+          from: "hsl(var(--track-mentalidade-from))",
+          to: "hsl(var(--track-mentalidade-to))",
+        },
+        'track-organizacao': {
+          from: "hsl(var(--track-organizacao-from))",
+          to: "hsl(var(--track-organizacao-to))",
+        },
+        'track-aceleracao': {
+          from: "hsl(var(--track-aceleracao-from))",
+          to: "hsl(var(--track-aceleracao-to))",
+        },
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],
