@@ -297,12 +297,11 @@ const Dashboard = () => {
           </div>
 
           {/* Center: Logo */}
-          <div className="text-center relative">
-            <img 
-              src="/src/assets/logo-mira.png" 
-              alt="MIRA" 
-              className="h-16 md:h-20 w-auto mx-auto"
-            />
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <Target className="text-white w-5 h-5" />
+            </div>
+            <span className="text-2xl font-bold text-gray-900 tracking-wider font-sans">mira</span>
           </div>
 
           {/* Right: Goal + Stats */}
