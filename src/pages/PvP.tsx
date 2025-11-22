@@ -299,7 +299,7 @@ const PvP = () => {
               <Swords className="h-10 w-10" />
               ARENA PvP
             </h1>
-            <p className="text-gray-300 mt-2 text-lg">
+            <p className="text-gray-100 mt-2 text-lg">
               ⚡ Desafie jogadores e aposte XP nas batalhas épicas!
             </p>
           </motion.div>
@@ -333,7 +333,7 @@ const PvP = () => {
                       <CardTitle className="text-white">
                         {selectedMode === '1v1' ? 'Criar Partida' : 'Criar Grupo'}
                       </CardTitle>
-                      <CardDescription className="text-gray-300">
+                      <CardDescription className="text-gray-200">
                         {selectedMode === '1v1' 
                           ? 'Crie uma partida 1v1' 
                           : 'Crie um grupo e convide membros'}
@@ -342,7 +342,7 @@ const PvP = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-300">
+                  <ul className="space-y-2 text-sm text-gray-200">
                     <li>• Escolha o módulo de perguntas</li>
                     <li>• Defina a aposta de XP</li>
                     <li>• Compartilhe o código</li>
@@ -359,14 +359,14 @@ const PvP = () => {
                     </div>
                     <div>
                       <CardTitle className="text-white">Entrar {selectedMode === '1v1' ? 'na Partida' : 'no Grupo'}</CardTitle>
-                      <CardDescription className="text-gray-300">
+                      <CardDescription className="text-gray-200">
                         Use um código para entrar
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-300">
+                  <ul className="space-y-2 text-sm text-gray-200">
                     <li>• Digite o código de 6 dígitos</li>
                     <li>• Verifique a aposta de XP</li>
                     <li>• Entre na batalha!</li>
@@ -382,7 +382,7 @@ const PvP = () => {
                   Como Funciona
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
+              <CardContent className="space-y-4 text-gray-100">
                 <div>
                   <h4 className="font-semibold mb-2 text-yellow-400">Sistema de Pontuação</h4>
                   <p className="text-sm">

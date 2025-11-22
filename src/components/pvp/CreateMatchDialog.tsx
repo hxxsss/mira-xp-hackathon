@@ -63,6 +63,15 @@ export const CreateMatchDialog = ({
       return;
     }
 
+    if (userXp < 10) {
+      toast({
+        title: "XP insuficiente",
+        description: "Você precisa de pelo menos 10 XP para criar uma partida.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (xpBet[0] > userXp) {
       toast({
         title: "XP insuficiente",
@@ -179,7 +188,7 @@ export const CreateMatchDialog = ({
               value={xpBet}
               onValueChange={setXpBet}
               min={10}
-              max={Math.min(500, userXp)}
+              max={Math.max(10, Math.min(500, userXp))}
               step={10}
               className="w-full"
             />

@@ -119,7 +119,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background p-4">
       <div className="max-w-3xl mx-auto py-8">
         <div className="mb-6 space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
+          <div className="flex justify-between text-sm text-gray-700">
             <span>Pergunta {currentQuestion + 1} de {totalQuestions}</span>
             <span className="flex items-center gap-1">
               <Zap className="h-4 w-4 text-primary" />
@@ -174,7 +174,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                           <span className="text-red-600">❌ Incorreto</span>
                         )}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-gray-700">
                         {answeredIndex !== null && question.options[answeredIndex].rationale}
                       </p>
                     </div>
