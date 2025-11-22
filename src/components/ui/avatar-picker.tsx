@@ -260,6 +260,67 @@ const avatars: Avatar[] = [
     ),
     alt: "Avatar 4",
   },
+  {
+    id: 5,
+    svg: (
+      <svg
+        viewBox="0 0 36 36"
+        fill="none"
+        role="img"
+        xmlns="http://www.w3.org/2000/svg"
+        width="40"
+        height="40"
+      >
+        <mask
+          id=":r1hh:"
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="36"
+          height="36"
+        >
+          <rect width="36" height="36" rx="72" fill="#FFFFFF"></rect>
+        </mask>
+        <g mask="url(#:r1hh:)">
+          <rect width="36" height="36" fill="#4f46e5"></rect>
+          <rect
+            x="0"
+            y="0"
+            width="36"
+            height="36"
+            transform="translate(-4 4) rotate(184 18 18) scale(1.1)"
+            fill="#fbbf24"
+            rx="36"
+          ></rect>
+          <g transform="translate(3.5 -2) rotate(-8 18 18)">
+            <path
+              d="M13,19 a1,0.75 0 0,0 10,0"
+              fill="#000000"
+            />
+            <rect
+              x="11"
+              y="14"
+              width="1.5"
+              height="2"
+              rx="1"
+              stroke="none"
+              fill="#000000"
+            />
+            <rect
+              x="23"
+              y="14"
+              width="1.5"
+              height="2"
+              rx="1"
+              stroke="none"
+              fill="#000000"
+            />
+          </g>
+        </g>
+      </svg>
+    ),
+    alt: "Avatar 5",
+  },
 ];
 
 const mainAvatarVariants = {
@@ -378,7 +439,7 @@ export function AvatarPicker({ selectedAvatarId, onAvatarChange }: AvatarPickerP
                 },
               },
             }}
-            className="bg-gradient-to-r from-purple-600/20 to-indigo-600/10 w-full"
+            className="bg-gradient-to-r from-primary/20 to-accent/10 w-full"
           />
 
           <div className="px-6 pb-6 -mt-12">
@@ -436,7 +497,7 @@ export function AvatarPicker({ selectedAvatarId, onAvatarChange }: AvatarPickerP
                     </div>
                     {selectedAvatar.id === avatar.id && (
                       <motion.div
-                        className="absolute inset-0 bg-purple-600/20 ring-2 ring-purple-600 ring-offset-2 ring-offset-background rounded-full"
+                        className="absolute inset-0 bg-primary/20 ring-2 ring-primary ring-offset-2 ring-offset-background rounded-full"
                         variants={selectedVariants}
                         initial="initial"
                         animate="animate"
