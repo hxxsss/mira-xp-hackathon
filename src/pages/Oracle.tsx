@@ -504,7 +504,7 @@ const Oracle = () => {
 
       {/* Input Area */}
       <div className="sticky bottom-0 glass-card border-t border-border">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 bg-purple-50">
           <div className="max-w-3xl mx-auto flex gap-3">
             <Input value={input} onChange={e => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder="Digite sua mensagem..." disabled={isLoading} className="flex-1 rounded-3xl px-6 py-6 text-base" />
             <Button onClick={sendMessage} disabled={!input.trim() || isLoading} size="lg" className="rounded-3xl px-6 gradient-primary hover:opacity-90 transition-opacity">
