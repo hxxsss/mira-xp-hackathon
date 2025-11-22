@@ -330,11 +330,21 @@ const Dashboard = () => {
             <span className="text-2xl font-bold text-gray-900 tracking-wider font-sans">mira</span>
           </div>
 
-          {/* Right: Goal + Stats */}
+          {/* Right: Stats + Goal */}
           <div className="flex items-center gap-2 justify-end">
-            {/* Wrapper vertical para empilhar Meta e Stats */}
+            {/* Wrapper vertical para empilhar Stats e Meta */}
             <div className="flex flex-col gap-2 items-end">
               
+              {/* Stats empilhados */}
+              <div className="flex flex-col gap-2">
+                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+                  <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
+                </div>
+                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+                  <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
+                </div>
+              </div>
+
               {/* Enhanced Goal Display */}
               {goal ? (
                 <motion.button
@@ -400,16 +410,6 @@ const Dashboard = () => {
                   <span className="hidden lg:inline font-medium">Criar Meta</span>
                 </motion.button>
               )}
-
-              {/* Stats */}
-              <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-                  <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
-                </div>
-                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-                  <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
-                </div>
-              </div>
 
             </div>
           </div>
