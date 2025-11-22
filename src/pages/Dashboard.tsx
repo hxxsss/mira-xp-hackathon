@@ -295,8 +295,8 @@ const Dashboard = () => {
 
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
-        <div className="max-w-7xl mx-auto flex items-center gap-4">
-          {/* Left: Profile, Ranking, Financas & Logout */}
+        <div className="max-w-7xl mx-auto flex justify-between items-center gap-4 relative">
+          {/* Left: Profile, Ranking, Financas */}
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
@@ -323,7 +323,7 @@ const Dashboard = () => {
           </button>
           </div>
 
-          {/* Center: Logo - positioned absolutely in center */}
+          {/* Center: Logo - positioned absolutely */}
           <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
               <Target className="text-white w-5 h-5" />
