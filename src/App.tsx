@@ -30,7 +30,7 @@ const App = () => <QueryClientProvider client={queryClient}>
           <Route path="/module/:moduleId" element={<ModulePage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/profile" element={<Profile />} className="bg-slate-50" />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/financas" element={<Financas />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
