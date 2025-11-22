@@ -79,6 +79,21 @@ const Dashboard = () => {
 
   useEffect(() => {
     loadData();
+    
+    // Timeout de segurança: se após 10 segundos ainda estiver carregando, mostrar erro
+    const timeout = setTimeout(() => {
+      if (loading) {
+        console.error("Timeout ao carregar dados");
+        setLoading(false);
+        toast({
+          title: "Tempo esgotado",
+          description: "O carregamento está demorando muito. Tente recarregar a página.",
+          variant: "destructive"
+        });
+      }
+    }, 10000);
+    
+    return () => clearTimeout(timeout);
   }, []);
 
   const loadData = async () => {
@@ -86,9 +101,12 @@ const Dashboard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
+        console.log("Nenhum usuário autenticado, redirecionando para login");
         navigate("/login");
         return;
       }
+
+      console.log("Carregando dados para usuário:", user.id);
 
       // Load profile
       const { data: profileData, error: profileError } = await supabase
@@ -97,27 +115,51 @@ const Dashboard = () => {
         .eq("id", user.id)
         .single();
       
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("Erro ao carregar perfil:", profileError);
+        toast({
+          title: "Erro ao carregar perfil",
+          description: "Não foi possível carregar seus dados. Tente novamente.",
+          variant: "destructive"
+        });
+        throw profileError;
+      }
+
+      console.log("Perfil carregado:", profileData);
 
       // Load active goal
-      const { data: goalData } = await supabase
+      const { data: goalData, error: goalError } = await supabase
         .from("goals")
         .select("*")
         .eq("user_id", user.id)
         .eq("is_active", true)
         .maybeSingle();
 
+      if (goalError) {
+        console.error("Erro ao carregar meta:", goalError);
+      }
+
       // Load learning tracks
-      const { data: tracksData } = await supabase
+      const { data: tracksData, error: tracksError } = await supabase
         .from('learning_tracks')
         .select('*')
         .order('order_index');
 
+      if (tracksError) {
+        console.error("Erro ao carregar trilhas:", tracksError);
+        throw tracksError;
+      }
+
       // Load learning modules
-      const { data: modules } = await supabase
+      const { data: modules, error: modulesError } = await supabase
         .from('learning_modules')
         .select('*')
         .order('order_index');
+
+      if (modulesError) {
+        console.error("Erro ao carregar módulos:", modulesError);
+        throw modulesError;
+      }
 
       // Load user module progress
       const { data: moduleProgress } = await supabase
@@ -133,6 +175,7 @@ const Dashboard = () => {
 
       // Initialize first track and module if no progress exists
       if (tracksData && tracksData.length > 0 && (!trackProgress || trackProgress.length === 0)) {
+        console.log("Inicializando primeira trilha e módulo");
         // Unlock first track
         await supabase
           .from('user_track_progress')
@@ -172,8 +215,14 @@ const Dashboard = () => {
 
       setProfile(profileData);
       setGoal(goalData);
-    } catch (error) {
-      console.error("Error loading data:", error);
+      console.log("Dados carregados com sucesso");
+    } catch (error: any) {
+      console.error("Erro ao carregar dados do dashboard:", error);
+      toast({
+        title: "Erro ao carregar dados",
+        description: error.message || "Ocorreu um erro. Tente recarregar a página.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
