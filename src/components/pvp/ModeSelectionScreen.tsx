@@ -83,7 +83,8 @@ export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch }: ModeSelectio
               <div className="space-y-3">
                 <Search className="w-16 h-16 mx-auto text-green-400" />
                 <h3 className="text-2xl font-bold text-green-400">⚡ RÁPIDO</h3>
-                <p className="text-sm text-black font-medium">
+                <p className="text-lg text-black font-semibold">PARTIDA INSTANTÂNEA</p>
+                <p className="text-sm text-black">
                   Jogue contra um<br />
                   usuário aleatório
                 </p>
@@ -97,46 +98,64 @@ export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch }: ModeSelectio
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-8 max-w-4xl mx-auto"
+          className="mt-6 max-w-5xl mx-auto"
         >
           <Card className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-gray-700">
-            <CardHeader>
+            <CardHeader className="pb-4">
               <CardTitle className="text-white flex items-center gap-2 justify-center">
                 <Swords className="w-6 h-6 text-yellow-400" />
                 Como Funciona o Sistema de Apostas
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-gray-100">
-              <div>
-                <h4 className="font-semibold mb-2 text-yellow-400">Sistema de Pontuação</h4>
-                <p className="text-sm">
-                  Cada resposta correta vale pontos baseados na velocidade:
-                  <br />• Base: 100 pontos
-                  <br />• Bônus de velocidade: até +100 pontos extras
-                </p>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold mb-2 text-green-400">Recompensas</h4>
-                <p className="text-sm">
-                  <strong>Modo 1v1:</strong>
-                  <br />• Vencedor leva o dobro do XP apostado
-                  <br />• Empate: cada um recupera sua aposta
-                  <br />
-                  <br /><strong>Modo Grupos:</strong>
-                  <br />• 1º lugar: 60% do pote total
-                  <br />• 2º lugar: 25% do pote
-                  <br />• 3º lugar: 15% do pote
-                </p>
+            <CardContent className="grid md:grid-cols-2 gap-6 p-6">
+              {/* Sistema de Pontuação */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">📊</span>
+                  <h4 className="font-bold text-yellow-400">Sistema de Pontuação</h4>
+                </div>
+                <ul className="text-sm space-y-1 text-gray-200">
+                  <li>• Base: <strong className="text-white">100 pontos</strong></li>
+                  <li>• Bônus velocidade: <strong className="text-white">até +100</strong></li>
+                </ul>
               </div>
 
-              <div>
-                <h4 className="font-semibold mb-2 text-purple-400">Apostas de XP</h4>
-                <p className="text-sm">
-                  • Escolha quanto XP deseja apostar (mínimo 10 XP)
-                  <br />• Quanto maior a aposta, maior a recompensa!
-                  <br />• Cuidado: perder significa perder o XP apostado
-                </p>
+              {/* Recompensas 1v1 */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">⚔️</span>
+                  <h4 className="font-bold text-red-400">Recompensas 1v1</h4>
+                </div>
+                <ul className="text-sm space-y-1 text-gray-200">
+                  <li>• Vencedor: <strong className="text-white">dobro do XP</strong></li>
+                  <li>• Empate: <strong className="text-white">recupera aposta</strong></li>
+                </ul>
+              </div>
+
+              {/* Recompensas Grupos */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">👥</span>
+                  <h4 className="font-bold text-purple-400">Recompensas Grupos</h4>
+                </div>
+                <ul className="text-sm space-y-1 text-gray-200">
+                  <li>• 1º lugar: <strong className="text-white">60% do XP total</strong></li>
+                  <li>• 2º lugar: <strong className="text-white">25% do XP total</strong></li>
+                  <li>• 3º lugar: <strong className="text-white">15% do XP total</strong></li>
+                </ul>
+              </div>
+
+              {/* Apostas de XP */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">🎲</span>
+                  <h4 className="font-bold text-green-400">Apostas de XP</h4>
+                </div>
+                <ul className="text-sm space-y-1 text-gray-200">
+                  <li>• Mínimo: <strong className="text-white">10 XP</strong></li>
+                  <li>• Maior aposta = <strong className="text-white">maior recompensa</strong></li>
+                  <li>• Perder = <strong className="text-white">perde o XP apostado</strong></li>
+                </ul>
               </div>
             </CardContent>
           </Card>
