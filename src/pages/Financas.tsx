@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -101,35 +100,20 @@ const Financas = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-background geometric-bg p-4 md:p-8 relative overflow-hidden">
-      {/* Neon lines animadas */}
-      {[...Array(8)].map((_, i) => (
-        <div
-          key={i}
-          className={`neon-line ${i % 2 === 0 ? 'neon-line-cyan' : 'neon-line-pink'}`}
-          style={{
-            left: `${10 + i * 12}%`,
-            width: '2px',
-            height: '200px',
-            animationDelay: `${i * 0.5}s`,
-          }}
-        />
-      ))}
-      
-      <div className="max-w-7xl mx-auto relative z-10">
+    <div className="min-h-screen bg-white p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate("/dashboard")}
-              className="glass-card hover:bg-white/30 border border-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)]"
             >
-              <ArrowLeft className="h-6 w-6 text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]" />
+              <ArrowLeft className="h-6 w-6" />
             </Button>
             <div>
-              <h1 className="text-4xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">Finanças</h1>
-              <p className="text-white/90 drop-shadow-sm">Gerencie suas finanças de forma inteligente</p>
+              <h1 className="text-4xl font-bold text-foreground">Finanças</h1>
+              <p className="text-muted-foreground">Gerencie suas finanças de forma inteligente</p>
             </div>
           </div>
         </div>
@@ -141,7 +125,7 @@ const Financas = () => {
         />
 
         <Tabs defaultValue="transacoes" className="mt-8">
-          <TabsList className="grid w-full grid-cols-4 glass-card p-1 border border-white/30 shadow-lg">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="transacoes">
               <Wallet className="h-4 w-4 mr-2" />
               Transações
@@ -218,53 +202,35 @@ const Financas = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-2xl font-semibold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">Minhas Metas</h2>
-                  <p className="text-sm text-white/90 drop-shadow-sm">Planeje e alcance seus sonhos financeiros</p>
+                  <h2 className="text-2xl font-semibold">Minhas Metas</h2>
+                  <p className="text-sm text-muted-foreground">Planeje e alcance seus sonhos financeiros</p>
                 </div>
-                <Button 
-                  onClick={() => {
-                    setEditingGoal(null);
-                    setShowGoalForm(true);
-                  }}
-                  className="bg-gradient-to-r from-primary via-accent to-secondary hover:shadow-[0_0_20px_rgba(164,69,178,0.6)] transition-all"
-                >
+                <Button onClick={() => {
+                  setEditingGoal(null);
+                  setShowGoalForm(true);
+                }}>
                   <Target className="w-4 h-4 mr-2" />
                   Criar Nova Meta
                 </Button>
               </div>
               {loading ? (
-                <div className="glass-card p-6 border border-white/30">
-                  <p className="text-center text-white/80">Carregando...</p>
-                </div>
+                <Card className="p-6">
+                  <p className="text-center text-muted-foreground">Carregando...</p>
+                </Card>
               ) : goals.length === 0 ? (
-                <div className="glass-card p-12 text-center border border-white/30 shadow-lg">
-                  <motion.div
-                    animate={{ 
-                      rotate: [0, 5, -5, 0],
-                      scale: [1, 1.1, 1]
-                    }}
-                    transition={{ 
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <Target className="w-16 h-16 mx-auto mb-4 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
-                  </motion.div>
-                  <h3 className="text-lg font-semibold mb-2 text-white">Nenhuma meta criada ainda</h3>
-                  <p className="text-white/80 mb-4">
+                <Card className="p-12 text-center">
+                  <Target className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">Nenhuma meta criada ainda</h3>
+                  <p className="text-muted-foreground mb-4">
                     Comece a planejar seus objetivos financeiros agora!
                   </p>
-                  <Button 
-                    onClick={() => {
-                      setEditingGoal(null);
-                      setShowGoalForm(true);
-                    }}
-                    className="bg-gradient-to-r from-primary via-accent to-secondary hover:shadow-[0_0_20px_rgba(164,69,178,0.6)] transition-all"
-                  >
+                  <Button onClick={() => {
+                    setEditingGoal(null);
+                    setShowGoalForm(true);
+                  }}>
                     Criar Primeira Meta
                   </Button>
-                </div>
+                </Card>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2">
                   {goals.map((goal) => (
