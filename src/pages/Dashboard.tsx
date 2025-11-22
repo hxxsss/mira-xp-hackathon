@@ -333,16 +333,6 @@ const Dashboard = () => {
 
           {/* Right: Stats + Goal */}
           <div className="flex items-center gap-4 justify-end">
-            {/* Stats empilhados à esquerda */}
-            <div className="flex flex-col gap-2">
-              <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-                <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
-              </div>
-              <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-                <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
-              </div>
-            </div>
-
             {/* Enhanced Goal Display */}
             {goal ? (
               <motion.button
@@ -404,11 +394,21 @@ const Dashboard = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Target className="w-5 h-5" />
-                <span className="hidden lg:inline font-medium">Criar Meta</span>
-              </motion.button>
-            )}
+              <Target className="w-5 h-5" />
+              <span className="hidden lg:inline font-medium">Criar Meta</span>
+            </motion.button>
+          )}
+
+          {/* Stats empilhados à direita */}
+          <div className="flex flex-col gap-2">
+            <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+              <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
+            </div>
+            <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+              <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
+            </div>
           </div>
+        </div>
         </div>
       </div>
 
