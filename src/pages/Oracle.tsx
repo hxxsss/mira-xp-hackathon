@@ -235,6 +235,18 @@ const Oracle = () => {
     setInput("");
     setIsLoading(true);
     setIsTyping(true);
+
+    // Safety timeout to prevent infinite loading
+    const safetyTimeout = setTimeout(() => {
+      setIsLoading(false);
+      setIsTyping(false);
+      toast({
+        title: "Timeout",
+        description: "A resposta demorou muito. Tente novamente.",
+        variant: "destructive"
+      });
+    }, 30000);
+
     try {
       // Get current session token
       const {
@@ -268,6 +280,7 @@ const Oracle = () => {
       let toolCallBuffer = "";
       let isCollectingToolCall = false;
       let hasToolCall = false;
+      let currentToolName = "";  // Track tool name from the start
 
       // Add initial 1.5s delay before first message appears
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -294,6 +307,11 @@ const Oracle = () => {
             const toolCalls = parsed.choices?.[0]?.delta?.tool_calls;
             if (toolCalls && toolCalls[0]) {
               hasToolCall = true;
+
+              // Capture tool name when first detected
+              if (toolCalls[0].function?.name && !currentToolName) {
+                currentToolName = toolCalls[0].function.name;
+              }
 
               // Remove any previously streamed assistant message to prevent duplication
               if (!isCollectingToolCall) {
@@ -336,8 +354,8 @@ const Oracle = () => {
               try {
                 const verdictData = JSON.parse(toolCallBuffer);
 
-                // Detect tool name from the parsed data structure
-                const toolName = parsed.choices?.[0]?.delta?.tool_calls?.[0]?.function?.name || (verdictData.empathy_message ? 'provide_verdict' : 'update_goal_deadline');
+                // Use the captured tool name
+                const toolName = currentToolName || 'provide_verdict';
                 
                 if (toolName === 'calculate_servitude') {
                   setMessages(prev => [...prev, {
@@ -453,8 +471,12 @@ const Oracle = () => {
                   };
                   updateDeadline();
                 }
+                
+                // Reset tool call tracking variables
                 isCollectingToolCall = false;
                 toolCallBuffer = "";
+                currentToolName = "";
+                hasToolCall = false;
               } catch (e) {
                 console.error("Failed to parse tool call:", e);
                 setIsTyping(false);
@@ -467,12 +489,15 @@ const Oracle = () => {
         }
       }
 
-      // Only set loading/typing to false if no tool call was processed
-      if (!hasToolCall) {
+      // Always disable loading when streaming ends (with safety delay)
+      setTimeout(() => {
         setIsLoading(false);
         setIsTyping(false);
-      }
+      }, 500);
+      
+      clearTimeout(safetyTimeout);
     } catch (error: any) {
+      clearTimeout(safetyTimeout);
       toast({
         title: "Erro",
         description: error.message || "Falha ao enviar mensagem",
