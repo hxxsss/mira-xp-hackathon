@@ -1,6 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { User, Trophy, Wallet, Swords, BookOpen, MessageSquare } from "lucide-react";
-import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock";
+import { Trophy, Wallet } from "lucide-react";
 
 interface NavigationDockProps {
   avatarEmoji?: string;
@@ -20,59 +19,44 @@ export function NavigationDock({ avatarEmoji = "🦄" }: NavigationDockProps) {
     },
     {
       title: "Ranking",
-      icon: <Trophy className="h-full w-full text-neutral-600 dark:text-neutral-300" />,
+      icon: <Trophy className="w-6 h-6" />,
       href: "/ranking",
     },
     {
       title: "Finanças",
-      icon: <Wallet className="h-full w-full text-neutral-600 dark:text-neutral-300" />,
+      icon: <Wallet className="w-6 h-6" />,
       href: "/financas",
-    },
-    {
-      title: "PvP Arena",
-      icon: <Swords className="h-full w-full text-neutral-600 dark:text-neutral-300" />,
-      href: "/pvp",
-    },
-    {
-      title: "Mentalidade",
-      icon: <BookOpen className="h-full w-full text-neutral-600 dark:text-neutral-300" />,
-      href: "/dashboard",
-    },
-    {
-      title: "Oráculo",
-      icon: <MessageSquare className="h-full w-full text-neutral-600 dark:text-neutral-300" />,
-      href: "/oracle",
     },
   ];
 
   return (
-    <Dock 
-      className="bg-white/80 backdrop-blur-md border border-indigo-200 shadow-xl"
-      magnification={70}
-      distance={120}
-      panelHeight={56}
-    >
+    <div className="flex items-center gap-3">
       {navItems.map((item, idx) => {
         const active = isActive(item.href);
         return (
-          <DockItem
+          <button
             key={idx}
             onClick={() => navigate(item.href)}
-            className={`aspect-square rounded-2xl transition-all ${
+            className={`group relative flex items-center justify-center w-12 h-12 rounded-full transition-all ${
               active 
-                ? 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg ring-2 ring-indigo-300' 
-                : 'bg-indigo-50 hover:bg-indigo-100'
+                ? 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg ring-2 ring-indigo-300 scale-105' 
+                : 'bg-indigo-100 hover:bg-indigo-200 hover:scale-105'
             }`}
+            title={item.title}
           >
-            <DockLabel>{item.title}</DockLabel>
-            <DockIcon>
-              <div className={active ? 'text-white' : ''}>
-                {item.icon}
+            <div className={active ? 'text-white' : 'text-indigo-600'}>
+              {item.icon}
+            </div>
+            
+            {/* Tooltip on hover */}
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                {item.title}
               </div>
-            </DockIcon>
-          </DockItem>
+            </div>
+          </button>
         );
       })}
-    </Dock>
+    </div>
   );
 }
