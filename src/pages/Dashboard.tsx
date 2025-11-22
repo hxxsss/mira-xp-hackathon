@@ -263,7 +263,7 @@ const Dashboard = () => {
   return (
     <div 
       className={cn(
-        "relative h-screen overflow-hidden flex flex-col bg-white",
+        "relative min-h-screen max-h-screen overflow-y-auto flex flex-col bg-white",
         getTrackClassName()
       )}
     >
@@ -444,7 +444,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Stage - Cover Flow Carousel */}
-      <div className="relative z-10 flex-1 flex items-center justify-center py-8">
+      <div className="relative z-10 flex items-center justify-center py-8 max-h-[600px]">
         <div className="w-full px-4">
           {currentTrack && (
             <CoverFlowCarousel
