@@ -58,6 +58,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
     };
   };
   const [api, setApi] = React.useState<CarouselApi>();
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
   
   // Limitar visualização: mostrar apenas módulos completos + atual + 2 bloqueados + mensagem
   const visibleItems = React.useMemo(() => {
@@ -91,6 +92,18 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
 
     // Sempre inicializa no primeiro card
     api.scrollTo(0, true);
+    
+    // Atualiza o índice selecionado quando muda
+    const onSelect = () => {
+      setSelectedIndex(api.selectedScrollSnap());
+    };
+    
+    api.on("select", onSelect);
+    onSelect();
+    
+    return () => {
+      api.off("select", onSelect);
+    };
   }, [api, items]);
 
   useEffect(() => {
@@ -161,6 +174,8 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
           const color = item.color || cardColors[index % cardColors.length];
           const trackColors = getTrackColors();
 
+          const isCenterCard = index === selectedIndex;
+
           return (
             <CarouselItem 
               key={item.id} 
@@ -169,12 +184,14 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
               <div className="card-visual p-2 h-full">
                 <Card
                   className={cn(
-                    "relative bg-white cursor-pointer transition-all duration-300 border-0 shadow-xl pb-8",
+                    "relative bg-white transition-all duration-300 border-0 shadow-xl pb-8",
                     "rounded-[35px] w-full aspect-[3/4]",
-                    isLocked && "cursor-not-allowed opacity-60"
+                    isCenterCard && !isLocked ? "cursor-pointer" : "cursor-default",
+                    isLocked && "cursor-not-allowed opacity-60",
+                    !isCenterCard && !isLocked && "opacity-70"
                   )}
                   style={{ fontFamily: "'Nunito', sans-serif" }}
-                  onClick={() => !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
+                  onClick={() => isCenterCard && !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
                 >
                   <CardContent className="p-0 h-full flex flex-col relative">
                     {/* Header colorido com curva */}
@@ -268,7 +285,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                         style={{
                           boxShadow: '0 4px 10px rgba(255, 193, 7, 0.4)'
                         }}
-                        disabled={isLocked}
+                        disabled={isLocked || !isCenterCard}
                       >
                         {isCompleted && 'REVISAR'}
                         {isInProgress && 'CONTINUAR'}
