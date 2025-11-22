@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Swords, Users, Search } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ModeSelectionScreenProps {
   onSelectMode: (mode: '1v1' | 'group') => void;
@@ -30,11 +30,11 @@ export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch }: ModeSelectio
           >
             <Card
               onClick={() => onSelectMode('1v1')}
-              className="arcade-button cursor-pointer p-8 bg-gradient-to-br from-red-500/20 to-orange-500/20 border-red-400 hover:shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-300"
+              className="arcade-button cursor-pointer p-6 bg-gradient-to-br from-red-500/20 to-orange-500/20 border-red-400 hover:shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-300"
             >
-              <div className="space-y-4">
-                <Swords className="w-20 h-20 mx-auto text-red-400" />
-                <h3 className="text-3xl font-bold text-red-400">⚔️ 1 vs 1</h3>
+              <div className="space-y-3">
+                <Swords className="w-16 h-16 mx-auto text-red-400" />
+                <h3 className="text-2xl font-bold text-red-400">⚔️ 1 vs 1</h3>
                 <p className="text-lg text-black font-semibold">DUELO CLÁSSICO</p>
                 <p className="text-sm text-black">
                   Desafie um oponente<br />
@@ -54,11 +54,11 @@ export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch }: ModeSelectio
           >
             <Card
               onClick={() => onSelectMode('group')}
-              className="arcade-button cursor-pointer p-8 bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-400 hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transition-all duration-300"
+              className="arcade-button cursor-pointer p-6 bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-400 hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transition-all duration-300"
             >
-              <div className="space-y-4">
-                <Users className="w-20 h-20 mx-auto text-purple-400" />
-                <h3 className="text-3xl font-bold text-purple-400">👥 GRUPOS</h3>
+              <div className="space-y-3">
+                <Users className="w-16 h-16 mx-auto text-purple-400" />
+                <h3 className="text-2xl font-bold text-purple-400">👥 GRUPOS</h3>
                 <p className="text-lg text-black font-semibold">BATALHA ÉPICA</p>
                 <p className="text-sm text-black">
                   Até 5 times competindo<br />
@@ -91,6 +91,56 @@ export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch }: ModeSelectio
             </Card>
           </motion.div>
         </div>
+
+        {/* How it Works Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-8 max-w-4xl mx-auto"
+        >
+          <Card className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2 justify-center">
+                <Swords className="w-6 h-6 text-yellow-400" />
+                Como Funciona o Sistema de Apostas
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-gray-100">
+              <div>
+                <h4 className="font-semibold mb-2 text-yellow-400">Sistema de Pontuação</h4>
+                <p className="text-sm">
+                  Cada resposta correta vale pontos baseados na velocidade:
+                  <br />• Base: 100 pontos
+                  <br />• Bônus de velocidade: até +100 pontos extras
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold mb-2 text-green-400">Recompensas</h4>
+                <p className="text-sm">
+                  <strong>Modo 1v1:</strong>
+                  <br />• Vencedor leva o dobro do XP apostado
+                  <br />• Empate: cada um recupera sua aposta
+                  <br />
+                  <br /><strong>Modo Grupos:</strong>
+                  <br />• 1º lugar: 60% do pote total
+                  <br />• 2º lugar: 25% do pote
+                  <br />• 3º lugar: 15% do pote
+                </p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-2 text-purple-400">Apostas de XP</h4>
+                <p className="text-sm">
+                  • Escolha quanto XP deseja apostar (mínimo 10 XP)
+                  <br />• Quanto maior a aposta, maior a recompensa!
+                  <br />• Cuidado: perder significa perder o XP apostado
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );

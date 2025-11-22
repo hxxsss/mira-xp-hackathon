@@ -225,17 +225,69 @@ export const QuickMatchDialog = ({ open, onOpenChange, onMatchFound, userId }: Q
             </div>
 
             <div>
-              <label className="text-sm font-medium">Aposta de XP: {xpBet}</label>
+              <label className="text-sm font-medium block mb-2">
+                Aposta de XP: <span className="text-primary font-bold text-lg">{xpBet} XP</span>
+              </label>
+              
               <Slider
                 value={[xpBet]}
                 onValueChange={([value]) => setXpBet(value)}
                 min={10}
                 max={Math.max(10, Math.min(500, userXp))}
                 step={10}
+                className="mb-2"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Seu XP: {userXp}
-              </p>
+              
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Mínimo: 10 XP</span>
+                <span>Seu XP disponível: <strong className="text-foreground">{userXp}</strong></span>
+                <span>Máximo: {Math.min(500, userXp)} XP</span>
+              </div>
+              
+              {xpBet > userXp && (
+                <p className="text-xs text-destructive mt-2">
+                  ⚠️ Você não tem XP suficiente para esta aposta!
+                </p>
+              )}
+              
+              <div className="flex gap-2 mt-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setXpBet(10)}
+                  className="flex-1"
+                  type="button"
+                >
+                  10 XP
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setXpBet(Math.min(50, userXp))}
+                  className="flex-1"
+                  type="button"
+                >
+                  50 XP
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setXpBet(Math.min(100, userXp))}
+                  className="flex-1"
+                  type="button"
+                >
+                  100 XP
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setXpBet(Math.min(500, userXp))}
+                  className="flex-1"
+                  type="button"
+                >
+                  Max
+                </Button>
+              </div>
             </div>
 
             <Button onClick={handleSearch} className="w-full">
