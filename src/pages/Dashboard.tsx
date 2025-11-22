@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Wallet, Trophy } from "lucide-react";
+import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Wallet, Trophy, Zap, Coins } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -414,11 +414,23 @@ const Dashboard = () => {
 
               {/* Stats */}
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                  <span className="text-xs text-white font-bold">XP {profile?.current_xp || 0}</span>
+                <div className="group relative px-3 py-1.5 bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-md rounded-full hover:from-purple-500/40 hover:to-pink-500/40 transition-all hover:scale-105">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
+                  <div className="flex items-center gap-1.5 relative z-10">
+                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                      <Zap className="w-3 h-3 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-xs text-white font-bold">{profile?.current_xp || 0}</span>
+                  </div>
                 </div>
-                <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                  <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
+                <div className="group relative px-3 py-1.5 bg-gradient-to-r from-yellow-500/30 to-orange-500/30 backdrop-blur-md rounded-full hover:from-yellow-500/40 hover:to-orange-500/40 transition-all hover:scale-105">
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
+                  <div className="flex items-center gap-1.5 relative z-10">
+                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
+                      <Coins className="w-3 h-3 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-xs text-white font-bold">{profile?.dream_points || 0}</span>
+                  </div>
                 </div>
               </div>
 
@@ -492,10 +504,14 @@ const Dashboard = () => {
       {/* Floating Oracle Button */}
       <button
         onClick={() => navigate('/oracle')}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group"
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group relative overflow-hidden"
       >
-        <MessageSquare className="w-8 h-8 group-hover:rotate-12 transition-transform" />
-        <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-300 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
+        <Sparkles className="w-8 h-8 relative z-10 group-hover:rotate-12 transition-transform" strokeWidth={2.5} />
+        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+          <Sparkles className="w-3 h-3 text-white" strokeWidth={3} />
+        </div>
       </button>
 
       {/* Goal Details Modal */}
