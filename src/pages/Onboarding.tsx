@@ -361,9 +361,9 @@ const Onboarding = () => {
 
                   {currentStep === 3 && <>
                       <CardHeader className="pb-3">
-                        <CardTitle>Você tem uma ideia de quanto tempo?</CardTitle>
+                        <CardTitle>Tem uma ideia de quanto tempo?</CardTitle>
                         <CardDescription>
-                          Quanto tempo você acha que vai levar para alcançar sua meta?
+                          Quanto tempo você acha que vai levar para conquistar?    
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-3">
