@@ -78,8 +78,6 @@ const Onboarding = () => {
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
-    } else {
-      navigate('/login');
     }
   };
 
@@ -485,7 +483,7 @@ const Onboarding = () => {
                     type="button"
                     variant="outline"
                     onClick={prevStep}
-                    disabled={loading}
+                    disabled={loading || currentStep === 0}
                     className="flex items-center gap-1 transition-all duration-300 rounded-2xl"
                   >
                     <ChevronLeft className="h-4 w-4" /> Voltar
