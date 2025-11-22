@@ -53,21 +53,24 @@ serve(async (req) => {
       );
     }
 
-    // Create Supabase client with the user's JWT
+    const jwt = authHeader.replace("Bearer ", "");
+
+    // Create Supabase client with the user's JWT for RLS
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       {
         global: {
-          headers: { Authorization: authHeader },
+          headers: { Authorization: `Bearer ${jwt}` },
         },
       }
     );
 
-    // Verify user is authenticated
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    // Verify user is authenticated using the JWT
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(jwt);
     
     if (userError || !user) {
+      safeError("oracle-chat unauthorized", { userError });
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         {
