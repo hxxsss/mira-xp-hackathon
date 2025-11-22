@@ -163,99 +163,125 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
               key={item.id} 
               className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3"
             >
-              <div className="card-visual p-2 h-full max-h-[70vh]">
+              <div className="card-visual p-2 h-full">
                 <Card
                   className={cn(
-                    "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[2/3]",
-                    getTrackBackgroundColor(),
-                    "border-2",
-                    getTrackBorderColor(),
-                    "hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
-                    getTrackHoverBorderColor(),
+                    "relative bg-white cursor-pointer transition-all duration-300 border-0 shadow-xl pb-8",
+                    "rounded-[35px] w-full aspect-[3/4]",
                     isLocked && "cursor-not-allowed opacity-60"
                   )}
+                  style={{ fontFamily: "'Nunito', sans-serif" }}
                   onClick={() => !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
                 >
-                  <CardContent className="flex flex-col items-center justify-between h-full p-6 relative">
-                    {/* Header: Badge e Número */}
-                    <div className="w-full flex justify-between items-start">
-                      <Badge
-                        className={cn(
-                          "text-xs font-semibold",
-                          isCompleted && "bg-purple-100 text-purple-700 border-purple-200",
-                          isInProgress && "bg-purple-500 text-white border-purple-600",
-                          item.status === 'unlocked' && "bg-purple-500 text-white animate-pulse border-purple-600"
-                        )}
+                  <CardContent className="p-0 h-full flex flex-col relative">
+                    {/* Header colorido com curva */}
+                    <div 
+                      className="relative h-[55%] w-full rounded-t-[35px] flex items-center justify-center overflow-visible"
+                      style={{
+                        backgroundColor: color,
+                        borderBottomLeftRadius: '40px',
+                        borderBottomRightRadius: '40px'
+                      }}
+                    >
+                      {/* Badge lateral com número */}
+                      <div 
+                        className="absolute -left-5 top-2/3 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md z-20"
+                        style={{
+                          border: `4px solid ${color}40`
+                        }}
                       >
-                        {isCompleted && '✓ COMPLETO'}
-                        {isInProgress && '🎯 NOVO'}
-                        {item.status === 'unlocked' && '⭐ NOVO'}
-                      </Badge>
-                      
-                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-700 text-sm border-2 border-purple-200">
-                        #{item.number}
+                        <span 
+                          className="font-extrabold text-lg"
+                          style={{ color: color }}
+                        >
+                          {item.number}
+                        </span>
                       </div>
-                    </div>
 
-                    {/* Centro: Ícone Grande */}
-                    <div className="flex-1 flex flex-col items-center justify-center">
-                      <div className="mb-4">
-                        {item.number === '01' && <MoneyCircleIcon />}
-                        {item.number === '02' && <TargetIcon />}
-                        {isLocked && item.number === '03' ? <LockedIcon /> : item.number === '03' && <div className="text-8xl">{item.icon}</div>}
-                        {item.number !== '01' && item.number !== '02' && item.number !== '03' && (
-                          <div className="text-8xl">{item.icon}</div>
+                      {/* Status badge no topo */}
+                      <div className="absolute top-4 right-4">
+                        <Badge
+                          className={cn(
+                            "text-xs font-bold px-3 py-1",
+                            isCompleted && "bg-white/90 border-white/50",
+                            isInProgress && "bg-white/90 border-white/50",
+                            item.status === 'unlocked' && "bg-white/90 border-white/50 animate-pulse"
+                          )}
+                          style={{
+                            color: color
+                          }}
+                        >
+                          {isCompleted && '✓ COMPLETO'}
+                          {isInProgress && '🎯 NOVO'}
+                          {item.status === 'unlocked' && '⭐ NOVO'}
+                        </Badge>
+                      </div>
+
+                      {/* Ícone/Ilustração */}
+                      <div className="z-10 -translate-y-2 drop-shadow-lg">
+                        {item.number === '01' && <div className="scale-75"><MoneyCircleIcon /></div>}
+                        {item.number === '02' && <div className="scale-75"><TargetIcon /></div>}
+                        {isLocked && item.number === '03' ? (
+                          <div className="scale-75"><LockedIcon /></div>
+                        ) : item.number === '03' ? (
+                          <div className="text-7xl">{item.icon}</div>
+                        ) : (
+                          item.number !== '01' && item.number !== '02' && (
+                            <div className="text-7xl">{item.icon}</div>
+                          )
                         )}
                       </div>
-                      
-                      {/* Módulo Label */}
-                      <div className="text-center mb-2">
-                        <h3 className="text-2xl font-bold text-gray-900">
-                          Módulo {item.number}
-                        </h3>
-                        <h4 className="text-xl font-semibold text-gray-900 mt-1">
-                          {item.title}
-                        </h4>
-                      </div>
                     </div>
 
-                    {/* Footer: Descrição e Botão */}
-                    <div className="w-full space-y-3">
-                      <p className="text-sm text-gray-600 text-center line-clamp-2">
-                        {item.description}
-                      </p>
+                    {/* Texto */}
+                    <div className="px-8 pt-6 pb-8 text-center flex-1 flex flex-col justify-between">
+                      <div>
+                        <h2 className="text-indigo-950 font-extrabold text-xl tracking-wide uppercase mb-3">
+                          {item.title}
+                        </h2>
+                        <p className="text-gray-500 text-xs leading-relaxed font-medium line-clamp-3">
+                          {item.description}
+                        </p>
+                      </div>
 
                       {/* Barra de Progresso */}
                       {item.progress !== undefined && item.progress > 0 && (
-                        <div className="w-full bg-purple-100 rounded-full h-2 overflow-hidden">
+                        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden mt-4">
                           <div
-                            className="h-full bg-purple-500 rounded-full transition-all duration-500"
-                            style={{ width: `${item.progress}%` }}
+                            className="h-full rounded-full transition-all duration-500"
+                            style={{ 
+                              width: `${item.progress}%`,
+                              backgroundColor: color
+                            }}
                           />
                         </div>
                       )}
-
-                      {item.id !== 'continue-message' && (
-                        <Button
-                          className="w-full font-semibold bg-purple-200 text-purple-700 hover:bg-purple-300"
-                          disabled={isLocked}
-                        >
-                          {isCompleted && 'REVISAR'}
-                          {isInProgress && 'CONTINUAR'}
-                          {item.status === 'unlocked' && 'COMEÇAR'}
-                          {isLocked && '🔒 BLOQUEADO'}
-                        </Button>
-                      )}
                     </div>
+
+                    {/* Botão Amarelo Flutuante */}
+                    {item.id !== 'continue-message' && (
+                      <button
+                        className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-bold py-3 px-8 rounded-full shadow-lg transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        style={{
+                          boxShadow: '0 4px 10px rgba(255, 193, 7, 0.4)'
+                        }}
+                        disabled={isLocked}
+                      >
+                        {isCompleted && 'REVISAR'}
+                        {isInProgress && 'CONTINUAR'}
+                        {item.status === 'unlocked' && 'COMEÇAR'}
+                        {isLocked && '🔒 BLOQUEADO'}
+                      </button>
+                    )}
 
                     {/* Overlay para cards bloqueados */}
                     {isLocked && (
-                      <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center z-10">
+                      <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center z-10 rounded-[35px]">
                         <div className="text-center">
                           <div className="text-6xl mb-3">🔒</div>
-                          <p className="text-purple-600 font-bold text-lg">BLOQUEADO</p>
-                          <p className="text-purple-500 text-sm mt-1">
-                            Complete de anterior
+                          <p className="text-white font-bold text-lg">BLOQUEADO</p>
+                          <p className="text-gray-200 text-sm mt-1">
+                            Complete o anterior
                           </p>
                         </div>
                       </div>
