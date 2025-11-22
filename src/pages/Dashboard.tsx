@@ -266,38 +266,6 @@ const Dashboard = () => {
         getTrackClassName()
       )}
     >
-      {/* Meteoros Neon - Variação de espessura e distribuição */}
-      {/* Linhas finas (2-4px) */}
-      <div className="neon-line neon-line-cyan" style={{ width: '3px', height: '220px', left: '5%', animationDelay: '0s', animationDuration: '4.2s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '2px', height: '280px', left: '15%', animationDelay: '1.5s', animationDuration: '5.8s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '4px', height: '240px', left: '60%', animationDelay: '3.2s', animationDuration: '4.5s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '3px', height: '200px', left: '75%', animationDelay: '2.1s', animationDuration: '5.2s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '2px', height: '260px', left: '-8%', animationDelay: '4.8s', animationDuration: '4.8s' }} />
-      
-      {/* Linhas médias (5-8px) */}
-      <div className="neon-line neon-line-pink" style={{ width: '6px', height: '350px', left: '10%', animationDelay: '0.8s', animationDuration: '5s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '7px', height: '420px', left: '25%', animationDelay: '2.5s', animationDuration: '4.3s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '5px', height: '380px', left: '35%', animationDelay: '1.2s', animationDuration: '5.5s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '8px', height: '400px', left: '50%', animationDelay: '3.8s', animationDuration: '4.7s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '6px', height: '340px', left: '65%', animationDelay: '5.2s', animationDuration: '5.3s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '7px', height: '360px', left: '-5%', animationDelay: '1.8s', animationDuration: '4.9s' }} />
-      
-      {/* Linhas grossas (10-14px) */}
-      <div className="neon-line neon-line-cyan" style={{ width: '12px', height: '500px', left: '20%', animationDelay: '0.3s', animationDuration: '5.8s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '14px', height: '550px', left: '40%', animationDelay: '2.9s', animationDuration: '4.2s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '10px', height: '480px', left: '55%', animationDelay: '4.5s', animationDuration: '5.6s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '13px', height: '520px', left: '70%', animationDelay: '1.1s', animationDuration: '4.4s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '11px', height: '460px', left: '80%', animationDelay: '3.5s', animationDuration: '5.1s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '14px', height: '600px', left: '0%', animationDelay: '5.8s', animationDuration: '3.8s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '12px', height: '540px', left: '45%', animationDelay: '6.5s', animationDuration: '4.6s' }} />
-      
-      {/* Linhas extras para densidade */}
-      <div className="neon-line neon-line-pink" style={{ width: '4px', height: '300px', left: '30%', animationDelay: '4.2s', animationDuration: '5.4s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '9px', height: '440px', left: '12%', animationDelay: '6.8s', animationDuration: '4.1s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '5px', height: '320px', left: '72%', animationDelay: '2.7s', animationDuration: '5.7s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '8px', height: '390px', left: '58%', animationDelay: '0.5s', animationDuration: '4.9s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '11px', height: '510px', left: '85%', animationDelay: '3.9s', animationDuration: '5.2s' }} />
-
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
