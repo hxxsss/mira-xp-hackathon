@@ -30,15 +30,13 @@ export const CreateMatchDialog = ({
 }: CreateMatchDialogProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [selectedModule, setSelectedModule] = useState<string>("");
+  const [selectedLevel, setSelectedLevel] = useState<string>("");
   const [xpBet, setXpBet] = useState([50]);
   const [userXp, setUserXp] = useState(0);
-  const [modules, setModules] = useState<any[]>([]);
 
   useEffect(() => {
     if (open) {
       loadUserXp();
-      loadModules();
     }
   }, [open]);
 
@@ -54,22 +52,12 @@ export const CreateMatchDialog = ({
     }
   };
 
-  const loadModules = async () => {
-    const { data } = await supabase
-      .from('learning_modules')
-      .select('*')
-      .order('order_index');
-    
-    if (data) {
-      setModules(data);
-    }
-  };
 
   const handleCreate = async () => {
-    if (!selectedModule) {
+    if (!selectedLevel) {
       toast({
-        title: "Selecione um módulo",
-        description: "Escolha o módulo de perguntas para a partida.",
+        title: "Selecione um nível",
+        description: "Escolha o nível de dificuldade para a partida.",
         variant: "destructive",
       });
       return;
@@ -87,13 +75,20 @@ export const CreateMatchDialog = ({
     setLoading(true);
 
     try {
-      // Buscar 5 perguntas aleatórias do módulo selecionado
-      const moduleData = quizQuestions.find(m => m.moduleNumber === selectedModule);
-      if (!moduleData || !moduleData.questions || moduleData.questions.length === 0) {
-        throw new Error("Módulo sem perguntas disponíveis");
+      // Buscar perguntas do nível selecionado
+      const { data: questionsFromDb, error: questionsError } = await supabase
+        .from('pvp_questions')
+        .select('*')
+        .eq('level', selectedLevel);
+
+      if (questionsError) throw questionsError;
+
+      if (!questionsFromDb || questionsFromDb.length < 5) {
+        throw new Error("Nível sem perguntas suficientes");
       }
 
-      const shuffled = [...moduleData.questions].sort(() => Math.random() - 0.5);
+      // Embaralhar e selecionar 5 perguntas
+      const shuffled = [...questionsFromDb].sort(() => Math.random() - 0.5);
       const selectedQuestions = shuffled.slice(0, 5);
 
       // Gerar código da partida (6 caracteres aleatórios)
@@ -117,7 +112,8 @@ export const CreateMatchDialog = ({
         .from('pvp_matches')
         .insert({
           host_user_id: userId,
-          module_id: selectedModule as any,
+          module_id: null,
+          difficulty_level: selectedLevel,
           xp_bet: xpBet[0],
           questions_data: selectedQuestions as any,
           status: 'waiting',
@@ -158,17 +154,16 @@ export const CreateMatchDialog = ({
 
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label>Módulo de Perguntas</Label>
-            <Select value={selectedModule} onValueChange={setSelectedModule}>
+            <Label>Nível de Dificuldade</Label>
+            <Select value={selectedLevel} onValueChange={setSelectedLevel}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecione um módulo" />
+                <SelectValue placeholder="Selecione o nível" />
               </SelectTrigger>
               <SelectContent>
-                {modules.map((module) => (
-                  <SelectItem key={module.id} value={module.id}>
-                    {module.number} - {module.title}
-                  </SelectItem>
-                ))}
+                <SelectItem value="Iniciante">🌱 Iniciante</SelectItem>
+                <SelectItem value="Básico">📚 Básico</SelectItem>
+                <SelectItem value="Intermediário">🎯 Intermediário</SelectItem>
+                <SelectItem value="Avançado">🚀 Avançado</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -198,7 +193,7 @@ export const CreateMatchDialog = ({
 
           <Button
             onClick={handleCreate}
-            disabled={loading || !selectedModule}
+            disabled={loading || !selectedLevel}
             className="w-full"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

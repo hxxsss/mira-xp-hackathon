@@ -20,6 +20,8 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const [startTime, setStartTime] = useState(Date.now());
   const [answers, setAnswers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showRationale, setShowRationale] = useState(false);
+  const [answeredIndex, setAnsweredIndex] = useState<number | null>(null);
 
   const questions = match.questions_data || [];
   const totalQuestions = questions.length;
@@ -42,7 +44,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     setLoading(true);
     const timeSeconds = (Date.now() - startTime) / 1000;
     const question = questions[currentQuestion];
-    const isCorrect = selectedAnswer === question.correct;
+    const isCorrect = question.options[selectedAnswer]?.isCorrect || false;
     const points = calculatePoints(isCorrect, timeSeconds);
 
     try {
@@ -64,17 +66,10 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
       const newAnswers = [...answers, { isCorrect, points }];
       setAnswers(newAnswers);
 
-      // Próxima pergunta ou finalizar
-      if (currentQuestion < totalQuestions - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-        setSelectedAnswer(null);
-      } else {
-        toast({
-          title: "Partida concluída!",
-          description: "Aguardando resultado...",
-        });
-        onComplete();
-      }
+      // Mostrar justificativa
+      setAnsweredIndex(selectedAnswer);
+      setShowRationale(true);
+      setLoading(false);
     } catch (error: any) {
       console.error('Error submitting answer:', error);
       toast({
@@ -82,8 +77,23 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
         description: error.message,
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
+    }
+  };
+
+  const handleNextQuestion = () => {
+    setShowRationale(false);
+    setAnsweredIndex(null);
+    
+    if (currentQuestion < totalQuestions - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+      setSelectedAnswer(null);
+    } else {
+      toast({
+        title: "Partida concluída!",
+        description: "Aguardando resultado...",
+      });
+      onComplete();
     }
   };
 
@@ -132,27 +142,51 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                 <CardTitle className="text-xl">{question.question}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {question.options.map((option: string, index: number) => (
+                {question.options.map((option: any, index: number) => (
                   <Button
                     key={index}
                     variant={selectedAnswer === index ? "default" : "outline"}
                     className="w-full justify-start text-left h-auto py-4 px-6"
                     onClick={() => setSelectedAnswer(index)}
-                    disabled={loading}
+                    disabled={loading || showRationale}
                   >
                     <span className="mr-3 font-bold">{String.fromCharCode(65 + index)}.</span>
-                    <span>{option}</span>
+                    <span>{option.text}</span>
                   </Button>
                 ))}
 
-                <Button
-                  onClick={handleAnswer}
-                  disabled={selectedAnswer === null || loading}
-                  className="w-full mt-6"
-                  size="lg"
-                >
-                  {loading ? "Enviando..." : "Confirmar Resposta"}
-                </Button>
+                {!showRationale ? (
+                  <Button
+                    onClick={handleAnswer}
+                    disabled={selectedAnswer === null || loading}
+                    className="w-full mt-6"
+                    size="lg"
+                  >
+                    {loading ? "Enviando..." : "Confirmar Resposta"}
+                  </Button>
+                ) : (
+                  <>
+                    <div className="mt-4 p-4 bg-muted rounded-lg space-y-2">
+                      <p className="text-sm font-semibold">
+                        {answeredIndex !== null && question.options[answeredIndex].isCorrect ? (
+                          <span className="text-green-600">✅ Correto!</span>
+                        ) : (
+                          <span className="text-red-600">❌ Incorreto</span>
+                        )}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {answeredIndex !== null && question.options[answeredIndex].rationale}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={handleNextQuestion}
+                      className="w-full mt-4"
+                      size="lg"
+                    >
+                      {currentQuestion < totalQuestions - 1 ? "Próxima Pergunta" : "Ver Resultado"}
+                    </Button>
+                  </>
+                )}
               </CardContent>
             </Card>
           </motion.div>
