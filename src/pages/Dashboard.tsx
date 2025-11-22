@@ -273,7 +273,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
-              className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full text-purple-600 hover:bg-purple-200 hover:scale-110 transition-all group border-2 border-purple-200"
+              className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 hover:scale-110 transition-all group border-2 border-indigo-200"
               title="Perfil"
             >
               <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
@@ -281,7 +281,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/ranking')}
-            className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full text-purple-600 hover:bg-purple-200 hover:scale-110 transition-all border-2 border-purple-200"
+            className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 hover:scale-110 transition-all border-2 border-indigo-200"
             title="Ranking"
           >
             <Trophy className="w-6 h-6" />
@@ -289,7 +289,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/financas')}
-            className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full text-purple-600 hover:bg-purple-200 hover:scale-110 transition-all border-2 border-purple-200"
+            className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 hover:scale-110 transition-all border-2 border-indigo-200"
             title="Finanças"
           >
             <Wallet className="w-6 h-6" />
@@ -298,9 +298,11 @@ const Dashboard = () => {
 
           {/* Center: Logo */}
           <div className="text-center relative">
-            <h1 className="text-6xl md:text-7xl font-logo font-bold tracking-[0.3em] text-purple-600">
-              MIRA
-            </h1>
+            <img 
+              src="/src/assets/logo-mira.png" 
+              alt="MIRA" 
+              className="h-16 md:h-20 w-auto mx-auto"
+            />
           </div>
 
           {/* Right: Goal + Stats */}
@@ -312,20 +314,20 @@ const Dashboard = () => {
               {goal ? (
                 <motion.button
                   onClick={() => setGoalModalOpen(true)}
-                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-purple-200 shadow-sm"
+                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-indigo-200 shadow-sm"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {/* Animated Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-pink-50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   {/* Ícone MAIOR e mais vibrante */}
                   <div className="relative">
                     {/* Glow effect pulsante */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-full blur-2xl opacity-60 animate-pulse" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 rounded-full blur-2xl opacity-60 animate-pulse" />
                     
                     {/* Container do ícone */}
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
+                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
                       <Target className="w-8 h-8 text-white" strokeWidth={3} />
                     </div>
                     
@@ -337,7 +339,7 @@ const Dashboard = () => {
                   
                   <div className="hidden lg:block text-left min-w-[180px] relative z-10">
                     <div className="text-xs text-gray-900 font-semibold leading-tight">{goal.title}</div>
-                    <div className="relative h-2 bg-purple-100 rounded-full mt-1 overflow-hidden">
+                    <div className="relative h-2 bg-indigo-100 rounded-full mt-1 overflow-hidden">
                       <motion.div
                         className="absolute inset-y-0 left-0 rounded-full shadow-lg"
                         style={{
@@ -345,7 +347,7 @@ const Dashboard = () => {
                             ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
                             : progressPercentage > 40
                             ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
-                            : 'linear-gradient(90deg, hsl(280 80% 50%), hsl(320 80% 60%))'
+                            : 'linear-gradient(90deg, hsl(239 84% 67%), hsl(217 91% 60%))'
                         }}
                         initial={{ width: 0 }}
                         animate={{ width: `${progressPercentage}%` }}
@@ -354,10 +356,10 @@ const Dashboard = () => {
                     </div>
                     <div className="flex justify-between items-center text-xs mt-1">
                       <span className="text-gray-600 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
-                      <span className="font-bold text-purple-600">{Math.round(progressPercentage)}%</span>
+                      <span className="font-bold text-indigo-600">{Math.round(progressPercentage)}%</span>
                     </div>
                   </div>
-                  <span className="lg:hidden font-bold text-purple-600 text-lg relative z-10">{Math.round(progressPercentage)}%</span>
+                  <span className="lg:hidden font-bold text-indigo-600 text-lg relative z-10">{Math.round(progressPercentage)}%</span>
                 </motion.button>
               ) : (
                 <motion.button
@@ -365,7 +367,7 @@ const Dashboard = () => {
                     setEditingGoal(null);
                     setGoalFormOpen(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full text-purple-600 hover:bg-purple-200 transition-all border-2 border-purple-200"
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-indigo-200"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -376,11 +378,11 @@ const Dashboard = () => {
 
               {/* Stats */}
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 bg-purple-100 rounded-full border-2 border-purple-200">
-                  <span className="text-xs text-purple-700 font-bold">XP {profile?.current_xp || 0}</span>
+                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+                  <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
                 </div>
-                <div className="px-3 py-1.5 bg-purple-100 rounded-full border-2 border-purple-200">
-                  <span className="text-xs text-purple-700 font-bold">💎 {profile?.dream_points || 0}</span>
+                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+                  <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
                 </div>
               </div>
 
@@ -400,10 +402,10 @@ const Dashboard = () => {
                 onClick={() => handleTrackChange(index)}
                 className={`relative px-6 py-2 rounded-full font-bold transition-all border-2 ${
                   index === currentTrackIndex
-                    ? 'bg-purple-600 text-white scale-110 shadow-xl border-purple-600'
+                    ? 'bg-indigo-600 text-white scale-110 shadow-xl border-indigo-600'
                     : track.status === 'locked'
                     ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 border-gray-200 opacity-60'
-                    : 'bg-white text-gray-700 hover:bg-purple-50 border-purple-200 opacity-80'
+                    : 'bg-white text-gray-700 hover:bg-indigo-50 border-indigo-200 opacity-80'
                 }`}
               >
                 <span className="mr-2">{track.icon}</span>
@@ -455,7 +457,7 @@ const Dashboard = () => {
       {/* Floating Oracle Button */}
       <button
         onClick={() => navigate('/oracle')}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group"
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group"
       >
         <MessageSquare className="w-8 h-8 group-hover:rotate-12 transition-transform" />
         <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-300 animate-pulse" />

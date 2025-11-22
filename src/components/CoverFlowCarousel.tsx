@@ -34,7 +34,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
   // Determina a cor de fundo baseada no nome da trilha
   const getTrackBackgroundColor = () => {
     const name = trackName.toLowerCase();
-    if (name.includes('mentalidade')) return 'bg-purple-50';
+    if (name.includes('mentalidade')) return 'bg-indigo-50';
     if (name.includes('organização')) return 'bg-yellow-50';
     if (name.includes('aceleração')) return 'bg-green-50';
     return 'bg-white';
@@ -42,7 +42,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
 
   const getTrackBorderColor = () => {
     const name = trackName.toLowerCase();
-    if (name.includes('mentalidade')) return 'border-purple-200';
+    if (name.includes('mentalidade')) return 'border-indigo-200';
     if (name.includes('organização')) return 'border-yellow-200';
     if (name.includes('aceleração')) return 'border-green-200';
     return 'border-gray-200';
@@ -50,10 +50,10 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
 
   const getTrackHoverBorderColor = () => {
     const name = trackName.toLowerCase();
-    if (name.includes('mentalidade')) return 'hover:border-purple-300';
+    if (name.includes('mentalidade')) return 'hover:border-indigo-300';
     if (name.includes('organização')) return 'hover:border-yellow-300';
     if (name.includes('aceleração')) return 'hover:border-green-300';
-    return 'hover:border-purple-300';
+    return 'hover:border-indigo-300';
   };
   const [api, setApi] = React.useState<CarouselApi>();
   
