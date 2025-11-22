@@ -283,8 +283,8 @@ const Onboarding = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Card className="border shadow-md rounded-3xl overflow-hidden bg-white">
-            <div>
+          <Card className="border shadow-md rounded-3xl overflow-hidden bg-white max-h-[calc(100vh-8rem)] flex flex-col">
+            <div className="flex-1 flex flex-col overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentStep}
@@ -292,6 +292,7 @@ const Onboarding = () => {
                   animate="visible"
                   exit="exit"
                   variants={contentVariants}
+                  className="flex-1 overflow-y-auto px-1 sm:px-2"
                 >
                   {currentStep === 0 && (
                     <>
