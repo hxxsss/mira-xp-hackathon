@@ -13,6 +13,7 @@ import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 import { GoalForm } from "@/components/financas/GoalForm";
 import miraLogo from "@/assets/mira-logo.png";
+import { TrackBadge } from "@/components/TrackBadge";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -443,31 +444,19 @@ const Dashboard = () => {
       </div>
 
 
-      {/* Track Navigation */}
-      <div className="flex-shrink-0 z-40">
+      {/* Track Navigation - Badge Style */}
+      <div className="flex-shrink-0 z-40 mb-8">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center items-center gap-6 flex-wrap">
             {tracks.map((track, index) => (
-              <button
+              <TrackBadge
                 key={track.id}
+                name={track.name}
+                icon={track.icon}
+                status={track.status}
+                isActive={index === currentTrackIndex}
                 onClick={() => handleTrackChange(index)}
-                className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
-                  index === currentTrackIndex
-                    ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
-                    : track.status === 'locked'
-                    ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
-                    : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
-                }`}
-              >
-                <span className="mr-2">{track.icon}</span>
-                {track.name}
-                {track.status === 'locked' && (
-                  <Lock className="inline-block ml-2 w-4 h-4" />
-                )}
-                {track.status === 'completed' && (
-                  <span className="ml-2">✓</span>
-                )}
-              </button>
+              />
             ))}
           </div>
           {currentTrack && (
@@ -475,9 +464,9 @@ const Dashboard = () => {
               key={currentTrack.id}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center mt-4"
+              className="text-center mt-6"
             >
-              <p className="text-white/90 text-lg">{currentTrack.description}</p>
+              <p className="text-white/90 text-lg font-medium drop-shadow-lg">{currentTrack.description}</p>
             </motion.div>
           )}
         </div>
