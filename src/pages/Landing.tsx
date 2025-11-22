@@ -30,7 +30,7 @@ const Landing = () => {
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
               <Target className="text-white w-5 h-5" />
             </div>
-            <span className="text-2xl font-logo font-bold text-gray-900 tracking-wider">MIRA</span>
+            <span className="text-2xl font-bold text-gray-900 tracking-wider font-sans">mira</span>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
