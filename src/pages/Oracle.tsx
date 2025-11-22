@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Sparkles, Send, ArrowLeft, CheckCircle, AlertTriangle, XCircle, History } from "lucide-react";
-import oracleBallImage from "@/assets/oracle-ball.png";
+import crystalBall from "@/assets/crystal-ball.png";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -404,7 +404,7 @@ const Oracle = () => {
               </Button>
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden">
-                  <img src={oracleBallImage} alt="Oráculo" className="w-full h-full object-cover" />
+                  <img src={crystalBall} alt="Oráculo" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h1 className="text-xl font-bold">Oráculo</h1>
