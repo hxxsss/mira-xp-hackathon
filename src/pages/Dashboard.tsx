@@ -298,14 +298,8 @@ const Dashboard = () => {
 
           {/* Center: Logo */}
           <div className="text-center relative">
-            <h1 className="text-6xl md:text-7xl font-logo font-bold tracking-[0.3em] relative">
-              {/* Glow neon effect */}
-              <span className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-70 animate-pulse"></span>
-              
-              {/* Texto principal branco com sombras neon */}
-              <span className="relative text-white drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] drop-shadow-[0_0_50px_rgba(236,72,153,0.6)]">
-                MIRA
-              </span>
+            <h1 className="text-6xl md:text-7xl font-logo font-bold tracking-[0.3em] text-purple-600">
+              MIRA
             </h1>
           </div>
 
