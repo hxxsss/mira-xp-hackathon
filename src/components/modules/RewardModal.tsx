@@ -29,7 +29,7 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
             🎉
           </motion.div>
           
-          <h2 className="text-3xl font-bold mb-2 text-foreground">
+          <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Parabéns!
           </h2>
           
@@ -73,7 +73,7 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
           >
             <Button 
               onClick={onClose} 
-              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-6 text-lg"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-6 text-lg"
             >
               Continue Sua Jornada! 🚀
             </Button>

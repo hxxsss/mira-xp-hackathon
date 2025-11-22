@@ -5,19 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Wallet, Trophy, Zap, Coins } from "lucide-react";
+import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Wallet, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 import { GoalForm } from "@/components/financas/GoalForm";
-import miraLogo from "@/assets/mira-logo.png";
-import mentalidadeBadge from "@/assets/mentalidade-badge.png";
-import organizacaoLocked from "@/assets/organizacao-locked.png";
-import organizacaoUnlocked from "@/assets/organizacao-unlocked.png";
-import aceleracaoLocked from "@/assets/aceleracao-locked.png";
-import aceleracaoUnlocked from "@/assets/aceleracao-unlocked.png";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -311,7 +305,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
-              className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all group"
+              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all group"
               title="Perfil"
             >
               <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
@@ -319,7 +313,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/ranking')}
-            className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all"
+            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
             title="Ranking"
           >
             <Trophy className="w-6 h-6" />
@@ -327,7 +321,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/financas')}
-            className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all"
+            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
             title="Finanças"
           >
             <Wallet className="w-6 h-6" />
@@ -336,17 +330,15 @@ const Dashboard = () => {
 
           {/* Center: Logo */}
           <div className="text-center relative">
-            <div className="relative inline-block">
+            <h1 className="text-6xl md:text-7xl font-logo font-bold tracking-[0.3em] relative">
               {/* Glow neon effect */}
-              <div className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-70 animate-pulse" />
+              <span className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-70 animate-pulse"></span>
               
-              {/* Logo Image */}
-              <img 
-                src={miraLogo} 
-                alt="MIRA" 
-                className="relative h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] drop-shadow-[0_0_50px_rgba(236,72,153,0.6)]"
-              />
-            </div>
+              {/* Texto principal branco com sombras neon */}
+              <span className="relative text-white drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] drop-shadow-[0_0_50px_rgba(236,72,153,0.6)]">
+                MIRA
+              </span>
+            </h1>
           </div>
 
           {/* Right: Goal + Stats */}
@@ -358,20 +350,20 @@ const Dashboard = () => {
               {goal ? (
                 <motion.button
                   onClick={() => setGoalModalOpen(true)}
-                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl border-4 border-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 transition-all group overflow-hidden"
+                  className="relative flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-md rounded-2xl text-white hover:from-white/30 hover:to-white/20 transition-all group overflow-hidden"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {/* Animated Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   {/* Ícone MAIOR e mais vibrante */}
                   <div className="relative">
                     {/* Glow effect pulsante */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-700 rounded-full blur-2xl opacity-40 animate-pulse" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-full blur-2xl opacity-60 animate-pulse" />
                     
                     {/* Container do ícone */}
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 via-purple-500 to-purple-700 flex items-center justify-center shadow-2xl ring-4 ring-[hsl(270,70%,35%)]/30">
+                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
                       <Target className="w-8 h-8 text-white" strokeWidth={3} />
                     </div>
                     
@@ -382,8 +374,8 @@ const Dashboard = () => {
                   </div>
                   
                   <div className="hidden lg:block text-left min-w-[180px] relative z-10">
-                    <div className="text-xs text-[hsl(270,70%,35%)] font-bold leading-tight">{goal.title}</div>
-                    <div className="relative h-2 bg-[hsl(270,70%,35%)]/20 rounded-full mt-1 overflow-hidden">
+                    <div className="text-xs text-white font-semibold leading-tight">{goal.title}</div>
+                    <div className="relative h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
                       <motion.div
                         className="absolute inset-y-0 left-0 rounded-full shadow-lg"
                         style={{
@@ -391,7 +383,7 @@ const Dashboard = () => {
                             ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
                             : progressPercentage > 40
                             ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
-                            : 'linear-gradient(90deg, hsl(270 70% 35%), hsl(270 70% 50%))'
+                            : 'linear-gradient(90deg, hsl(280 80% 50%), hsl(320 80% 60%))'
                         }}
                         initial={{ width: 0 }}
                         animate={{ width: `${progressPercentage}%` }}
@@ -399,11 +391,11 @@ const Dashboard = () => {
                       />
                     </div>
                     <div className="flex justify-between items-center text-xs mt-1">
-                      <span className="text-[hsl(270,70%,35%)]/70 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
-                      <span className="font-bold text-[hsl(270,70%,35%)]">{Math.round(progressPercentage)}%</span>
+                      <span className="text-white/80 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
+                      <span className="font-bold text-accent">{Math.round(progressPercentage)}%</span>
                     </div>
                   </div>
-                  <span className="lg:hidden font-bold text-[hsl(270,70%,35%)] text-lg relative z-10">{Math.round(progressPercentage)}%</span>
+                  <span className="lg:hidden font-bold text-accent text-lg relative z-10">{Math.round(progressPercentage)}%</span>
                 </motion.button>
               ) : (
                 <motion.button
@@ -411,34 +403,22 @@ const Dashboard = () => {
                     setEditingGoal(null);
                     setGoalFormOpen(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/30 to-primary/30 backdrop-blur-md rounded-full text-white hover:from-accent/40 hover:to-primary/40 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Target className="w-5 h-5" />
-                  <span className="hidden lg:inline font-bold">Criar Meta</span>
+                  <span className="hidden lg:inline font-medium">Criar Meta</span>
                 </motion.button>
               )}
 
               {/* Stats */}
               <div className="flex items-center gap-2">
-                <div className="group relative px-3 py-1.5 bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-md rounded-full hover:from-purple-500/40 hover:to-pink-500/40 transition-all hover:scale-105">
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
-                  <div className="flex items-center gap-1.5 relative z-10">
-                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                      <Zap className="w-3 h-3 text-white" strokeWidth={3} />
-                    </div>
-                    <span className="text-xs text-white font-bold">{profile?.current_xp || 0}</span>
-                  </div>
+                <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
+                  <span className="text-xs text-white font-bold">XP {profile?.current_xp || 0}</span>
                 </div>
-                <div className="group relative px-3 py-1.5 bg-gradient-to-r from-yellow-500/30 to-orange-500/30 backdrop-blur-md rounded-full hover:from-yellow-500/40 hover:to-orange-500/40 transition-all hover:scale-105">
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
-                  <div className="flex items-center gap-1.5 relative z-10">
-                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
-                      <Coins className="w-3 h-3 text-white" strokeWidth={3} />
-                    </div>
-                    <span className="text-xs text-white font-bold">{profile?.dream_points || 0}</span>
-                  </div>
+                <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
+                  <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
                 </div>
               </div>
 
@@ -452,96 +432,28 @@ const Dashboard = () => {
       <div className="flex-shrink-0 z-40">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center gap-4">
-            {tracks.map((track, index) =>
-              track.name.toLowerCase().includes('mentalidade') ? (
-                <button
-                  key={track.id}
-                  onClick={() => handleTrackChange(index)}
-                  className="relative transition-all hover:scale-110"
-                >
-                  <img 
-                    src={mentalidadeBadge} 
-                    alt="Mentalidade" 
-                    className={`h-16 w-auto object-contain transition-all ${
-                      index === currentTrackIndex
-                        ? 'scale-110 drop-shadow-2xl'
-                        : track.status === 'locked'
-                        ? 'opacity-50 grayscale'
-                        : 'opacity-80'
-                    }`}
-                  />
-                  {track.status === 'locked' && (
-                    <Lock className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-white drop-shadow-lg" />
-                  )}
-                  {track.status === 'completed' && (
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
-                  )}
-                </button>
-              ) : track.name.toLowerCase().includes('organização') || track.name.toLowerCase().includes('organizacao') ? (
-                <button
-                  key={track.id}
-                  onClick={() => handleTrackChange(index)}
-                  className="relative transition-all hover:scale-110"
-                >
-                  <img 
-                    src={track.status === 'locked' ? organizacaoLocked : organizacaoUnlocked} 
-                    alt="Organização" 
-                    className={`h-16 w-auto object-contain transition-all ${
-                      index === currentTrackIndex
-                        ? 'scale-110 drop-shadow-2xl'
-                        : track.status === 'locked'
-                        ? 'opacity-50'
-                        : 'opacity-80'
-                    }`}
-                  />
-                  {track.status === 'completed' && (
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
-                  )}
-                </button>
-              ) : track.name.toLowerCase().includes('aceleração') || track.name.toLowerCase().includes('aceleracao') ? (
-                <button
-                  key={track.id}
-                  onClick={() => handleTrackChange(index)}
-                  className="relative transition-all hover:scale-110"
-                >
-                  <img 
-                    src={track.status === 'locked' ? aceleracaoLocked : aceleracaoUnlocked} 
-                    alt="Aceleração" 
-                    className={`h-16 w-auto object-contain transition-all ${
-                      index === currentTrackIndex
-                        ? 'scale-110 drop-shadow-2xl'
-                        : track.status === 'locked'
-                        ? 'opacity-50'
-                        : 'opacity-80'
-                    }`}
-                  />
-                  {track.status === 'completed' && (
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
-                  )}
-                </button>
-              ) : (
-                <button
-                  key={track.id}
-                  onClick={() => handleTrackChange(index)}
-                  className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
-                    index === currentTrackIndex
-                      ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
-                      : track.status === 'locked'
-                      ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
-                      : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
-                  }`}
-                >
-                  <span className="mr-2">{track.icon}</span>
-                  {track.name}
-                  {track.status === 'locked' && (
-                    <Lock className="inline-block ml-2 w-4 h-4" />
-                  )}
-                  {track.status === 'completed' && (
-                    <span className="ml-2">✓</span>
-                  )}
-                </button>
-              )
-            )}
+            {tracks.map((track, index) => (
+              <button
+                key={track.id}
+                onClick={() => handleTrackChange(index)}
+                className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
+                  index === currentTrackIndex
+                    ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
+                    : track.status === 'locked'
+                    ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
+                    : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
+                }`}
+              >
+                <span className="mr-2">{track.icon}</span>
+                {track.name}
+                {track.status === 'locked' && (
+                  <Lock className="inline-block ml-2 w-4 h-4" />
+                )}
+                {track.status === 'completed' && (
+                  <span className="ml-2">✓</span>
+                )}
+              </button>
+            ))}
           </div>
           {currentTrack && (
             <motion.div
@@ -580,14 +492,10 @@ const Dashboard = () => {
       {/* Floating Oracle Button */}
       <button
         onClick={() => navigate('/oracle')}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group relative overflow-hidden"
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
-        <Sparkles className="w-8 h-8 relative z-10 group-hover:rotate-12 transition-transform" strokeWidth={2.5} />
-        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-          <Sparkles className="w-3 h-3 text-white" strokeWidth={3} />
-        </div>
+        <MessageSquare className="w-8 h-8 group-hover:rotate-12 transition-transform" />
+        <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-300 animate-pulse" />
       </button>
 
       {/* Goal Details Modal */}
