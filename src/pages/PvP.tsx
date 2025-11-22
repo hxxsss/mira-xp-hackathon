@@ -308,33 +308,10 @@ const PvP = () => {
         </div>
 
         {!selectedMode ? (
-          <>
-            {/* Quick Match Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6"
-            >
-              <Card 
-                className="arcade-button cursor-pointer bg-gradient-to-br from-green-500/20 to-blue-500/20 hover:scale-105 transition-transform"
-                onClick={() => setShowQuickMatchDialog(true)}
-              >
-                <CardHeader>
-                  <div className="flex items-center gap-4 justify-center">
-                    <Search className="h-10 w-10 text-green-400" />
-                    <div className="text-center">
-                      <CardTitle className="text-white text-3xl">⚡ BUSCA RÁPIDA</CardTitle>
-                      <CardDescription className="text-purple-900 text-lg mt-2">
-                        Encontre um oponente automaticamente em segundos!
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-            </motion.div>
-            
-            <ModeSelectionScreen onSelectMode={handleModeSelected} />
-          </>
+          <ModeSelectionScreen 
+            onSelectMode={handleModeSelected}
+            onQuickMatch={() => setShowQuickMatchDialog(true)}
+          />
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
