@@ -52,6 +52,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        purple: {
+          dark: "hsl(var(--purple-dark))",
+          medium: "hsl(var(--purple-medium))",
+          light: "hsl(var(--purple-light))",
+        },
+        yellow: {
+          soft: "hsl(var(--yellow-soft))",
+        },
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],

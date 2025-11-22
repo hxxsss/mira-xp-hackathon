@@ -59,6 +59,12 @@ All colors MUST be HSL.
     --shadow-md: 0 4px 16px hsl(270 30% 20% / 0.08);
     --shadow-lg: 0 8px 32px hsl(270 30% 20% / 0.12);
     --shadow-glow: 0 0 40px hsl(270 70% 60% / 0.3);
+    
+    /* Duolingo-style profile colors */
+    --purple-dark: 235 24% 12%;
+    --purple-medium: 250 70% 60%;
+    --purple-light: 250 90% 80%;
+    --yellow-soft: 48 100% 96%;
   }
 }
 
