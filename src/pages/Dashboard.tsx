@@ -262,7 +262,7 @@ const Dashboard = () => {
   return (
     <div 
       className={cn(
-        "relative h-screen overflow-hidden flex flex-col gradient-background geometric-bg",
+        "relative h-screen overflow-hidden flex flex-col bg-white",
         getTrackClassName()
       )}
     >
