@@ -53,21 +53,31 @@ serve(async (req) => {
       );
     }
 
-    // Create Supabase client with the user's JWT and service role key
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      }
-    );
+    // Decode JWT from Authorization header to extract user id
+    if (!authHeader.toLowerCase().startsWith("bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Invalid authorization header" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
 
-    // Verify user is authenticated
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    
-    if (userError || !user) {
+    const token = authHeader.split(" ")[1];
+    let userId: string | null = null;
+
+    try {
+      const [, payload] = token.split(".");
+      const base64 = payload.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((payload.length + 3) % 4);
+      const decoded = JSON.parse(atob(base64));
+      userId = decoded.sub ?? null;
+    } catch (e) {
+      safeError("Failed to decode JWT", e);
+    }
+
+
+    if (!userId) {
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         {
@@ -76,6 +86,13 @@ serve(async (req) => {
         }
       );
     }
+
+    // Create Supabase client with service role key
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    );
+
 
     const { messages } = await req.json();
 
@@ -117,13 +134,13 @@ serve(async (req) => {
     const { data: profile } = await supabaseClient
       .from("profiles")
       .select("name, income_type, monthly_income")
-      .eq("id", user.id)
+      .eq("id", userId)
       .single();
 
     const { data: goal } = await supabaseClient
       .from("goals")
       .select("id, title, total_amount, current_amount, target_date")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -143,7 +160,7 @@ serve(async (req) => {
     const { data: debts } = await supabaseClient
       .from("debts")
       .select("*")
-      .eq("user_id", user.id);
+      .eq("user_id", userId);
 
     const totalDebt = debts?.reduce((sum, debt) => 
       sum + (Number(debt.total_amount) - Number(debt.paid_amount)), 0) || 0;
