@@ -416,31 +416,21 @@ const Oracle = () => {
                       recommendation: verdictData.recommendation
                     }
                   }]);
-                } else if (toolName === 'provide_verdict' || verdictData.empathy_message) {
-                  // Add empathy message first
+                } else if (toolName === 'provide_verdict') {
+                  // Add verdict data directly (empathy message now comes as streaming text before this)
                   setMessages(prev => [...prev, {
                     role: "assistant",
-                    content: verdictData.empathy_message
+                    content: "",
+                    isAnalysis: true,
+                    verdict: {
+                      verdict: verdictData.verdict_status,
+                      delay_months: verdictData.delay_months,
+                      reasoning: verdictData.verdict_reasoning,
+                      advice: verdictData.suggestion,
+                      summary: verdictData.verdict_title,
+                      math_summary: verdictData.math_summary
+                    }
                   }]);
-
-                  // Add 1.5s delay and then analysis message
-                  setTimeout(() => {
-                    setMessages(prev => [...prev, {
-                      role: "assistant",
-                      content: "",
-                      isAnalysis: true,
-                      verdict: {
-                        verdict: verdictData.verdict_status,
-                        delay_months: verdictData.delay_months,
-                        reasoning: verdictData.verdict_reasoning,
-                        advice: verdictData.suggestion,
-                        summary: verdictData.verdict_title,
-                        math_summary: verdictData.math_summary
-                      }
-                    }]);
-                    setIsTyping(false);
-                    setIsLoading(false);
-                  }, 1500);
                 } else if (toolName === 'update_goal_deadline' || verdictData.additional_months !== undefined) {
                   // Handle update_goal_deadline tool call
                   const updateDeadline = async () => {
