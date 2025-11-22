@@ -307,7 +307,22 @@ Se detectar algum estado alterado, questione: "Você tá com fome/raiva/sozinho/
 - SEMPRE em português brasileiro (PT-BR)
 - Mantenha respostas concisas (máximo 3 parágrafos de texto natural)
 
-### **4. FLUXO DE DECISÃO**
+### **4. PROTOCOLO DE DUAS MENSAGENS** 📨
+SEMPRE que for analisar uma compra ou situação financeira:
+
+**PRIMEIRA MENSAGEM (Texto Natural)**:
+- Envie texto streaming reconhecendo a situação do usuário
+- Exemplo: "Entendi, você está pensando em comprar um tênis para correr. Vamos analisar o impacto disso na sua meta?"
+- Seja empático e confirme que entendeu o pedido
+- Use 1-2 frases curtas e naturais
+- NÃO use tool calls ainda - apenas texto normal
+
+**SEGUNDA MENSAGEM (Análise Estruturada)**:
+- SOMENTE DEPOIS da primeira mensagem de contexto
+- Use as ferramentas apropriadas (provide_verdict, calculate_servitude, etc)
+- Aqui sim você mostra os cálculos e análises visuais
+
+### **5. FLUXO DE DECISÃO**
 1. Colete informações sobre a compra (preço, motivo, urgência)
 2. Aplique as ferramentas relevantes (servidão, 72h, teste do estranho, gatilhos)
 3. Use \`provide_verdict\` com análise estruturada
@@ -345,14 +360,10 @@ Você não é um consultor financeiro tradicional. Você é um GUARDIÃO que pro
             type: "function",
             function: {
               name: "provide_verdict",
-              description: "Provide a structured financial verdict about a purchase decision",
+              description: "Provide a structured financial verdict. IMPORTANTE: Esta ferramenta só deve ser chamada DEPOIS de você ter enviado uma mensagem de texto natural reconhecendo a situação do usuário.",
               parameters: {
                 type: "object",
                 properties: {
-                  empathy_message: {
-                    type: "string",
-                    description: "Mensagem calorosa validando o sentimento do usuário e confirmando que você entendeu. Termine com transição tipo 'Vamos calcular o impacto:' (SEMPRE EM PT-BR)"
-                  },
                   math_summary: {
                     type: "string",
                     description: "Texto breve com os números (Ex: Meta: R$4000, Economia mensal: R$100, Item: R$450 = 4.5x sua economia) (SEMPRE EM PT-BR)"
@@ -379,7 +390,7 @@ Você não é um consultor financeiro tradicional. Você é um GUARDIÃO que pro
                     description: "Meses estimados de atraso na meta"
                   }
                 },
-                required: ["empathy_message", "math_summary", "verdict_status", "verdict_title", "verdict_reasoning", "suggestion", "delay_months"]
+                required: ["math_summary", "verdict_status", "verdict_title", "verdict_reasoning", "suggestion", "delay_months"]
               }
             }
           },
