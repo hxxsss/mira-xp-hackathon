@@ -625,6 +625,54 @@ export type Database = {
         }
         Relationships: []
       }
+      pvp_queue: {
+        Row: {
+          created_at: string | null
+          difficulty_level: string
+          id: string
+          match_id: string | null
+          matched_at: string | null
+          status: string | null
+          user_id: string
+          xp_bet: number
+        }
+        Insert: {
+          created_at?: string | null
+          difficulty_level: string
+          id?: string
+          match_id?: string | null
+          matched_at?: string | null
+          status?: string | null
+          user_id: string
+          xp_bet: number
+        }
+        Update: {
+          created_at?: string | null
+          difficulty_level?: string
+          id?: string
+          match_id?: string | null
+          matched_at?: string | null
+          status?: string | null
+          user_id?: string
+          xp_bet?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pvp_queue_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "pvp_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pvp_queue_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shop_items: {
         Row: {
           cost_points: number
