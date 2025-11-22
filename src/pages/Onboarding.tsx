@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Target, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Target, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -163,6 +163,15 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-6 left-6 z-20 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors group"
+      >
+        <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+        <span className="font-medium">Voltar para início</span>
+      </button>
+
       {/* Blur colorido de fundo */}
       <div className="fixed bottom-0 left-0 right-0 h-64 z-0 pointer-events-none">
         <div 
