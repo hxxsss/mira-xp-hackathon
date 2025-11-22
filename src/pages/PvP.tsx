@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Swords, Plus, LogIn, ArrowLeft, Users } from "lucide-react";
+import { Swords, Plus, LogIn, ArrowLeft, Users, Search } from "lucide-react";
 import { CreateMatchDialog } from "@/components/pvp/CreateMatchDialog";
 import { JoinMatchDialog } from "@/components/pvp/JoinMatchDialog";
 import { CreateGroupDialog } from "@/components/pvp/CreateGroupDialog";
+import { QuickMatchDialog } from "@/components/pvp/QuickMatchDialog";
 import { GroupLobby } from "@/components/pvp/GroupLobby";
 import { MatchLobby } from "@/components/pvp/MatchLobby";
 import { MatchGame } from "@/components/pvp/MatchGame";
@@ -40,6 +41,7 @@ const PvP = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showCreateGroupDialog, setShowCreateGroupDialog] = useState(false);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
+  const [showQuickMatchDialog, setShowQuickMatchDialog] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [showPodiumModal, setShowPodiumModal] = useState(false);
   const [groupResults, setGroupResults] = useState<any[]>([]);
@@ -306,7 +308,33 @@ const PvP = () => {
         </div>
 
         {!selectedMode ? (
-          <ModeSelectionScreen onSelectMode={handleModeSelected} />
+          <>
+            {/* Quick Match Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <Card 
+                className="arcade-button cursor-pointer bg-gradient-to-br from-green-500/20 to-blue-500/20 hover:scale-105 transition-transform"
+                onClick={() => setShowQuickMatchDialog(true)}
+              >
+                <CardHeader>
+                  <div className="flex items-center gap-4 justify-center">
+                    <Search className="h-10 w-10 text-green-400" />
+                    <div className="text-center">
+                      <CardTitle className="text-white text-3xl">⚡ BUSCA RÁPIDA</CardTitle>
+                      <CardDescription className="text-purple-900 text-lg mt-2">
+                        Encontre um oponente automaticamente em segundos!
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            </motion.div>
+            
+            <ModeSelectionScreen onSelectMode={handleModeSelected} />
+          </>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
@@ -333,7 +361,7 @@ const PvP = () => {
                       <CardTitle className="text-white">
                         {selectedMode === '1v1' ? 'Criar Partida' : 'Criar Grupo'}
                       </CardTitle>
-                      <CardDescription className="text-gray-200">
+                      <CardDescription className="text-purple-900">
                         {selectedMode === '1v1' 
                           ? 'Crie uma partida 1v1' 
                           : 'Crie um grupo e convide membros'}
@@ -342,7 +370,7 @@ const PvP = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-200">
+                  <ul className="space-y-2 text-sm text-purple-900">
                     <li>• Escolha o módulo de perguntas</li>
                     <li>• Defina a aposta de XP</li>
                     <li>• Compartilhe o código</li>
@@ -359,14 +387,14 @@ const PvP = () => {
                     </div>
                     <div>
                       <CardTitle className="text-white">Entrar {selectedMode === '1v1' ? 'na Partida' : 'no Grupo'}</CardTitle>
-                      <CardDescription className="text-gray-200">
+                      <CardDescription className="text-purple-900">
                         Use um código para entrar
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-200">
+                  <ul className="space-y-2 text-sm text-purple-900">
                     <li>• Digite o código de 6 dígitos</li>
                     <li>• Verifique a aposta de XP</li>
                     <li>• Entre na batalha!</li>
@@ -426,12 +454,19 @@ const PvP = () => {
         userId={userId}
       />
 
-      <CreateGroupDialog
-        open={showCreateGroupDialog}
-        onOpenChange={setShowCreateGroupDialog}
-        onGroupCreated={handleGroupCreated}
-        userId={userId}
-      />
+        <CreateGroupDialog
+          open={showCreateGroupDialog}
+          onOpenChange={setShowCreateGroupDialog}
+          onGroupCreated={handleGroupCreated}
+          userId={userId}
+        />
+
+        <QuickMatchDialog
+          open={showQuickMatchDialog}
+          onOpenChange={setShowQuickMatchDialog}
+          onMatchFound={handleMatchJoined}
+          userId={userId}
+        />
 
       <JoinMatchDialog
         open={showJoinDialog}
