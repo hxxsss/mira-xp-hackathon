@@ -181,11 +181,11 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
               key={item.id} 
               className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3"
             >
-              <div className="card-visual p-2 h-full">
+              <div className="card-visual p-2 pb-10 h-full">
                 <Card
                   className={cn(
                     "relative bg-white transition-all duration-300 border-0 shadow-xl pb-8",
-                    "rounded-[35px] w-full aspect-[3/4]",
+                    "rounded-[35px] w-full aspect-[3/4] max-h-[450px] md:max-h-[500px] lg:max-h-[550px]",
                     isCenterCard && !isLocked ? "cursor-pointer" : "cursor-default",
                     isLocked && "cursor-not-allowed opacity-60",
                     !isCenterCard && !isLocked && "opacity-70"
@@ -281,7 +281,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                     {/* Botão Amarelo Flutuante */}
                     {item.id !== 'continue-message' && (
                       <button
-                        className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-bold py-3 px-8 rounded-full shadow-lg transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-bold py-3 px-8 rounded-full shadow-lg transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                         style={{
                           boxShadow: '0 4px 10px rgba(255, 193, 7, 0.4)'
                         }}
