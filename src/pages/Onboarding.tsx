@@ -149,7 +149,8 @@ const Onboarding = () => {
       });
       if (authError) throw authError;
       if (!authData.user) throw new Error("Usuário não foi criado");
-      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Criar perfil
       const {
         error: profileError
       } = await supabase.from("profiles").upsert({
@@ -163,6 +164,8 @@ const Onboarding = () => {
         onConflict: "id"
       });
       if (profileError) throw profileError;
+      
+      // Criar meta
       const {
         error: goalError
       } = await supabase.from("goals").insert({
@@ -172,6 +175,21 @@ const Onboarding = () => {
         estimated_timeline: formData.goalTimeline
       });
       if (goalError) throw goalError;
+      
+      // Aguardar sessão ser estabelecida (aumentado para 1500ms)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Verificar se a sessão foi estabelecida
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        // Tentar novamente após mais um delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const { data: { session: retrySession } } = await supabase.auth.getSession();
+        if (!retrySession) {
+          throw new Error("Sessão não foi estabelecida. Por favor, faça login.");
+        }
+      }
+      
       toast({
         title: "Bem-vindo ao MIRA! 🎉",
         description: "Sua jornada começa agora."
