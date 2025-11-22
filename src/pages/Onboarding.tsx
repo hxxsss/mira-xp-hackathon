@@ -29,9 +29,18 @@ const steps = [
   { id: "personal", title: "Informações" },
   { id: "goal", title: "Meta" },
   { id: "amount", title: "Valor" },
-  { id: "income", title: "Renda" },
+  { id: "timeline", title: "Prazo" },
+  { id: "income", title: "Tipo de Renda" },
   { id: "avatar", title: "Mascote" },
   { id: "password", title: "Senha" },
+];
+
+const timelineOptions = [
+  { value: "1-3", label: "1-3 meses", emoji: "⚡", description: "Metas rápidas e urgentes" },
+  { value: "3-6", label: "3-6 meses", emoji: "📅", description: "Médio prazo" },
+  { value: "6-12", label: "6-12 meses", emoji: "📆", description: "Metas ambiciosas" },
+  { value: "12+", label: "Mais de 1 ano", emoji: "🎯", description: "Grandes conquistas" },
+  { value: "unsure", label: "Não sei ainda", emoji: "❓", description: "Vou decidir depois" },
 ];
 
 const fadeInUp = {
@@ -51,12 +60,24 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const formatCurrency = (value: string): string => {
+    const numbers = value.replace(/\D/g, '');
+    if (!numbers) return '';
+    const formatted = new Intl.NumberFormat('pt-BR').format(parseInt(numbers));
+    return formatted;
+  };
+
+  const parseCurrency = (formatted: string): string => {
+    return formatted.replace(/\./g, '');
+  };
+
   const [formData, setFormData] = useState({
     name: "",
     age: "",
     email: "",
     goalName: "",
     goalAmount: "",
+    goalTimeline: "",
     incomeType: "",
     avatarId: 1,
     password: "",
@@ -120,6 +141,7 @@ const Onboarding = () => {
         user_id: authData.user.id,
         title: formData.goalName,
         total_amount: parseFloat(formData.goalAmount),
+        estimated_timeline: formData.goalTimeline,
       });
 
       if (goalError) throw goalError;
@@ -151,10 +173,12 @@ const Onboarding = () => {
       case 2:
         return formData.goalAmount;
       case 3:
-        return formData.incomeType;
+        return formData.goalTimeline;
       case 4:
-        return formData.avatarId;
+        return formData.incomeType;
       case 5:
+        return formData.avatarId;
+      case 6:
         return formData.password.length >= 6;
       default:
         return true;
@@ -182,7 +206,8 @@ const Onboarding = () => {
             currentStep === 2 && "track-blur-aceleracao",
             currentStep === 3 && "track-blur-mentalidade",
             currentStep === 4 && "track-blur-organizacao",
-            currentStep === 5 && "track-blur-aceleracao"
+            currentStep === 5 && "track-blur-aceleracao",
+            currentStep === 6 && "track-blur-mentalidade"
           )}
         />
       </div>
@@ -358,20 +383,63 @@ const Onboarding = () => {
                               R$
                             </span>
                             <Input
-                              type="number"
-                              value={formData.goalAmount}
-                              onChange={(e) => updateField("goalAmount", e.target.value)}
-                              placeholder="0,00"
+                              type="text"
+                              value={formatCurrency(formData.goalAmount)}
+                              onChange={(e) => {
+                                const formatted = e.target.value;
+                                const rawValue = parseCurrency(formatted);
+                                updateField("goalAmount", rawValue);
+                              }}
+                              placeholder="0"
                               className="text-2xl p-6 pl-12 transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
-                              step="0.01"
                             />
                           </div>
+                          <p className="text-sm text-muted-foreground text-center">
+                            Ex: R$ 3.500
+                          </p>
                         </motion.div>
                       </CardContent>
                     </>
                   )}
 
                   {currentStep === 3 && (
+                    <>
+                      <CardHeader>
+                        <CardTitle>Você tem uma ideia de quanto tempo?</CardTitle>
+                        <CardDescription>
+                          Quanto tempo você acha que vai levar para alcançar sua meta?
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <motion.div variants={fadeInUp} className="space-y-3">
+                          {timelineOptions.map((option) => (
+                            <motion.button
+                              key={option.value}
+                              onClick={() => updateField("goalTimeline", option.value)}
+                              className={cn(
+                                "w-full p-4 rounded-xl border-2 transition-all text-left",
+                                formData.goalTimeline === option.value
+                                  ? "border-purple-600 bg-purple-50"
+                                  : "border-gray-200 hover:bg-gray-50"
+                              )}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="text-2xl">{option.emoji}</div>
+                                <div>
+                                  <div className="font-semibold">{option.label}</div>
+                                  <div className="text-sm text-muted-foreground">{option.description}</div>
+                                </div>
+                              </div>
+                            </motion.button>
+                          ))}
+                        </motion.div>
+                      </CardContent>
+                    </>
+                  )}
+
+                  {currentStep === 6 && (
                     <>
                       <CardHeader>
                         <CardTitle>De onde vem seu dinheiro?</CardTitle>
@@ -457,7 +525,7 @@ const Onboarding = () => {
                     </>
                   )}
 
-                  {currentStep === 5 && (
+                  {currentStep === 6 && (
                     <>
                       <CardHeader>
                         <CardTitle>Quase lá!</CardTitle>
@@ -520,16 +588,6 @@ const Onboarding = () => {
               </CardFooter>
             </div>
           </Card>
-        </motion.div>
-
-        {/* Step indicator */}
-        <motion.div
-          className="mt-4 text-center text-sm text-gray-600"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          Etapa {currentStep + 1} de {steps.length}: {steps[currentStep].title}
         </motion.div>
       </div>
     </div>
