@@ -14,6 +14,8 @@ import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 import { GoalForm } from "@/components/financas/GoalForm";
 import miraLogo from "@/assets/mira-logo.png";
 import mentalidadeBadge from "@/assets/mentalidade-badge.png";
+import organizacaoLocked from "@/assets/organizacao-locked.png";
+import organizacaoUnlocked from "@/assets/organizacao-unlocked.png";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -469,6 +471,27 @@ const Dashboard = () => {
                   {track.status === 'locked' && (
                     <Lock className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-white drop-shadow-lg" />
                   )}
+                  {track.status === 'completed' && (
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
+                  )}
+                </button>
+              ) : track.name.toLowerCase().includes('organização') || track.name.toLowerCase().includes('organizacao') ? (
+                <button
+                  key={track.id}
+                  onClick={() => handleTrackChange(index)}
+                  className="relative transition-all hover:scale-110"
+                >
+                  <img 
+                    src={track.status === 'locked' ? organizacaoLocked : organizacaoUnlocked} 
+                    alt="Organização" 
+                    className={`h-12 w-auto object-contain transition-all ${
+                      index === currentTrackIndex
+                        ? 'scale-110 drop-shadow-2xl'
+                        : track.status === 'locked'
+                        ? 'opacity-50'
+                        : 'opacity-80'
+                    }`}
+                  />
                   {track.status === 'completed' && (
                     <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
                   )}
