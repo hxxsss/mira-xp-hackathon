@@ -263,7 +263,7 @@ const Dashboard = () => {
   return (
     <div 
       className={cn(
-        "relative min-h-screen max-h-screen overflow-y-auto flex flex-col bg-white",
+        "relative h-screen overflow-hidden flex flex-col bg-white",
         getTrackClassName()
       )}
     >
@@ -294,7 +294,7 @@ const Dashboard = () => {
       </div>
 
       {/* HUD - Top Navigation */}
-      <div className="flex-shrink-0 z-50 p-3">
+      <div className="flex-shrink-0 z-50 p-2">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4 relative">
           {/* Left: Profile, Ranking, Financas */}
           <div className="flex items-center gap-3">
@@ -444,7 +444,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Stage - Cover Flow Carousel */}
-      <div className="relative z-10 flex items-center justify-center py-8 max-h-[600px]">
+      <div className="relative z-10 flex-1 flex items-center justify-center py-4 overflow-hidden">
         <div className="w-full px-4">
           {currentTrack && (
             <CoverFlowCarousel

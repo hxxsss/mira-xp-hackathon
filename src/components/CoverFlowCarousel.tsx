@@ -181,11 +181,11 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
               key={item.id} 
               className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3"
             >
-              <div className="card-visual p-2 pb-10 h-full">
+              <div className="card-visual p-2 pb-8 h-full">
                 <Card
                   className={cn(
                     "relative bg-white transition-all duration-300 border-0 shadow-xl pb-8",
-                    "rounded-[35px] w-full aspect-[3/4] max-h-[450px] md:max-h-[500px] lg:max-h-[550px]",
+                    "rounded-[35px] w-full aspect-[3/4] max-h-[350px] md:max-h-[400px] lg:max-h-[450px]",
                     isCenterCard && !isLocked ? "cursor-pointer" : "cursor-default",
                     isLocked && "cursor-not-allowed opacity-60",
                     !isCenterCard && !isLocked && "opacity-70"
