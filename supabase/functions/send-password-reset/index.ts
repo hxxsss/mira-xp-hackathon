@@ -11,6 +11,35 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Sanitize sensitive data in logs (masks UUIDs and emails)
+const sanitizeForLog = (data: any): any => {
+  if (typeof data === 'string') {
+    return data
+      .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, 'UUID-****')
+      .replace(/[\w.-]+@[\w.-]+\.\w+/gi, 'email-****');
+  }
+  if (typeof data === 'object' && data !== null) {
+    const sanitized: any = Array.isArray(data) ? [] : {};
+    for (const key in data) {
+      if (key.toLowerCase().includes('id') || key.toLowerCase().includes('email')) {
+        sanitized[key] = '****';
+      } else {
+        sanitized[key] = sanitizeForLog(data[key]);
+      }
+    }
+    return sanitized;
+  }
+  return data;
+};
+
+const safeLog = (...args: any[]) => {
+  console.log(...args.map(sanitizeForLog));
+};
+
+const safeError = (...args: any[]) => {
+  console.error(...args.map(sanitizeForLog));
+};
+
 interface PasswordResetRequest {
   email: string;
 }
@@ -22,7 +51,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { email }: PasswordResetRequest = await req.json();
-    console.log("Password reset requested for:", email);
+    safeLog("Password reset requested");
 
     if (!email) {
       return new Response(
@@ -40,7 +69,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (!user) {
       // Don't reveal if user exists or not (security)
-      console.log("User not found, but sending success response");
+      safeLog("User not found, but sending success response");
       return new Response(
         JSON.stringify({ success: true }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -76,7 +105,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
 
     if (insertError) {
-      console.error("Error inserting reset code:", insertError);
+      safeError("Error inserting reset code:", insertError);
       throw insertError;
     }
 
@@ -100,18 +129,18 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     if (emailError) {
-      console.error("Error sending email:", emailError);
+      safeError("Error sending email:", emailError);
       throw emailError;
     }
 
-    console.log("Password reset email sent successfully");
+    safeLog("Password reset email sent successfully");
 
     return new Response(
       JSON.stringify({ success: true }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {
-    console.error("Error in send-password-reset:", error);
+    safeError("Error in send-password-reset:", error);
     return new Response(
       JSON.stringify({ error: error.message || "Erro ao enviar código de recuperação" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
