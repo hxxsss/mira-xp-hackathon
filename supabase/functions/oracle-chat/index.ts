@@ -53,31 +53,21 @@ serve(async (req) => {
       );
     }
 
-    // Decode JWT from Authorization header to extract user id
-    if (!authHeader.toLowerCase().startsWith("bearer ")) {
-      return new Response(
-        JSON.stringify({ error: "Invalid authorization header" }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
-    }
+    // Create Supabase client with the user's JWT
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
+    );
 
-    const token = authHeader.split(" ")[1];
-    let userId: string | null = null;
-
-    try {
-      const [, payload] = token.split(".");
-      const base64 = payload.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((payload.length + 3) % 4);
-      const decoded = JSON.parse(atob(base64));
-      userId = decoded.sub ?? null;
-    } catch (e) {
-      safeError("Failed to decode JWT", e);
-    }
-
-
-    if (!userId) {
+    // Verify user is authenticated
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         {
@@ -86,13 +76,6 @@ serve(async (req) => {
         }
       );
     }
-
-    // Create Supabase client with service role key
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    );
-
 
     const { messages } = await req.json();
 
@@ -134,13 +117,13 @@ serve(async (req) => {
     const { data: profile } = await supabaseClient
       .from("profiles")
       .select("name, income_type, monthly_income")
-      .eq("id", userId)
+      .eq("id", user.id)
       .single();
 
     const { data: goal } = await supabaseClient
       .from("goals")
       .select("id, title, total_amount, current_amount, target_date")
-      .eq("user_id", userId)
+      .eq("user_id", user.id)
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -156,23 +139,6 @@ serve(async (req) => {
       );
     }
 
-    // Get user's debts
-    const { data: debts } = await supabaseClient
-      .from("debts")
-      .select("*")
-      .eq("user_id", userId);
-
-    const totalDebt = debts?.reduce((sum, debt) => 
-      sum + (Number(debt.total_amount) - Number(debt.paid_amount)), 0) || 0;
-
-    // Calculate hourly wage
-    const hourlyWage = profile.monthly_income 
-      ? (profile.monthly_income / 160).toFixed(2) // ~160 working hours/month
-      : null;
-
-    // Detect financial state
-    const financialState = totalDebt > 0 ? "crisis" : "stable";
-
     // Calculate monthly savings (simplified)
     const monthlySavings = profile.monthly_income ? Math.round(profile.monthly_income * 0.1) : 100;
 
@@ -185,11 +151,6 @@ serve(async (req) => {
       monthlySavings: monthlySavings.toString(),
       goalId: goal.id,
       targetDate: goal.target_date,
-      monthlyIncome: profile.monthly_income,
-      hourlyWage: hourlyWage,
-      totalDebt: totalDebt,
-      financialState: financialState,
-      debts: debts || [],
     };
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -199,107 +160,61 @@ serve(async (req) => {
     }
 
     // Build the system prompt based on user context
-    const systemPrompt = `VOCÊ É O ORÁCULO - Guardião Financeiro de ${userContext.name}
+    const systemPrompt = `Você é O Oráculo, um conselheiro financeiro amigável da Geração Z ajudando ${userContext.name} a gerenciar seu dinheiro.
 
-CONTEXTO:
-- Meta: ${userContext.goalTitle} (R$${Number(userContext.goalAmount).toFixed(2)})
-- Progresso: R$${Number(userContext.currentAmount).toFixed(2)} de R$${Number(userContext.goalAmount).toFixed(2)}
-- Renda: R$${profile.monthly_income || 'Desconhecida'}/mês
-- Salário/hora: R$${hourlyWage || '?'} (~160h/mês)
-- Economia mensal estimada: ~R$${((profile.monthly_income || 0) * 0.2).toFixed(2)}
-${userContext.targetDate ? `- Prazo: ${new Date(userContext.targetDate).toLocaleDateString('pt-BR')}` : ''}
+CONTEXTO DO USUÁRIO:
+- Nome: ${userContext.name}
+- Meta: ${userContext.goalTitle} (${userContext.goalAmount})
+- Economia Atual: ${userContext.currentAmount}
+- Tipo de Renda: ${userContext.incomeType === 'mesada' ? 'Recebe mesada da família' : 'Tem renda própria do trabalho'}
+- Taxa de Economia Mensal: ~${userContext.monthlySavings || 'Desconhecido'}
+- ID da Meta: ${userContext.goalId}
+${userContext.targetDate ? `- Prazo da Meta: ${userContext.targetDate}` : ''}
 
-═══════════════════════════════════════════
+SEU PAPEL:
+Você é um amigo financeiro que usa o método SMART para entender compras antes de dar conselhos.
 
-SEU ÚNICO TRABALHO:
-Quando o usuário mencionar uma POSSÍVEL COMPRA, faça isso:
+FLUXO DE CONVERSA COMPLETO:
+1. Quando o usuário mencionar querer comprar algo, faça perguntas empáticas para reunir informações (preço, motivo, urgência).
 
-1. COLETA NATURAL (se faltar dados):
-   Se não tiver PREÇO + MOTIVO, pergunte naturalmente:
-   - "Legal! Quanto custa? E me conta, por que você quer isso?"
-   - "Opa! Qual o valor? E qual a real necessidade?"
+2. Quando tiver informações suficientes, use a ferramenta provide_verdict para fornecer análise financeira estruturada.
+
+3. CRÍTICO - APÓS DAR O VEREDITO, SEMPRE perguntar de forma clara:
+   - "Essa compra atrasará sua meta em [X] meses. Ainda assim deseja seguir com essa compra?"
    
-   **NÃO desperdice tempo com "Vamos analisar?" - vá direto ao ponto**
-
-2. ANÁLISE IMEDIATA (assim que tiver preço + motivo):
-   a) Mensagem breve: "Entendi, [item] de R$[valor]. Vou calcular o impacto real..."
-   b) Use calculate_servitude (preço → horas de trabalho)
-   c) Use provide_verdict com:
-      - delay_months: Quantos meses vai atrasar a meta
-      - verdict_status:
-        * "approved" → Necessidade real
-        * "warning" → Desejo válido mas não urgente  
-        * "denied" → Impulso / marketing / luxo desnecessário
-
-3. CRITÉRIOS PARA VEREDITO:
-
-   ✅ APPROVED (Recomendada):
-   - Ferramenta de trabalho que gera/protege renda
-   - Saúde / segurança urgente
-   - Educação que aumenta renda
-   - Previne gastos maiores futuros
-   - Necessidade básica (comida, moradia, trabalho)
+4. Baseado na resposta:
    
-   ⚠️ WARNING (Alerta):
-   - Desejo legítimo mas pode esperar
-   - Preço alto para benefício médio
-   - Alternativa mais barata existe
-   - Atrasa meta moderadamente (2-6 meses)
+   A) Se o usuário responder SIM (quer fazer a compra):
+      - Explique a melhor forma de fazer essa compra (parcelamento, esperar promoção, procurar alternativas mais baratas, cashback, etc.)
+      - Use update_goal_deadline para ajustar o prazo da meta
+      - Confirme: "Atualizei o prazo da sua meta. Boa sorte com sua compra! 💪"
    
-   ❌ DENIED (Não Recomendada):
-   - Impulso puro / gatilho emocional
-   - Marketing manipulativo ("só hoje", "última unidade", "oferta exclusiva")
-   - Luxo sem necessidade clara
-   - Atrasa meta significativamente (>6 meses)
-   - Estado emocional alterado (com fome/raiva/cansado/sozinho)
-
-4. FORMATO DA RESPOSTA:
-   Mensagem natural → [Tools: calculate_servitude + provide_verdict] → Pergunta final
+   B) Se o usuário responder NÃO (não vai fazer a compra):
+      - Elogie a decisão: "Sei que pode ser difícil deixar uma compra de lado, mas você está ficando mais próximo da sua meta ao não desviar do caminho! 🎯💪"
+      - NÃO use update_goal_deadline
    
-   "Essa compra vai atrasar sua meta em X meses. Ainda quer seguir?"
+   C) Se a compra JÁ FOI FEITA (usuário menciona no passado):
+      - Comente brevemente formas de amenizar o impacto (ex: fazer freelas extras, vender algo não usado, economizar mais no próximo mês)
+      - Use IMEDIATAMENTE update_goal_deadline para atualizar o prazo da meta
+      - Seja empático e construtivo
 
-═══════════════════════════════════════════
+TOM:
+- Casual mas respeitoso (como conversar com um amigo inteligente)
+- Use emojis com moderação
+- Seja empático, não moralista
+- Celebre boas decisões
+- Para decisões ruins, ofereça alternativas, não sermões
+- Você SEMPRE responde em português brasileiro (PT-BR)
 
-TOM DE VOZ:
-- Direto mas empático (amigo que fala verdades duras)
-- Números sem enrolação
-- Verdade desconfortável quando necessário
-- Celebra decisões inteligentes
-- Use emojis com moderação (1-2 por mensagem)
-- Português brasileiro (PT-BR)
-- Respostas concisas (máximo 3 parágrafos)
+DIRETRIZES DE VEREDITO:
+- APPROVED: Item custa < 10% da meta, ou é uma necessidade genuína (atraso: 0-1 mês)
+- WARNING: Item custa 10-30% da meta, atrasa meta em 1-3 meses
+- DENIED: Item custa > 30% da meta, atrasa significativamente o sonho (3+ meses)
 
-═══════════════════════════════════════════
-
-NÃO FAÇA:
-- ❌ Análise sem ter preço + motivo
-- ❌ Múltiplas perguntas de coleta (pergunte tudo de uma vez)
-- ❌ Sermões morais ou julgamentos
-- ❌ Frases vazias tipo "Vamos analisar?"
-- ❌ Linguagem técnica sem explicar
-
-═══════════════════════════════════════════
-
-EXEMPLOS DE FLUXO IDEAL:
-
-👤 "Quero comprar um notebook"
-🔮 "Legal! Quanto custa esse notebook? E me conta, por que você precisa dele?"
-
-👤 "R$3500, pra trabalhar com design"
-🔮 "Entendi, notebook pra design de R$3500. Vou calcular o impacto real..."
-    [Tools executam]
-    "Essa compra vai atrasar sua meta em ~9 meses, mas é ferramenta de trabalho. Ainda quer seguir?"
-
----
-
-👤 "Vi um tênis de R$800"
-🔮 "Opa! E por que você quer esse tênis?"
-
-👤 "Tá na promoção só hoje"
-🔮 "Entendi, tênis de R$800 'só hoje'. Vou analisar..."
-    [Tools executam, detectam gatilho de marketing]
-    "Isso vai atrasar sua meta em 2 meses. É gatilho de escassez pra te fazer comprar sem pensar. Vale a pena?"`;
-
+IMPORTANTE SOBRE update_goal_deadline:
+- SEMPRE use esta ferramenta quando confirmar que uma compra será feita ou já foi feita
+- NUNCA use se o usuário desistir da compra
+- O campo additional_months deve refletir o atraso calculado (delay_months do veredito)`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -319,10 +234,14 @@ EXEMPLOS DE FLUXO IDEAL:
             type: "function",
             function: {
               name: "provide_verdict",
-              description: "Provide a structured financial verdict. IMPORTANTE: Esta ferramenta só deve ser chamada DEPOIS de você ter enviado uma mensagem de texto natural reconhecendo a situação do usuário.",
+              description: "Provide a structured financial verdict about a purchase decision",
               parameters: {
                 type: "object",
                 properties: {
+                  empathy_message: {
+                    type: "string",
+                    description: "Mensagem calorosa validando o sentimento do usuário e confirmando que você entendeu. Termine com transição tipo 'Vamos calcular o impacto:' (SEMPRE EM PT-BR)"
+                  },
                   math_summary: {
                     type: "string",
                     description: "Texto breve com os números (Ex: Meta: R$4000, Economia mensal: R$100, Item: R$450 = 4.5x sua economia) (SEMPRE EM PT-BR)"
@@ -349,7 +268,7 @@ EXEMPLOS DE FLUXO IDEAL:
                     description: "Meses estimados de atraso na meta"
                   }
                 },
-                required: ["math_summary", "verdict_status", "verdict_title", "verdict_reasoning", "suggestion", "delay_months"]
+                required: ["empathy_message", "math_summary", "verdict_status", "verdict_title", "verdict_reasoning", "suggestion", "delay_months"]
               }
             }
           },
@@ -371,160 +290,6 @@ EXEMPLOS DE FLUXO IDEAL:
                   }
                 },
                 required: ["additional_months", "reasoning"]
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "calculate_servitude",
-              description: "Converte o preço de um item em HORAS DE TRABALHO para mostrar o custo real em tempo de vida",
-              parameters: {
-                type: "object",
-                properties: {
-                  item_price: {
-                    type: "number",
-                    description: "Preço do item em reais"
-                  },
-                  item_name: {
-                    type: "string",
-                    description: "Nome do item"
-                  },
-                  servitude_hours: {
-                    type: "number",
-                    description: "Horas de trabalho equivalentes"
-                  },
-                  impact_message: {
-                    type: "string",
-                    description: "Mensagem de impacto (Ex: 'Isso custa 40 horas da sua vida. Vale uma semana de trabalho?')"
-                  }
-                },
-                required: ["item_price", "item_name", "servitude_hours", "impact_message"]
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "detect_marketing_triggers",
-              description: "Identifica gatilhos psicológicos de marketing na fala do usuário",
-              parameters: {
-                type: "object",
-                properties: {
-                  triggers_found: {
-                    type: "array",
-                    items: { type: "string" },
-                    description: "Lista de gatilhos detectados (Ex: 'Só hoje', 'Últimas unidades', 'Oferta exclusiva')"
-                  },
-                  warning_message: {
-                    type: "string",
-                    description: "Alerta sobre escassez fabricada e manipulação"
-                  }
-                },
-                required: ["triggers_found", "warning_message"]
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "apply_72h_rule",
-              description: "Aplica a Regra das 72 Horas para compras não essenciais",
-              parameters: {
-                type: "object",
-                properties: {
-                  is_survival_item: {
-                    type: "boolean",
-                    description: "Se é item de sobrevivência (comida, remédios, moradia)"
-                  },
-                  should_wait: {
-                    type: "boolean",
-                    description: "Se deve esperar 72h"
-                  },
-                  reasoning: {
-                    type: "string",
-                    description: "Explicação científica sobre o desejo químico (dopamina)"
-                  }
-                },
-                required: ["is_survival_item", "should_wait", "reasoning"]
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "stranger_test",
-              description: "Aplica o Teste do Estranho para avaliar se a pessoa quer o item ou o dinheiro",
-              parameters: {
-                type: "object",
-                properties: {
-                  item_name: { 
-                    type: "string",
-                    description: "Nome do item"
-                  },
-                  item_price: { 
-                    type: "number",
-                    description: "Preço do item"
-                  },
-                  test_question: {
-                    type: "string",
-                    description: "Pergunta formatada do teste"
-                  }
-                },
-                required: ["item_name", "item_price", "test_question"]
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "crisis_protocol",
-              description: "Ativa o Protocolo de Insolvência com hierarquia das 4 Paredes",
-              parameters: {
-                type: "object",
-                properties: {
-                  priority_list: {
-                    type: "array",
-                    items: { type: "string" },
-                    description: "Lista priorizada: [Comida/Remédios, Moradia, Luz/Água, Ferramentas de Trabalho]"
-                  },
-                  debt_strategy: {
-                    type: "string",
-                    description: "Estratégia para dívidas bancárias (última prioridade)"
-                  },
-                  tactical_advice: {
-                    type: "string",
-                    description: "Táticas de guerrilha (DED, troca de dívida, bola de neve vs avalanche)"
-                  }
-                },
-                required: ["priority_list", "debt_strategy", "tactical_advice"]
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "halt_assessment",
-              description: "Avalia o estado emocional HALT antes de validar compra",
-              parameters: {
-                type: "object",
-                properties: {
-                  halt_status: {
-                    type: "object",
-                    properties: {
-                      hungry: { type: "boolean" },
-                      angry: { type: "boolean" },
-                      lonely: { type: "boolean" },
-                      tired: { type: "boolean" }
-                    },
-                    description: "Status de cada estado emocional"
-                  },
-                  recommendation: {
-                    type: "string",
-                    description: "Recomendação baseada no estado emocional"
-                  }
-                },
-                required: ["halt_status", "recommendation"]
               }
             }
           }

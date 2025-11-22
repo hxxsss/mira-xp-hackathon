@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Sparkles, Send, ArrowLeft, CheckCircle, AlertTriangle, XCircle, History, Clock, TrendingDown, Brain, DollarSign } from "lucide-react";
+import { Sparkles, Send, ArrowLeft, CheckCircle, AlertTriangle, XCircle, History } from "lucide-react";
 import oracleBallImage from "@/assets/oracle-ball.png";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,40 +23,6 @@ interface Message {
     advice?: string;
     summary: string;
     math_summary?: string;
-  };
-  servitude?: {
-    item_name: string;
-    item_price: number;
-    hours: number;
-    impact_message: string;
-  };
-  marketing_triggers?: {
-    triggers: string[];
-    warning: string;
-  };
-  rule72h?: {
-    is_survival_item: boolean;
-    should_wait: boolean;
-    reasoning: string;
-  };
-  stranger_test?: {
-    item_name: string;
-    item_price: number;
-    test_question: string;
-  };
-  crisis_protocol?: {
-    priority_list: string[];
-    debt_strategy: string;
-    tactical_advice: string;
-  };
-  halt_assessment?: {
-    halt_status: {
-      hungry: boolean;
-      angry: boolean;
-      lonely: boolean;
-      tired: boolean;
-    };
-    recommendation: string;
   };
 }
 interface UserContext {
@@ -235,18 +200,6 @@ const Oracle = () => {
     setInput("");
     setIsLoading(true);
     setIsTyping(true);
-
-    // Safety timeout to prevent infinite loading
-    const safetyTimeout = setTimeout(() => {
-      setIsLoading(false);
-      setIsTyping(false);
-      toast({
-        title: "Timeout",
-        description: "A resposta demorou muito. Tente novamente.",
-        variant: "destructive"
-      });
-    }, 30000);
-
     try {
       // Get current session token
       const {
@@ -280,7 +233,6 @@ const Oracle = () => {
       let toolCallBuffer = "";
       let isCollectingToolCall = false;
       let hasToolCall = false;
-      let currentToolName = "";  // Track tool name from the start
 
       // Add initial 1.5s delay before first message appears
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -307,11 +259,6 @@ const Oracle = () => {
             const toolCalls = parsed.choices?.[0]?.delta?.tool_calls;
             if (toolCalls && toolCalls[0]) {
               hasToolCall = true;
-
-              // Capture tool name when first detected
-              if (toolCalls[0].function?.name && !currentToolName) {
-                currentToolName = toolCalls[0].function.name;
-              }
 
               // Remove any previously streamed assistant message to prevent duplication
               if (!isCollectingToolCall) {
@@ -354,83 +301,33 @@ const Oracle = () => {
               try {
                 const verdictData = JSON.parse(toolCallBuffer);
 
-                // Use the captured tool name
-                const toolName = currentToolName || 'provide_verdict';
-                
-                if (toolName === 'calculate_servitude') {
+                // Detect tool name from the parsed data structure
+                const toolName = parsed.choices?.[0]?.delta?.tool_calls?.[0]?.function?.name || (verdictData.empathy_message ? 'provide_verdict' : 'update_goal_deadline');
+                if (toolName === 'provide_verdict' || verdictData.empathy_message) {
+                  // Add empathy message first
                   setMessages(prev => [...prev, {
                     role: "assistant",
-                    content: "",
-                    servitude: {
-                      item_name: verdictData.item_name,
-                      item_price: verdictData.item_price,
-                      hours: verdictData.servitude_hours,
-                      impact_message: verdictData.impact_message
-                    }
+                    content: verdictData.empathy_message
                   }]);
-                } else if (toolName === 'detect_marketing_triggers') {
-                  setMessages(prev => [...prev, {
-                    role: "assistant",
-                    content: "",
-                    marketing_triggers: {
-                      triggers: verdictData.triggers_found,
-                      warning: verdictData.warning_message
-                    }
-                  }]);
-                } else if (toolName === 'apply_72h_rule') {
-                  setMessages(prev => [...prev, {
-                    role: "assistant",
-                    content: "",
-                    rule72h: {
-                      is_survival_item: verdictData.is_survival_item,
-                      should_wait: verdictData.should_wait,
-                      reasoning: verdictData.reasoning
-                    }
-                  }]);
-                } else if (toolName === 'stranger_test') {
-                  setMessages(prev => [...prev, {
-                    role: "assistant",
-                    content: "",
-                    stranger_test: {
-                      item_name: verdictData.item_name,
-                      item_price: verdictData.item_price,
-                      test_question: verdictData.test_question
-                    }
-                  }]);
-                } else if (toolName === 'crisis_protocol') {
-                  setMessages(prev => [...prev, {
-                    role: "assistant",
-                    content: "",
-                    crisis_protocol: {
-                      priority_list: verdictData.priority_list,
-                      debt_strategy: verdictData.debt_strategy,
-                      tactical_advice: verdictData.tactical_advice
-                    }
-                  }]);
-                } else if (toolName === 'halt_assessment') {
-                  setMessages(prev => [...prev, {
-                    role: "assistant",
-                    content: "",
-                    halt_assessment: {
-                      halt_status: verdictData.halt_status,
-                      recommendation: verdictData.recommendation
-                    }
-                  }]);
-                } else if (toolName === 'provide_verdict') {
-                  // Add verdict data directly (empathy message now comes as streaming text before this)
-                  setMessages(prev => [...prev, {
-                    role: "assistant",
-                    content: "",
-                    isAnalysis: true,
-                    verdict: {
-                      verdict: verdictData.verdict_status,
-                      delay_months: verdictData.delay_months,
-                      reasoning: verdictData.verdict_reasoning,
-                      advice: verdictData.suggestion,
-                      summary: verdictData.verdict_title,
-                      math_summary: verdictData.math_summary
-                    }
-                  }]);
+
+                  // Add 1.5s delay and then analysis message
+                  setTimeout(() => {
+                    setMessages(prev => [...prev, {
+                      role: "assistant",
+                      content: "",
+                      isAnalysis: true,
+                      verdict: {
+                        verdict: verdictData.verdict_status,
+                        delay_months: verdictData.delay_months,
+                        reasoning: verdictData.verdict_reasoning,
+                        advice: verdictData.suggestion,
+                        summary: verdictData.verdict_title,
+                        math_summary: verdictData.math_summary
+                      }
+                    }]);
+                    setIsTyping(false);
+                    setIsLoading(false);
+                  }, 1500);
                 } else if (toolName === 'update_goal_deadline' || verdictData.additional_months !== undefined) {
                   // Handle update_goal_deadline tool call
                   const updateDeadline = async () => {
@@ -461,12 +358,8 @@ const Oracle = () => {
                   };
                   updateDeadline();
                 }
-                
-                // Reset tool call tracking variables
                 isCollectingToolCall = false;
                 toolCallBuffer = "";
-                currentToolName = "";
-                hasToolCall = false;
               } catch (e) {
                 console.error("Failed to parse tool call:", e);
                 setIsTyping(false);
@@ -479,15 +372,12 @@ const Oracle = () => {
         }
       }
 
-      // Always disable loading when streaming ends (with safety delay)
-      setTimeout(() => {
+      // Only set loading/typing to false if no tool call was processed
+      if (!hasToolCall) {
         setIsLoading(false);
         setIsTyping(false);
-      }, 500);
-      
-      clearTimeout(safetyTimeout);
+      }
     } catch (error: any) {
-      clearTimeout(safetyTimeout);
       toast({
         title: "Erro",
         description: error.message || "Falha ao enviar mensagem",
@@ -585,110 +475,6 @@ const Oracle = () => {
           }} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[80%] ${message.role === "user" ? "bg-primary text-primary-foreground" : "glass-card"} rounded-3xl px-6 py-4`}>
                   {message.content && <p className="whitespace-pre-wrap">{message.content}</p>}
-                  
-                  {message.servitude && (
-                    <Card className="p-4 mt-3 bg-red-500/10 border-2 border-red-500/50">
-                      <div className="flex items-center gap-3">
-                        <Clock className="w-6 h-6 text-red-500 flex-shrink-0" />
-                        <div>
-                          <p className="font-bold text-red-500 text-lg">{message.servitude.hours.toFixed(1)} horas da sua vida</p>
-                          <p className="text-sm text-muted-foreground">{message.servitude.item_name} - R${message.servitude.item_price.toFixed(2)}</p>
-                          <p className="text-sm mt-1">{message.servitude.impact_message}</p>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-
-                  {message.marketing_triggers && message.marketing_triggers.triggers.length > 0 && (
-                    <Card className="p-4 mt-3 bg-yellow-500/10 border-2 border-yellow-500/50">
-                      <div className="flex items-start gap-3">
-                        <AlertTriangle className="w-6 h-6 text-yellow-500 flex-shrink-0" />
-                        <div>
-                          <p className="font-bold text-yellow-500">🚨 Gatilhos Detectados</p>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {message.marketing_triggers.triggers.map((trigger, idx) => (
-                              <Badge key={idx} variant="outline" className="border-yellow-500/50 text-yellow-500">{trigger}</Badge>
-                            ))}
-                          </div>
-                          <p className="text-sm mt-2">{message.marketing_triggers.warning}</p>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-
-                  {message.rule72h && (
-                    <Card className="p-4 mt-3 bg-blue-500/10 border-2 border-blue-500/50">
-                      <div className="flex items-start gap-3">
-                        <History className="w-6 h-6 text-blue-500 flex-shrink-0" />
-                        <div>
-                          <p className="font-bold text-blue-500">
-                            {message.rule72h.is_survival_item ? "✅ Item Essencial" : "⏳ Regra das 72 Horas"}
-                          </p>
-                          {message.rule72h.should_wait && (
-                            <p className="text-sm font-medium mt-1">Espere 3 dias antes de comprar</p>
-                          )}
-                          <p className="text-sm mt-1">{message.rule72h.reasoning}</p>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-
-                  {message.stranger_test && (
-                    <Card className="p-4 mt-3 bg-purple-500/10 border-2 border-purple-500/50">
-                      <div className="flex items-start gap-3">
-                        <DollarSign className="w-6 h-6 text-purple-500 flex-shrink-0" />
-                        <div>
-                          <p className="font-bold text-purple-500">💰 Teste do Estranho</p>
-                          <p className="text-sm mt-1">{message.stranger_test.test_question}</p>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-
-                  {message.crisis_protocol && (
-                    <Card className="p-4 mt-3 bg-orange-500/10 border-2 border-orange-500/50">
-                      <div className="flex items-start gap-3">
-                        <TrendingDown className="w-6 h-6 text-orange-500 flex-shrink-0" />
-                        <div>
-                          <p className="font-bold text-orange-500">🆘 Protocolo de Crise</p>
-                          <div className="mt-2">
-                            <p className="text-sm font-semibold mb-1">Hierarquia das 4 Paredes:</p>
-                            <ol className="space-y-1">
-                              {message.crisis_protocol.priority_list.map((item, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
-                                  <span className="font-bold text-orange-500 min-w-[20px]">{idx + 1}.</span>
-                                  <span className="text-sm">{item}</span>
-                                </li>
-                              ))}
-                            </ol>
-                          </div>
-                          <div className="mt-3 bg-background/50 rounded p-2">
-                            <p className="text-xs font-semibold mb-1">Estratégia:</p>
-                            <p className="text-xs">{message.crisis_protocol.debt_strategy}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-
-                  {message.halt_assessment && (
-                    <Card className="p-4 mt-3 bg-indigo-500/10 border-2 border-indigo-500/50">
-                      <div className="flex items-start gap-3">
-                        <Brain className="w-6 h-6 text-indigo-500 flex-shrink-0" />
-                        <div>
-                          <p className="font-bold text-indigo-500">🧠 Avaliação HALT</p>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {message.halt_assessment.halt_status.hungry && <Badge variant="outline">Com Fome</Badge>}
-                            {message.halt_assessment.halt_status.angry && <Badge variant="outline">Com Raiva</Badge>}
-                            {message.halt_assessment.halt_status.lonely && <Badge variant="outline">Solitário</Badge>}
-                            {message.halt_assessment.halt_status.tired && <Badge variant="outline">Cansado</Badge>}
-                          </div>
-                          <p className="text-sm mt-2">{message.halt_assessment.recommendation}</p>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-                  
                   {message.verdict && <>
                       {message.verdict.math_summary && <p className="font-semibold text-sm mt-3 mb-2">
                           📊 {message.verdict.math_summary}
