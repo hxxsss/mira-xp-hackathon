@@ -23,6 +23,7 @@ export default {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
           light: "hsl(var(--primary-light))",
+          dark: "hsl(var(--primary-dark))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -43,6 +44,14 @@ export default {
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -91,6 +100,20 @@ export default {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-15px)" },
         },
+        "blob": {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1) rotate(0deg)",
+          },
+          "33%": {
+            transform: "translate(30px, -50px) scale(1.1) rotate(120deg)",
+          },
+          "66%": {
+            transform: "translate(-20px, 20px) scale(0.9) rotate(240deg)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1) rotate(360deg)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -98,6 +121,7 @@ export default {
         "shimmer": "shimmer 2s infinite",
         "float": "float 4s ease-in-out infinite",
         "float-delayed": "float-delayed 4s ease-in-out infinite 1s",
+        "blob": "blob 7s infinite",
       },
     },
   },
