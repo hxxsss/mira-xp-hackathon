@@ -314,7 +314,7 @@ const Dashboard = () => {
               {goal ? (
                 <motion.button
                   onClick={() => setGoalModalOpen(true)}
-                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-black shadow-md"
+                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-indigo-200 shadow-sm"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -367,7 +367,7 @@ const Dashboard = () => {
                     setEditingGoal(null);
                     setGoalFormOpen(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-black shadow-md"
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-indigo-200"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -378,10 +378,10 @@ const Dashboard = () => {
 
               {/* Stats */}
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-black shadow-md">
+                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
                   <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
                 </div>
-                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-black shadow-md">
+                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
                   <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
                 </div>
               </div>
@@ -400,12 +400,12 @@ const Dashboard = () => {
               <button
                 key={track.id}
                 onClick={() => handleTrackChange(index)}
-                className={`relative px-6 py-2 rounded-full font-bold transition-all border-2 shadow-md ${
+                className={`relative px-6 py-2 rounded-full font-bold transition-all border-2 ${
                   index === currentTrackIndex
-                    ? 'bg-indigo-600 text-white scale-110 shadow-xl border-black'
+                    ? 'bg-indigo-600 text-white scale-110 shadow-xl border-indigo-600'
                     : track.status === 'locked'
                     ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 border-gray-200 opacity-60'
-                    : 'bg-white text-gray-700 hover:bg-indigo-50 border-black opacity-80'
+                    : 'bg-white text-gray-700 hover:bg-indigo-50 border-indigo-200 opacity-80'
                 }`}
               >
                 <span className="mr-2">{track.icon}</span>

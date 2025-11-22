@@ -168,7 +168,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                   className={cn(
                     "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[2/3]",
                     getTrackBackgroundColor(),
-                    "border-2 border-black shadow-md",
+                    "border-2",
                     getTrackBorderColor(),
                     "hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
                     getTrackHoverBorderColor(),
