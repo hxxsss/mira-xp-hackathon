@@ -142,8 +142,8 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                 <Card
                   className={cn(
                     "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[2/3]",
-                    "bg-white border-4 border-[hsl(270,70%,35%)] hover:shadow-[0_0_30px_rgba(88,28,135,0.5)]",
-                    isLocked && "cursor-not-allowed"
+                    "bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 shadow-lg hover:shadow-2xl hover:border-indigo-300",
+                    isLocked && "cursor-not-allowed opacity-70"
                   )}
                   onClick={() => !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
                 >
@@ -153,9 +153,9 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                       <Badge
                         className={cn(
                           "text-xs font-semibold",
-                          isCompleted && "bg-purple-100 text-purple-700 border-purple-200",
-                          isInProgress && "bg-purple-500 text-white border-purple-600",
-                          item.status === 'unlocked' && "bg-purple-500 text-white animate-pulse border-purple-600"
+                          isCompleted && "bg-emerald-100 text-emerald-700 border-emerald-200",
+                          isInProgress && "bg-indigo-500 text-white border-indigo-600",
+                          item.status === 'unlocked' && "bg-indigo-500 text-white animate-pulse border-indigo-600"
                         )}
                       >
                         {isCompleted && '✓ COMPLETO'}
@@ -163,7 +163,7 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                         {item.status === 'unlocked' && '⭐ NOVO'}
                       </Badge>
                       
-                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-700 text-sm border-2 border-purple-200">
+                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700 text-sm border-2 border-indigo-200">
                         #{item.number}
                       </div>
                     </div>
@@ -198,9 +198,9 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
 
                       {/* Barra de Progresso */}
                       {item.progress !== undefined && item.progress > 0 && (
-                        <div className="w-full bg-purple-100 rounded-full h-2 overflow-hidden">
+                        <div className="w-full bg-indigo-100 rounded-full h-2 overflow-hidden">
                           <div
-                            className="h-full bg-purple-500 rounded-full transition-all duration-500"
+                            className="h-full bg-indigo-500 rounded-full transition-all duration-500"
                             style={{ width: `${item.progress}%` }}
                           />
                         </div>
@@ -208,7 +208,7 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
 
                       {item.id !== 'continue-message' && (
                         <Button
-                          className="w-full font-semibold bg-purple-200 text-purple-700 hover:bg-purple-300"
+                          className="w-full font-semibold bg-indigo-500 text-white hover:bg-indigo-600 rounded-2xl"
                           disabled={isLocked}
                         >
                           {isCompleted && 'REVISAR'}
@@ -221,12 +221,12 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
 
                     {/* Overlay para cards bloqueados */}
                     {isLocked && (
-                      <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center z-10">
+                      <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center z-10 backdrop-blur-sm">
                         <div className="text-center">
                           <div className="text-6xl mb-3">🔒</div>
-                          <p className="text-purple-600 font-bold text-lg">BLOQUEADO</p>
-                          <p className="text-purple-500 text-sm mt-1">
-                            Complete de anterior
+                          <p className="text-gray-900 font-bold text-lg">BLOQUEADO</p>
+                          <p className="text-gray-700 text-sm mt-1">
+                            Complete o anterior
                           </p>
                         </div>
                       </div>
@@ -239,8 +239,8 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
         })}
       </CarouselContent>
       
-      <CarouselPrevious className="hidden md:flex -left-12 bg-white/80 hover:bg-white" />
-      <CarouselNext className="hidden md:flex -right-12 bg-white/80 hover:bg-white" />
+      <CarouselPrevious className="hidden md:flex -left-12 bg-white border-2 border-gray-200 hover:bg-gray-50 shadow-lg" />
+      <CarouselNext className="hidden md:flex -right-12 bg-white border-2 border-gray-200 hover:bg-gray-50 shadow-lg" />
     </Carousel>
   );
 }
