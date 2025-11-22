@@ -456,7 +456,7 @@ const Dashboard = () => {
 
       {/* Bottom Blur Effect - Changes color based on track */}
       <div className={cn(
-        "fixed bottom-0 left-0 right-0 h-64 pointer-events-none z-30 transition-all duration-700",
+        "fixed bottom-0 left-0 right-0 h-64 pointer-events-none z-0 transition-all duration-700",
         !currentTrack?.name.toLowerCase().includes('organização') && !currentTrack?.name.toLowerCase().includes('aceleração') && "track-blur-mentalidade",
         currentTrack?.name.toLowerCase().includes('organização') && "track-blur-organizacao",
         currentTrack?.name.toLowerCase().includes('aceleração') && "track-blur-aceleracao"
