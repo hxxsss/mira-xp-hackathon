@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Wallet, Trophy, Zap, Coins } from "lucide-react";
+import { Sparkles, MessageSquare, User, Lock, Target, TrendingUp, Wallet, Trophy, Zap, Coins, DollarSign, PiggyBank } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -59,6 +59,7 @@ interface Profile {
   avatar_id: number;
   current_xp: number;
   weekly_xp: number;
+  total_xp: number;
   dream_points: number;
 }
 
@@ -245,8 +246,8 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen gradient-background geometric-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
@@ -254,215 +255,179 @@ const Dashboard = () => {
   const selectedAvatar = avatars.find(a => a.id === profile?.avatar_id) || avatars[0];
   const progressPercentage = goal ? Math.min((Number(goal.current_amount) / Number(goal.total_amount)) * 100, 100) : 0;
   const currentTrack = tracks[currentTrackIndex];
-  const currentBgColor = currentTrack?.background_color || '#7C3AED';
-  
-  // Determina a classe CSS baseada no nome da trilha
-  const getTrackClassName = () => {
-    if (!currentTrack) return '';
-    const trackName = currentTrack.name.toLowerCase();
-    if (trackName.includes('organização')) return 'track-organizacao';
-    if (trackName.includes('aceleração')) return 'track-aceleracao';
-    return ''; // Mentalidade (padrão)
-  };
 
   return (
-    <div 
-      className={cn(
-        "relative h-screen overflow-hidden flex flex-col gradient-background geometric-bg",
-        getTrackClassName()
-      )}
-    >
-      {/* Meteoros Neon - Variação de espessura e distribuição */}
-      {/* Linhas finas (2-4px) */}
-      <div className="neon-line neon-line-cyan" style={{ width: '3px', height: '220px', left: '5%', animationDelay: '0s', animationDuration: '4.2s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '2px', height: '280px', left: '15%', animationDelay: '1.5s', animationDuration: '5.8s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '4px', height: '240px', left: '60%', animationDelay: '3.2s', animationDuration: '4.5s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '3px', height: '200px', left: '75%', animationDelay: '2.1s', animationDuration: '5.2s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '2px', height: '260px', left: '-8%', animationDelay: '4.8s', animationDuration: '4.8s' }} />
-      
-      {/* Linhas médias (5-8px) */}
-      <div className="neon-line neon-line-pink" style={{ width: '6px', height: '350px', left: '10%', animationDelay: '0.8s', animationDuration: '5s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '7px', height: '420px', left: '25%', animationDelay: '2.5s', animationDuration: '4.3s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '5px', height: '380px', left: '35%', animationDelay: '1.2s', animationDuration: '5.5s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '8px', height: '400px', left: '50%', animationDelay: '3.8s', animationDuration: '4.7s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '6px', height: '340px', left: '65%', animationDelay: '5.2s', animationDuration: '5.3s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '7px', height: '360px', left: '-5%', animationDelay: '1.8s', animationDuration: '4.9s' }} />
-      
-      {/* Linhas grossas (10-14px) */}
-      <div className="neon-line neon-line-cyan" style={{ width: '12px', height: '500px', left: '20%', animationDelay: '0.3s', animationDuration: '5.8s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '14px', height: '550px', left: '40%', animationDelay: '2.9s', animationDuration: '4.2s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '10px', height: '480px', left: '55%', animationDelay: '4.5s', animationDuration: '5.6s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '13px', height: '520px', left: '70%', animationDelay: '1.1s', animationDuration: '4.4s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '11px', height: '460px', left: '80%', animationDelay: '3.5s', animationDuration: '5.1s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '14px', height: '600px', left: '0%', animationDelay: '5.8s', animationDuration: '3.8s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '12px', height: '540px', left: '45%', animationDelay: '6.5s', animationDuration: '4.6s' }} />
-      
-      {/* Linhas extras para densidade */}
-      <div className="neon-line neon-line-pink" style={{ width: '4px', height: '300px', left: '30%', animationDelay: '4.2s', animationDuration: '5.4s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '9px', height: '440px', left: '12%', animationDelay: '6.8s', animationDuration: '4.1s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '5px', height: '320px', left: '72%', animationDelay: '2.7s', animationDuration: '5.7s' }} />
-      <div className="neon-line neon-line-cyan" style={{ width: '8px', height: '390px', left: '58%', animationDelay: '0.5s', animationDuration: '4.9s' }} />
-      <div className="neon-line neon-line-pink" style={{ width: '11px', height: '510px', left: '85%', animationDelay: '3.9s', animationDuration: '5.2s' }} />
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Floating Icons Background */}
+      <div className="absolute top-20 left-[10%] w-16 h-16 bg-white rounded-2xl shadow-lg animate-float z-0 flex items-center justify-center">
+        <DollarSign className="text-indigo-500 w-8 h-8" />
+      </div>
+      <div className="absolute top-40 right-[15%] w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-float-delayed z-0">
+        <TrendingUp className="text-purple-500 w-8 h-8" />
+      </div>
+      <div className="absolute top-60 left-[20%] w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-float z-0">
+        <Wallet className="text-emerald-500 w-8 h-8" />
+      </div>
+      <div className="absolute bottom-40 right-[20%] w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-float-delayed z-0">
+        <PiggyBank className="text-pink-500 w-8 h-8" />
+      </div>
 
-      {/* HUD - Top Navigation */}
-      <div className="flex-shrink-0 z-50 p-3">
-        <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
-          {/* Left: Profile, Ranking, Financas & Logout */}
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate('/profile')}
-              className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all group"
-              title="Perfil"
-            >
-              <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
-            </button>
-
-          <button 
-            onClick={() => navigate('/ranking')}
-            className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all"
-            title="Ranking"
-          >
-            <Trophy className="w-6 h-6" />
-          </button>
-
-          <button 
-            onClick={() => navigate('/financas')}
-            className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 hover:scale-110 transition-all"
-            title="Finanças"
-          >
-            <Wallet className="w-6 h-6" />
-          </button>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-8">
+        {/* Header Section */}
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Olá, {profile?.name || "Sonhador"}! 👋
+            </h1>
+            <p className="text-gray-600">
+              Continue sua jornada de crescimento financeiro
+            </p>
           </div>
 
-          {/* Center: Logo */}
-          <div className="text-center relative">
-            <div className="relative inline-block">
-              {/* Glow neon effect */}
-              <div className="absolute inset-0 blur-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-70 animate-pulse" />
-              
-              {/* Logo Image */}
-              <img 
-                src={miraLogo} 
-                alt="MIRA" 
-                className="relative h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] drop-shadow-[0_0_50px_rgba(236,72,153,0.6)]"
-              />
+          <Button
+            onClick={() => supabase.auth.signOut()}
+            variant="outline"
+            className="bg-white text-gray-900 border-gray-200 hover:bg-gray-50 shadow-md"
+          >
+            Sair
+          </Button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid md:grid-cols-3 gap-6 mb-10">
+          {/* XP Card */}
+          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-3xl shadow-lg hover-lift">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-indigo-500 rounded-xl">
+                  <Zap className="text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">XP Total</p>
+                  <p className="text-2xl font-bold text-gray-900">{profile?.total_xp || 0}</p>
+                </div>
+              </div>
+            </div>
+            <Progress value={(profile?.current_xp || 0) % 100} className="h-2" />
+            <p className="text-xs text-gray-600 mt-2">
+              {100 - ((profile?.current_xp || 0) % 100)} XP até o próximo nível
+            </p>
+          </div>
+
+          {/* Dream Points Card */}
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-3xl shadow-lg hover-lift">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-purple-500 rounded-xl">
+                  <Coins className="text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Pontos dos Sonhos</p>
+                  <p className="text-2xl font-bold text-gray-900">{profile?.dream_points || 0}</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Right: Goal + Stats */}
-          <div className="flex items-center gap-2 justify-end">
-            {/* Wrapper vertical para empilhar Meta e Stats */}
-            <div className="flex flex-col gap-2 items-end">
-              
-              {/* Enhanced Goal Display */}
-              {goal ? (
-                <motion.button
-                  onClick={() => setGoalModalOpen(true)}
-                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl border-4 border-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 transition-all group overflow-hidden"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {/* Animated Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
-                  {/* Ícone MAIOR e mais vibrante */}
-                  <div className="relative">
-                    {/* Glow effect pulsante */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-700 rounded-full blur-2xl opacity-40 animate-pulse" />
-                    
-                    {/* Container do ícone */}
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 via-purple-500 to-purple-700 flex items-center justify-center shadow-2xl ring-4 ring-[hsl(270,70%,35%)]/30">
-                      <Target className="w-8 h-8 text-white" strokeWidth={3} />
-                    </div>
-                    
-                    {/* Badge de porcentagem */}
-                    <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
-                      {Math.round(progressPercentage)}%
-                    </div>
-                  </div>
-                  
-                  <div className="hidden lg:block text-left min-w-[180px] relative z-10">
-                    <div className="text-xs text-[hsl(270,70%,35%)] font-bold leading-tight">{goal.title}</div>
-                    <div className="relative h-2 bg-[hsl(270,70%,35%)]/20 rounded-full mt-1 overflow-hidden">
-                      <motion.div
-                        className="absolute inset-y-0 left-0 rounded-full shadow-lg"
-                        style={{
-                          background: progressPercentage > 80 
-                            ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
-                            : progressPercentage > 40
-                            ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
-                            : 'linear-gradient(90deg, hsl(270 70% 35%), hsl(270 70% 50%))'
-                        }}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progressPercentage}%` }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                      />
-                    </div>
-                    <div className="flex justify-between items-center text-xs mt-1">
-                      <span className="text-[hsl(270,70%,35%)]/70 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
-                      <span className="font-bold text-[hsl(270,70%,35%)]">{Math.round(progressPercentage)}%</span>
-                    </div>
-                  </div>
-                  <span className="lg:hidden font-bold text-[hsl(270,70%,35%)] text-lg relative z-10">{Math.round(progressPercentage)}%</span>
-                </motion.button>
-              ) : (
-                <motion.button
-                  onClick={() => {
-                    setEditingGoal(null);
-                    setGoalFormOpen(true);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border-4 border-[hsl(270,70%,35%)] text-[hsl(270,70%,35%)] hover:shadow-2xl hover:shadow-primary-dark/50 transition-all"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Target className="w-5 h-5" />
-                  <span className="hidden lg:inline font-bold">Criar Meta</span>
-                </motion.button>
-              )}
-
-              {/* Stats */}
-              <div className="flex items-center gap-2">
-                <div className="group relative px-3 py-1.5 bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-md rounded-full hover:from-purple-500/40 hover:to-pink-500/40 transition-all hover:scale-105">
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
-                  <div className="flex items-center gap-1.5 relative z-10">
-                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                      <Zap className="w-3 h-3 text-white" strokeWidth={3} />
-                    </div>
-                    <span className="text-xs text-white font-bold">{profile?.current_xp || 0}</span>
-                  </div>
+          {/* Streak Card */}
+          <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 rounded-3xl shadow-lg hover-lift">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-emerald-500 rounded-xl">
+                  <Trophy className="text-white" />
                 </div>
-                <div className="group relative px-3 py-1.5 bg-gradient-to-r from-yellow-500/30 to-orange-500/30 backdrop-blur-md rounded-full hover:from-yellow-500/40 hover:to-orange-500/40 transition-all hover:scale-105">
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
-                  <div className="flex items-center gap-1.5 relative z-10">
-                    <div className="w-5 h-5 rounded-md bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
-                      <Coins className="w-3 h-3 text-white" strokeWidth={3} />
-                    </div>
-                    <span className="text-xs text-white font-bold">{profile?.dream_points || 0}</span>
-                  </div>
+                <div>
+                  <p className="text-sm text-gray-600">Sequência Diária</p>
+                  <p className="text-2xl font-bold text-gray-900">7 dias 🔥</p>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
-      </div>
 
+        {/* Financial Goal Section */}
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl p-8 border border-blue-100 shadow-xl mb-10 hover-lift">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl">
+              <Target className="text-white w-6 h-6" />
+            </div>
+            Meta Financeira
+          </h3>
 
-      {/* Track Navigation */}
-      <div className="flex-shrink-0 z-40">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-center gap-4">
-            {tracks.map((track, index) =>
-              track.name.toLowerCase().includes('mentalidade') ? (
-                <button
-                  key={track.id}
-                  onClick={() => handleTrackChange(index)}
-                  className="relative transition-all hover:scale-110"
-                >
-                  <img 
-                    src={mentalidadeBadge} 
-                    alt="Mentalidade" 
-                    className={`h-16 w-auto object-contain transition-all ${
+          {goal ? (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="text-xl font-semibold text-gray-900">{goal.title}</h4>
+                <span className="text-2xl font-bold text-indigo-600">{Math.round(progressPercentage)}%</span>
+              </div>
+              <Progress value={progressPercentage} className="h-3" />
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>R$ {goal.current_amount.toLocaleString('pt-BR')}</span>
+                <span>R$ {goal.total_amount.toLocaleString('pt-BR')}</span>
+              </div>
+              <Button
+                onClick={() => setGoalModalOpen(true)}
+                className="w-full bg-indigo-600 text-white hover:bg-indigo-700 rounded-2xl py-6 text-lg font-semibold"
+              >
+                Ver Detalhes
+              </Button>
+            </div>
+          ) : (
+            <Button
+              onClick={() => {
+                setEditingGoal(null);
+                setGoalFormOpen(true);
+              }}
+              className="w-full bg-indigo-600 text-white hover:bg-indigo-700 rounded-2xl py-6 text-lg font-semibold"
+            >
+              <Target className="mr-2 h-5 w-5" />
+              Criar Meta
+            </Button>
+          )}
+        </div>
+
+        {/* Navigation Links */}
+        <div className="grid grid-cols-3 gap-4 mb-10">
+          <Button
+            onClick={() => navigate("/profile")}
+            className="bg-white rounded-full border-2 border-indigo-200 text-gray-900 hover:shadow-xl hover:border-indigo-400 hover:scale-105 transition-all duration-300 py-6 text-lg font-semibold"
+          >
+            <User className="mr-2 h-5 w-5 text-indigo-600" />
+            Perfil
+          </Button>
+          <Button
+            onClick={() => navigate("/ranking")}
+            className="bg-white rounded-full border-2 border-purple-200 text-gray-900 hover:shadow-xl hover:border-purple-400 hover:scale-105 transition-all duration-300 py-6 text-lg font-semibold"
+          >
+            <Trophy className="mr-2 h-5 w-5 text-purple-600" />
+            Ranking
+          </Button>
+          <Button
+            onClick={() => navigate("/financas")}
+            className="bg-white rounded-full border-2 border-emerald-200 text-gray-900 hover:shadow-xl hover:border-emerald-400 hover:scale-105 transition-all duration-300 py-6 text-lg font-semibold"
+          >
+            <TrendingUp className="mr-2 h-5 w-5 text-emerald-600" />
+            Finanças
+          </Button>
+        </div>
+
+        {/* Learning Tracks Section */}
+        <div className="mb-10">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">Trilhas de Aprendizado</h2>
+
+          {/* Track Badges Navigation */}
+          <div className="flex justify-center gap-8 mb-10">
+            {tracks.map((track, index) => (
+              <button
+                key={track.id}
+                onClick={() => handleTrackChange(index)}
+                className="relative transition-all hover:scale-110"
+              >
+                {track.id === "mentalidade" && (
+                  <img
+                    src={mentalidadeBadge}
+                    alt="Mentalidade"
+                    className={`h-24 w-auto object-contain transition-all ${
                       index === currentTrackIndex
                         ? 'scale-110 drop-shadow-2xl'
                         : track.status === 'locked'
@@ -470,23 +435,12 @@ const Dashboard = () => {
                         : 'opacity-80'
                     }`}
                   />
-                  {track.status === 'locked' && (
-                    <Lock className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-white drop-shadow-lg" />
-                  )}
-                  {track.status === 'completed' && (
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
-                  )}
-                </button>
-              ) : track.name.toLowerCase().includes('organização') || track.name.toLowerCase().includes('organizacao') ? (
-                <button
-                  key={track.id}
-                  onClick={() => handleTrackChange(index)}
-                  className="relative transition-all hover:scale-110"
-                >
-                  <img 
-                    src={track.status === 'locked' ? organizacaoLocked : organizacaoUnlocked} 
-                    alt="Organização" 
-                    className={`h-16 w-auto object-contain transition-all ${
+                )}
+                {track.id === "organizacao" && (
+                  <img
+                    src={track.status === 'locked' ? organizacaoLocked : organizacaoUnlocked}
+                    alt="Organização"
+                    className={`h-24 w-auto object-contain transition-all ${
                       index === currentTrackIndex
                         ? 'scale-110 drop-shadow-2xl'
                         : track.status === 'locked'
@@ -494,20 +448,12 @@ const Dashboard = () => {
                         : 'opacity-80'
                     }`}
                   />
-                  {track.status === 'completed' && (
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
-                  )}
-                </button>
-              ) : track.name.toLowerCase().includes('aceleração') || track.name.toLowerCase().includes('aceleracao') ? (
-                <button
-                  key={track.id}
-                  onClick={() => handleTrackChange(index)}
-                  className="relative transition-all hover:scale-110"
-                >
-                  <img 
-                    src={track.status === 'locked' ? aceleracaoLocked : aceleracaoUnlocked} 
-                    alt="Aceleração" 
-                    className={`h-16 w-auto object-contain transition-all ${
+                )}
+                {track.id === "aceleracao" && (
+                  <img
+                    src={track.status === 'locked' ? aceleracaoLocked : aceleracaoUnlocked}
+                    alt="Aceleração"
+                    className={`h-24 w-auto object-contain transition-all ${
                       index === currentTrackIndex
                         ? 'scale-110 drop-shadow-2xl'
                         : track.status === 'locked'
@@ -515,50 +461,53 @@ const Dashboard = () => {
                         : 'opacity-80'
                     }`}
                   />
-                  {track.status === 'completed' && (
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">✓</div>
-                  )}
-                </button>
-              ) : (
-                <button
-                  key={track.id}
-                  onClick={() => handleTrackChange(index)}
-                  className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
-                    index === currentTrackIndex
-                      ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
-                      : track.status === 'locked'
-                      ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
-                      : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
-                  }`}
-                >
-                  <span className="mr-2">{track.icon}</span>
-                  {track.name}
-                  {track.status === 'locked' && (
-                    <Lock className="inline-block ml-2 w-4 h-4" />
-                  )}
-                  {track.status === 'completed' && (
-                    <span className="ml-2">✓</span>
-                  )}
-                </button>
-              )
-            )}
+                )}
+                {track.status === 'locked' && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Lock className="w-8 h-8 text-gray-600 drop-shadow-lg" />
+                  </div>
+                )}
+                {track.status === 'completed' && (
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">✓</div>
+                )}
+              </button>
+            ))}
           </div>
+
+          {/* Current Track Info */}
           {currentTrack && (
             <motion.div
               key={currentTrack.id}
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center mt-4"
+              className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-3xl shadow-lg mb-8"
             >
-              <p className="text-white/90 text-lg">{currentTrack.description}</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">{currentTrack.name}</h3>
+                  <p className="text-gray-600 mt-2">{currentTrack.description}</p>
+                </div>
+                <Badge className={`text-white ${
+                  currentTrack.status === "completed"
+                    ? "bg-emerald-500"
+                    : currentTrack.status === "unlocked"
+                    ? "bg-blue-500"
+                    : "bg-gray-400"
+                }`}>
+                  {currentTrack.status === "completed"
+                    ? "Completo"
+                    : currentTrack.status === "unlocked"
+                      ? "Em Progresso"
+                      : "Bloqueado"}
+                </Badge>
+              </div>
             </motion.div>
           )}
         </div>
-      </div>
 
-      {/* Main Stage - Cover Flow Carousel */}
-      <div className="relative z-10 flex-1 flex items-center justify-center py-8">
-        <div className="w-full px-4">
+        {/* Modules Carousel */}
+        <div className="mb-10">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">Módulos Disponíveis</h2>
           {currentTrack && (
             <CoverFlowCarousel
               items={currentTrack.modules.map(module => ({
@@ -575,20 +524,28 @@ const Dashboard = () => {
             />
           )}
         </div>
-      </div>
 
-      {/* Floating Oracle Button */}
-      <button
-        onClick={() => navigate('/oracle')}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group relative overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
-        <Sparkles className="w-8 h-8 relative z-10 group-hover:rotate-12 transition-transform" strokeWidth={2.5} />
-        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-          <Sparkles className="w-3 h-3 text-white" strokeWidth={3} />
+        {/* Oracle Section */}
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-3xl shadow-xl hover-lift mb-10 border border-purple-100">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl">
+              <Sparkles className="text-white w-8 h-8" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Consulte o Oráculo</h2>
+              <p className="text-gray-600">
+                Tire suas dúvidas sobre finanças pessoais
+              </p>
+            </div>
+          </div>
+          <Button
+            onClick={() => navigate("/oracle")}
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-6 text-lg font-semibold hover:shadow-2xl hover:scale-105 transition-all rounded-2xl"
+          >
+            Abrir Chat do Oráculo
+          </Button>
         </div>
-      </button>
+      </div>
 
       {/* Goal Details Modal */}
       <GoalDetailsModal 
@@ -612,7 +569,6 @@ const Dashboard = () => {
           setEditingGoal(null);
         }}
       />
-
     </div>
   );
 };
