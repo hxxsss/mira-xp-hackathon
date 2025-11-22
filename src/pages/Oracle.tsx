@@ -414,7 +414,7 @@ const Oracle = () => {
             
             <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-2xl">
+                <Button variant="outline" size="icon" className="rounded-2xl bg-indigo-600 hover:bg-indigo-500">
                   <History className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
