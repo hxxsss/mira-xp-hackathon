@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 import { GoalForm } from "@/components/financas/GoalForm";
+import { NavigationDock } from "@/components/NavigationDock";
 import crystalBall from "@/assets/crystal-ball.png";
 
 const avatars = [
@@ -355,31 +356,9 @@ const Dashboard = () => {
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-2">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4 relative">
-          {/* Left: Profile, Ranking, Financas */}
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate('/profile')}
-              className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 hover:scale-110 transition-all group border-2 border-indigo-200"
-              title="Perfil"
-            >
-              <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
-            </button>
-
-          <button 
-            onClick={() => navigate('/ranking')}
-            className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 hover:scale-110 transition-all border-2 border-indigo-200"
-            title="Ranking"
-          >
-            <Trophy className="w-6 h-6" />
-          </button>
-
-          <button 
-            onClick={() => navigate('/financas')}
-            className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 hover:scale-110 transition-all border-2 border-indigo-200"
-            title="Finanças"
-          >
-            <Wallet className="w-6 h-6" />
-          </button>
+          {/* Left: Navigation Dock */}
+          <div className="flex items-center">
+            <NavigationDock avatarEmoji={selectedAvatar.emoji} />
           </div>
 
           {/* Center: Logo - positioned absolutely */}
