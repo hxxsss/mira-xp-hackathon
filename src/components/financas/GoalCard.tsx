@@ -30,15 +30,15 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
     : null;
 
   const getGradient = () => {
-    if (progress >= 80) return "from-green-500 via-emerald-500 to-teal-500";
-    if (progress >= 40) return "from-orange-500 via-amber-500 to-yellow-500";
-    return "from-indigo-600 via-blue-500 to-cyan-500";
+    if (progress >= 80) return "from-primary via-primary/80 to-primary/60";
+    if (progress >= 40) return "from-accent via-accent/80 to-accent/60";
+    return "from-secondary via-secondary/80 to-secondary/60";
   };
 
   const getProgressColor = () => {
-    if (progress >= 80) return "from-green-400 to-emerald-400";
-    if (progress >= 40) return "from-yellow-400 to-amber-400";
-    return "from-indigo-400 to-blue-400";
+    if (progress >= 80) return "from-primary/80 to-primary";
+    if (progress >= 40) return "from-accent/80 to-accent";
+    return "from-secondary/80 to-secondary";
   };
 
   const getMotivationalIcon = () => {
@@ -62,7 +62,7 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
         
         <div className="relative p-6 space-y-4">
           {/* Header */}
-          <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               {/* Container do ícone MAIOR com glow */}
               <div className="relative">
@@ -70,7 +70,7 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
                 <div className={`absolute inset-0 bg-gradient-to-br ${getGradient()} rounded-full blur-2xl opacity-50 animate-pulse`} />
                 
                 {/* Ícone principal GIGANTE */}
-                <div className={`relative w-20 h-20 rounded-full bg-gradient-to-br ${getGradient()} flex items-center justify-center shadow-2xl ring-4 ring-white/50`}>
+                <div className={`relative w-20 h-20 rounded-full bg-gradient-to-br ${getGradient()} flex items-center justify-center shadow-2xl ring-4 ring-background/50`}>
                   <span className="text-5xl drop-shadow-lg">{getMotivationalIcon()}</span>
                 </div>
               </div>
@@ -78,7 +78,7 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
               <div>
                 <h3 className="text-2xl font-bold text-foreground">{goal.title}</h3>
                 {goal.is_active && (
-                  <span className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 animate-pulse">
+                  <span className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary animate-pulse">
                     ⭐ Meta Ativa
                   </span>
                 )}
@@ -106,7 +106,7 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
                 transition={{ duration: 1, ease: "easeOut" }}
               />
               {/* Shine Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/20 to-transparent animate-shimmer" />
             </div>
           </div>
 
