@@ -52,11 +52,21 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
 
   const handleCreate = async () => {
     if (!selectedLevel) {
-      toast({ title: "Erro", description: "Selecione um nível" });
+      toast({ title: "Erro", description: "Selecione um nível", variant: "destructive" });
       return;
     }
+
+    if (currentXp < 10) {
+      toast({
+        title: "XP insuficiente",
+        description: "Você precisa de pelo menos 10 XP para criar um grupo.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!groupName.trim()) {
-      toast({ title: "Erro", description: "Digite o nome do grupo" });
+      toast({ title: "Erro", description: "Digite o nome do grupo", variant: "destructive" });
       return;
     }
     if (xpBet > currentXp) {
@@ -200,7 +210,7 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
               value={[xpBet]}
               onValueChange={([value]) => setXpBet(value)}
               min={10}
-              max={Math.min(500, currentXp)}
+              max={Math.max(10, Math.min(500, currentXp))}
               step={10}
               className="my-4"
             />

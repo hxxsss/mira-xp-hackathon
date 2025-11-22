@@ -34,8 +34,8 @@ export const ModeSelectionScreen = ({ onSelectMode }: ModeSelectionScreenProps) 
               <div className="space-y-4">
                 <Swords className="w-20 h-20 mx-auto text-red-400" />
                 <h3 className="text-3xl font-bold text-red-400">⚔️ 1 vs 1</h3>
-                <p className="text-lg text-gray-300">DUELO CLÁSSICO</p>
-                <p className="text-sm text-gray-400">
+                <p className="text-lg text-gray-100">DUELO CLÁSSICO</p>
+                <p className="text-sm text-gray-200">
                   Desafie um oponente<br />
                   Quem responde mais rápido vence
                 </p>
@@ -58,8 +58,8 @@ export const ModeSelectionScreen = ({ onSelectMode }: ModeSelectionScreenProps) 
               <div className="space-y-4">
                 <Users className="w-20 h-20 mx-auto text-purple-400" />
                 <h3 className="text-3xl font-bold text-purple-400">👥 GRUPOS</h3>
-                <p className="text-lg text-gray-300">BATALHA ÉPICA</p>
-                <p className="text-sm text-gray-400">
+                <p className="text-lg text-gray-100">BATALHA ÉPICA</p>
+                <p className="text-sm text-gray-200">
                   Até 5 times competindo<br />
                   Trabalho em equipe e estratégia
                 </p>
