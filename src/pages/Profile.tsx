@@ -145,12 +145,12 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4">
-            <Sparkles className="w-8 h-8 text-primary-foreground animate-pulse" />
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-xl animate-pulse">
+            <Target className="w-10 h-10 text-white" />
           </div>
-          <p className="text-muted-foreground">Carregando perfil...</p>
+          <p className="text-gray-600 font-medium text-lg">Carregando perfil...</p>
         </div>
       </div>
     );
@@ -164,15 +164,15 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
       {/* Header with Stats */}
-      <div className="border-b border-border bg-background sticky top-0 z-10">
+      <div className="border-b border-indigo-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               onClick={() => navigate("/dashboard")}
-              className="text-foreground hover:bg-muted"
+              className="text-indigo-600 hover:bg-indigo-50"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar ao Dashboard
@@ -193,24 +193,24 @@ export default function Profile() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="relative bg-card rounded-[40px] p-8 shadow-2xl aspect-square flex items-center justify-center"
+              className="relative bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-[40px] p-8 shadow-2xl aspect-square flex items-center justify-center"
             >
               {/* Empty space for mascot */}
               <div className="text-center">
-                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-muted/30 flex items-center justify-center">
+                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-indigo-100/50 flex items-center justify-center">
                   <span className="text-6xl opacity-20">👤</span>
                 </div>
-                <p className="text-sm text-muted-foreground">Seu mascote aparecerá aqui</p>
-                <p className="text-xs text-muted-foreground mt-1 opacity-60">Em breve você poderá personalizar!</p>
+                <p className="text-sm text-gray-600">Seu mascote aparecerá aqui</p>
+                <p className="text-xs text-gray-500 mt-1 opacity-60">Em breve você poderá personalizar!</p>
               </div>
 
               {/* Edit Button */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="absolute top-6 right-6 w-14 h-14 bg-[hsl(var(--yellow-soft))] rounded-2xl flex items-center justify-center hover:bg-yellow-100 transition-all shadow-lg"
+                className="absolute top-6 right-6 w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center hover:bg-indigo-200 transition-all shadow-lg"
               >
-                <Pencil className="w-6 h-6 text-primary" />
+                <Pencil className="w-6 h-6 text-indigo-600" />
               </motion.button>
             </motion.div>
 
@@ -221,9 +221,9 @@ export default function Profile() {
               transition={{ delay: 0.1 }}
               className="text-center space-y-2"
             >
-              <h1 className="text-4xl font-bold text-foreground">{profile?.name}</h1>
-              <p className="text-muted-foreground">@{profile?.email.split('@')[0]}</p>
-              <p className="text-sm text-muted-foreground/70">
+              <h1 className="text-4xl font-bold text-gray-900">{profile?.name}</h1>
+              <p className="text-gray-600">@{profile?.email.split('@')[0]}</p>
+              <p className="text-sm text-gray-500">
                 Por aqui desde {profile?.created_at && formatDate(profile.created_at)}
               </p>
             </motion.div>
@@ -239,29 +239,29 @@ export default function Profile() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="border-2 hover:shadow-lg transition-shadow">
+              <Card className="border-2 border-indigo-200 hover:shadow-lg hover:shadow-indigo-100 transition-shadow bg-white">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Trophy className="w-5 h-5 text-primary" />
+                  <CardTitle className="flex items-center gap-2 text-gray-900">
+                    <Trophy className="w-5 h-5 text-indigo-600" />
                     Estatísticas
                   </CardTitle>
                   <CardDescription>Seu progresso na plataforma</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-secondary/10 p-4 rounded-2xl border border-secondary/20">
+                    <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-200">
                       <div className="flex items-center gap-2 mb-2">
-                        <Sparkles className="w-4 h-4 text-secondary" />
-                        <span className="text-sm text-muted-foreground">XP Total</span>
+                        <Sparkles className="w-4 h-4 text-indigo-500" />
+                        <span className="text-sm text-gray-600">XP Total</span>
                       </div>
-                      <p className="text-2xl font-bold text-foreground">{profile?.current_xp || 0}</p>
+                      <p className="text-2xl font-bold text-gray-900">{profile?.current_xp || 0}</p>
                     </div>
-                    <div className="bg-secondary/10 p-4 rounded-2xl border border-secondary/20">
+                    <div className="bg-purple-50 p-4 rounded-2xl border border-purple-200">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-lg">💎</span>
-                        <span className="text-sm text-muted-foreground">Diamantes</span>
+                        <span className="text-sm text-gray-600">Diamantes</span>
                       </div>
-                      <p className="text-2xl font-bold text-foreground">{profile?.dream_points || 0}</p>
+                      <p className="text-2xl font-bold text-gray-900">{profile?.dream_points || 0}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -274,26 +274,26 @@ export default function Profile() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <Card className="border-2 hover:shadow-lg transition-shadow">
+              <Card className="border-2 border-indigo-200 hover:shadow-lg hover:shadow-indigo-100 transition-shadow bg-white">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Award className="w-5 h-5 text-primary" />
+                  <CardTitle className="flex items-center gap-2 text-gray-900">
+                    <Award className="w-5 h-5 text-indigo-600" />
                     Informações da Conta
                   </CardTitle>
                   <CardDescription>Seus dados cadastrais</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground">Email</Label>
-                    <div className="px-4 py-3 bg-muted/20 rounded-xl border border-border">
-                      <p className="text-foreground">{profile?.email}</p>
+                    <Label className="text-gray-600">Email</Label>
+                    <div className="px-4 py-3 bg-indigo-50 rounded-xl border border-indigo-200">
+                      <p className="text-gray-900">{profile?.email}</p>
                     </div>
                   </div>
                   {profile?.age && (
                     <div className="space-y-2">
-                      <Label className="text-muted-foreground">Idade</Label>
-                      <div className="px-4 py-3 bg-muted/20 rounded-xl border border-border">
-                        <p className="text-foreground">{profile.age} anos</p>
+                      <Label className="text-gray-600">Idade</Label>
+                      <div className="px-4 py-3 bg-indigo-50 rounded-xl border border-indigo-200">
+                        <p className="text-gray-900">{profile.age} anos</p>
                       </div>
                     </div>
                   )}
@@ -307,10 +307,10 @@ export default function Profile() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card className="border-2 hover:shadow-lg transition-shadow">
+              <Card className="border-2 border-indigo-200 hover:shadow-lg hover:shadow-indigo-100 transition-shadow bg-white">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Lock className="w-5 h-5 text-primary" />
+                  <CardTitle className="flex items-center gap-2 text-gray-900">
+                    <Lock className="w-5 h-5 text-indigo-600" />
                     Segurança
                   </CardTitle>
                   <CardDescription>
@@ -321,26 +321,26 @@ export default function Profile() {
                   {!showChangePassword ? (
                     <Button 
                       onClick={() => setShowChangePassword(true)}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
                     >
                       Alterar Senha
                     </Button>
                   ) : (
                     <form onSubmit={handleChangePassword} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="currentPassword" className="text-foreground">Senha Atual</Label>
+                        <Label htmlFor="currentPassword" className="text-gray-900">Senha Atual</Label>
                         <Input
                           id="currentPassword"
                           type="password"
                           value={currentPassword}
                           onChange={(e) => setCurrentPassword(e.target.value)}
                           required
-                          className="bg-background border-border text-foreground"
+                          className="bg-white border-indigo-200 text-gray-900"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="newPassword" className="text-foreground">Nova Senha</Label>
+                        <Label htmlFor="newPassword" className="text-gray-900">Nova Senha</Label>
                         <Input
                           id="newPassword"
                           type="password"
@@ -348,19 +348,19 @@ export default function Profile() {
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
                           required
-                          className="bg-background border-border text-foreground"
+                          className="bg-white border-indigo-200 text-gray-900"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="confirmPassword" className="text-foreground">Confirmar Nova Senha</Label>
+                        <Label htmlFor="confirmPassword" className="text-gray-900">Confirmar Nova Senha</Label>
                         <Input
                           id="confirmPassword"
                           type="password"
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           required
-                          className="bg-background border-border text-foreground"
+                          className="bg-white border-indigo-200 text-gray-900"
                         />
                       </div>
 
@@ -368,7 +368,7 @@ export default function Profile() {
                         <Button 
                           type="submit" 
                           disabled={changingPassword}
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white"
                         >
                           {changingPassword ? "Alterando..." : "Salvar Nova Senha"}
                         </Button>
@@ -381,7 +381,7 @@ export default function Profile() {
                             setNewPassword("");
                             setConfirmPassword("");
                           }}
-                          className="border-border text-foreground hover:bg-muted"
+                          className="border-indigo-200 text-gray-900 hover:bg-indigo-50"
                         >
                           Cancelar
                         </Button>
@@ -398,10 +398,10 @@ export default function Profile() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.35 }}
             >
-              <Card className="border-2 hover:shadow-lg transition-shadow">
+              <Card className="border-2 border-indigo-200 hover:shadow-lg hover:shadow-indigo-100 transition-shadow bg-white">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <LogOut className="w-5 h-5 text-primary" />
+                  <CardTitle className="flex items-center gap-2 text-gray-900">
+                    <LogOut className="w-5 h-5 text-indigo-600" />
                     Sessão
                   </CardTitle>
                   <CardDescription>
@@ -415,7 +415,7 @@ export default function Profile() {
                       await supabase.auth.signOut();
                       navigate("/");
                     }}
-                    className="border-border text-foreground hover:bg-muted"
+                    className="border-indigo-200 text-gray-900 hover:bg-indigo-50"
                   >
                     Sair da Conta
                   </Button>
