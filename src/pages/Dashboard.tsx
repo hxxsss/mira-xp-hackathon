@@ -465,7 +465,7 @@ const Dashboard = () => {
       {/* Floating Oracle Button */}
       <button
         onClick={() => navigate('/oracle')}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group"
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-primary hover:bg-primary/90 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group"
       >
         <MessageSquare className="w-8 h-8 group-hover:rotate-12 transition-transform" />
         <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-300 animate-pulse" />
