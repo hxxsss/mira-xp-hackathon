@@ -3,13 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Swords, Plus, LogIn, ArrowLeft } from "lucide-react";
+import { Swords, Plus, LogIn, ArrowLeft, Users } from "lucide-react";
 import { CreateMatchDialog } from "@/components/pvp/CreateMatchDialog";
 import { JoinMatchDialog } from "@/components/pvp/JoinMatchDialog";
+import { CreateGroupDialog } from "@/components/pvp/CreateGroupDialog";
+import { GroupLobby } from "@/components/pvp/GroupLobby";
 import { MatchLobby } from "@/components/pvp/MatchLobby";
 import { MatchGame } from "@/components/pvp/MatchGame";
 import { MatchResultModal } from "@/components/pvp/MatchResultModal";
+import { PodiumModal } from "@/components/pvp/PodiumModal";
+import { ModeSelectionScreen } from "@/components/pvp/ModeSelectionScreen";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 
 interface Match {
   id: string;
@@ -22,6 +27,7 @@ interface Match {
   host_score: number | null;
   opponent_score: number | null;
   winner_user_id: string | null;
+  match_mode?: '1v1' | 'group';
 }
 
 const PvP = () => {
@@ -29,9 +35,15 @@ const PvP = () => {
   const { toast } = useToast();
   const [userId, setUserId] = useState<string>("");
   const [currentMatch, setCurrentMatch] = useState<Match | null>(null);
+  const [currentGroupId, setCurrentGroupId] = useState<string | null>(null);
+  const [selectedMode, setSelectedMode] = useState<'1v1' | 'group' | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showCreateGroupDialog, setShowCreateGroupDialog] = useState(false);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
+  const [showPodiumModal, setShowPodiumModal] = useState(false);
+  const [groupResults, setGroupResults] = useState<any[]>([]);
+  const [xpGained, setXpGained] = useState(0);
 
   useEffect(() => {
     checkAuth();
@@ -56,7 +68,7 @@ const PvP = () => {
           setCurrentMatch(updatedMatch);
 
           if (updatedMatch.status === 'completed') {
-            setShowResultModal(true);
+            handleMatchCompleted(updatedMatch);
           }
         }
       )
@@ -76,9 +88,65 @@ const PvP = () => {
     setUserId(user.id);
   };
 
+  const handleMatchCompleted = async (match: Match) => {
+    if (match.match_mode === 'group') {
+      // Load group results for podium
+      const { data: groups } = await supabase
+        .from("pvp_groups")
+        .select("*")
+        .eq("match_id", match.id)
+        .order("total_score", { ascending: false });
+
+      if (groups) {
+        setGroupResults(groups);
+        
+        // Calculate XP gained
+        const userGroup = groups.find(g => g.leader_user_id === userId || 
+          groups.some(g => g.id === currentGroupId));
+        const position = groups.findIndex(g => g.id === userGroup?.id) + 1;
+        
+        const totalPot = match.xp_bet * groups.length; // Simplified
+        let xp = 0;
+        if (position === 1) xp = Math.floor(totalPot * 0.6);
+        else if (position === 2) xp = Math.floor(totalPot * 0.25);
+        else if (position === 3) xp = Math.floor(totalPot * 0.15);
+        else xp = -match.xp_bet;
+        
+        setXpGained(xp);
+        setShowPodiumModal(true);
+      }
+    } else {
+      setShowResultModal(true);
+    }
+  };
+
+  const handleModeSelected = (mode: '1v1' | 'group') => {
+    setSelectedMode(mode);
+    if (mode === '1v1') {
+      setShowCreateDialog(true);
+    } else {
+      setShowCreateGroupDialog(true);
+    }
+  };
+
   const handleMatchCreated = (match: Match) => {
     setCurrentMatch(match);
     setShowCreateDialog(false);
+  };
+
+  const handleGroupCreated = (matchId: string, groupId: string) => {
+    supabase
+      .from("pvp_matches")
+      .select("*")
+      .eq("id", matchId)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setCurrentMatch(data as Match);
+          setCurrentGroupId(groupId);
+        }
+      });
+    setShowCreateGroupDialog(false);
   };
 
   const handleMatchJoined = (match: Match) => {
@@ -91,7 +159,6 @@ const PvP = () => {
 
     try {
       if (currentMatch.status === 'waiting' && currentMatch.host_user_id === userId) {
-        // Host cancela a partida
         await supabase
           .from('pvp_matches')
           .delete()
@@ -99,6 +166,8 @@ const PvP = () => {
       }
 
       setCurrentMatch(null);
+      setCurrentGroupId(null);
+      setSelectedMode(null);
       toast({
         title: "Partida abandonada",
         description: "Você saiu da partida.",
@@ -109,16 +178,59 @@ const PvP = () => {
   };
 
   const handleGameComplete = () => {
-    // O resultado será mostrado automaticamente via realtime
+    // Result shown via realtime
   };
 
   const handleCloseResult = () => {
     setShowResultModal(false);
+    setShowPodiumModal(false);
     setCurrentMatch(null);
+    setCurrentGroupId(null);
+    setSelectedMode(null);
   };
 
+  const handleStartGroupGame = () => {
+    // Game starts automatically via realtime
+  };
+
+  // Game screens
   if (currentMatch) {
-    if (currentMatch.status === 'waiting') {
+    // Group mode lobby
+    if (currentMatch.match_mode === 'group' && currentMatch.status === 'waiting' && currentGroupId) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 p-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center gap-4 mb-8">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLeaveMatch}
+                className="text-white hover:bg-white/20"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <motion.h1
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-4xl font-bold neon-text"
+              >
+                🎮 ARENA DE GRUPOS
+              </motion.h1>
+            </div>
+            
+            <GroupLobby
+              matchId={currentMatch.id}
+              groupId={currentGroupId}
+              userId={userId}
+              onStartGame={handleStartGroupGame}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // 1v1 mode lobby
+    if (currentMatch.match_mode === '1v1' && currentMatch.status === 'waiting') {
       return (
         <MatchLobby
           match={currentMatch}
@@ -128,115 +240,196 @@ const PvP = () => {
       );
     }
 
+    // In game
     if (currentMatch.status === 'in_progress') {
       return (
-        <MatchGame
-          match={currentMatch}
-          userId={userId}
-          onComplete={handleGameComplete}
-        />
+        <div className="min-h-screen battle-gradient p-4">
+          <MatchGame
+            match={currentMatch}
+            userId={userId}
+            onComplete={handleGameComplete}
+          />
+        </div>
       );
     }
   }
 
+  // Main menu
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/30 to-pink-900/30 p-4 relative overflow-hidden">
+      {/* Animated background particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-purple-500/30 rounded-full"
+            animate={{
+              y: [0, -1000],
+              x: [0, Math.random() * 100 - 50],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              delay: Math.random() * 5
+            }}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: '100%'
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="flex items-center gap-4 mb-8">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
+            className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <div>
-            <h1 className="text-4xl font-bold flex items-center gap-3">
-              <Swords className="h-8 w-8 text-primary" />
-              Modo PvP
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h1 className="text-5xl font-bold flex items-center gap-3 neon-text">
+              <Swords className="h-10 w-10" />
+              ARENA PvP
             </h1>
-            <p className="text-muted-foreground mt-1">
-              Desafie outros jogadores e aposte XP!
+            <p className="text-gray-300 mt-2 text-lg">
+              ⚡ Desafie jogadores e aposte XP nas batalhas épicas!
             </p>
-          </div>
+          </motion.div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setShowCreateDialog(true)}>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <Plus className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <CardTitle>Criar Partida</CardTitle>
-                  <CardDescription>
-                    Crie uma nova partida e convide um amigo
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Escolha o módulo de perguntas</li>
-                <li>• Defina a aposta de XP</li>
-                <li>• Compartilhe o código da sala</li>
-              </ul>
-            </CardContent>
-          </Card>
+        {!selectedMode ? (
+          <ModeSelectionScreen onSelectMode={handleModeSelected} />
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
+          >
+            <Button
+              variant="ghost"
+              onClick={() => setSelectedMode(null)}
+              className="text-white hover:bg-white/20"
+            >
+              ← Voltar aos Modos
+            </Button>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setShowJoinDialog(true)}>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-secondary/10 rounded-lg">
-                  <LogIn className="h-6 w-6 text-secondary-foreground" />
-                </div>
-                <div>
-                  <CardTitle>Entrar em Partida</CardTitle>
-                  <CardDescription>
-                    Use um código para entrar em uma partida
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Digite o código de 6 dígitos</li>
-                <li>• Verifique a aposta de XP</li>
-                <li>• Aceite o desafio!</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card className="arcade-button cursor-pointer bg-gradient-to-br from-primary/20 to-accent/20 hover:scale-105 transition-transform" 
+                    onClick={() => selectedMode === '1v1' ? setShowCreateDialog(true) : setShowCreateGroupDialog(true)}>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-primary/30 rounded-lg">
+                      <Plus className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-white">
+                        {selectedMode === '1v1' ? 'Criar Partida' : 'Criar Grupo'}
+                      </CardTitle>
+                      <CardDescription className="text-gray-300">
+                        {selectedMode === '1v1' 
+                          ? 'Crie uma partida 1v1' 
+                          : 'Crie um grupo e convide membros'}
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-gray-300">
+                    <li>• Escolha o módulo de perguntas</li>
+                    <li>• Defina a aposta de XP</li>
+                    <li>• Compartilhe o código</li>
+                  </ul>
+                </CardContent>
+              </Card>
 
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Como Funciona</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h4 className="font-semibold mb-2">Sistema de Pontuação</h4>
-              <p className="text-sm text-muted-foreground">
-                Cada resposta correta vale pontos baseados na velocidade:
-                <br />• Base: 100 pontos
-                <br />• Bônus de velocidade: até +100 pontos (quanto mais rápido, mais pontos)
-              </p>
+              <Card className="arcade-button cursor-pointer bg-gradient-to-br from-secondary/20 to-primary/20 hover:scale-105 transition-transform" 
+                    onClick={() => setShowJoinDialog(true)}>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-secondary/30 rounded-lg">
+                      <LogIn className="h-6 w-6 text-secondary-foreground" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-white">Entrar {selectedMode === '1v1' ? 'na Partida' : 'no Grupo'}</CardTitle>
+                      <CardDescription className="text-gray-300">
+                        Use um código para entrar
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-gray-300">
+                    <li>• Digite o código de 6 dígitos</li>
+                    <li>• Verifique a aposta de XP</li>
+                    <li>• Entre na batalha!</li>
+                  </ul>
+                </CardContent>
+              </Card>
             </div>
-            <div>
-              <h4 className="font-semibold mb-2">Aposta e Recompensa</h4>
-              <p className="text-sm text-muted-foreground">
-                • O vencedor leva o dobro do XP apostado (sua aposta + aposta do oponente)
-                <br />• Em caso de empate, cada jogador recupera sua aposta
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+
+            <Card className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Swords className="w-6 h-6 text-yellow-400" />
+                  Como Funciona
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <div>
+                  <h4 className="font-semibold mb-2 text-yellow-400">Sistema de Pontuação</h4>
+                  <p className="text-sm">
+                    Cada resposta correta vale pontos baseados na velocidade:
+                    <br />• Base: 100 pontos
+                    <br />• Bônus de velocidade: até +100 pontos
+                  </p>
+                </div>
+                {selectedMode === 'group' && (
+                  <div>
+                    <h4 className="font-semibold mb-2 text-purple-400">Modo Grupo</h4>
+                    <p className="text-sm">
+                      • Até 5 grupos competindo simultaneamente
+                      <br />• Cada membro joga sua vez contra membros de outros grupos
+                      <br />• Pontos individuais somam ao total do grupo
+                      <br />• Grupo com mais pontos vence e leva o prêmio!
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <h4 className="font-semibold mb-2 text-green-400">Recompensas</h4>
+                  <p className="text-sm">
+                    {selectedMode === '1v1' ? (
+                      <>• Vencedor leva o dobro do XP apostado<br />• Empate: cada um recupera sua aposta</>
+                    ) : (
+                      <>• 1º lugar: 60% do pote total<br />• 2º lugar: 25% do pote<br />• 3º lugar: 15% do pote</>
+                    )}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
       </div>
 
+      {/* Dialogs */}
       <CreateMatchDialog
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         onMatchCreated={handleMatchCreated}
+        userId={userId}
+      />
+
+      <CreateGroupDialog
+        open={showCreateGroupDialog}
+        onOpenChange={setShowCreateGroupDialog}
+        onGroupCreated={handleGroupCreated}
         userId={userId}
       />
 
@@ -252,6 +445,16 @@ const PvP = () => {
           match={currentMatch}
           userId={userId}
           onClose={handleCloseResult}
+        />
+      )}
+
+      {showPodiumModal && currentGroupId && (
+        <PodiumModal
+          open={showPodiumModal}
+          onClose={handleCloseResult}
+          groups={groupResults}
+          userGroupId={currentGroupId}
+          xpGained={xpGained}
         />
       )}
     </div>

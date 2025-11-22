@@ -293,3 +293,54 @@ All colors MUST be HSL.
 .animation-delay-4000 {
   animation-delay: 4s;
 }
+
+.gradient-text {
+  background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* PvP Game Aesthetics */
+.neon-text {
+  text-shadow: 
+    0 0 10px rgba(255, 0, 255, 0.8),
+    0 0 20px rgba(255, 0, 255, 0.6),
+    0 0 30px rgba(255, 0, 255, 0.4);
+  color: #ff00ff;
+}
+
+.battle-gradient {
+  background: linear-gradient(
+    135deg,
+    #ff0080 0%,
+    #7928ca 50%,
+    #ff0080 100%
+  );
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.podium-gold {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+}
+
+.arcade-button {
+  border: 3px solid #00ff88;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 255, 136, 0.3),
+    0 0 20px rgba(0, 255, 136, 0.5);
+  transition: all 0.3s ease;
+}
+
+.arcade-button:hover {
+  box-shadow: 
+    inset 0 0 30px rgba(0, 255, 136, 0.5),
+    0 0 40px rgba(0, 255, 136, 0.8);
+}
