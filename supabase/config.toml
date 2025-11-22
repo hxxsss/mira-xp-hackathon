@@ -1,1 +1,13 @@
 project_id = "lwghyetnojgexnzxmhxa"
+
+[functions.oracle-chat]
+verify_jwt = true
+
+[functions.send-password-reset]
+verify_jwt = false
+
+[functions.verify-reset-code]
+verify_jwt = false
+
+[functions.update-goal-deadline]
+verify_jwt = true
