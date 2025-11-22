@@ -376,6 +376,82 @@ export type Database = {
         }
         Relationships: []
       }
+      pvp_group_members: {
+        Row: {
+          group_id: string
+          has_played: boolean
+          id: string
+          joined_at: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          has_played?: boolean
+          id?: string
+          joined_at?: string
+          score?: number
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          has_played?: boolean
+          id?: string
+          joined_at?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pvp_group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "pvp_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pvp_groups: {
+        Row: {
+          created_at: string
+          id: string
+          invite_code: string
+          leader_user_id: string
+          match_id: string
+          name: string
+          ready_to_start: boolean
+          total_score: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invite_code: string
+          leader_user_id: string
+          match_id: string
+          name: string
+          ready_to_start?: boolean
+          total_score?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invite_code?: string
+          leader_user_id?: string
+          match_id?: string
+          name?: string
+          ready_to_start?: boolean
+          total_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pvp_groups_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "pvp_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pvp_match_answers: {
         Row: {
           answered_at: string | null
@@ -431,10 +507,13 @@ export type Database = {
         Row: {
           completed_at: string | null
           created_at: string | null
+          current_round: number | null
           host_score: number | null
           host_user_id: string
           id: string
           match_code: string
+          match_mode: string | null
+          max_groups: number | null
           module_id: string
           opponent_score: number | null
           opponent_user_id: string | null
@@ -447,10 +526,13 @@ export type Database = {
         Insert: {
           completed_at?: string | null
           created_at?: string | null
+          current_round?: number | null
           host_score?: number | null
           host_user_id: string
           id?: string
           match_code: string
+          match_mode?: string | null
+          max_groups?: number | null
           module_id: string
           opponent_score?: number | null
           opponent_user_id?: string | null
@@ -463,10 +545,13 @@ export type Database = {
         Update: {
           completed_at?: string | null
           created_at?: string | null
+          current_round?: number | null
           host_score?: number | null
           host_user_id?: string
           id?: string
           match_code?: string
+          match_mode?: string | null
+          max_groups?: number | null
           module_id?: string
           opponent_score?: number | null
           opponent_user_id?: string | null
