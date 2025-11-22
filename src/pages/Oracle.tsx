@@ -398,7 +398,7 @@ const Oracle = () => {
         <div className="container mx-auto px-4 py-4 bg-white">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" onClick={() => navigate("/dashboard")} className="rounded-2xl">
+              <Button variant="outline" size="icon" onClick={() => navigate("/dashboard")} className="rounded-2xl bg-white">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div className="flex items-center gap-3">
