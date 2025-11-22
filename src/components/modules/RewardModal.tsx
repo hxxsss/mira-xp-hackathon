@@ -13,7 +13,7 @@ interface RewardModalProps {
 export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle }: RewardModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white border-4 border-[hsl(270,70%,35%)]">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -36,8 +36,8 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
           <p className="text-xl font-semibold mb-2">{moduleTitle}</p>
           <p className="text-gray-600 mb-6">Módulo Completo</p>
 
-          <div className="bg-white rounded-lg p-6 mb-6 border border-gray-200">
-            <p className="text-sm text-gray-600 mb-4">Você ganhou:</p>
+          <div className="bg-white rounded-lg p-6 mb-6 border-4 border-[hsl(270,70%,35%)] shadow-lg">
+            <p className="text-sm text-[hsl(270,70%,35%)] font-bold mb-4">Você ganhou:</p>
             
             <div className="flex justify-center gap-8">
               <motion.div
@@ -46,10 +46,10 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
                 transition={{ delay: 0.4 }}
                 className="text-center"
               >
-                <div className="text-4xl font-bold text-[#7C3AED] mb-1">
+                <div className="text-4xl font-bold text-[hsl(270,70%,35%)] mb-1">
                   +{xpReward}
                 </div>
-                <div className="text-sm text-gray-600">XP</div>
+                <div className="text-sm text-[hsl(270,70%,35%)]">XP</div>
               </motion.div>
               
               <motion.div
@@ -58,10 +58,10 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
                 transition={{ delay: 0.5 }}
                 className="text-center"
               >
-                <div className="text-4xl font-bold text-[#F5A623] mb-1">
+                <div className="text-4xl font-bold text-[hsl(270,70%,35%)] mb-1">
                   +{pointsReward}
                 </div>
-                <div className="text-sm text-gray-600">Pontos</div>
+                <div className="text-sm text-[hsl(270,70%,35%)]">Pontos</div>
               </motion.div>
             </div>
           </div>
@@ -73,7 +73,7 @@ export const RewardModal = ({ open, onClose, xpReward, pointsReward, moduleTitle
           >
             <Button 
               onClick={onClose} 
-              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-6 text-lg"
+              className="w-full bg-[hsl(270,70%,35%)] hover:bg-[hsl(270,70%,30%)] text-white font-bold py-6 text-lg border-4 border-[hsl(270,70%,35%)]"
             >
               Continue Sua Jornada! 🚀
             </Button>
