@@ -440,80 +440,41 @@ const Dashboard = () => {
       </div>
 
 
-      {/* Track Navigation - Glassmorphism Segmented Control */}
-      <div className="flex-shrink-0 z-40 py-6">
-        <div className="max-w-4xl mx-auto px-4">
-          <motion.div 
-            className="flex gap-2 glass-segmented-control p-2 rounded-full justify-center flex-wrap"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {tracks.map((track, idx) => {
-              const isActive = idx === currentTrackIndex;
-              const isLocked = track.status === 'locked';
-              
-              return (
-                <motion.button
-                  key={track.id}
-                  onClick={() => !isLocked && handleTrackChange(idx)}
-                  disabled={isLocked}
-                  className={cn(
-                    "relative px-8 py-4 rounded-full font-black text-base transition-all duration-300 overflow-hidden",
-                    isActive 
-                      ? "neon-pill-active text-white shadow-2xl scale-110" 
-                      : "text-white/80 hover:bg-white/10 hover:scale-105",
-                    isLocked && "opacity-40 cursor-not-allowed"
-                  )}
-                  whileHover={!isLocked ? { scale: 1.05 } : {}}
-                  whileTap={!isLocked ? { scale: 0.95 } : {}}
-                >
-                  {/* Background glow para botão ativo */}
-                  {isActive && (
-                    <motion.div 
-                      className="absolute inset-0 bg-gradient-to-r from-cyan-400/30 via-purple-500/30 to-pink-500/30 blur-xl"
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.5, 0.8, 0.5],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  )}
-                  
-                  <span className="flex items-center gap-3 relative z-10">
-                    <span className="text-2xl">{track.icon}</span>
-                    <span className="tracking-wide">{track.name}</span>
-                    {isLocked && <Lock className="w-5 h-5" />}
-                    {track.status === 'completed' && <span className="text-green-400">✓</span>}
-                  </span>
-                  
-                  {/* Indicador inferior para ativo */}
-                  {isActive && (
-                    <motion.span 
-                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 bg-white rounded-full shadow-lg"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    />
-                  )}
-                </motion.button>
-              );
-            })}
-          </motion.div>
-          
-          {/* Descrição da trilha */}
+      {/* Track Navigation */}
+      <div className="flex-shrink-0 z-40">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-center gap-4">
+            {tracks.map((track, index) => (
+              <button
+                key={track.id}
+                onClick={() => handleTrackChange(index)}
+                className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
+                  index === currentTrackIndex
+                    ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
+                    : track.status === 'locked'
+                    ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
+                    : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
+                }`}
+              >
+                <span className="mr-2">{track.icon}</span>
+                {track.name}
+                {track.status === 'locked' && (
+                  <Lock className="inline-block ml-2 w-4 h-4" />
+                )}
+                {track.status === 'completed' && (
+                  <span className="ml-2">✓</span>
+                )}
+              </button>
+            ))}
+          </div>
           {currentTrack && (
             <motion.div
               key={currentTrack.id}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center mt-6"
+              className="text-center mt-4"
             >
-              <p className="text-white/95 text-xl font-semibold drop-shadow-lg">{currentTrack.description}</p>
+              <p className="text-white/90 text-lg">{currentTrack.description}</p>
             </motion.div>
           )}
         </div>

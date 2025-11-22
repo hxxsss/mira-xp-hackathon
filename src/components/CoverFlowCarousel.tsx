@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { motion } from "framer-motion";
 import { MoneyCircleIcon, TargetIcon, LockedIcon } from "@/components/modules/ModuleIcons";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -74,27 +73,27 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
       const slideNodes = api.slideNodes();
       
       slideNodes.forEach((slideNode) => {
+        // Pega a posição do slide em relação ao viewport
         const slideRect = slideNode.getBoundingClientRect();
         const viewportRect = api.rootNode().getBoundingClientRect();
         
+        // Calcula distância do centro
         const centerDiff = Math.abs(
           (slideRect.left + slideRect.width / 2) - 
           (viewportRect.left + viewportRect.width / 2)
         );
         
-        // Efeito 3D Cover Flow: escala + rotação + opacidade
-        let scale = 1 - Math.min(centerDiff * 0.0015, 0.3);
-        let opacity = 1 - Math.min(centerDiff * 0.002, 0.6);
-        let rotateY = Math.min(centerDiff * 0.05, 25); // Rotação 3D
-        
-        // Determina direção da rotação
-        const direction = (slideRect.left + slideRect.width / 2) < (viewportRect.left + viewportRect.width / 2) ? -1 : 1;
+        // Lógica de Escala: 1 no centro, diminui conforme afasta
+        let scale = 1 - Math.min(centerDiff * 0.002, 0.25); // Ajuste 0.002 para sensibilidade
+        let opacity = 1 - Math.min(centerDiff * 0.003, 0.5);
 
+        // Aplica no container visual dentro do CarouselItem
         const innerContent = slideNode.querySelector('.card-visual') as HTMLElement;
         if (innerContent) {
-          innerContent.style.transform = `scale(${scale}) perspective(1000px) rotateY(${rotateY * direction}deg)`;
+          innerContent.style.transform = `scale(${scale})`;
           innerContent.style.opacity = `${opacity}`;
-          innerContent.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out';
+          // Garante transição suave apenas se não estiver arrastando
+          innerContent.style.transition = 'transform 0.1s ease-out, opacity 0.1s ease-out';
         }
       });
     };
@@ -139,188 +138,109 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
               key={item.id} 
               className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3"
             >
-              <motion.div 
-                className="card-visual p-2 h-full max-h-[70vh]"
-                whileHover={{ scale: 1.05, y: -10 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
+              <div className="card-visual p-2 h-full max-h-[70vh]">
                 <Card
                   className={cn(
-                    "relative overflow-hidden cursor-pointer aspect-[2/3]",
-                    "glass-card-game border-4 border-white/40",
-                    "hover:shadow-[0_0_60px_rgba(124,58,237,0.6),0_20px_40px_rgba(0,0,0,0.3)]",
-                    "hover:border-white/60 transition-all duration-300",
-                    isLocked && "cursor-not-allowed opacity-70"
+                    "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[2/3]",
+                    "bg-white hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
+                    isLocked && "cursor-not-allowed"
                   )}
                   onClick={() => !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
                 >
                   <CardContent className="flex flex-col items-center justify-between h-full p-6 relative">
-                    {/* Animated Background Gradient */}
-                    <motion.div 
-                      className="absolute inset-0 opacity-20"
-                      style={{
-                        background: `radial-gradient(circle at 50% 50%, ${color}, transparent 70%)`
-                      }}
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.2, 0.3, 0.2],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-
                     {/* Header: Badge e Número */}
-                    <div className="w-full flex justify-between items-start relative z-10">
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+                    <div className="w-full flex justify-between items-start">
+                      <Badge
+                        className={cn(
+                          "text-xs font-semibold",
+                          isCompleted && "bg-purple-100 text-purple-700 border-purple-200",
+                          isInProgress && "bg-purple-500 text-white border-purple-600",
+                          item.status === 'unlocked' && "bg-purple-500 text-white animate-pulse border-purple-600"
+                        )}
                       >
-                        <Badge
-                          className={cn(
-                            "text-xs font-bold px-3 py-1 shadow-lg",
-                            isCompleted && "bg-gradient-to-r from-emerald-400 to-green-500 text-white border-0",
-                            isInProgress && "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 animate-pulse",
-                            item.status === 'unlocked' && "bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0 animate-pulse"
-                          )}
-                        >
-                          {isCompleted && '✓ COMPLETO'}
-                          {isInProgress && '🎯 EM PROGRESSO'}
-                          {item.status === 'unlocked' && '⭐ NOVO'}
-                        </Badge>
-                      </motion.div>
+                        {isCompleted && '✓ COMPLETO'}
+                        {isInProgress && '🎯 NOVO'}
+                        {item.status === 'unlocked' && '⭐ NOVO'}
+                      </Badge>
                       
-                      <motion.div 
-                        className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center font-black text-white text-sm shadow-xl ring-4 ring-white/50"
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
+                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-700 text-sm border-2 border-purple-200">
                         #{item.number}
-                      </motion.div>
+                      </div>
                     </div>
 
-                    {/* Centro: Ícone Grande com Animação */}
-                    <div className="flex-1 flex flex-col items-center justify-center relative z-10">
-                      <motion.div 
-                        className="mb-4 relative"
-                        animate={{ 
-                          y: [0, -10, 0],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        {/* Glow effect */}
-                        <div className="absolute inset-0 blur-3xl opacity-50" style={{ backgroundColor: color }} />
-                        
-                        <div className="relative">
-                          {item.number === '01' && <MoneyCircleIcon />}
-                          {item.number === '02' && <TargetIcon />}
-                          {isLocked && item.number === '03' ? <LockedIcon /> : item.number === '03' && <div className="text-9xl drop-shadow-2xl">{item.icon}</div>}
-                          {item.number !== '01' && item.number !== '02' && item.number !== '03' && (
-                            <div className="text-9xl drop-shadow-2xl">{item.icon}</div>
-                          )}
-                        </div>
-                      </motion.div>
+                    {/* Centro: Ícone Grande */}
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                      <div className="mb-4">
+                        {item.number === '01' && <MoneyCircleIcon />}
+                        {item.number === '02' && <TargetIcon />}
+                        {isLocked && item.number === '03' ? <LockedIcon /> : item.number === '03' && <div className="text-8xl">{item.icon}</div>}
+                        {item.number !== '01' && item.number !== '02' && item.number !== '03' && (
+                          <div className="text-8xl">{item.icon}</div>
+                        )}
+                      </div>
                       
                       {/* Módulo Label */}
-                      <motion.div 
-                        className="text-center mb-2"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        <h3 className="text-3xl font-black text-gray-900 tracking-tight">
+                      <div className="text-center mb-2">
+                        <h3 className="text-2xl font-bold text-gray-900">
                           Módulo {item.number}
                         </h3>
-                        <h4 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mt-1">
+                        <h4 className="text-xl font-semibold text-gray-900 mt-1">
                           {item.title}
                         </h4>
-                      </motion.div>
+                      </div>
                     </div>
 
                     {/* Footer: Descrição e Botão */}
-                    <div className="w-full space-y-3 relative z-10">
-                      <p className="text-sm text-gray-700 font-medium text-center line-clamp-2">
+                    <div className="w-full space-y-3">
+                      <p className="text-sm text-gray-600 text-center line-clamp-2">
                         {item.description}
                       </p>
 
                       {/* Barra de Progresso */}
                       {item.progress !== undefined && item.progress > 0 && (
-                        <div className="w-full bg-purple-100 rounded-full h-3 overflow-hidden shadow-inner">
-                          <motion.div
-                            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${item.progress}%` }}
-                            transition={{ duration: 1, ease: "easeOut" }}
+                        <div className="w-full bg-purple-100 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="h-full bg-purple-500 rounded-full transition-all duration-500"
+                            style={{ width: `${item.progress}%` }}
                           />
                         </div>
                       )}
 
                       {item.id !== 'continue-message' && (
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                          <Button
-                            className={cn(
-                              "w-full font-black text-lg py-6 rounded-2xl shadow-xl transition-all",
-                              isCompleted && "bg-gradient-to-r from-emerald-500 to-green-600 text-white hover:from-emerald-600 hover:to-green-700",
-                              isInProgress && "bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700 animate-pulse",
-                              item.status === 'unlocked' && "bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700",
-                              isLocked && "bg-gray-300 text-gray-500"
-                            )}
-                            disabled={isLocked}
-                          >
-                            {isCompleted && '✓ REVISAR'}
-                            {isInProgress && '▶ CONTINUAR'}
-                            {item.status === 'unlocked' && '⚡ COMEÇAR'}
-                            {isLocked && '🔒 BLOQUEADO'}
-                          </Button>
-                        </motion.div>
+                        <Button
+                          className="w-full font-semibold bg-purple-200 text-purple-700 hover:bg-purple-300"
+                          disabled={isLocked}
+                        >
+                          {isCompleted && 'REVISAR'}
+                          {isInProgress && 'CONTINUAR'}
+                          {item.status === 'unlocked' && 'COMEÇAR'}
+                          {isLocked && '🔒 BLOQUEADO'}
+                        </Button>
                       )}
                     </div>
 
                     {/* Overlay para cards bloqueados */}
                     {isLocked && (
-                      <motion.div 
-                        className="absolute inset-0 backdrop-blur-md bg-gray-900/70 flex items-center justify-center z-20"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <motion.div 
-                          className="text-center"
-                          animate={{ 
-                            scale: [1, 1.1, 1],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }}
-                        >
-                          <div className="text-7xl mb-4 drop-shadow-2xl">🔒</div>
-                          <p className="text-white font-black text-2xl drop-shadow-lg">BLOQUEADO</p>
-                          <p className="text-purple-300 text-base mt-2 font-semibold">
-                            Complete o anterior
+                      <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center z-10">
+                        <div className="text-center">
+                          <div className="text-6xl mb-3">🔒</div>
+                          <p className="text-purple-600 font-bold text-lg">BLOQUEADO</p>
+                          <p className="text-purple-500 text-sm mt-1">
+                            Complete de anterior
                           </p>
-                        </motion.div>
-                      </motion.div>
+                        </div>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             </CarouselItem>
           );
         })}
       </CarouselContent>
       
-      <CarouselPrevious className="hidden md:flex -left-12 glass-card-game border-2 border-white/40 hover:scale-110 transition-all shadow-2xl" />
-      <CarouselNext className="hidden md:flex -right-12 glass-card-game border-2 border-white/40 hover:scale-110 transition-all shadow-2xl" />
+      <CarouselPrevious className="hidden md:flex -left-12 bg-white/80 hover:bg-white" />
+      <CarouselNext className="hidden md:flex -right-12 bg-white/80 hover:bg-white" />
     </Carousel>
   );
 }
