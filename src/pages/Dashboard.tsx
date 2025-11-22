@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 import { GoalForm } from "@/components/financas/GoalForm";
+import oracleBall from "@/assets/oracle-ball.png";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -488,13 +489,19 @@ const Dashboard = () => {
       )} />
 
       {/* Floating Oracle Button */}
-      <button
+      <motion.button
         onClick={() => navigate('/oracle')}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-primary hover:bg-primary/90 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center text-white group"
+        whileHover={{ scale: 1.1, rotate: [0, -5, 5, -5, 0] }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed bottom-8 right-8 z-50 w-24 h-24 rounded-3xl shadow-2xl transition-all overflow-hidden group"
       >
-        <MessageSquare className="w-8 h-8 group-hover:rotate-12 transition-transform" />
-        <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-300 animate-pulse" />
-      </button>
+        <img 
+          src={oracleBall} 
+          alt="Oráculo"
+          className="w-full h-full object-cover group-hover:brightness-110 transition-all"
+        />
+        <Sparkles className="absolute -top-1 -right-1 w-6 h-6 text-yellow-300 animate-pulse drop-shadow-lg" />
+      </motion.button>
 
       {/* Goal Details Modal */}
       <GoalDetailsModal 
