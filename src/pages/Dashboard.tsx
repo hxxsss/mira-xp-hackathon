@@ -266,6 +266,32 @@ const Dashboard = () => {
         getTrackClassName()
       )}
     >
+      {/* Animated Background with Neon Lines */}
+      <div className={cn(
+        "fixed inset-0 z-0 geometric-bg gradient-background transition-all duration-700",
+        !currentTrack?.name.toLowerCase().includes('organização') && !currentTrack?.name.toLowerCase().includes('aceleração') && "",
+        currentTrack?.name.toLowerCase().includes('organização') && "track-organizacao",
+        currentTrack?.name.toLowerCase().includes('aceleração') && "track-aceleracao"
+      )}>
+        {/* Neon Lines - Meteor Effect */}
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className={cn(
+              "neon-line absolute",
+              i % 2 === 0 ? "neon-line-cyan" : "neon-line-pink"
+            )}
+            style={{
+              width: `${Math.random() * 3 + 1}px`,
+              height: `${Math.random() * 200 + 100}px`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${Math.random() * 3 + 4}s`
+            }}
+          />
+        ))}
+      </div>
+
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
