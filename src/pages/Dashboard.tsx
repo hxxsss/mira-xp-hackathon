@@ -312,43 +312,21 @@ const Dashboard = () => {
               <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
             </button>
 
-          {/* Ranking Button - Game Style */}
-          <motion.button 
+          <button 
             onClick={() => navigate('/ranking')}
-            className="relative flex items-center justify-center w-14 h-14 rounded-2xl overflow-hidden group"
+            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
             title="Ranking"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
           >
-            {/* Animated Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 opacity-90 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 blur-xl opacity-60 group-hover:opacity-80 animate-pulse" />
-            
-            {/* Icon with shadow */}
-            <Trophy className="relative w-7 h-7 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] group-hover:scale-110 transition-transform" strokeWidth={2.5} />
-            
-            {/* Corner accent */}
-            <div className="absolute top-0 right-0 w-3 h-3 bg-white/40 rounded-bl-lg" />
-          </motion.button>
+            <Trophy className="w-6 h-6" />
+          </button>
 
-          {/* Financas Button - Game Style */}
-          <motion.button 
+          <button 
             onClick={() => navigate('/financas')}
-            className="relative flex items-center justify-center w-14 h-14 rounded-2xl overflow-hidden group"
+            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
             title="Finanças"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
           >
-            {/* Animated Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-green-500 to-teal-500 opacity-90 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-green-500 to-teal-500 blur-xl opacity-60 group-hover:opacity-80 animate-pulse" />
-            
-            {/* Icon with shadow */}
-            <Wallet className="relative w-7 h-7 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] group-hover:scale-110 transition-transform" strokeWidth={2.5} />
-            
-            {/* Corner accent */}
-            <div className="absolute top-0 right-0 w-3 h-3 bg-white/40 rounded-bl-lg" />
-          </motion.button>
+            <Wallet className="w-6 h-6" />
+          </button>
           </div>
 
           {/* Center: Logo */}
