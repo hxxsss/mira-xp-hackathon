@@ -311,7 +311,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
-              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all group"
+              className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-primary hover:shadow-2xl hover:shadow-primary/50 hover:scale-110 transition-all group"
               title="Perfil"
             >
               <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
@@ -319,7 +319,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/ranking')}
-            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
+            className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-primary text-primary hover:shadow-2xl hover:shadow-primary/50 hover:scale-110 transition-all"
             title="Ranking"
           >
             <Trophy className="w-6 h-6" />
@@ -327,7 +327,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/financas')}
-            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
+            className="flex items-center justify-center w-12 h-12 bg-white rounded-full border-4 border-primary text-primary hover:shadow-2xl hover:shadow-primary/50 hover:scale-110 transition-all"
             title="Finanças"
           >
             <Wallet className="w-6 h-6" />
@@ -358,20 +358,20 @@ const Dashboard = () => {
               {goal ? (
                 <motion.button
                   onClick={() => setGoalModalOpen(true)}
-                  className="relative flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-md rounded-2xl text-white hover:from-white/30 hover:to-white/20 transition-all group overflow-hidden"
+                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl border-4 border-primary hover:shadow-2xl hover:shadow-primary/50 transition-all group overflow-hidden"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {/* Animated Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   {/* Ícone MAIOR e mais vibrante */}
                   <div className="relative">
                     {/* Glow effect pulsante */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-full blur-2xl opacity-60 animate-pulse" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-full blur-2xl opacity-40 animate-pulse" />
                     
                     {/* Container do ícone */}
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
+                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-primary/30">
                       <Target className="w-8 h-8 text-white" strokeWidth={3} />
                     </div>
                     
@@ -382,8 +382,8 @@ const Dashboard = () => {
                   </div>
                   
                   <div className="hidden lg:block text-left min-w-[180px] relative z-10">
-                    <div className="text-xs text-white font-semibold leading-tight">{goal.title}</div>
-                    <div className="relative h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
+                    <div className="text-xs text-primary font-bold leading-tight">{goal.title}</div>
+                    <div className="relative h-2 bg-primary/20 rounded-full mt-1 overflow-hidden">
                       <motion.div
                         className="absolute inset-y-0 left-0 rounded-full shadow-lg"
                         style={{
@@ -399,11 +399,11 @@ const Dashboard = () => {
                       />
                     </div>
                     <div className="flex justify-between items-center text-xs mt-1">
-                      <span className="text-white/80 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
-                      <span className="font-bold text-accent">{Math.round(progressPercentage)}%</span>
+                      <span className="text-primary/70 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
+                      <span className="font-bold text-primary">{Math.round(progressPercentage)}%</span>
                     </div>
                   </div>
-                  <span className="lg:hidden font-bold text-accent text-lg relative z-10">{Math.round(progressPercentage)}%</span>
+                  <span className="lg:hidden font-bold text-primary text-lg relative z-10">{Math.round(progressPercentage)}%</span>
                 </motion.button>
               ) : (
                 <motion.button
@@ -411,12 +411,12 @@ const Dashboard = () => {
                     setEditingGoal(null);
                     setGoalFormOpen(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/30 to-primary/30 backdrop-blur-md rounded-full text-white hover:from-accent/40 hover:to-primary/40 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border-4 border-primary text-primary hover:shadow-2xl hover:shadow-primary/50 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Target className="w-5 h-5" />
-                  <span className="hidden lg:inline font-medium">Criar Meta</span>
+                  <span className="hidden lg:inline font-bold">Criar Meta</span>
                 </motion.button>
               )}
 
