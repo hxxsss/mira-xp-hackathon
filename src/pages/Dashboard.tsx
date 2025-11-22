@@ -273,7 +273,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
-              className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all group"
+              className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full text-purple-600 hover:bg-purple-200 hover:scale-110 transition-all group border-2 border-purple-200"
               title="Perfil"
             >
               <span className="text-2xl group-hover:scale-125 transition-transform">{avatars.find(a => a.id === profile?.avatar_id)?.emoji || '🦄'}</span>
@@ -281,7 +281,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/ranking')}
-            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
+            className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full text-purple-600 hover:bg-purple-200 hover:scale-110 transition-all border-2 border-purple-200"
             title="Ranking"
           >
             <Trophy className="w-6 h-6" />
@@ -289,7 +289,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/financas')}
-            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 hover:scale-110 transition-all"
+            className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full text-purple-600 hover:bg-purple-200 hover:scale-110 transition-all border-2 border-purple-200"
             title="Finanças"
           >
             <Wallet className="w-6 h-6" />
@@ -312,12 +312,12 @@ const Dashboard = () => {
               {goal ? (
                 <motion.button
                   onClick={() => setGoalModalOpen(true)}
-                  className="relative flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-md rounded-2xl text-white hover:from-white/30 hover:to-white/20 transition-all group overflow-hidden"
+                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-purple-200 shadow-sm"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {/* Animated Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-pink-50 opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   {/* Ícone MAIOR e mais vibrante */}
                   <div className="relative">
@@ -336,8 +336,8 @@ const Dashboard = () => {
                   </div>
                   
                   <div className="hidden lg:block text-left min-w-[180px] relative z-10">
-                    <div className="text-xs text-white font-semibold leading-tight">{goal.title}</div>
-                    <div className="relative h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
+                    <div className="text-xs text-gray-900 font-semibold leading-tight">{goal.title}</div>
+                    <div className="relative h-2 bg-purple-100 rounded-full mt-1 overflow-hidden">
                       <motion.div
                         className="absolute inset-y-0 left-0 rounded-full shadow-lg"
                         style={{
@@ -353,11 +353,11 @@ const Dashboard = () => {
                       />
                     </div>
                     <div className="flex justify-between items-center text-xs mt-1">
-                      <span className="text-white/80 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
-                      <span className="font-bold text-accent">{Math.round(progressPercentage)}%</span>
+                      <span className="text-gray-600 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
+                      <span className="font-bold text-purple-600">{Math.round(progressPercentage)}%</span>
                     </div>
                   </div>
-                  <span className="lg:hidden font-bold text-accent text-lg relative z-10">{Math.round(progressPercentage)}%</span>
+                  <span className="lg:hidden font-bold text-purple-600 text-lg relative z-10">{Math.round(progressPercentage)}%</span>
                 </motion.button>
               ) : (
                 <motion.button
@@ -365,7 +365,7 @@ const Dashboard = () => {
                     setEditingGoal(null);
                     setGoalFormOpen(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/30 to-primary/30 backdrop-blur-md rounded-full text-white hover:from-accent/40 hover:to-primary/40 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full text-purple-600 hover:bg-purple-200 transition-all border-2 border-purple-200"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -376,11 +376,11 @@ const Dashboard = () => {
 
               {/* Stats */}
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                  <span className="text-xs text-white font-bold">XP {profile?.current_xp || 0}</span>
+                <div className="px-3 py-1.5 bg-purple-100 rounded-full border-2 border-purple-200">
+                  <span className="text-xs text-purple-700 font-bold">XP {profile?.current_xp || 0}</span>
                 </div>
-                <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full">
-                  <span className="text-xs text-white font-bold">💎 {profile?.dream_points || 0}</span>
+                <div className="px-3 py-1.5 bg-purple-100 rounded-full border-2 border-purple-200">
+                  <span className="text-xs text-purple-700 font-bold">💎 {profile?.dream_points || 0}</span>
                 </div>
               </div>
 
@@ -398,12 +398,12 @@ const Dashboard = () => {
               <button
                 key={track.id}
                 onClick={() => handleTrackChange(index)}
-                className={`relative px-6 py-2 rounded-full font-bold transition-all border ${
+                className={`relative px-6 py-2 rounded-full font-bold transition-all border-2 ${
                   index === currentTrackIndex
-                    ? 'bg-white text-gray-900 scale-110 shadow-xl border-white'
+                    ? 'bg-purple-600 text-white scale-110 shadow-xl border-purple-600'
                     : track.status === 'locked'
-                    ? 'bg-white/5 text-white/50 hover:bg-white/10 border-white/10 opacity-60'
-                    : 'bg-white/5 text-white hover:bg-white/15 border-white/10 opacity-80'
+                    ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 border-gray-200 opacity-60'
+                    : 'bg-white text-gray-700 hover:bg-purple-50 border-purple-200 opacity-80'
                 }`}
               >
                 <span className="mr-2">{track.icon}</span>
@@ -424,7 +424,7 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mt-4"
             >
-              <p className="text-white/90 text-lg">{currentTrack.description}</p>
+              <p className="text-gray-700 text-lg">{currentTrack.description}</p>
             </motion.div>
           )}
         </div>
