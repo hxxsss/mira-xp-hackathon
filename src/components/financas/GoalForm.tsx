@@ -131,11 +131,16 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[650px] max-h-[85vh]">
+      <DialogContent className="sm:max-w-[650px] max-h-[85vh] glass-card border-2 border-white/30 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-center gap-2 text-xl">
-            <Target className="w-5 h-5 text-primary" />
-            {isEditing ? "Editar Meta" : "Criar Nova Meta"}
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary rounded-full blur-lg opacity-50 animate-pulse" />
+              <Target className="w-5 h-5 text-primary relative drop-shadow-[0_0_10px_rgba(164,69,178,0.8)]" />
+            </div>
+            <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              {isEditing ? "Editar Meta" : "Criar Nova Meta"}
+            </span>
           </DialogTitle>
           {isEditing && (
             <p className="text-sm text-gray-700">

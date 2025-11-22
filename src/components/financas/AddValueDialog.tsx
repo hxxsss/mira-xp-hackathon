@@ -71,11 +71,16 @@ export const AddValueDialog = ({ goal, open, onOpenChange, onSuccess }: AddValue
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] glass-card border-2 border-white/30 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Plus className="w-6 h-6 text-primary" />
-            Adicionar Valor à Meta
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary rounded-full blur-lg opacity-50 animate-pulse" />
+              <Plus className="w-6 h-6 text-primary relative drop-shadow-[0_0_10px_rgba(164,69,178,0.8)]" />
+            </div>
+            <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              Adicionar Valor à Meta
+            </span>
           </DialogTitle>
         </DialogHeader>
 
