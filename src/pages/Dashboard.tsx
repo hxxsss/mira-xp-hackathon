@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -238,6 +238,34 @@ const Dashboard = () => {
     setCurrentTrackIndex(trackIndex);
   };
 
+  // Variantes de animação para transição entre trilhas
+  const carouselVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0,
+      scale: 0.8,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -300 : 300,
+      opacity: 0,
+      scale: 0.8,
+    }),
+  };
+
+  const [direction, setDirection] = useState(0);
+  const [prevTrackIndex, setPrevTrackIndex] = useState(0);
+
+  // Atualiza direção da animação quando a trilha muda
+  useEffect(() => {
+    setDirection(currentTrackIndex > prevTrackIndex ? 1 : -1);
+    setPrevTrackIndex(currentTrackIndex);
+  }, [currentTrackIndex]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -418,7 +446,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center gap-4">
             {tracks.map((track, index) => (
-              <button
+              <motion.button
                 key={track.id}
                 onClick={() => handleTrackChange(index)}
                 className={`relative px-6 py-2 rounded-full font-bold transition-all border-2 ${
@@ -428,6 +456,8 @@ const Dashboard = () => {
                     ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 border-gray-200 opacity-60'
                     : 'bg-white text-gray-700 hover:bg-indigo-50 border-indigo-200 opacity-80'
                 }`}
+                whileHover={{ scale: track.status !== 'locked' ? 1.05 : 1 }}
+                whileTap={{ scale: track.status !== 'locked' ? 0.95 : 1 }}
               >
                 <span className="mr-2">{track.icon}</span>
                 {track.name}
@@ -437,7 +467,7 @@ const Dashboard = () => {
                 {track.status === 'completed' && (
                   <span className="ml-2">✓</span>
                 )}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
@@ -446,22 +476,38 @@ const Dashboard = () => {
       {/* Main Stage - Cover Flow Carousel */}
       <div className="relative z-10 flex-1 flex items-center justify-center py-4 overflow-hidden">
         <div className="w-full px-4">
-          {currentTrack && (
-            <CoverFlowCarousel
-              items={currentTrack.modules.map(module => ({
-                id: module.id,
-                number: module.number,
-                title: module.title,
-                description: module.description,
-                icon: module.icon,
-                color: module.card_color,
-                status: module.status,
-                progress: module.progress_percent
-              }))}
-              trackName={currentTrack.name}
-              onItemClick={(id, status) => handleModuleClick(id, status, currentTrack.status)}
-            />
-          )}
+          <AnimatePresence mode="wait" custom={direction}>
+            {currentTrack && (
+              <motion.div
+                key={currentTrack.id}
+                custom={direction}
+                variants={carouselVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.3 },
+                  scale: { duration: 0.3 },
+                }}
+              >
+                <CoverFlowCarousel
+                  items={currentTrack.modules.map(module => ({
+                    id: module.id,
+                    number: module.number,
+                    title: module.title,
+                    description: module.description,
+                    icon: module.icon,
+                    color: module.card_color,
+                    status: module.status,
+                    progress: module.progress_percent
+                  }))}
+                  trackName={currentTrack.name}
+                  onItemClick={(id, status) => handleModuleClick(id, status, currentTrack.status)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
