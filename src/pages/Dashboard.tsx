@@ -332,87 +332,82 @@ const Dashboard = () => {
           </div>
 
           {/* Right: Stats + Goal */}
-          <div className="flex items-center gap-2 justify-end">
-            {/* Wrapper vertical para empilhar Stats e Meta */}
-            <div className="flex flex-col gap-2 items-end">
-              
-              {/* Stats empilhados */}
-              <div className="flex flex-col gap-2">
-                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-                  <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
-                </div>
-                <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-                  <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
-                </div>
+          <div className="flex items-center gap-4 justify-end">
+            {/* Stats empilhados à esquerda */}
+            <div className="flex flex-col gap-2">
+              <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+                <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
               </div>
-
-              {/* Enhanced Goal Display */}
-              {goal ? (
-                <motion.button
-                  onClick={() => setGoalModalOpen(true)}
-                  className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-indigo-200 shadow-sm"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {/* Animated Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
-                  {/* Ícone MAIOR e mais vibrante */}
-                  <div className="relative">
-                    {/* Glow effect pulsante */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 rounded-full blur-2xl opacity-60 animate-pulse" />
-                    
-                    {/* Container do ícone */}
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
-                      <Target className="w-8 h-8 text-white" strokeWidth={3} />
-                    </div>
-                    
-                    {/* Badge de porcentagem */}
-                    <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
-                      {Math.round(progressPercentage)}%
-                    </div>
-                  </div>
-                  
-                  <div className="hidden lg:block text-left min-w-[180px] relative z-10">
-                    <div className="text-xs text-gray-900 font-semibold leading-tight">{goal.title}</div>
-                    <div className="relative h-2 bg-indigo-100 rounded-full mt-1 overflow-hidden">
-                      <motion.div
-                        className="absolute inset-y-0 left-0 rounded-full shadow-lg"
-                        style={{
-                          background: progressPercentage > 80 
-                            ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
-                            : progressPercentage > 40
-                            ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
-                            : 'linear-gradient(90deg, hsl(239 84% 67%), hsl(217 91% 60%))'
-                        }}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progressPercentage}%` }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                      />
-                    </div>
-                    <div className="flex justify-between items-center text-xs mt-1">
-                      <span className="text-gray-600 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
-                      <span className="font-bold text-indigo-600">{Math.round(progressPercentage)}%</span>
-                    </div>
-                  </div>
-                  <span className="lg:hidden font-bold text-indigo-600 text-lg relative z-10">{Math.round(progressPercentage)}%</span>
-                </motion.button>
-              ) : (
-                <motion.button
-                  onClick={() => {
-                    setEditingGoal(null);
-                    setGoalFormOpen(true);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-indigo-200"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Target className="w-5 h-5" />
-                  <span className="hidden lg:inline font-medium">Criar Meta</span>
-                </motion.button>
-              )}
-
+              <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+                <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
+              </div>
             </div>
+
+            {/* Enhanced Goal Display */}
+            {goal ? (
+              <motion.button
+                onClick={() => setGoalModalOpen(true)}
+                className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-indigo-200 shadow-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {/* Animated Background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                {/* Ícone MAIOR e mais vibrante */}
+                <div className="relative">
+                  {/* Glow effect pulsante */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 rounded-full blur-2xl opacity-60 animate-pulse" />
+                  
+                  {/* Container do ícone */}
+                  <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
+                    <Target className="w-8 h-8 text-white" strokeWidth={3} />
+                  </div>
+                  
+                  {/* Badge de porcentagem */}
+                  <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
+                    {Math.round(progressPercentage)}%
+                  </div>
+                </div>
+                
+                <div className="hidden lg:block text-left min-w-[180px] relative z-10">
+                  <div className="text-xs text-gray-900 font-semibold leading-tight">{goal.title}</div>
+                  <div className="relative h-2 bg-indigo-100 rounded-full mt-1 overflow-hidden">
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-full shadow-lg"
+                      style={{
+                        background: progressPercentage > 80 
+                          ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
+                          : progressPercentage > 40
+                          ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
+                          : 'linear-gradient(90deg, hsl(239 84% 67%), hsl(217 91% 60%))'
+                      }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progressPercentage}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center text-xs mt-1">
+                    <span className="text-gray-600 font-medium">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
+                    <span className="font-bold text-indigo-600">{Math.round(progressPercentage)}%</span>
+                  </div>
+                </div>
+                <span className="lg:hidden font-bold text-indigo-600 text-lg relative z-10">{Math.round(progressPercentage)}%</span>
+              </motion.button>
+            ) : (
+              <motion.button
+                onClick={() => {
+                  setEditingGoal(null);
+                  setGoalFormOpen(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-indigo-200"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Target className="w-5 h-5" />
+                <span className="hidden lg:inline font-medium">Criar Meta</span>
+              </motion.button>
+            )}
           </div>
         </div>
       </div>
@@ -491,16 +486,15 @@ const Dashboard = () => {
       {/* Floating Oracle Button */}
       <motion.button
         onClick={() => navigate('/oracle')}
-        whileHover={{ scale: 1.1, rotate: [0, -5, 5, -5, 0] }}
+        whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-8 right-8 z-50 w-24 h-24 rounded-3xl shadow-2xl transition-all overflow-hidden group"
+        className="fixed bottom-8 right-8 z-50 w-24 h-24 rounded-3xl shadow-2xl transition-all overflow-hidden"
       >
         <img 
           src={oracleBall} 
           alt="Oráculo"
-          className="w-full h-full object-cover group-hover:brightness-110 transition-all"
+          className="w-full h-full object-cover"
         />
-        <Sparkles className="absolute -top-1 -right-1 w-6 h-6 text-yellow-300 animate-pulse drop-shadow-lg" />
       </motion.button>
 
       {/* Goal Details Modal */}
