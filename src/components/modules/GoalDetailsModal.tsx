@@ -4,7 +4,6 @@ import { Progress } from "@/components/ui/progress";
 import { Target, TrendingUp, Calendar, CheckCircle, DollarSign, Sparkles } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-
 interface Goal {
   id: string;
   title: string;
@@ -14,44 +13,38 @@ interface Goal {
   created_at?: string;
   is_active?: boolean;
 }
-
 interface GoalDetailsModalProps {
   goal: Goal | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEdit?: () => void;
 }
-
-export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetailsModalProps) {
+export function GoalDetailsModal({
+  goal,
+  open,
+  onOpenChange,
+  onEdit
+}: GoalDetailsModalProps) {
   if (!goal) return null;
-
-  const progressPercentage = (goal.current_amount / goal.total_amount) * 100;
+  const progressPercentage = goal.current_amount / goal.total_amount * 100;
   const remainingAmount = goal.total_amount - goal.current_amount;
-  
   const createdAt = goal.created_at ? new Date(goal.created_at) : new Date();
   const daysSinceCreation = Math.floor((new Date().getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-  
-  const daysUntilTarget = goal.target_date 
-    ? Math.ceil((new Date(goal.target_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-    : 30; // fallback para 30 dias
-    
-  const dailySuggestion = daysUntilTarget > 0 ? remainingAmount / daysUntilTarget : 0;
+  const daysUntilTarget = goal.target_date ? Math.ceil((new Date(goal.target_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 30; // fallback para 30 dias
 
+  const dailySuggestion = daysUntilTarget > 0 ? remainingAmount / daysUntilTarget : 0;
   const getProgressColor = () => {
     if (progressPercentage >= 80) return "text-green-500";
     if (progressPercentage >= 40) return "text-yellow-500";
     return "text-blue-500";
   };
-
   const getMotivationalMessage = () => {
     if (progressPercentage >= 80) return "Você está quase lá! 🎉 Continue nesse ritmo incrível!";
     if (progressPercentage >= 50) return "Ótimo progresso! Mantenha o foco no seu objetivo! 💪";
     if (progressPercentage >= 20) return "Você começou bem! Cada passo conta! 🚀";
     return "Toda grande conquista começa com o primeiro passo! 🌟";
   };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+  return <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[85vh] bg-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-3xl">
@@ -87,16 +80,14 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
             {/* Barra customizada com bolinha */}
             <div className="relative w-full h-3 bg-gray-200 rounded-full">
               {/* Barra de progresso preenchida */}
-              <div 
-                className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 transition-all duration-300"
-                style={{ width: `${progressPercentage}%` }}
-              />
+              <div className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 transition-all duration-300" style={{
+              width: `${progressPercentage}%`
+            }} />
               
               {/* Bolinha indicadora */}
-              <div 
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-[#b8860b] shadow-lg border-2 border-white transition-all duration-300"
-                style={{ left: `${progressPercentage}%` }}
-              />
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-[#b8860b] shadow-lg border-2 border-white transition-all duration-300" style={{
+              left: `${progressPercentage}%`
+            }} />
             </div>
           </div>
 
@@ -120,19 +111,25 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
                 <div className="flex justify-between">
                   <span className="text-gray-600">Valor Atual:</span>
                   <span className="font-bold text-gray-900">
-                    R$ {goal.current_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {goal.current_amount.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2
+                  })}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Meta Total:</span>
                   <span className="font-bold text-gray-900">
-                    R$ {goal.total_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {goal.total_amount.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2
+                  })}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-gray-200">
                   <span className="text-gray-600">Faltam:</span>
                   <span className="font-bold text-[#b8860b]">
-                    R$ {remainingAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {remainingAmount.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2
+                  })}
                   </span>
                 </div>
               </div>
@@ -158,25 +155,23 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
                     {daysSinceCreation} {daysSinceCreation === 1 ? 'dia' : 'dias'}
                   </span>
                 </div>
-                {goal.target_date && (
-                  <div className="flex justify-between">
+                {goal.target_date && <div className="flex justify-between">
                     <span className="text-gray-600">Prazo:</span>
                     <span className="font-medium text-gray-900">
-                      {formatDistanceToNow(new Date(goal.target_date), { 
-                        locale: ptBR,
-                        addSuffix: true 
-                      })}
+                      {formatDistanceToNow(new Date(goal.target_date), {
+                    locale: ptBR,
+                    addSuffix: true
+                  })}
                     </span>
-                  </div>
-                )}
-                {daysUntilTarget > 0 && (
-                  <div className="flex justify-between">
+                  </div>}
+                {daysUntilTarget > 0 && <div className="flex justify-between">
                     <span className="text-gray-600">Meta diária:</span>
                     <span className="font-medium text-gray-900">
-                      R$ {dailySuggestion.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      R$ {dailySuggestion.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2
+                  })}
                     </span>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
           </div>
@@ -188,34 +183,21 @@ export function GoalDetailsModal({ goal, open, onOpenChange, onEdit }: GoalDetai
               <span>Dica para alcançar sua meta</span>
             </div>
             <p className="text-sm text-black">
-              {progressPercentage >= 50 
-                ? "Continue economizando regularmente e complete módulos de aprendizado para ganhar pontos extras!" 
-                : "Estabeleça pequenas metas semanais e revise seu progresso regularmente para manter a motivação!"}
+              {progressPercentage >= 50 ? "Continue economizando regularmente e complete módulos de aprendizado para ganhar pontos extras!" : "Estabeleça pequenas metas semanais e revise seu progresso regularmente para manter a motivação!"}
             </p>
           </div>
 
           {/* Botões de Ação */}
           <div className="flex gap-2 pt-2">
-            <Button 
-              variant="outline" 
-              className="flex-1"
-              onClick={() => onOpenChange(false)}
-            >
-              Fechar
-            </Button>
-              <Button 
-                variant="outline"
-                className="flex-1 hover:bg-yellow-400 hover:text-black hover:border-yellow-400 transition-colors"
-                onClick={() => {
-                  onOpenChange(false);
-                  if (onEdit) onEdit();
-                }}
-              >
+            
+              <Button variant="outline" className="flex-1 hover:bg-yellow-400 hover:text-black hover:border-yellow-400 transition-colors" onClick={() => {
+            onOpenChange(false);
+            if (onEdit) onEdit();
+          }}>
                 Editar Meta
               </Button>
           </div>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 }
