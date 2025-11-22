@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 import { GoalForm } from "@/components/financas/GoalForm";
-import oracleBall from "@/assets/oracle-ball.png";
+import crystalBall from "@/assets/crystal-ball.png";
 
 const avatars = [
   { id: 1, emoji: "🦄" },
@@ -295,7 +295,7 @@ const Dashboard = () => {
 
       {/* HUD - Top Navigation */}
       <div className="flex-shrink-0 z-50 p-3">
-        <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
+        <div className="max-w-7xl mx-auto flex items-center gap-4">
           {/* Left: Profile, Ranking, Financas & Logout */}
           <div className="flex items-center gap-3">
             <button 
@@ -323,8 +323,8 @@ const Dashboard = () => {
           </button>
           </div>
 
-          {/* Center: Logo */}
-          <div className="flex items-center gap-2">
+          {/* Center: Logo - positioned absolutely in center */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
               <Target className="text-white w-5 h-5" />
             </div>
@@ -491,7 +491,7 @@ const Dashboard = () => {
         className="fixed bottom-8 right-8 z-50 w-24 h-24 rounded-3xl shadow-2xl transition-all overflow-hidden"
       >
         <img 
-          src={oracleBall} 
+          src={crystalBall} 
           alt="Oráculo"
           className="w-full h-full object-cover"
         />

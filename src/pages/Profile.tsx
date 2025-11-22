@@ -177,24 +177,6 @@ export default function Profile() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar ao Dashboard
             </Button>
-
-            {/* Stats Badges */}
-            <div className="flex items-center gap-3">
-              <motion.div 
-                className="px-4 py-2 bg-secondary/20 rounded-2xl border-2 border-secondary/40 flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-              >
-                <Sparkles className="w-4 h-4 text-secondary" />
-                <span className="text-sm font-bold text-foreground">{profile?.current_xp || 0} XP</span>
-              </motion.div>
-              <motion.div 
-                className="px-4 py-2 bg-secondary/20 rounded-2xl border-2 border-secondary/40 flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-              >
-                <span className="text-lg">💎</span>
-                <span className="text-sm font-bold text-foreground">{profile?.dream_points || 0}</span>
-              </motion.div>
-            </div>
           </div>
         </div>
       </div>
