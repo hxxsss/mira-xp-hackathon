@@ -440,16 +440,6 @@ const Dashboard = () => {
               </button>
             ))}
           </div>
-          {currentTrack && (
-            <motion.div
-              key={currentTrack.id}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center mt-4"
-            >
-              <p className="text-gray-700 text-lg">{currentTrack.description}</p>
-            </motion.div>
-          )}
         </div>
       </div>
 
