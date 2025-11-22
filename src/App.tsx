@@ -15,11 +15,8 @@ import Ranking from "./pages/Ranking";
 import ModulePage from "./pages/ModulePage";
 import NotFound from "./pages/NotFound";
 import Financas from "./pages/Financas";
-
 const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -33,7 +30,7 @@ const App = () => (
           <Route path="/module/:moduleId" element={<ModulePage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} className="bg-slate-50" />
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/financas" element={<Financas />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -41,7 +38,5 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
-  </QueryClientProvider>
-);
-
+  </QueryClientProvider>;
 export default App;
