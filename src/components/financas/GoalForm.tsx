@@ -138,7 +138,7 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
             {isEditing ? "Editar Meta" : "Criar Nova Meta"}
           </DialogTitle>
           {isEditing && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-gray-700">
               💡 <strong>Mudou de ideia?</strong> Você pode escolher uma meta completamente diferente!
             </p>
           )}
@@ -254,17 +254,17 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
  {/* Preview "Antes vs Depois" */}
             {isEditing && goal && (
               <div className="bg-muted/50 rounded-lg p-2 space-y-0.5 border border-border">
-                <h4 className="text-xs font-semibold text-foreground">📊 Comparação</h4>
+                <h4 className="text-xs font-semibold text-black">📊 Comparação</h4>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-muted-foreground block">Meta Atual</span>
-                    <span className="font-semibold text-foreground text-sm">{goal.title}</span>
-                    <span className="block text-xs text-muted-foreground">
+                    <span className="text-gray-600 block">Meta Atual</span>
+                    <span className="font-semibold text-black text-sm">{goal.title}</span>
+                    <span className="block text-xs text-gray-600">
                       R$ {goal.total_amount.toFixed(2)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground block">Nova Meta</span>
+                    <span className="text-gray-600 block">Nova Meta</span>
                     <span className="font-bold text-primary text-sm">{watchedValues.title || "..."}</span>
                     <span className="block text-xs text-primary">
                       R$ {Number(watchedValues.total_amount || 0).toFixed(2)}
