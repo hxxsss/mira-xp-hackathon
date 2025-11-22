@@ -23,6 +23,7 @@ All colors MUST be HSL.
     --primary: 270 70% 60%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 260 65% 70%;
+    --primary-dark: 270 70% 35%;
     
     /* Coral pink (energetic, playful) */
     --secondary: 330 80% 60%;

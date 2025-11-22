@@ -142,7 +142,7 @@ export function CoverFlowCarousel({ items, onItemClick }: CoverFlowCarouselProps
                 <Card
                   className={cn(
                     "relative overflow-hidden cursor-pointer transition-all duration-300 aspect-[2/3]",
-                    "bg-white hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]",
+                    "bg-white border-4 border-[hsl(270,70%,35%)] hover:shadow-[0_0_30px_rgba(88,28,135,0.5)]",
                     isLocked && "cursor-not-allowed"
                   )}
                   onClick={() => !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
