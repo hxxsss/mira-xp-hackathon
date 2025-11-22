@@ -79,21 +79,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     loadData();
-    
-    // Timeout de segurança: se após 10 segundos ainda estiver carregando, mostrar erro
-    const timeout = setTimeout(() => {
-      if (loading) {
-        console.error("Timeout ao carregar dados");
-        setLoading(false);
-        toast({
-          title: "Tempo esgotado",
-          description: "O carregamento está demorando muito. Tente recarregar a página.",
-          variant: "destructive"
-        });
-      }
-    }, 10000);
-    
-    return () => clearTimeout(timeout);
   }, []);
 
   const loadData = async () => {
