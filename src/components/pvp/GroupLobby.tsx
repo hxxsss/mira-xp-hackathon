@@ -25,6 +25,18 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
 
   useEffect(() => {
     loadData();
+    loadMatchData();
+    
+    const timeoutId = setTimeout(() => {
+      if (!group || !match) {
+        console.warn('⚠️ GroupLobby: Timeout - Dados não carregaram em 5s');
+        toast({
+          title: "Problemas ao carregar",
+          description: "Recarregue a página se o problema persistir",
+          variant: "destructive"
+        });
+      }
+    }, 5000);
     
     const channel = supabase
       .channel(`match-${matchId}`)
@@ -34,52 +46,76 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
       .subscribe();
 
     return () => {
+      clearTimeout(timeoutId);
       supabase.removeChannel(channel);
     };
   }, [matchId, groupId]);
 
   const loadData = async () => {
-    const { data: groupData, error: groupError } = await supabase
-      .from("pvp_groups")
-      .select("*")
-      .eq("id", groupId)
-      .maybeSingle();
+    console.log('🔍 GroupLobby: Carregando dados...', { groupId, matchId });
     
-    if (groupData) {
-      setGroup(groupData);
-      setIsLeader(groupData.leader_user_id === userId);
-    }
+    try {
+      const { data: groupData, error: groupError } = await supabase
+        .from("pvp_groups")
+        .select("*")
+        .eq("id", groupId)
+        .maybeSingle();
+      
+      console.log('📦 Dados do grupo:', groupData, groupError);
+      
+      if (groupData) {
+        setGroup(groupData);
+        setIsLeader(groupData.leader_user_id === userId);
+      } else if (groupError) {
+        console.error('❌ Erro ao carregar grupo:', groupError);
+        toast({ 
+          title: "Erro ao carregar grupo", 
+          description: "Tente novamente em instantes",
+          variant: "destructive" 
+        });
+      }
 
-    const { data: membersData } = await supabase
-      .from("pvp_group_members")
-      .select("*, profiles(name, avatar_id)")
-      .eq("group_id", groupId);
-    
-    if (membersData) setMembers(membersData);
+      const { data: membersData, error: membersError } = await supabase
+        .from("pvp_group_members")
+        .select("*, profiles(name, avatar_id)")
+        .eq("group_id", groupId);
+      
+      console.log('👥 Membros do grupo:', membersData, membersError);
+      
+      if (membersData) setMembers(membersData);
 
-    const { data: allGroupsData } = await supabase
-      .from("pvp_groups")
-      .select("*, pvp_group_members(count)")
-      .eq("match_id", matchId);
-    
-    if (allGroupsData) {
-      setAllGroups(allGroupsData);
-      setReadyGroups(allGroupsData.filter(g => g.ready_to_start).length);
+      const { data: allGroupsData } = await supabase
+        .from("pvp_groups")
+        .select("*, pvp_group_members(count)")
+        .eq("match_id", matchId);
+      
+      if (allGroupsData) {
+        setAllGroups(allGroupsData);
+        setReadyGroups(allGroupsData.filter(g => g.ready_to_start).length);
+      }
+    } catch (error) {
+      console.error('❌ Erro geral ao carregar dados:', error);
     }
   };
 
   const loadMatchData = async () => {
-    const { data } = await supabase
+    console.log('🎮 Carregando dados da partida...', matchId);
+    
+    const { data, error } = await supabase
       .from("pvp_matches")
       .select("*")
       .eq("id", matchId)
       .maybeSingle();
+    
+    console.log('🎮 Dados da partida:', data, error);
     
     if (data) {
       setMatch(data);
       if (data.status === 'in_progress') {
         onStartGame();
       }
+    } else if (error) {
+      console.error('❌ Erro ao carregar partida:', error);
     }
   };
 
@@ -116,7 +152,13 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
   };
 
   if (!group || !match) {
-    return <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-purple-400" /></div>;
+    return (
+      <div className="flex flex-col items-center justify-center p-8 space-y-4">
+        <Loader2 className="w-12 h-12 animate-spin text-purple-400" />
+        <p className="text-white text-lg">Carregando arena...</p>
+        <p className="text-purple-300 text-sm">Se demorar muito, verifique sua conexão</p>
+      </div>
+    );
   }
 
   return (

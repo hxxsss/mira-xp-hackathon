@@ -290,7 +290,7 @@ const PvP = () => {
 
   // Main menu
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/30 to-pink-900/30 p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 p-4 relative overflow-hidden">
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
