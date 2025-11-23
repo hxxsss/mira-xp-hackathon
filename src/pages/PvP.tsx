@@ -9,6 +9,7 @@ import { JoinMatchDialog } from "@/components/pvp/JoinMatchDialog";
 import { JoinGroupDialog } from "@/components/pvp/JoinGroupDialog";
 import { CreateGroupDialog } from "@/components/pvp/CreateGroupDialog";
 import { QuickMatchDialog } from "@/components/pvp/QuickMatchDialog";
+import { UniversalJoinDialog } from "@/components/pvp/UniversalJoinDialog";
 import { GroupLobby } from "@/components/pvp/GroupLobby";
 import { MatchLobby } from "@/components/pvp/MatchLobby";
 import { MatchGame } from "@/components/pvp/MatchGame";
@@ -44,6 +45,7 @@ const PvP = () => {
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [showJoinGroupDialog, setShowJoinGroupDialog] = useState(false);
   const [showQuickMatchDialog, setShowQuickMatchDialog] = useState(false);
+  const [showUniversalJoinDialog, setShowUniversalJoinDialog] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [showPodiumModal, setShowPodiumModal] = useState(false);
   const [groupResults, setGroupResults] = useState<any[]>([]);
@@ -181,6 +183,34 @@ const PvP = () => {
     }
   };
 
+  const handleUniversalJoin = async (type: '1v1' | 'group', matchId: string, groupId?: string) => {
+    if (type === '1v1') {
+      // Reload match data for 1v1
+      const { data } = await supabase
+        .from("pvp_matches")
+        .select("*")
+        .eq("id", matchId)
+        .single();
+      
+      if (data) {
+        setCurrentMatch(data as Match);
+      }
+    } else if (type === 'group' && groupId) {
+      // Reload match and set group for group mode
+      const { data } = await supabase
+        .from("pvp_matches")
+        .select("*")
+        .eq("id", matchId)
+        .single();
+      
+      if (data) {
+        setCurrentMatch(data as Match);
+        setCurrentGroupId(groupId);
+      }
+    }
+    setShowUniversalJoinDialog(false);
+  };
+
   const handleGameComplete = () => {
     // Result shown via realtime
   };
@@ -313,6 +343,7 @@ const PvP = () => {
           <ModeSelectionScreen 
             onSelectMode={handleModeSelected}
             onQuickMatch={() => setShowQuickMatchDialog(true)}
+            onJoinWithCode={() => setShowUniversalJoinDialog(true)}
           />
         ) : (
           <motion.div
@@ -460,6 +491,13 @@ const PvP = () => {
         open={showJoinGroupDialog}
         onOpenChange={setShowJoinGroupDialog}
         onGroupJoined={handleGroupCreated}
+        userId={userId}
+      />
+
+      <UniversalJoinDialog
+        open={showUniversalJoinDialog}
+        onOpenChange={setShowUniversalJoinDialog}
+        onJoinSuccess={handleUniversalJoin}
         userId={userId}
       />
 

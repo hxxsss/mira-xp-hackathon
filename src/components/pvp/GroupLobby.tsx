@@ -39,11 +39,11 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
   }, [matchId, groupId]);
 
   const loadData = async () => {
-    const { data: groupData } = await supabase
+    const { data: groupData, error: groupError } = await supabase
       .from("pvp_groups")
       .select("*")
       .eq("id", groupId)
-      .single();
+      .maybeSingle();
     
     if (groupData) {
       setGroup(groupData);
@@ -73,7 +73,7 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
       .from("pvp_matches")
       .select("*")
       .eq("id", matchId)
-      .single();
+      .maybeSingle();
     
     if (data) {
       setMatch(data);

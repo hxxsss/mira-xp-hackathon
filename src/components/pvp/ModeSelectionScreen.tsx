@@ -1,13 +1,14 @@
 import { motion } from "framer-motion";
-import { Swords, Users, Search } from "lucide-react";
+import { Swords, Users, Search, Key } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ModeSelectionScreenProps {
   onSelectMode: (mode: '1v1' | 'group') => void;
   onQuickMatch: () => void;
+  onJoinWithCode: () => void;
 }
 
-export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch }: ModeSelectionScreenProps) => {
+export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch, onJoinWithCode }: ModeSelectionScreenProps) => {
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
       <div className="text-center space-y-8">
@@ -19,7 +20,7 @@ export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch }: ModeSelectio
           🎯 ESCOLHA SEU MODO
         </motion.h2>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {/* 1v1 Mode */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -87,6 +88,30 @@ export const ModeSelectionScreen = ({ onSelectMode, onQuickMatch }: ModeSelectio
                 <p className="text-sm text-black">
                   Jogue contra um<br />
                   usuário aleatório
+                </p>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Join with Code */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Card
+              onClick={onJoinWithCode}
+              className="arcade-button cursor-pointer p-6 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-yellow-400 hover:shadow-[0_0_40px_rgba(234,179,8,0.5)] transition-all duration-300"
+            >
+              <div className="space-y-3">
+                <Key className="w-16 h-16 mx-auto text-yellow-400" />
+                <h3 className="text-2xl font-bold text-yellow-400">🔑 CÓDIGO</h3>
+                <p className="text-lg text-black font-semibold">ENTRAR COM CÓDIGO</p>
+                <p className="text-sm text-black">
+                  Já tem um código?<br />
+                  Entre diretamente!
                 </p>
               </div>
             </Card>
