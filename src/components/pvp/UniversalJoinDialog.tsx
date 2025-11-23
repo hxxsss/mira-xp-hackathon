@@ -192,21 +192,21 @@ export const UniversalJoinDialog = ({ open, onOpenChange, onJoinSuccess, userId 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-purple-900/95 to-pink-900/95 border-purple-500 text-white">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">🔑 Entrar com Código</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center text-white">🔑 Entrar com Código</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Digite o código (6 caracteres)</label>
+            <label className="text-sm font-medium text-purple-200">Digite o código (6 caracteres)</label>
             <div className="flex gap-2">
               <Input
                 placeholder="ABC123"
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 maxLength={6}
-                className="text-center text-2xl font-mono tracking-widest"
+                className="text-center text-2xl font-mono tracking-widest bg-purple-950/50 border-purple-600 text-white placeholder:text-purple-400"
               />
               <Button onClick={searchCode} disabled={searching || code.length !== 6}>
                 {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}

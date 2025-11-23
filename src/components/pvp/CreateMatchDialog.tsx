@@ -153,19 +153,19 @@ export const CreateMatchDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 border-purple-500 text-white">
         <DialogHeader>
-          <DialogTitle>Criar Nova Partida</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-white text-2xl">Criar Nova Partida</DialogTitle>
+          <DialogDescription className="text-purple-200">
             Configure sua partida PvP e convide um amigo
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label>Nível de Dificuldade</Label>
+            <Label className="text-purple-200">Nível de Dificuldade</Label>
             <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-purple-950/50 border-purple-600 text-white">
                 <SelectValue placeholder="Selecione o nível" />
               </SelectTrigger>
               <SelectContent>
@@ -179,8 +179,8 @@ export const CreateMatchDialog = ({
 
           <div className="space-y-2">
             <div className="flex justify-between">
-              <Label>Aposta de XP</Label>
-              <span className="text-sm text-muted-foreground">
+              <Label className="text-purple-200">Aposta de XP</Label>
+              <span className="text-sm text-purple-300">
                 Seu XP: {userXp}
               </span>
             </div>
@@ -193,8 +193,8 @@ export const CreateMatchDialog = ({
               className="w-full"
             />
             <div className="text-center">
-              <span className="text-2xl font-bold text-primary">{xpBet[0]} XP</span>
-              <p className="text-xs text-muted-foreground mt-1">
+              <span className="text-2xl font-bold text-yellow-400">{xpBet[0]} XP</span>
+              <p className="text-xs text-purple-300 mt-1">
                 O vencedor leva {xpBet[0] * 2} XP
               </p>
             </div>
