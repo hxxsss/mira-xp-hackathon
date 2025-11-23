@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Swords, Plus, LogIn, ArrowLeft, Users, Search } from "lucide-react";
 import { CreateMatchDialog } from "@/components/pvp/CreateMatchDialog";
 import { JoinMatchDialog } from "@/components/pvp/JoinMatchDialog";
+import { JoinGroupDialog } from "@/components/pvp/JoinGroupDialog";
 import { CreateGroupDialog } from "@/components/pvp/CreateGroupDialog";
 import { QuickMatchDialog } from "@/components/pvp/QuickMatchDialog";
 import { GroupLobby } from "@/components/pvp/GroupLobby";
@@ -41,6 +42,7 @@ const PvP = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showCreateGroupDialog, setShowCreateGroupDialog] = useState(false);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
+  const [showJoinGroupDialog, setShowJoinGroupDialog] = useState(false);
   const [showQuickMatchDialog, setShowQuickMatchDialog] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [showPodiumModal, setShowPodiumModal] = useState(false);
@@ -356,7 +358,7 @@ const PvP = () => {
               </Card>
 
               <Card className="arcade-button cursor-pointer bg-gradient-to-br from-secondary/20 to-primary/20 hover:scale-105 transition-transform" 
-                    onClick={() => setShowJoinDialog(true)}>
+                    onClick={() => selectedMode === '1v1' ? setShowJoinDialog(true) : setShowJoinGroupDialog(true)}>
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="p-3 bg-secondary/30 rounded-lg">
@@ -433,7 +435,9 @@ const PvP = () => {
 
         <CreateGroupDialog
           open={showCreateGroupDialog}
-          onOpenChange={setShowCreateGroupDialog}
+          onOpenChange={(open) => {
+            setShowCreateGroupDialog(open);
+          }}
           onGroupCreated={handleGroupCreated}
           userId={userId}
         />
@@ -449,6 +453,13 @@ const PvP = () => {
         open={showJoinDialog}
         onOpenChange={setShowJoinDialog}
         onMatchJoined={handleMatchJoined}
+        userId={userId}
+      />
+
+      <JoinGroupDialog
+        open={showJoinGroupDialog}
+        onOpenChange={setShowJoinGroupDialog}
+        onGroupJoined={handleGroupCreated}
         userId={userId}
       />
 
