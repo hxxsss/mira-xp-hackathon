@@ -159,24 +159,24 @@ export const JoinMatchDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 border-purple-500 text-white">
         <DialogHeader>
-          <DialogTitle>Entrar em Partida</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-white text-2xl">Entrar em Partida</DialogTitle>
+          <DialogDescription className="text-purple-200">
             Digite o código de 6 dígitos para entrar em uma partida
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Código da Partida</Label>
+            <Label className="text-purple-200">Código da Partida</Label>
             <div className="flex gap-2">
               <Input
                 placeholder="ABC123"
                 value={matchCode}
                 onChange={(e) => setMatchCode(e.target.value.toUpperCase())}
                 maxLength={6}
-                className="text-center text-lg font-mono tracking-widest"
+                className="text-center text-lg font-mono tracking-widest bg-purple-950/50 border-purple-600 text-white placeholder:text-purple-400"
               />
               <Button onClick={searchMatch} disabled={loading || matchCode.length !== 6}>
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -186,18 +186,18 @@ export const JoinMatchDialog = ({
           </div>
 
           {foundMatch && (
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
+            <Alert className="bg-purple-950/50 border-purple-600">
+              <AlertCircle className="h-4 w-4 text-purple-400" />
               <AlertDescription>
-                <div className="space-y-2">
+                <div className="space-y-2 text-white">
                   <p className="font-semibold">Partida encontrada!</p>
                   <p className="text-sm">
                     Módulo: {foundMatch.learning_modules?.number} - {foundMatch.learning_modules?.title}
                   </p>
                   <p className="text-sm">
-                    Aposta: <span className="font-bold text-primary">{foundMatch.xp_bet} XP</span>
+                    Aposta: <span className="font-bold text-yellow-400">{foundMatch.xp_bet} XP</span>
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-purple-300">
                     Seu XP atual: {userXp}
                   </p>
                 </div>

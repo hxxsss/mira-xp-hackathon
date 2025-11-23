@@ -202,17 +202,17 @@ export const QuickMatchDialog = ({ open, onOpenChange, onMatchFound, userId }: Q
 
   return (
     <Dialog open={open} onOpenChange={searching ? () => {} : onOpenChange}>
-      <DialogContent>
+      <DialogContent className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 border-purple-500 text-white">
         <DialogHeader>
-          <DialogTitle>⚡ Busca Rápida</DialogTitle>
+          <DialogTitle className="text-white text-2xl">⚡ Busca Rápida</DialogTitle>
         </DialogHeader>
 
         {!searching ? (
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Nível de Dificuldade</label>
+              <label className="text-sm font-medium text-purple-200">Nível de Dificuldade</label>
               <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-purple-950/50 border-purple-600 text-white">
                   <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -225,8 +225,8 @@ export const QuickMatchDialog = ({ open, onOpenChange, onMatchFound, userId }: Q
             </div>
 
             <div>
-              <label className="text-sm font-medium block mb-2">
-                Aposta de XP: <span className="text-primary font-bold text-lg">{xpBet} XP</span>
+              <label className="text-sm font-medium block mb-2 text-purple-200">
+                Aposta de XP: <span className="text-yellow-400 font-bold text-lg">{xpBet} XP</span>
               </label>
               
               <Slider
@@ -238,14 +238,14 @@ export const QuickMatchDialog = ({ open, onOpenChange, onMatchFound, userId }: Q
                 className="mb-2"
               />
               
-              <div className="flex justify-between text-xs text-muted-foreground">
+              <div className="flex justify-between text-xs text-purple-300">
                 <span>Mínimo: 10 XP</span>
-                <span>Seu XP disponível: <strong className="text-foreground">{userXp}</strong></span>
+                <span>Seu XP disponível: <strong className="text-white">{userXp}</strong></span>
                 <span>Máximo: {Math.min(500, userXp)} XP</span>
               </div>
               
               {xpBet > userXp && (
-                <p className="text-xs text-destructive mt-2">
+                <p className="text-xs text-red-400 mt-2">
                   ⚠️ Você não tem XP suficiente para esta aposta!
                 </p>
               )}
@@ -297,9 +297,9 @@ export const QuickMatchDialog = ({ open, onOpenChange, onMatchFound, userId }: Q
           </div>
         ) : (
           <div className="text-center space-y-4 py-8">
-            <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-            <p className="text-lg font-semibold">Procurando oponente...</p>
-            <p className="text-sm text-muted-foreground">
+            <Loader2 className="h-12 w-12 animate-spin mx-auto text-purple-400" />
+            <p className="text-lg font-semibold text-white">Procurando oponente...</p>
+            <p className="text-sm text-purple-300">
               Nível: {selectedLevel} | Aposta: {xpBet} XP
             </p>
             <Button variant="outline" onClick={handleCancel}>

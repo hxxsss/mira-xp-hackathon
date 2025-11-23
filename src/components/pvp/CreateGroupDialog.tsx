@@ -192,7 +192,7 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-gradient-to-br from-purple-900/90 to-pink-900/90 border-purple-500">
+      <DialogContent className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 border-purple-500 text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2 text-purple-300">
             <Users className="w-6 h-6" />
