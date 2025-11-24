@@ -1,11 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Wallet, DollarSign, PiggyBank, CreditCard, BarChart3, Sparkles, PlayCircle } from "lucide-react";
+import { Target, TrendingUp, Wallet, DollarSign, PiggyBank, CreditCard, BarChart3, Sparkles, PlayCircle, Trophy, Brain, LineChart, Swords, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+
 const Landing = () => {
   const navigate = useNavigate();
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
   useEffect(() => {
     supabase.auth.getSession().then(({
       data: {
@@ -29,18 +37,24 @@ const Landing = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#home" className="text-gray-700 hover:text-gray-900 font-medium">
+            <button onClick={() => scrollToSection('inicio')} className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
               Início
-            </a>
-            <a href="#recursos" className="text-gray-700 hover:text-gray-900 font-medium">
-              Recursos
-            </a>
-            <a href="#produto" className="text-gray-700 hover:text-gray-900 font-medium">
-              Produto
-            </a>
-            <a href="#precos" className="text-gray-700 hover:text-gray-900 font-medium">
-              Preços
-            </a>
+            </button>
+            <button onClick={() => scrollToSection('gamificacao')} className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+              Gamificação
+            </button>
+            <button onClick={() => scrollToSection('oraculo')} className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+              Oráculo
+            </button>
+            <button onClick={() => scrollToSection('financas')} className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+              Finanças
+            </button>
+            <button onClick={() => scrollToSection('arena-pvp')} className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+              Arena PvP
+            </button>
+            <button onClick={() => scrollToSection('mascotes')} className="text-gray-700 hover:text-gray-900 font-medium transition-colors">
+              Mascotes
+            </button>
           </div>
 
           <div className="flex items-center gap-3">
@@ -62,7 +76,7 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full pt-12 pb-0 px-6 overflow-hidden bg-white">
+      <section id="inicio" className="relative w-full pt-12 pb-0 px-6 overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto relative">
           {/* Floating Icons - Left Side */}
           <div className="absolute top-24 left-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl animate-float z-20 flex items-center justify-center">
@@ -141,6 +155,134 @@ const Landing = () => {
             </span>
           </div>
 
+        </div>
+      </section>
+
+      {/* Gamificação Section */}
+      <section id="gamificacao" className="py-24 px-6 bg-gradient-to-br from-indigo-50 to-purple-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <Trophy className="w-16 h-16 text-indigo-600 mx-auto mb-4" />
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Gamificação</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Aprenda educação financeira de forma divertida com nosso sistema de pontos, níveis e recompensas
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+              <Target className="w-12 h-12 text-indigo-600 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Sistema de XP</h3>
+              <p className="text-gray-600">Ganhe experiência completando módulos e desafios financeiros</p>
+            </div>
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+              <Trophy className="w-12 h-12 text-purple-600 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Conquistas</h3>
+              <p className="text-gray-600">Desbloqueie conquistas especiais ao atingir marcos importantes</p>
+            </div>
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+              <Sparkles className="w-12 h-12 text-pink-600 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Recompensas</h3>
+              <p className="text-gray-600">Troque seus pontos por itens exclusivos na loja</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Oráculo Section */}
+      <section id="oraculo" className="py-24 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <Brain className="w-16 h-16 text-purple-600 mx-auto mb-4" />
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Oráculo Financeiro</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Seu assistente financeiro com IA que te ajuda a tomar decisões inteligentes sobre suas compras e metas
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-100 to-pink-100 p-12 rounded-3xl max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-gray-900">Análise Inteligente</h3>
+                <p className="text-gray-700">O Oráculo analisa seu perfil financeiro e suas metas para te dar conselhos personalizados sobre cada compra</p>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-gray-900">Decisões Conscientes</h3>
+                <p className="text-gray-700">Receba aprovações, alertas ou recomendações baseadas no impacto de cada decisão em suas metas financeiras</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Finanças Section */}
+      <section id="financas" className="py-24 px-6 bg-gradient-to-br from-green-50 to-emerald-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <LineChart className="w-16 h-16 text-green-600 mx-auto mb-4" />
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Gestão Financeira</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Controle completo das suas finanças pessoais em um só lugar
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+              <Wallet className="w-12 h-12 text-green-600 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Transações</h3>
+              <p className="text-gray-600">Registre e acompanhe todas as suas receitas e despesas</p>
+            </div>
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+              <BarChart3 className="w-12 h-12 text-emerald-600 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Orçamento</h3>
+              <p className="text-gray-600">Crie orçamentos por categoria e monitore seus gastos</p>
+            </div>
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+              <CreditCard className="w-12 h-12 text-teal-600 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Dívidas</h3>
+              <p className="text-gray-600">Gerencie e acompanhe o pagamento das suas dívidas</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Arena PvP Section */}
+      <section id="arena-pvp" className="py-24 px-6 bg-gradient-to-br from-orange-50 to-red-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <Swords className="w-16 h-16 text-orange-600 mx-auto mb-4" />
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Arena PvP</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Desafie outros usuários em partidas de conhecimento financeiro e suba no ranking
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-orange-100 to-red-100 p-12 rounded-3xl max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-gray-900">Partidas 1v1</h3>
+                <p className="text-gray-700">Enfrente outros jogadores em duelos de conhecimento financeiro e aposte XP</p>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-gray-900">Modo Grupo</h3>
+                <p className="text-gray-700">Crie grupos com amigos e competir com outras equipes na arena</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mascotes Section */}
+      <section id="mascotes" className="py-24 px-6 bg-gradient-to-br from-cyan-50 to-blue-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <Users className="w-16 h-16 text-cyan-600 mx-auto mb-4" />
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Mascotes</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Personalize sua experiência escolhendo seu avatar favorito
+            </p>
+          </div>
+          <div className="bg-white p-12 rounded-3xl max-w-4xl mx-auto text-center">
+            <p className="text-xl text-gray-700">
+              Desbloqueie mascotes especiais conforme avança na sua jornada de educação financeira
+            </p>
+          </div>
         </div>
       </section>
 
