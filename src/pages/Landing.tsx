@@ -44,10 +44,17 @@ const Landing = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button onClick={() => navigate("/login")} variant="ghost" className="text-gray-700 hover:text-gray-900 px-5 py-2.5 rounded-full font-medium hover:bg-gray-100 transition-colors">
+            <Button 
+              onClick={() => navigate("/login")} 
+              variant="ghost"
+              className="text-gray-700 hover:text-gray-900 px-5 py-2.5 rounded-full font-medium hover:bg-gray-100 transition-colors"
+            >
               Login
             </Button>
-            <Button onClick={() => navigate("/onboarding")} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:shadow-indigo-200 transition-all duration-300">
+            <Button 
+              onClick={() => navigate("/onboarding")} 
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:shadow-indigo-200 transition-all duration-300"
+            >
               Criar conta
             </Button>
           </div>
@@ -86,7 +93,9 @@ const Landing = () => {
               <span className="text-indigo-600">realidade</span> com um clique
             </h1>
 
-            <p className="text-sm md:text-base text-gray-500 mb-6 max-w-xl mx-auto font-normal">​</p>
+            <p className="text-sm md:text-base text-gray-500 mb-6 max-w-xl mx-auto font-normal">
+              Alcance seus objetivos financeiros em menos tempo com gamificação e educação financeira.
+            </p>
 
             <button onClick={() => navigate("/login")} className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors">
               <PlayCircle className="w-6 h-6" />
