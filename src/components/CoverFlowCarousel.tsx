@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { MoneyCircleIcon, TargetIcon, LockedIcon } from "@/components/modules/ModuleIcons";
 import { Card, CardContent } from "@/components/ui/card";
+import { CircularIconBadge } from "@/components/ui/circular-icon-badge";
 import {
   Carousel,
   CarouselContent,
@@ -36,25 +37,33 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
     const name = trackName.toLowerCase();
     if (name.includes('mentalidade')) {
       return {
-        badgeBg: '#8B5CF6', // Roxo
-        badgeBorder: '#C4B5FD', // Roxo claro
+        badgeBg: '#8B5CF6',
+        badgeBorder: '#C4B5FD',
+        gradient: 'from-indigo-600 via-blue-500 to-cyan-500',
+        border: 'border-blue-400',
       };
     }
     if (name.includes('organização')) {
       return {
-        badgeBg: '#F59E0B', // Laranja/Amarelo
-        badgeBorder: '#FDE68A', // Amarelo claro
+        badgeBg: '#F59E0B',
+        badgeBorder: '#FDE68A',
+        gradient: 'from-emerald-600 via-green-500 to-teal-500',
+        border: 'border-green-400',
       };
     }
     if (name.includes('aceleração')) {
       return {
-        badgeBg: '#10B981', // Verde
-        badgeBorder: '#A7F3D0', // Verde claro
+        badgeBg: '#10B981',
+        badgeBorder: '#A7F3D0',
+        gradient: 'from-orange-600 via-amber-500 to-yellow-500',
+        border: 'border-amber-400',
       };
     }
     return {
       badgeBg: '#8B5CF6',
       badgeBorder: '#C4B5FD',
+      gradient: 'from-purple-600 via-indigo-500 to-blue-500',
+      border: 'border-purple-400',
     };
   };
   const [api, setApi] = React.useState<CarouselApi>();
@@ -184,8 +193,9 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
               <div className="card-visual p-2 pb-8 h-full">
                 <Card
                   className={cn(
-                    "relative bg-white transition-all duration-300 border-0 shadow-xl pb-8",
-                    "rounded-[35px] w-full aspect-[3/4] max-h-[350px] md:max-h-[400px] lg:max-h-[450px]",
+                    "relative bg-white transition-all duration-300 shadow-2xl pb-8",
+                    `rounded-2xl border-2 ${trackColors.border}`,
+                    "w-full aspect-[3/4] max-h-[350px] md:max-h-[400px] lg:max-h-[450px]",
                     isCenterCard && !isLocked ? "cursor-pointer" : "cursor-default",
                     isLocked && "cursor-not-allowed opacity-60",
                     !isCenterCard && !isLocked && "opacity-70"
@@ -196,9 +206,8 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                   <CardContent className="p-0 h-full flex flex-col relative">
                     {/* Header colorido com curva */}
                     <div 
-                      className="relative h-[55%] w-full rounded-t-[35px] flex items-center justify-center overflow-visible"
+                      className={`relative h-[55%] w-full rounded-t-2xl flex items-center justify-center overflow-visible bg-gradient-to-br ${trackColors.gradient}`}
                       style={{
-                        backgroundColor: color,
                         borderBottomLeftRadius: '40px',
                         borderBottomRightRadius: '40px'
                       }}
@@ -207,14 +216,11 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                       <div className="absolute top-4 right-4">
                         <Badge
                           className={cn(
-                            "text-xs font-bold px-3 py-1",
-                            isCompleted && "bg-white/90 border-white/50",
-                            isInProgress && "bg-white/90 border-white/50",
-                            item.status === 'unlocked' && "bg-white/90 border-white/50 animate-pulse"
+                            "text-xs font-bold px-3 py-1 ring-2 ring-white shadow-lg",
+                            isCompleted && "bg-green-500 text-white border-0",
+                            isInProgress && "bg-blue-500 text-white border-0",
+                            item.status === 'unlocked' && "bg-amber-500 text-white border-0 animate-pulse"
                           )}
-                          style={{
-                            color: color
-                          }}
                         >
                           {isCompleted && '✓ COMPLETO'}
                           {isInProgress && '🎯 NOVO'}
@@ -222,19 +228,18 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                         </Badge>
                       </div>
 
-                      {/* Ícone/Ilustração */}
-                      <div className="z-10 -translate-y-2 drop-shadow-lg">
-                        {item.number === '01' && <div className="scale-75"><MoneyCircleIcon /></div>}
-                        {item.number === '02' && <div className="scale-75"><TargetIcon /></div>}
-                        {isLocked && item.number === '03' ? (
-                          <div className="scale-75"><LockedIcon /></div>
-                        ) : item.number === '03' ? (
-                          <div className="text-7xl">{item.icon}</div>
-                        ) : (
-                          item.number !== '01' && item.number !== '02' && (
-                            <div className="text-7xl">{item.icon}</div>
-                          )
-                        )}
+                      {/* Ícone circular com glow - centralizado e na parte inferior */}
+                      <div className="absolute left-1/2 -translate-x-1/2 -bottom-12 z-20">
+                        <CircularIconBadge
+                          icon={
+                            item.number === '01' ? <div className="scale-50 -ml-2"><MoneyCircleIcon /></div> :
+                            item.number === '02' ? <div className="scale-50 -ml-2"><TargetIcon /></div> :
+                            isLocked && item.number === '03' ? <div className="scale-50 -ml-2"><LockedIcon /></div> :
+                            <span className="text-4xl">{item.icon}</span>
+                          }
+                          gradientColors={trackColors.gradient}
+                          size="lg"
+                        />
                       </div>
                     </div>
 
