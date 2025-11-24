@@ -11,6 +11,7 @@ import { RewardModal } from '@/components/modules/RewardModal';
 import { useToast } from '@/hooks/use-toast';
 import { VideoPlaceholder } from '@/components/journey/VideoPlaceholder';
 import { EmotionGrid } from '@/components/journey/EmotionGrid';
+import { SliderInput } from '@/components/journey/SliderInput';
 import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 
@@ -372,12 +373,22 @@ const ModulePage = () => {
                 </div>
 
                 <div className="mb-6">
-                  <EmotionGrid
-                    question={currentLesson.question}
-                    options={currentLesson.options}
-                    selectedOption={selectedJourneyOption}
-                    onSelect={setSelectedJourneyOption}
-                  />
+                  {currentLesson.input_type === 'slider' ? (
+                    <SliderInput
+                      question={currentLesson.question}
+                      minLabel={currentLesson.slider_config?.min_label || "Mínimo"}
+                      maxLabel={currentLesson.slider_config?.max_label || "Máximo"}
+                      value={selectedJourneyOption}
+                      onChange={setSelectedJourneyOption}
+                    />
+                  ) : (
+                    <EmotionGrid
+                      question={currentLesson.question}
+                      options={currentLesson.options}
+                      selectedOption={selectedJourneyOption}
+                      onSelect={setSelectedJourneyOption}
+                    />
+                  )}
                 </div>
 
                 <div className="flex justify-between mt-8">
