@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { MoneyCircleIcon, TargetIcon, LockedIcon } from "@/components/modules/ModuleIcons";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -224,16 +223,10 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
 
                       {/* Ícone/Ilustração */}
                       <div className="z-10 -translate-y-2 drop-shadow-lg">
-                        {item.number === '01' && <div className="scale-75"><MoneyCircleIcon /></div>}
-                        {item.number === '02' && <div className="scale-75"><TargetIcon /></div>}
-                        {isLocked && item.number === '03' ? (
-                          <div className="scale-75"><LockedIcon /></div>
-                        ) : item.number === '03' ? (
-                          <div className="text-7xl">{item.icon}</div>
+                        {isLocked ? (
+                          <div className="text-7xl">🔒</div>
                         ) : (
-                          item.number !== '01' && item.number !== '02' && (
-                            <div className="text-7xl">{item.icon}</div>
-                          )
+                          <div className="text-7xl">{item.icon}</div>
                         )}
                       </div>
                     </div>
