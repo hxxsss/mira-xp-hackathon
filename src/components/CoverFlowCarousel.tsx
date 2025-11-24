@@ -202,25 +202,6 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                         borderBottomRightRadius: '40px'
                       }}
                     >
-                      {/* Status badge no topo */}
-                      <div className="absolute top-4 right-4">
-                        <Badge
-                          className={cn(
-                            "text-xs font-bold px-3 py-1",
-                            isCompleted && "bg-white/90 border-white/50",
-                            isInProgress && "bg-white/90 border-white/50",
-                            item.status === 'unlocked' && "bg-white/90 border-white/50 animate-pulse"
-                          )}
-                          style={{
-                            color: color
-                          }}
-                        >
-                          {isCompleted && '✓ COMPLETO'}
-                          {isInProgress && '🎯 NOVO'}
-                          {item.status === 'unlocked' && '⭐ NOVO'}
-                        </Badge>
-                      </div>
-
                       {/* Ícone/Ilustração */}
                       <div className="z-10 -translate-y-2 drop-shadow-lg">
                         {isLocked ? (
