@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Wallet, DollarSign, PiggyBank, CreditCard, BarChart3, Sparkles, PlayCircle, Trophy, Brain, LineChart, Swords, Users } from "lucide-react";
+import { Target, TrendingUp, Wallet, DollarSign, PiggyBank, CreditCard, BarChart3, Sparkles, PlayCircle, Trophy, Brain, LineChart, Swords, Users, User, Gift, Clock, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -244,24 +244,87 @@ const Landing = () => {
       </section>
 
       {/* Arena PvP Section */}
-      <section id="arena-pvp" className="py-24 px-6 bg-gradient-to-br from-orange-50 to-red-50">
+      <section id="arena-pvp" className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <Swords className="w-16 h-16 text-orange-600 mx-auto mb-4" />
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Arena PvP</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Desafie outros usuários em partidas de conhecimento financeiro e suba no ranking
-            </p>
-          </div>
-          <div className="bg-gradient-to-br from-orange-100 to-red-100 p-12 rounded-3xl max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <h3 className="text-2xl font-bold text-gray-900">Partidas 1v1</h3>
-                <p className="text-gray-700">Enfrente outros jogadores em duelos de conhecimento financeiro e aposte XP</p>
+          <div className="bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 rounded-[3rem] p-8 md:p-16 shadow-xl border border-orange-100">
+            <div className="flex flex-col lg:flex-row items-center gap-12">
+              <div className="flex-1 space-y-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl text-white font-bold shadow-lg">
+                  <Swords className="w-5 h-5" />
+                  <span>PvP</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">Arena de Batalha</h2>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  Desafie amigos em duelos épicos de conhecimento financeiro. Teste suas habilidades, ganhe recompensas e suba no ranking global.
+                </p>
+                
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div className="bg-white p-6 rounded-2xl shadow-md border-2 border-orange-200 hover:border-orange-400 transition-all hover:scale-105 cursor-pointer group">
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <User className="text-2xl text-orange-600 group-hover:scale-110 transition-transform" />
+                      <span className="text-xl font-bold text-gray-900">vs</span>
+                      <User className="text-2xl text-orange-600 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <p className="text-center font-semibold text-gray-700">Duelo 1 vs 1</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl shadow-md border-2 border-orange-200 hover:border-orange-400 transition-all hover:scale-105 cursor-pointer group">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Users className="text-3xl text-orange-600 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <p className="text-center font-semibold text-gray-700">Batalha em Grupo</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-orange-100">
+                    <Trophy className="w-5 h-5 text-orange-500" />
+                    <span className="text-sm font-semibold text-gray-700">Ranking Global</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-orange-100">
+                    <Gift className="w-5 h-5 text-orange-500" />
+                    <span className="text-sm font-semibold text-gray-700">Recompensas</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-orange-100">
+                    <Clock className="w-5 h-5 text-orange-500" />
+                    <span className="text-sm font-semibold text-gray-700">Tempo Real</span>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => navigate("/pvp")}
+                  className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center gap-3 whitespace-nowrap cursor-pointer"
+                >
+                  <span>Entrar na Arena</span>
+                  <Swords className="w-5 h-5" />
+                </button>
               </div>
-              <div className="space-y-4">
-                <h3 className="text-2xl font-bold text-gray-900">Modo Grupo</h3>
-                <p className="text-gray-700">Crie grupos com amigos e competir com outras equipes na arena</p>
+
+              <div className="flex-1 w-full">
+                <div className="relative h-80 lg:h-96 w-full bg-gradient-to-br from-orange-400 via-red-400 to-pink-400 rounded-3xl shadow-2xl flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-red-500/20 backdrop-blur-sm"></div>
+                  <div className="relative z-10 flex items-center justify-center gap-8">
+                    <div className="flex flex-col items-center gap-3 animate-pulse">
+                      <div className="w-20 h-20 bg-white rounded-full shadow-xl flex items-center justify-center">
+                        <User className="w-8 h-8 text-orange-600" />
+                      </div>
+                      <div className="bg-white px-4 py-2 rounded-full shadow-lg">
+                        <span className="font-bold text-orange-600">Você</span>
+                      </div>
+                    </div>
+                    <div className="text-white font-bold text-6xl drop-shadow-lg animate-bounce">VS</div>
+                    <div className="flex flex-col items-center gap-3 animate-pulse" style={{ animationDelay: '0.5s' }}>
+                      <div className="w-20 h-20 bg-white rounded-full shadow-xl flex items-center justify-center">
+                        <User className="w-8 h-8 text-red-600" />
+                      </div>
+                      <div className="bg-white px-4 py-2 rounded-full shadow-lg">
+                        <span className="font-bold text-red-600">Rival</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-orange-600 shadow-lg">
+                    <Flame className="w-4 h-4 inline mr-1" /> Em Andamento
+                  </div>
+                </div>
               </div>
             </div>
           </div>
