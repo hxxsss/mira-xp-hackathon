@@ -213,11 +213,6 @@ const ModulePage = () => {
         });
         throw error;
       }
-      
-      toast({
-        title: "✓ Resposta salva",
-        description: "Seu progresso foi registrado!",
-      });
 
       // Se for a última etapa, completar módulo
       if (currentLessonIndex === module.content.steps.length - 1) {
