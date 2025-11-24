@@ -69,6 +69,7 @@ const Dashboard = () => {
   const [goalModalOpen, setGoalModalOpen] = useState(false);
   const [goalFormOpen, setGoalFormOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [hasCompletedJourney, setHasCompletedJourney] = useState(true);
 
   useEffect(() => {
     loadData();
@@ -104,6 +105,22 @@ const Dashboard = () => {
       }
 
       console.log("Perfil carregado:", profileData);
+
+      // Check if user has completed journey
+      const { data: journeyProgress } = await supabase
+        .from("user_journey_progress")
+        .select("*")
+        .eq("user_id", user.id);
+
+      const { data: journeySteps } = await supabase
+        .from("journey_steps")
+        .select("id");
+
+      setHasCompletedJourney(
+        journeyProgress && journeySteps 
+          ? journeyProgress.length >= journeySteps.length 
+          : false
+      );
 
       // Load active goal
       const { data: goalData, error: goalError } = await supabase
@@ -520,6 +537,48 @@ const Dashboard = () => {
         </motion.button>
       )}
 
+
+      {/* Journey Call to Action - Only show if not completed */}
+      {!hasCompletedJourney && (
+        <motion.div 
+          className="max-w-7xl mx-auto px-4 mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <div className="relative overflow-hidden bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 rounded-3xl p-6 sm:p-8 shadow-2xl">
+            {/* Decorative background */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
+            </div>
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex-1 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                  <Sparkles className="w-6 h-6 text-yellow-300" />
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white">
+                    Comece Sua Jornada
+                  </h3>
+                </div>
+                <p className="text-purple-100 text-sm sm:text-base">
+                  Descubra seu perfil financeiro e desbloqueie sua primeira trilha de aprendizado
+                </p>
+              </div>
+
+              <motion.button
+                onClick={() => navigate("/journey/1")}
+                className="px-8 py-4 bg-white text-purple-600 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Iniciar Agora
+                <span className="ml-2">🚀</span>
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Track Navigation */}
       <div className="flex-shrink-0 z-40 mt-2 sm:mt-0">
