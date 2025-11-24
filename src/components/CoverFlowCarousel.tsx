@@ -37,23 +37,27 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
       return {
         badgeBg: '#8B5CF6', // Roxo
         badgeBorder: '#C4B5FD', // Roxo claro
+        cardColor: '#8B5CF6', // Cor principal para elementos do card
       };
     }
     if (name.includes('organização')) {
       return {
         badgeBg: '#F59E0B', // Laranja/Amarelo
         badgeBorder: '#FDE68A', // Amarelo claro
+        cardColor: '#F59E0B',
       };
     }
     if (name.includes('aceleração')) {
       return {
         badgeBg: '#10B981', // Verde
         badgeBorder: '#A7F3D0', // Verde claro
+        cardColor: '#10B981',
       };
     }
     return {
       badgeBg: '#8B5CF6',
       badgeBorder: '#C4B5FD',
+      cardColor: '#8B5CF6',
     };
   };
   const [api, setApi] = React.useState<CarouselApi>();
@@ -170,8 +174,8 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
           const isLocked = item.status === 'locked';
           const isCompleted = item.status === 'completed';
           const isInProgress = item.status === 'in_progress';
-          const color = item.color || cardColors[index % cardColors.length];
           const trackColors = getTrackColors();
+          const color = trackColors.cardColor; // Usa a cor da trilha
 
           const isCenterCard = index === selectedIndex;
 
