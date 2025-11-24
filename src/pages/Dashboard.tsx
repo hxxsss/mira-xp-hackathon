@@ -359,9 +359,10 @@ const Dashboard = () => {
               <span className="text-xl sm:text-2xl font-bold text-gray-900 tracking-wider font-sans">mira</span>
             </div>
           </div>
-
+          
           {/* Bottom row on mobile: Stats + Goal */}
           <div className="flex items-center gap-2 sm:gap-4 justify-center sm:justify-end w-full sm:w-auto">
+
             {/* Enhanced Goal Display */}
             {goal ? (
               <motion.button
@@ -437,8 +438,8 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        </div>
       </div>
+    </div>
 
 
       {/* Track Navigation */}
