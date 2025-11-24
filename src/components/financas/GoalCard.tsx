@@ -56,9 +56,7 @@ export const GoalCard = ({ goal, onEdit, onAddValue, onViewDetails }: GoalCardPr
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className={`overflow-hidden relative group rounded-2xl shadow-2xl border-2 ${
-        goal.is_active ? "border-primary/50" : "border-muted"
-      }`}>
+      <Card className="overflow-hidden relative group">
         {/* Gradient Background */}
         <div className={`absolute inset-0 bg-gradient-to-br ${getGradient()} opacity-10 group-hover:opacity-15 transition-opacity`} />
         
