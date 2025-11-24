@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { avatars } from "@/components/ui/avatar-picker";
 
 interface Profile {
   name: string;
@@ -195,13 +196,19 @@ export default function Profile() {
               transition={{ duration: 0.3 }}
               className="relative bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-[40px] p-8 shadow-2xl aspect-square flex items-center justify-center"
             >
-              {/* Empty space for mascot */}
+              {/* Mascot Display */}
               <div className="text-center">
-                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-indigo-100/50 flex items-center justify-center">
-                  <span className="text-6xl opacity-20">👤</span>
-                </div>
-                <p className="text-sm text-gray-600">Seu mascote aparecerá aqui</p>
-                <p className="text-xs text-gray-500 mt-1 opacity-60">Em breve você poderá personalizar!</p>
+                <motion.div 
+                  className="w-40 h-40 mx-auto mb-4 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl border-4 border-white"
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="scale-[4]">
+                    {avatars.find(a => a.id === profile?.avatar_id)?.svg || avatars[0].svg}
+                  </div>
+                </motion.div>
+                <p className="text-sm text-gray-600 font-medium">Seu Mascote</p>
+                <p className="text-xs text-gray-500 mt-1">Avatar #{profile?.avatar_id}</p>
               </div>
 
               {/* Edit Button */}
