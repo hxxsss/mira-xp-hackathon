@@ -209,6 +209,39 @@ export type Database = {
           },
         ]
       }
+      journey_steps: {
+        Row: {
+          created_at: string | null
+          id: string
+          options: Json
+          question: string
+          step_number: number
+          subtitle: string | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          options: Json
+          question: string
+          step_number: number
+          subtitle?: string | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          options?: Json
+          question?: string
+          step_number?: number
+          subtitle?: string | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       learning_modules: {
         Row: {
           card_color: string
@@ -776,6 +809,45 @@ export type Database = {
           },
           {
             foreignKeyName: "user_inventory_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_journey_progress: {
+        Row: {
+          completed_at: string | null
+          id: string
+          selected_option: number
+          step_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          selected_option: number
+          step_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          selected_option?: number
+          step_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_journey_progress_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "journey_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_journey_progress_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"

@@ -16,6 +16,7 @@ import ModulePage from "./pages/ModulePage";
 import NotFound from "./pages/NotFound";
 import Financas from "./pages/Financas";
 import PvP from "./pages/PvP";
+import JourneyStep from "./pages/JourneyStep";
 const queryClient = new QueryClient();
 const App = () => <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -29,6 +30,7 @@ const App = () => <QueryClientProvider client={queryClient}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/oracle" element={<Oracle />} />
           <Route path="/module/:moduleId" element={<ModulePage />} />
+          <Route path="/journey/:stepNumber" element={<JourneyStep />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<Profile />} />
