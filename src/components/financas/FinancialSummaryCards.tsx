@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, DollarSign, CreditCard } from "lucide-react";
+import { CircularIconBadge } from "@/components/ui/circular-icon-badge";
 
 interface FinancialSummaryCardsProps {
   transactions: any[];
@@ -40,29 +41,37 @@ export const FinancialSummaryCards = ({
       title: "Saldo do Mês",
       value: `R$ ${balance.toFixed(2)}`,
       icon: DollarSign,
-      color: balance >= 0 ? "text-green-500" : "text-red-500",
-      bgColor: balance >= 0 ? "bg-green-500/10" : "bg-red-500/10",
+      gradient: balance >= 0 ? "from-green-500 via-emerald-500 to-teal-500" : "from-red-500 via-rose-500 to-pink-500",
+      border: balance >= 0 ? "border-green-400" : "border-red-400",
+      indicator: balance >= 0 ? "↑" : "↓",
+      indicatorColor: balance >= 0 ? "bg-green-500" : "bg-red-500",
     },
     {
       title: "Receitas",
       value: `R$ ${totalIncome.toFixed(2)}`,
       icon: TrendingUp,
-      color: "text-green-500",
-      bgColor: "bg-green-500/10",
+      gradient: "from-green-500 via-emerald-500 to-teal-500",
+      border: "border-green-400",
+      indicator: "↑",
+      indicatorColor: "bg-green-500",
     },
     {
       title: "Despesas",
       value: `R$ ${totalExpenses.toFixed(2)}`,
       icon: TrendingDown,
-      color: "text-red-500",
-      bgColor: "bg-red-500/10",
+      gradient: "from-red-500 via-rose-500 to-pink-500",
+      border: "border-red-400",
+      indicator: "↓",
+      indicatorColor: "bg-red-500",
     },
     {
       title: "Total em Dívidas",
       value: `R$ ${totalDebts.toFixed(2)}`,
       icon: CreditCard,
-      color: "text-orange-500",
-      bgColor: "bg-orange-500/10",
+      gradient: "from-orange-500 via-amber-500 to-yellow-500",
+      border: "border-orange-400",
+      indicator: totalDebts > 0 ? "!" : "✓",
+      indicatorColor: totalDebts > 0 ? "bg-orange-500" : "bg-green-500",
     },
   ];
 
@@ -80,19 +89,28 @@ export const FinancialSummaryCards = ({
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {cards.map((card, index) => (
-        <Card key={index} className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">{card.title}</p>
-              <p className="text-2xl font-bold">{card.value}</p>
+      {cards.map((card, index) => {
+        const Icon = card.icon;
+        return (
+          <Card key={index} className={`p-6 rounded-2xl shadow-2xl border-2 ${card.border}`}>
+            <div className="flex items-center justify-between">
+              <CircularIconBadge
+                icon={<Icon className="w-8 h-8" />}
+                gradientColors={card.gradient}
+                size="md"
+                badge={{
+                  content: card.indicator,
+                  color: card.indicatorColor,
+                }}
+              />
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground mb-1">{card.title}</p>
+                <p className="text-2xl font-bold">{card.value}</p>
+              </div>
             </div>
-            <div className={`p-3 rounded-full ${card.bgColor}`}>
-              <card.icon className={`h-6 w-6 ${card.color}`} />
-            </div>
-          </div>
-        </Card>
-      ))}
+          </Card>
+        );
+      })}
     </div>
   );
 };
