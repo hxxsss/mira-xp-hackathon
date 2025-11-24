@@ -4,11 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
-import metaCharacter from "@/assets/characters/meta-character.png";
-import poupadorCharacter from "@/assets/characters/poupador-character.png";
-import gestorCharacter from "@/assets/characters/gestor-character.png";
-import investidorCharacter from "@/assets/characters/investidor-character.png";
-import sonhadorCharacter from "@/assets/characters/sonhador-character.png";
 const Landing = () => {
   const navigate = useNavigate();
   useEffect(() => {
@@ -146,45 +141,6 @@ const Landing = () => {
             </span>
           </div>
 
-          {/* Characters Section */}
-          <div className="relative z-10 w-screen mt-24 -mx-6 overflow-hidden">
-            <div className="w-full">
-              <h2 className="text-4xl font-bold text-center text-gray-900 mb-16 px-6">
-                Conheça nossos personagens
-              </h2>
-              <div className="grid grid-cols-5 gap-0">
-                {/* Character 1 - Blue */}
-                <div className="bg-[#60A5FA] h-[500px] flex flex-col items-center justify-center px-4">
-                  <img src={metaCharacter} alt="Meta" className="w-56 h-56 object-contain mb-6" />
-                  <h3 className="text-white font-bold text-2xl">Meta</h3>
-                </div>
-
-                {/* Character 2 - Purple */}
-                <div className="bg-[#A78BFA] h-[500px] flex flex-col items-center justify-center px-4">
-                  <img src={poupadorCharacter} alt="Poupador" className="w-56 h-56 object-contain mb-6" />
-                  <h3 className="text-white font-bold text-2xl">Poupador</h3>
-                </div>
-
-                {/* Character 3 - Pink */}
-                <div className="bg-[#F472B6] h-[500px] flex flex-col items-center justify-center px-4">
-                  <img src={gestorCharacter} alt="Gestor" className="w-56 h-56 object-contain mb-6" />
-                  <h3 className="text-white font-bold text-2xl">Gestor</h3>
-                </div>
-
-                {/* Character 4 - Orange */}
-                <div className="bg-[#FB923C] h-[500px] flex flex-col items-center justify-center px-4">
-                  <img src={investidorCharacter} alt="Investidor" className="w-56 h-56 object-contain mb-6" />
-                  <h3 className="text-white font-bold text-2xl">Investidor</h3>
-                </div>
-
-                {/* Character 5 - Green */}
-                <div className="bg-[#4ADE80] h-[500px] flex flex-col items-center justify-center px-4">
-                  <img src={sonhadorCharacter} alt="Sonhador" className="w-56 h-56 object-contain mb-6" />
-                  <h3 className="text-white font-bold text-2xl">Sonhador</h3>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
