@@ -360,37 +360,37 @@ const Dashboard = () => {
             </div>
           </div>
           
-          {/* Bottom row on mobile: Stats + Goal */}
+          {/* Bottom row on mobile: Stats only (Goal moved to separate section) */}
           <div className="flex items-center gap-2 sm:gap-4 justify-center sm:justify-end w-full sm:w-auto">
 
-            {/* Enhanced Goal Display */}
+            {/* Enhanced Goal Display - Desktop only */}
             {goal ? (
               <motion.button
                 onClick={() => setGoalModalOpen(true)}
-                className="relative flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 bg-white rounded-xl sm:rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-indigo-200 shadow-sm"
+                className="hidden md:flex relative items-center gap-2 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 bg-white rounded-xl sm:rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-indigo-200 shadow-sm"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {/* Animated Background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity" />
                 
-                {/* Icon - smaller on mobile */}
+                {/* Icon */}
                 <div className="relative">
                   {/* Glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 rounded-full blur-xl sm:blur-2xl opacity-60 animate-pulse" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 rounded-full blur-2xl opacity-60 animate-pulse" />
                   
                   {/* Icon container */}
-                  <div className="relative w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-xl sm:shadow-2xl ring-2 sm:ring-4 ring-white/30">
-                    <Target className="w-5 h-5 sm:w-8 sm:h-8 text-white" strokeWidth={3} />
+                  <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
+                    <Target className="w-8 h-8 text-white" strokeWidth={3} />
                   </div>
                   
                   {/* Percentage badge */}
-                  <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-[10px] sm:text-xs font-black text-white ring-1 sm:ring-2 ring-white shadow-lg">
+                  <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
                     {Math.round(progressPercentage)}%
                   </div>
                 </div>
                 
-                <div className="hidden md:block text-left min-w-[140px] lg:min-w-[180px] relative z-10">
+                <div className="text-left min-w-[140px] lg:min-w-[180px] relative z-10">
                   <div className="text-xs text-gray-900 font-semibold leading-tight">{goal.title}</div>
                   <div className="relative h-2 bg-indigo-100 rounded-full mt-1 overflow-hidden">
                     <motion.div
@@ -419,27 +419,103 @@ const Dashboard = () => {
                   setEditingGoal(null);
                   setGoalFormOpen(true);
                 }}
-                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-indigo-200"
+                className="hidden md:flex items-center gap-2 px-4 py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-indigo-200"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-              <Target className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden md:inline font-medium text-sm">Criar Meta</span>
-            </motion.button>
-          )}
+                <Target className="w-5 h-5" />
+                <span className="font-medium text-sm">Criar Meta</span>
+              </motion.button>
+            )}
 
-          {/* Stats - horizontal on mobile, vertical on desktop */}
-          <div className="flex sm:flex-col gap-2">
-            <div className="px-2 sm:px-3 py-1 sm:py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-              <span className="text-[10px] sm:text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
-            </div>
-            <div className="px-2 sm:px-3 py-1 sm:py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-              <span className="text-[10px] sm:text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
+            {/* Stats - Enhanced for mobile */}
+            <div className="flex sm:flex-col gap-2">
+              <div className="px-3 sm:px-3 py-1.5 sm:py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+                <span className="text-xs sm:text-xs text-indigo-700 font-bold">⚡ {profile?.current_xp || 0} XP</span>
+              </div>
+              <div className="px-3 sm:px-3 py-1.5 sm:py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+                <span className="text-xs sm:text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Mobile Expanded Goal Section - Only visible on mobile */}
+      {goal && (
+        <motion.div 
+          onClick={() => setGoalModalOpen(true)}
+          className="md:hidden mx-4 mb-3 p-4 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-indigo-200 cursor-pointer"
+          whileTap={{ scale: 0.98 }}
+        >
+          {/* Header with Icon and Title */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="relative">
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 rounded-full blur-lg opacity-60 animate-pulse" />
+              
+              {/* Icon container */}
+              <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-xl ring-2 ring-white/30">
+                <Target className="w-7 h-7 text-white" strokeWidth={3} />
+              </div>
+              
+              {/* Percentage badge */}
+              <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-[10px] font-black text-white ring-2 ring-white shadow-lg">
+                {Math.round(progressPercentage)}%
+              </div>
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <div className="text-xs text-gray-500 font-medium mb-0.5">Sua Meta</div>
+              <div className="text-sm font-bold text-gray-900 truncate">{goal.title}</div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="relative h-3 bg-indigo-100 rounded-full overflow-hidden mb-2">
+            <motion.div
+              className="absolute inset-y-0 left-0 rounded-full shadow-md"
+              style={{
+                background: progressPercentage > 80 
+                  ? 'linear-gradient(90deg, hsl(142 76% 36%), hsl(142 70% 50%))' 
+                  : progressPercentage > 40
+                  ? 'linear-gradient(90deg, hsl(45 93% 47%), hsl(45 90% 60%))'
+                  : 'linear-gradient(90deg, hsl(239 84% 67%), hsl(217 91% 60%))'
+              }}
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercentage}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
+          </div>
+
+          {/* Values */}
+          <div className="flex justify-between items-center">
+            <div className="text-xs text-gray-600">
+              <span className="font-semibold text-indigo-600">R$ {(goal.current_amount / 1000).toFixed(1)}k</span>
+              <span className="text-gray-400 mx-1">/</span>
+              <span className="font-medium">R$ {(goal.total_amount / 1000).toFixed(1)}k</span>
+            </div>
+            <div className="text-xs font-bold text-indigo-600">
+              {Math.round(progressPercentage)}% alcançado
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Mobile Create Goal Button - Only visible when no goal exists */}
+      {!goal && (
+        <motion.button
+          onClick={() => {
+            setEditingGoal(null);
+            setGoalFormOpen(true);
+          }}
+          className="md:hidden mx-4 mb-3 flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl text-indigo-600 hover:from-indigo-100 hover:to-blue-100 transition-all border-2 border-indigo-200 border-dashed"
+          whileTap={{ scale: 0.98 }}
+        >
+          <Target className="w-5 h-5" />
+          <span className="font-semibold text-sm">Criar Sua Primeira Meta</span>
+        </motion.button>
+      )}
 
 
       {/* Track Navigation */}
