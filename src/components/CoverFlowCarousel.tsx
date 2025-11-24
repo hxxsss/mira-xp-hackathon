@@ -197,9 +197,14 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                   onClick={() => isCenterCard && !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
                 >
                   <CardContent className="p-0 h-full flex flex-col relative">
-                    {/* Header limpo sem fundo colorido */}
+                    {/* Header com cor da trilha */}
                     <div 
-                      className="relative h-[55%] w-full rounded-t-[35px] flex items-center justify-center overflow-visible bg-background"
+                      className="relative h-[55%] w-full rounded-t-[35px] flex items-center justify-center overflow-visible"
+                      style={{
+                        backgroundColor: color,
+                        borderBottomLeftRadius: '40px',
+                        borderBottomRightRadius: '40px'
+                      }}
                     >
                       {/* Ícone/Ilustração */}
                       <div className="z-10 -translate-y-2 drop-shadow-lg">
