@@ -446,6 +446,9 @@ const Dashboard = () => {
         <motion.div 
           onClick={() => setGoalModalOpen(true)}
           className="md:hidden mx-4 mb-3 p-4 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-indigo-200 cursor-pointer"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           whileTap={{ scale: 0.98 }}
         >
           {/* Header with Icon and Title */}
