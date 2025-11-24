@@ -345,51 +345,51 @@ const Dashboard = () => {
       </div>
 
       {/* HUD - Top Navigation */}
-      <div className="flex-shrink-0 z-50 p-2">
-        <div className="max-w-7xl mx-auto flex justify-between items-center gap-4 relative">
-          {/* Left: Navigation Dock */}
-          <div className="flex items-center">
+      <div className="flex-shrink-0 z-50 p-2 sm:p-4">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4 relative">
+          {/* Top row on mobile: Logo + Navigation */}
+          <div className="flex w-full sm:w-auto justify-between sm:justify-start items-center gap-2">
             <NavigationDock avatarId={profile?.avatar_id} />
-          </div>
-
-          {/* Center: Logo - positioned absolutely */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
-              <Target className="text-white w-5 h-5" />
+            
+            {/* Logo - visible on mobile, repositioned on desktop */}
+            <div className="flex sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2 items-center gap-1 sm:gap-2">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <Target className="text-white w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <span className="text-xl sm:text-2xl font-bold text-gray-900 tracking-wider font-sans">mira</span>
             </div>
-            <span className="text-2xl font-bold text-gray-900 tracking-wider font-sans">mira</span>
           </div>
 
-          {/* Right: Stats + Goal */}
-          <div className="flex items-center gap-4 justify-end">
+          {/* Bottom row on mobile: Stats + Goal */}
+          <div className="flex items-center gap-2 sm:gap-4 justify-center sm:justify-end w-full sm:w-auto">
             {/* Enhanced Goal Display */}
             {goal ? (
               <motion.button
                 onClick={() => setGoalModalOpen(true)}
-                className="relative flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-indigo-200 shadow-sm"
+                className="relative flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 bg-white rounded-xl sm:rounded-2xl text-gray-900 hover:bg-gray-50 transition-all group overflow-hidden border-2 border-indigo-200 shadow-sm"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {/* Animated Background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity" />
                 
-                {/* Ícone MAIOR e mais vibrante */}
+                {/* Icon - smaller on mobile */}
                 <div className="relative">
-                  {/* Glow effect pulsante */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 rounded-full blur-2xl opacity-60 animate-pulse" />
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 rounded-full blur-xl sm:blur-2xl opacity-60 animate-pulse" />
                   
-                  {/* Container do ícone */}
-                  <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-2xl ring-4 ring-white/30">
-                    <Target className="w-8 h-8 text-white" strokeWidth={3} />
+                  {/* Icon container */}
+                  <div className="relative w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-xl sm:shadow-2xl ring-2 sm:ring-4 ring-white/30">
+                    <Target className="w-5 h-5 sm:w-8 sm:h-8 text-white" strokeWidth={3} />
                   </div>
                   
-                  {/* Badge de porcentagem */}
-                  <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-black text-white ring-2 ring-white shadow-lg">
+                  {/* Percentage badge */}
+                  <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-[10px] sm:text-xs font-black text-white ring-1 sm:ring-2 ring-white shadow-lg">
                     {Math.round(progressPercentage)}%
                   </div>
                 </div>
                 
-                <div className="hidden lg:block text-left min-w-[180px] relative z-10">
+                <div className="hidden md:block text-left min-w-[140px] lg:min-w-[180px] relative z-10">
                   <div className="text-xs text-gray-900 font-semibold leading-tight">{goal.title}</div>
                   <div className="relative h-2 bg-indigo-100 rounded-full mt-1 overflow-hidden">
                     <motion.div
@@ -411,7 +411,6 @@ const Dashboard = () => {
                     <span className="font-bold text-indigo-600">{Math.round(progressPercentage)}%</span>
                   </div>
                 </div>
-                <span className="lg:hidden font-bold text-indigo-600 text-lg relative z-10">{Math.round(progressPercentage)}%</span>
               </motion.button>
             ) : (
               <motion.button
@@ -419,22 +418,22 @@ const Dashboard = () => {
                   setEditingGoal(null);
                   setGoalFormOpen(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-indigo-200"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-100 rounded-full text-indigo-600 hover:bg-indigo-200 transition-all border-2 border-indigo-200"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-              <Target className="w-5 h-5" />
-              <span className="hidden lg:inline font-medium">Criar Meta</span>
+              <Target className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden md:inline font-medium text-sm">Criar Meta</span>
             </motion.button>
           )}
 
-          {/* Stats empilhados à direita */}
-          <div className="flex flex-col gap-2">
-            <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-              <span className="text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
+          {/* Stats - horizontal on mobile, vertical on desktop */}
+          <div className="flex sm:flex-col gap-2">
+            <div className="px-2 sm:px-3 py-1 sm:py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+              <span className="text-[10px] sm:text-xs text-indigo-700 font-bold">XP {profile?.current_xp || 0}</span>
             </div>
-            <div className="px-3 py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
-              <span className="text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
+            <div className="px-2 sm:px-3 py-1 sm:py-1.5 bg-indigo-100 rounded-full border-2 border-indigo-200">
+              <span className="text-[10px] sm:text-xs text-indigo-700 font-bold">💎 {profile?.dream_points || 0}</span>
             </div>
           </div>
         </div>
@@ -443,16 +442,16 @@ const Dashboard = () => {
 
 
       {/* Track Navigation */}
-      <div className="flex-shrink-0 z-40">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-center gap-4">
+      <div className="flex-shrink-0 z-40 mt-2 sm:mt-0">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4">
+          <div className="flex justify-center gap-1.5 sm:gap-3 md:gap-4 flex-wrap">
             {tracks.map((track, index) => (
               <motion.button
                 key={track.id}
                 onClick={() => handleTrackChange(index)}
-                className={`relative px-6 py-2 rounded-full font-bold transition-all border-2 ${
+                className={`relative px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all border-2 ${
                   index === currentTrackIndex
-                    ? 'bg-indigo-600 text-white scale-110 shadow-xl border-indigo-600'
+                    ? 'bg-indigo-600 text-white scale-105 sm:scale-110 shadow-xl border-indigo-600'
                     : track.status === 'locked'
                     ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 border-gray-200 opacity-60'
                     : 'bg-white text-gray-700 hover:bg-indigo-50 border-indigo-200 opacity-80'
@@ -460,13 +459,14 @@ const Dashboard = () => {
                 whileHover={{ scale: track.status !== 'locked' ? 1.05 : 1 }}
                 whileTap={{ scale: track.status !== 'locked' ? 0.95 : 1 }}
               >
-                <span className="mr-2">{track.icon}</span>
-                {track.name}
+                <span className="mr-1 sm:mr-2 text-sm sm:text-base">{track.icon}</span>
+                <span className="hidden sm:inline">{track.name}</span>
+                <span className="sm:hidden">{track.name.split(' ')[0]}</span>
                 {track.status === 'locked' && (
-                  <Lock className="inline-block ml-2 w-4 h-4" />
+                  <Lock className="inline-block ml-1 sm:ml-2 w-3 h-3 sm:w-4 sm:h-4" />
                 )}
                 {track.status === 'completed' && (
-                  <span className="ml-2">✓</span>
+                  <span className="ml-1 sm:ml-2">✓</span>
                 )}
               </motion.button>
             ))}
@@ -475,8 +475,8 @@ const Dashboard = () => {
       </div>
 
       {/* Main Stage - Cover Flow Carousel */}
-      <div className="relative z-10 flex-1 flex items-center justify-center py-4 overflow-hidden">
-        <div className="w-full px-4">
+      <div className="relative z-10 flex-1 flex items-center justify-center py-2 sm:py-4 overflow-hidden">
+        <div className="w-full px-2 sm:px-4">
           <AnimatePresence mode="wait" initial={false}>
             {currentTrack && (
               <motion.div
@@ -524,22 +524,22 @@ const Dashboard = () => {
         onClick={() => navigate('/oracle')}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-8 right-8 z-50 group"
+        className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 z-50 group"
       >
-        <div className="absolute inset-0 bg-purple-500/30 rounded-full blur-xl animate-pulse" />
-        <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-2xl ring-4 ring-purple-500/50">
+        <div className="absolute inset-0 bg-purple-500/30 rounded-full blur-lg sm:blur-xl animate-pulse" />
+        <div className="relative w-14 h-14 sm:w-20 sm:h-20 rounded-full overflow-hidden shadow-xl sm:shadow-2xl ring-2 sm:ring-4 ring-purple-500/50">
           <img 
             src={crystalBall} 
             alt="Oráculo"
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-          <Star className="w-3 h-3 text-white" fill="white" />
+        <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+          <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="white" />
         </div>
         
-        {/* Label ao fazer hover */}
-        <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 px-4 py-2 bg-gray-900 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+        {/* Label ao fazer hover - hidden on mobile */}
+        <div className="hidden md:block absolute right-full mr-4 top-1/2 -translate-y-1/2 px-4 py-2 bg-gray-900 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
           <div className="font-bold">Oráculo</div>
           <div className="text-xs text-gray-300">Converse com a IA!</div>
         </div>
@@ -550,23 +550,23 @@ const Dashboard = () => {
         onClick={() => navigate('/pvp')}
         whileHover={{ scale: 1.15, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-8 left-8 z-50 group"
+        className="fixed bottom-4 sm:bottom-8 left-4 sm:left-8 z-50 group"
       >
         {/* Glow Effect pulsante */}
-        <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-purple-600 rounded-3xl blur-xl opacity-75 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-purple-600 rounded-2xl sm:rounded-3xl blur-lg sm:blur-xl opacity-75 animate-pulse" />
         
         {/* Container do botão */}
-        <div className="relative w-24 h-24 rounded-3xl bg-gradient-to-br from-red-500 via-orange-500 to-purple-600 shadow-2xl flex items-center justify-center">
-          <Swords className="w-12 h-12 text-white" strokeWidth={2.5} />
+        <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-red-500 via-orange-500 to-purple-600 shadow-xl sm:shadow-2xl flex items-center justify-center">
+          <Swords className="w-8 h-8 sm:w-12 sm:h-12 text-white" strokeWidth={2.5} />
           
           {/* Badge NOVO */}
-          <div className="absolute -top-2 -right-2 px-2 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-300 text-xs font-black text-gray-900 shadow-lg animate-pulse">
+          <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-300 text-[10px] sm:text-xs font-black text-gray-900 shadow-lg animate-pulse">
             NOVO!
           </div>
         </div>
         
-        {/* Label ao fazer hover */}
-        <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-4 py-2 bg-gray-900 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+        {/* Label ao fazer hover - hidden on mobile */}
+        <div className="hidden md:block absolute left-full ml-4 top-1/2 -translate-y-1/2 px-4 py-2 bg-gray-900 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
           <div className="font-bold">Modo PvP</div>
           <div className="text-xs text-gray-300">Desafie outro jogador!</div>
         </div>
