@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ interface MatchGameProps {
   match: any;
   userId: string;
   onComplete: () => void;
+  onLeave: () => void;
 }
 
 interface RoundResult {
@@ -24,8 +26,9 @@ interface RoundResult {
   opponentPoints: number;
 }
 
-export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
+export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [startTime, setStartTime] = useState(Date.now());
@@ -45,31 +48,12 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const progress = (currentQuestion / totalQuestions) * 100;
   const opponentUserId = match.host_user_id === userId ? match.opponent_user_id : match.host_user_id;
 
-  const handleLeaveMatch = async () => {
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from("pvp_matches")
-        .update({ status: "abandoned" })
-        .eq("id", match.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Você saiu da partida",
-        description: "A vitória foi concedida ao seu oponente",
-      });
-      onComplete();
-    } catch (error) {
-      console.error("Erro ao sair da partida:", error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível sair da partida",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleLeaveMatch = () => {
+    // Limpa timers locais e delega a saída para o container
+    if (timerRef.current) clearInterval(timerRef.current);
+    onLeave?.();
+    // Força navegação imediata para a tela inicial do PvP
+    navigate("/pvp");
   };
 
   // Validation: ensure we have all necessary data
