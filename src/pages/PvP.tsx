@@ -96,7 +96,8 @@ const PvP = () => {
               setCurrentMatch(newMatch);
               
               // Notificações apropriadas
-              if (newMatch.status === 'ready_check' && currentMatch.status !== 'ready_check') {
+              const opponentJustJoined = !currentMatch.opponent_user_id && newMatch.opponent_user_id;
+              if (opponentJustJoined && newMatch.status === 'waiting') {
                 toast({
                   title: "Oponente encontrado!",
                   description: "Preparem-se para a batalha!",
@@ -206,32 +207,7 @@ const PvP = () => {
   };
 
   const handleMatchJoined = async (match: Match) => {
-    // O oponente que acabou de entrar SEMPRE transiciona para ready_check
-    if (match.opponent_user_id && match.status === 'waiting') {
-      const { data: updatedMatch, error } = await supabase
-        .from('pvp_matches')
-        .update({ status: 'ready_check' })
-        .eq('id', match.id)
-        .eq('status', 'waiting') // Garantir que ainda está em waiting (evitar duplicação)
-        .select()
-        .single();
-      
-      if (updatedMatch && !error) {
-        setCurrentMatch(updatedMatch as Match);
-      } else {
-        // Se falhou, buscar estado atual (pode ter sido atualizado por outro)
-        const { data: currentState } = await supabase
-          .from('pvp_matches')
-          .select('*')
-          .eq('id', match.id)
-          .single();
-        if (currentState) {
-          setCurrentMatch(currentState as Match);
-        }
-      }
-    } else {
-      setCurrentMatch(match);
-    }
+    setCurrentMatch(match);
     setShowJoinDialog(false);
     setShowQuickMatchDialog(false);
   };
@@ -246,8 +222,7 @@ const PvP = () => {
           .from('pvp_matches')
           .delete()
           .eq('id', currentMatch.id);
-      } else if (currentMatch.match_mode === '1v1' && 
-                 (currentMatch.status === 'ready_check' || currentMatch.status === 'in_progress')) {
+      } else if (currentMatch.match_mode === '1v1' && currentMatch.status === 'in_progress') {
         // 1v1: Marcar como abandonado e dar vitória ao outro
         const winnerId = currentMatch.host_user_id === userId 
           ? currentMatch.opponent_user_id 
@@ -302,30 +277,7 @@ const PvP = () => {
       
       if (data) {
         const match = data as Match;
-        // Transicionar para ready_check se necessário
-        if (match.opponent_user_id && match.status === 'waiting') {
-          const { data: updatedMatch, error } = await supabase
-            .from('pvp_matches')
-            .update({ status: 'ready_check' })
-            .eq('id', match.id)
-            .eq('status', 'waiting')
-            .select()
-            .single();
-          
-          if (updatedMatch && !error) {
-            setCurrentMatch(updatedMatch as Match);
-          } else {
-            // Refetch estado atual se a atualização falhou
-            const { data: currentState } = await supabase
-              .from('pvp_matches')
-              .select('*')
-              .eq('id', match.id)
-              .single();
-            if (currentState) setCurrentMatch(currentState as Match);
-          }
-        } else {
-          setCurrentMatch(match);
-        }
+        setCurrentMatch(match);
       }
     } else if (type === 'group' && groupId) {
       // Reload match and set group for group mode
@@ -417,16 +369,6 @@ const PvP = () => {
       );
     }
 
-    // Ready check screen (both players confirming)
-    if (currentMatch.status === 'ready_check') {
-      return (
-        <ReadyScreen
-          match={currentMatch}
-          userId={userId}
-          onBothReady={() => {}}
-        />
-      );
-    }
 
     // In game
     if (currentMatch.status === 'in_progress') {
