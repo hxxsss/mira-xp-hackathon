@@ -46,6 +46,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const opponentUserId = match.host_user_id === userId ? match.opponent_user_id : match.host_user_id;
 
   const handleLeaveMatch = async () => {
+    setLoading(true);
     try {
       const { error } = await supabase
         .from("pvp_matches")
@@ -66,6 +67,8 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
         description: "Não foi possível sair da partida",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -643,10 +646,11 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
               variant="ghost"
               size="sm"
               onClick={handleLeaveMatch}
-              className="text-red-500 hover:text-red-600 hover:bg-red-50 gap-2"
+              disabled={loading}
+              className="text-red-500 hover:text-red-600 hover:bg-red-50 gap-2 disabled:opacity-50"
             >
               <LogOut className="h-4 w-4" />
-              Sair
+              {loading ? "Saindo..." : "Sair"}
             </Button>
 
             {/* Circular Timer */}
