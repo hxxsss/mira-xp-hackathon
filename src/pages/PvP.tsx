@@ -68,17 +68,31 @@ const PvP = () => {
           table: 'pvp_matches',
           filter: `id=eq.${currentMatch.id}`
         },
-        (payload) => {
+        async (payload) => {
           console.log('Match update:', payload);
           const updatedMatch = payload.new as Match;
-          setCurrentMatch(updatedMatch);
 
-          // Quando a partida iniciar, ambos os jogadores devem ver
+          // Quando a partida iniciar, recarregar dados completos
           if (updatedMatch.status === 'in_progress' && currentMatch.status === 'waiting') {
+            // Refetch complete match data to ensure host has all fields
+            const { data: fullMatch } = await supabase
+              .from('pvp_matches')
+              .select('*')
+              .eq('id', updatedMatch.id)
+              .single();
+            
+            if (fullMatch) {
+              setCurrentMatch(fullMatch as Match);
+            } else {
+              setCurrentMatch(updatedMatch);
+            }
+
             toast({
               title: "Partida iniciada!",
               description: "A batalha começou. Boa sorte!",
             });
+          } else {
+            setCurrentMatch(updatedMatch);
           }
 
           if (updatedMatch.status === 'completed') {

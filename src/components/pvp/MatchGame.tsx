@@ -43,6 +43,21 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const progress = (currentQuestion / totalQuestions) * 100;
   const opponentUserId = match.host_user_id === userId ? match.opponent_user_id : match.host_user_id;
 
+  // Protection against empty questions_data
+  if (totalQuestions === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-lg text-center">
+          <CardContent className="pt-6">
+            <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
+            <h2 className="text-2xl font-bold mb-2">Carregando perguntas...</h2>
+            <p className="text-muted-foreground">Aguarde enquanto preparamos a partida.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Timer de 90 segundos
   useEffect(() => {
     setStartTime(Date.now());
