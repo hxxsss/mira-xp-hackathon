@@ -126,8 +126,6 @@ export const UniversalJoinDialog = ({ open, onOpenChange, onJoinSuccess, userId 
           .from("pvp_matches")
           .update({
             opponent_user_id: userId,
-            status: "in_progress",
-            started_at: new Date().toISOString()
           })
           .eq("id", foundMatch.id);
 
