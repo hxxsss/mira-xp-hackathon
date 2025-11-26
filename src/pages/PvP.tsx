@@ -233,6 +233,7 @@ const PvP = () => {
       setCurrentMatch(match);
     }
     setShowJoinDialog(false);
+    setShowQuickMatchDialog(false);
   };
 
   const handleLeaveMatch = async () => {

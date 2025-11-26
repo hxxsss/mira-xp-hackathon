@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 const PREDEFINED_CATEGORIES = [
@@ -147,8 +148,8 @@ export const TransactionForm = ({
             <div className="grid grid-cols-2 gap-2 mt-2">
               <Button
                 type="button"
-                variant={formData.type === "income" ? "default" : "outline"}
-                onClick={() => setFormData({ ...formData, type: "income" })}
+                variant={formData.type === "deposit" ? "default" : "outline"}
+                onClick={() => setFormData({ ...formData, type: "deposit" })}
               >
                 Receita
               </Button>
@@ -193,20 +194,25 @@ export const TransactionForm = ({
 
           <div>
             <Label>Categoria</Label>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {PREDEFINED_CATEGORIES.map((cat) => (
-                <Button
-                  key={cat.name}
-                  type="button"
-                  variant={formData.category === cat.name ? "default" : "outline"}
-                  onClick={() => handleCategorySelect(cat.name)}
-                  className="justify-start"
-                >
-                  <span className="mr-2">{cat.icon}</span>
-                  {cat.name}
-                </Button>
-              ))}
-            </div>
+            <Select 
+              value={formData.category} 
+              onValueChange={handleCategorySelect}
+            >
+              <SelectTrigger className="w-full mt-2">
+                <SelectValue placeholder="Selecione uma categoria..." />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-gray-800 z-50">
+                {PREDEFINED_CATEGORIES.map((cat) => (
+                  <SelectItem key={cat.name} value={cat.name}>
+                    <span className="flex items-center gap-2">
+                      <span>{cat.icon}</span>
+                      <span className="text-gray-900 dark:text-gray-100">{cat.name}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
             {showCustomCategory && (
               <Input
                 className="mt-2"
