@@ -256,7 +256,7 @@ const PvP = () => {
         await supabase
           .from('pvp_matches')
           .update({ 
-            status: 'abandoned',
+            status: 'completed',
             winner_user_id: winnerId,
             completed_at: new Date().toISOString()
           })
@@ -436,6 +436,7 @@ const PvP = () => {
             match={currentMatch}
             userId={userId}
             onComplete={handleGameComplete}
+            onLeave={handleLeaveMatch}
           />
         </div>
       );
