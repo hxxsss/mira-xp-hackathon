@@ -63,7 +63,7 @@ const PvP = () => {
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'pvp_matches',
           filter: `id=eq.${currentMatch.id}`
@@ -72,6 +72,14 @@ const PvP = () => {
           console.log('Match update:', payload);
           const updatedMatch = payload.new as Match;
           setCurrentMatch(updatedMatch);
+
+          // Quando a partida iniciar, ambos os jogadores devem ver
+          if (updatedMatch.status === 'in_progress' && currentMatch.status === 'waiting') {
+            toast({
+              title: "Partida iniciada!",
+              description: "A batalha começou. Boa sorte!",
+            });
+          }
 
           if (updatedMatch.status === 'completed') {
             handleMatchCompleted(updatedMatch);
