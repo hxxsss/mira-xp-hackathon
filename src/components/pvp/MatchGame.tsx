@@ -37,6 +37,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const [showRoundResult, setShowRoundResult] = useState(false);
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasSubmittedRef = useRef(false); // Evitar race conditions
 
   const questions = match.questions_data || [];
   const totalQuestions = questions.length;
@@ -60,6 +61,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
 
   // Timer de 90 segundos
   useEffect(() => {
+    hasSubmittedRef.current = false; // Resetar ao mudar de questão
     setStartTime(Date.now());
     setTimeRemaining(90);
     setMyAnswered(false);
@@ -82,10 +84,10 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     };
   }, [currentQuestion]);
 
-  // Listener para respostas do oponente
+  // Listener para respostas (minha ou do oponente)
   useEffect(() => {
     const channel = supabase
-      .channel('match-answers')
+      .channel(`match-answers-${match.id}-${currentQuestion}`)
       .on(
         'postgres_changes',
         {
@@ -95,9 +97,12 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
           filter: `match_id=eq.${match.id}`,
         },
         (payload) => {
-          if (payload.new.user_id === opponentUserId && payload.new.question_index === currentQuestion) {
-            setOpponentAnswered(true);
-            checkBothAnswered(payload.new);
+          if (payload.new.question_index === currentQuestion) {
+            if (payload.new.user_id === opponentUserId) {
+              setOpponentAnswered(true);
+            }
+            // Verificar se ambos responderam (independente de quem respondeu)
+            checkBothAnswered();
           }
         }
       )
@@ -108,42 +113,66 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     };
   }, [match.id, currentQuestion, opponentUserId]);
 
+  const showRoundResultScreen = (myAnswerData: any, opponentAnswer: any) => {
+    const result: RoundResult = {
+      questionIndex: currentQuestion,
+      myAnswer: myAnswerData?.selected_answer ?? -1,
+      myCorrect: myAnswerData?.is_correct ?? false,
+      myTime: myAnswerData?.time_taken_seconds ?? 90,
+      myPoints: myAnswerData?.points_earned ?? 0,
+      opponentCorrect: opponentAnswer?.is_correct ?? false,
+      opponentTime: opponentAnswer?.time_taken_seconds ?? 90,
+      opponentPoints: opponentAnswer?.points_earned ?? 0,
+    };
+    
+    setRoundResult(result);
+    setShowRoundResult(true);
+  };
+
   const handleTimeout = async () => {
     if (timerRef.current) clearInterval(timerRef.current);
     
-    if (!myAnswered) {
-      // Auto-submit com resposta anulada
+    // Se eu não respondi, enviar resposta anulada
+    if (!hasSubmittedRef.current) {
+      hasSubmittedRef.current = true;
       await submitAnswer(null, 90);
+      
+      toast({
+        title: "⏰ Tempo esgotado!",
+        description: "Sua resposta foi anulada.",
+        variant: "destructive",
+      });
     }
-  };
-
-  const checkBothAnswered = async (opponentAnswer: any) => {
-    if (!myAnswered) return;
-
-    // Buscar minha resposta
-    const { data: myAnswerData } = await supabase
+    
+    // Buscar respostas de ambos
+    const { data: bothAnswers } = await supabase
       .from('pvp_match_answers')
       .select('*')
       .eq('match_id', match.id)
-      .eq('user_id', userId)
-      .eq('question_index', currentQuestion)
-      .single();
+      .eq('question_index', currentQuestion);
+    
+    const myAnswerData = bothAnswers?.find(a => a.user_id === userId);
+    const opponentAnswer = bothAnswers?.find(a => a.user_id === opponentUserId);
+    
+    // Mostrar resultado (mesmo que um ou ambos não tenham respondido)
+    showRoundResultScreen(myAnswerData, opponentAnswer);
+  };
 
+  const checkBothAnswered = async () => {
+    // Buscar todas as respostas desta questão
+    const { data: bothAnswers } = await supabase
+      .from('pvp_match_answers')
+      .select('*')
+      .eq('match_id', match.id)
+      .eq('question_index', currentQuestion);
+    
+    const myAnswerData = bothAnswers?.find(a => a.user_id === userId);
+    const opponentAnswer = bothAnswers?.find(a => a.user_id === opponentUserId);
+    
+    // Se AMBOS responderam, parar timer e mostrar resultado
     if (myAnswerData && opponentAnswer) {
-      const result: RoundResult = {
-        questionIndex: currentQuestion,
-        myAnswer: myAnswerData.selected_answer,
-        myCorrect: myAnswerData.is_correct,
-        myTime: myAnswerData.time_taken_seconds,
-        myPoints: myAnswerData.points_earned,
-        opponentCorrect: opponentAnswer.is_correct,
-        opponentTime: opponentAnswer.time_taken_seconds,
-        opponentPoints: opponentAnswer.points_earned,
-      };
-
-      setRoundResult(result);
-      setShowRoundResult(true);
       if (timerRef.current) clearInterval(timerRef.current);
+      showRoundResultScreen(myAnswerData, opponentAnswer);
     }
   };
 
@@ -181,17 +210,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
       setMyAnswered(true);
 
       // Verificar se oponente já respondeu
-      const { data: opponentAnswer } = await supabase
-        .from('pvp_match_answers')
-        .select('*')
-        .eq('match_id', match.id)
-        .eq('user_id', opponentUserId)
-        .eq('question_index', currentQuestion)
-        .maybeSingle();
-
-      if (opponentAnswer) {
-        checkBothAnswered(opponentAnswer);
-      }
+      checkBothAnswered();
     } catch (error: any) {
       console.error('Error submitting answer:', error);
       toast({
@@ -203,8 +222,9 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   };
 
   const handleAnswer = async () => {
-    if (selectedAnswer === null || myAnswered) return;
+    if (selectedAnswer === null || myAnswered || hasSubmittedRef.current) return;
     
+    hasSubmittedRef.current = true;
     setLoading(true);
     const timeSeconds = (Date.now() - startTime) / 1000;
     await submitAnswer(selectedAnswer, timeSeconds);
@@ -266,7 +286,9 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                 <h3 className="font-bold text-center mb-3">Você</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-center gap-2">
-                    {roundResult.myCorrect ? (
+                    {roundResult.myTime >= 90 || roundResult.myAnswer === -1 ? (
+                      <span className="text-orange-600 font-semibold">⏰ Não respondeu</span>
+                    ) : roundResult.myCorrect ? (
                       <span className="text-green-600 font-semibold">✅ Correto</span>
                     ) : (
                       <span className="text-red-600 font-semibold">❌ Incorreto</span>
@@ -288,7 +310,9 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                 <h3 className="font-bold text-center mb-3">Oponente</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-center gap-2">
-                    {roundResult.opponentCorrect ? (
+                    {roundResult.opponentTime >= 90 ? (
+                      <span className="text-orange-600 font-semibold">⏰ Não respondeu</span>
+                    ) : roundResult.opponentCorrect ? (
                       <span className="text-green-600 font-semibold">✅ Correto</span>
                     ) : (
                       <span className="text-red-600 font-semibold">❌ Incorreto</span>
