@@ -19,46 +19,9 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
   const [countdown, setCountdown] = useState<number | null>(null);
   const [myReady, setMyReady] = useState(isHost ? match.host_ready : match.opponent_ready);
 
-  useEffect(() => {
-    // Verificar se já estava pronto ao montar
-    const myReadyField = isHost ? match.host_ready : match.opponent_ready;
-    if (myReadyField) {
-      setMyReady(true);
-    }
-    
-    // Verificar se ambos já estão prontos
-    if (match.host_ready && match.opponent_ready && countdown === null) {
-      startCountdown();
-    }
-  }, []);
-
-  useEffect(() => {
-    const channel = supabase
-      .channel(`ready-${match.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'pvp_matches',
-          filter: `id=eq.${match.id}`
-        },
-        (payload) => {
-          const updated = payload.new as any;
-          setHostReady(updated.host_ready);
-          setOpponentReady(updated.opponent_ready);
-
-          if (updated.host_ready && updated.opponent_ready && countdown === null) {
-            startCountdown();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [match.id, countdown]);
+  
+  // Estado de prontidão e início do jogo agora é coordenado via banco de dados
+  // O status da partida é usado como "fonte da verdade" para sincronizar o início entre os dois jogadores.
 
   const startCountdown = () => {
     let count = 3;
@@ -86,7 +49,8 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
           status: 'in_progress',
           started_at: new Date().toISOString()
         })
-        .eq('id', match.id);
+        .eq('id', match.id)
+        .eq('status', 'starting');
     }
     onBothReady();
   };
@@ -105,6 +69,41 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
       description: "Aguardando oponente...",
     });
   };
+
+  // Mantém myReady em sincronia com o estado vindo do backend
+  useEffect(() => {
+    const myReadyField = isHost ? match.host_ready : match.opponent_ready;
+    setMyReady(!!myReadyField);
+  }, [isHost, match.host_ready, match.opponent_ready, match.id]);
+
+  // Coordena transição para "starting" e início da contagem via status da partida
+  useEffect(() => {
+    setHostReady(!!match.host_ready);
+    setOpponentReady(!!match.opponent_ready);
+
+    const bothReady = !!match.host_ready && !!match.opponent_ready;
+
+    // Apenas o host promove o estado para "starting" no banco
+    if (bothReady && match.status === 'waiting' && isHost) {
+      console.log('[ReadyScreen] Both players ready, host setting status=starting', match.id);
+      supabase
+        .from('pvp_matches')
+        .update({ status: 'starting' })
+        .eq('id', match.id)
+        .eq('status', 'waiting')
+        .then(({ error }) => {
+          if (error) {
+            console.error('[ReadyScreen] Error updating match to starting', error);
+          }
+        });
+    }
+
+    // Quando o status muda para "starting", ambos os clientes iniciam a contagem localmente
+    if (match.status === 'starting' && countdown === null) {
+      console.log('[ReadyScreen] Match status is starting, triggering countdown', match.id);
+      startCountdown();
+    }
+  }, [match.host_ready, match.opponent_ready, match.status, isHost, match.id, countdown]);
 
   return (
     <div className="min-h-screen battle-gradient relative overflow-hidden flex items-center justify-center">
