@@ -355,7 +355,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
             >
-              <CardTitle className="text-white text-3xl mb-2">
+              <CardTitle className="text-gray-800 text-3xl mb-2">
                 🎯 Rodada {currentQuestion + 1} - Resultado
               </CardTitle>
               {/* Auto-advance progress bar */}
@@ -365,7 +365,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                 transition={{ duration: 4, ease: "linear" }}
                 className="h-1 bg-primary rounded-full mt-4"
               />
-              <p className="text-white/60 text-sm mt-2">
+              <p className="text-gray-600 text-sm mt-2">
                 Próxima questão em instantes... (ou clique para pular)
               </p>
             </motion.div>
@@ -511,10 +511,10 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
               transition={{ delay: 0.8 }}
               className="glass-card p-6 border-2 border-primary/30"
             >
-              <h3 className="font-bold text-white text-center mb-4 text-xl">📊 Placar Atual</h3>
+              <h3 className="font-bold text-gray-800 text-center mb-4 text-xl">📊 Placar Atual</h3>
               <div className="flex justify-around items-center">
                 <div className="text-center">
-                  <p className="text-white/70 text-sm mb-1">Você</p>
+                  <p className="text-gray-600 text-sm mb-1">Você</p>
                   <motion.p
                     key={myTotalScore}
                     initial={{ scale: 1.5 }}
@@ -524,9 +524,9 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                     {myTotalScore}
                   </motion.p>
                 </div>
-                <div className="text-white/30 text-5xl font-bold px-8">—</div>
+                <div className="text-gray-400 text-5xl font-bold px-8">—</div>
                 <div className="text-center">
-                  <p className="text-white/70 text-sm mb-1">Oponente</p>
+                  <p className="text-gray-600 text-sm mb-1">Oponente</p>
                   <motion.p
                     key={opponentTotalScore}
                     initial={{ scale: 1.5 }}
@@ -582,11 +582,11 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="px-4 py-2 bg-primary/20 rounded-full border-2 border-primary/50">
-                <span className="text-white font-bold">
+                <span className="text-gray-800 font-bold">
                   ⚡ {currentQuestion + 1}/{totalQuestions}
                 </span>
               </div>
-              <div className="text-white/60 text-sm">
+              <div className="text-gray-600 text-sm">
                 Questão {currentQuestion + 1}
               </div>
             </div>
@@ -661,9 +661,9 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                 </div>
                 <div className="flex-1">
                   <p className="text-white/60 text-sm mb-2">📚 Educação Financeira</p>
-                  <CardTitle className="text-2xl text-white leading-relaxed">
-                    {question.question}
-                  </CardTitle>
+            <CardTitle className="text-2xl text-gray-800 leading-relaxed">
+              {question.question}
+            </CardTitle>
                 </div>
               </div>
             </div>
