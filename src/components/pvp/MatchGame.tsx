@@ -252,6 +252,20 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const myTotalScore = answers.reduce((sum, a) => sum + a.points, 0);
+  const opponentTotalScore = 0; // Não temos acesso aos dados do oponente localmente
+
+  // Auto-advance after showing result
+  useEffect(() => {
+    if (showRoundResult && roundResult) {
+      const autoAdvanceTimer = setTimeout(() => {
+        handleNextQuestion();
+      }, 4000);
+      
+      return () => clearTimeout(autoAdvanceTimer);
+    }
+  }, [showRoundResult, roundResult]);
+
   if (currentQuestion >= totalQuestions) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
@@ -274,68 +288,229 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   // Tela de resultado da rodada
   if (showRoundResult && roundResult) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-2xl">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl">Resultado da Questão {currentQuestion + 1}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Meu resultado */}
-              <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
-                <h3 className="font-bold text-center mb-3">Você</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    {roundResult.myTime >= 90 || roundResult.myAnswer === -1 ? (
-                      <span className="text-orange-600 font-semibold">⏰ Não respondeu</span>
-                    ) : roundResult.myCorrect ? (
-                      <span className="text-green-600 font-semibold">✅ Correto</span>
-                    ) : (
-                      <span className="text-red-600 font-semibold">❌ Incorreto</span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    <span>{formatTime(roundResult.myTime)}</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Zap className="h-4 w-4 text-primary" />
-                    <span className="font-bold">{roundResult.myPoints} pts</span>
-                  </div>
-                </div>
-              </div>
+      <div className="min-h-screen battle-gradient p-4 flex items-center justify-center relative overflow-hidden">
+        {/* Confetti effect for correct answers */}
+        {roundResult.myCorrect && (
+          <div className="absolute inset-0 pointer-events-none">
+            {[...Array(50)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 bg-yellow-400 rounded-full"
+                initial={{ 
+                  x: '50%',
+                  y: '50%',
+                  scale: 0
+                }}
+                animate={{
+                  x: `${Math.random() * 100}%`,
+                  y: `${Math.random() * 100}%`,
+                  scale: [0, 1, 0],
+                  opacity: [0, 1, 0]
+                }}
+                transition={{
+                  duration: Math.random() * 2 + 1,
+                  ease: "easeOut"
+                }}
+              />
+            ))}
+          </div>
+        )}
 
-              {/* Resultado do oponente */}
-              <div className="p-4 bg-muted rounded-lg border-2 border-border">
-                <h3 className="font-bold text-center mb-3">Oponente</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    {roundResult.opponentTime >= 90 ? (
-                      <span className="text-orange-600 font-semibold">⏰ Não respondeu</span>
-                    ) : roundResult.opponentCorrect ? (
-                      <span className="text-green-600 font-semibold">✅ Correto</span>
-                    ) : (
-                      <span className="text-red-600 font-semibold">❌ Incorreto</span>
+        <Card className="w-full max-w-3xl glass-card relative">
+          <CardHeader className="text-center">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+            >
+              <CardTitle className="text-white text-3xl mb-2">
+                🎯 Rodada {currentQuestion + 1} - Resultado
+              </CardTitle>
+              {/* Auto-advance progress bar */}
+              <motion.div
+                initial={{ width: '100%' }}
+                animate={{ width: '0%' }}
+                transition={{ duration: 4, ease: "linear" }}
+                className="h-1 bg-primary rounded-full mt-4"
+              />
+              <p className="text-white/60 text-sm mt-2">
+                Próxima questão em instantes... (ou clique para pular)
+              </p>
+            </motion.div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* VS Comparison */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Você */}
+              <motion.div
+                initial={{ x: -50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className={`p-6 rounded-xl border-4 ${
+                  roundResult.myCorrect ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'
+                } relative overflow-hidden`}
+              >
+                {roundResult.myCorrect && (
+                  <motion.div
+                    animate={{ scale: [0, 1.5, 1] }}
+                    className="absolute top-2 right-2"
+                  >
+                    ✨
+                  </motion.div>
+                )}
+                <div className="text-center space-y-3">
+                  <div className="inline-block px-4 py-1 bg-primary rounded-full">
+                    <span className="text-white font-bold">VOCÊ</span>
+                  </div>
+                  
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.4, type: "spring" }}
+                    className={`text-5xl mx-auto w-20 h-20 rounded-full flex items-center justify-center ${
+                      roundResult.myCorrect ? 'bg-green-500' : 'bg-red-500'
+                    }`}
+                  >
+                    {roundResult.myAnswer === -1 ? '⏰' : roundResult.myCorrect ? '✓' : '✗'}
+                  </motion.div>
+
+                  <div className="text-white space-y-1">
+                    <p className="font-semibold">
+                      {roundResult.myAnswer === -1 
+                        ? 'Tempo esgotado' 
+                        : roundResult.myCorrect ? 'Correto!' : 'Incorreto'}
+                    </p>
+                    {roundResult.myTime < 90 && (
+                      <p className="text-sm text-white/70">
+                        ⏱ {formatTime(roundResult.myTime)}
+                      </p>
                     )}
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    <span>{formatTime(roundResult.opponentTime)}</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Zap className="h-4 w-4 text-primary" />
-                    <span className="font-bold">{roundResult.opponentPoints} pts</span>
+                    <motion.p
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.6 }}
+                      className="text-3xl font-bold text-yellow-400"
+                    >
+                      +{roundResult.myPoints}
+                    </motion.p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
+
+              {/* Oponente */}
+              <motion.div
+                initial={{ x: 50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className={`p-6 rounded-xl border-4 ${
+                  roundResult.opponentCorrect ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'
+                } relative overflow-hidden`}
+              >
+                {roundResult.opponentCorrect && (
+                  <motion.div
+                    animate={{ scale: [0, 1.5, 1] }}
+                    className="absolute top-2 right-2"
+                  >
+                    ✨
+                  </motion.div>
+                )}
+                <div className="text-center space-y-3">
+                  <div className="inline-block px-4 py-1 bg-secondary rounded-full">
+                    <span className="text-white font-bold">OPONENTE</span>
+                  </div>
+                  
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.4, type: "spring" }}
+                    className={`text-5xl mx-auto w-20 h-20 rounded-full flex items-center justify-center ${
+                      roundResult.opponentCorrect ? 'bg-green-500' : 'bg-red-500'
+                    }`}
+                  >
+                    {roundResult.opponentTime >= 90 ? '⏰' : roundResult.opponentCorrect ? '✓' : '✗'}
+                  </motion.div>
+
+                  <div className="text-white space-y-1">
+                    <p className="font-semibold">
+                      {roundResult.opponentTime >= 90 
+                        ? 'Tempo esgotado' 
+                        : roundResult.opponentCorrect ? 'Correto!' : 'Incorreto'}
+                    </p>
+                    {roundResult.opponentTime < 90 && (
+                      <p className="text-sm text-white/70">
+                        ⏱ {formatTime(roundResult.opponentTime)}
+                      </p>
+                    )}
+                    <motion.p
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.6 }}
+                      className="text-3xl font-bold text-yellow-400"
+                    >
+                      +{roundResult.opponentPoints}
+                    </motion.p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
+
+            {/* VS Divider */}
+            <div className="flex items-center justify-center">
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ 
+                  duration: 0.5,
+                  repeat: Infinity,
+                  repeatDelay: 1
+                }}
+                className="text-5xl font-bold text-white/20"
+              >
+                VS
+              </motion.div>
+            </div>
+
+            {/* Placar atualizado */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="glass-card p-6 border-2 border-primary/30"
+            >
+              <h3 className="font-bold text-white text-center mb-4 text-xl">📊 Placar Atual</h3>
+              <div className="flex justify-around items-center">
+                <div className="text-center">
+                  <p className="text-white/70 text-sm mb-1">Você</p>
+                  <motion.p
+                    key={myTotalScore}
+                    initial={{ scale: 1.5 }}
+                    animate={{ scale: 1 }}
+                    className="text-4xl font-bold text-primary"
+                  >
+                    {myTotalScore}
+                  </motion.p>
+                </div>
+                <div className="text-white/30 text-5xl font-bold px-8">—</div>
+                <div className="text-center">
+                  <p className="text-white/70 text-sm mb-1">Oponente</p>
+                  <motion.p
+                    key={opponentTotalScore}
+                    initial={{ scale: 1.5 }}
+                    animate={{ scale: 1 }}
+                    className="text-4xl font-bold text-secondary"
+                  >
+                    {opponentTotalScore || 0}
+                  </motion.p>
+                </div>
+              </div>
+            </motion.div>
 
             <Button
               onClick={handleNextQuestion}
-              className="w-full"
-              size="lg"
+              className="w-full arcade-button text-xl py-6 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
             >
-              {currentQuestion < totalQuestions - 1 ? "Próxima Questão →" : "Ver Resultado Final"}
+              {currentQuestion < totalQuestions - 1 ? '⚡ Próxima Questão' : '🏆 Ver Resultado Final'}
             </Button>
           </CardContent>
         </Card>
@@ -344,79 +519,211 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background p-4">
-      <div className="max-w-3xl mx-auto py-8">
-        <div className="mb-6 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Pergunta {currentQuestion + 1} de {totalQuestions}</span>
-            <span className="flex items-center gap-1">
-              <Zap className="h-4 w-4 text-primary" />
-              {answers.reduce((sum, a) => sum + a.points, 0)} pts
-            </span>
-          </div>
-          <Progress value={progress} className="h-2" />
-          
-          {/* Timer */}
-          <div className={`flex items-center justify-center gap-2 text-lg font-bold ${timerColor}`}>
-            <Clock className="h-5 w-5" />
-            <span>{formatTime(timeRemaining)}</span>
-          </div>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated background particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-purple-400/30 rounded-full"
+            animate={{
+              y: [-20, -1000],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: Math.random() * 5 + 5,
+              repeat: Infinity,
+              delay: Math.random() * 3
+            }}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: '100%'
+            }}
+          />
+        ))}
+      </div>
 
-          {/* Indicador de oponente */}
-          {opponentAnswered && !myAnswered && (
-            <div className="flex items-center justify-center gap-2 text-sm text-green-600 bg-green-50 dark:bg-green-950 p-2 rounded-lg animate-pulse">
-              <CheckCircle2 className="h-4 w-4" />
-              <span>Oponente já respondeu!</span>
+      <Card className="w-full max-w-3xl glass-card relative z-10">
+        <CardHeader>
+          {/* Timer and Progress */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="px-4 py-2 bg-primary/20 rounded-full border-2 border-primary/50">
+                <span className="text-white font-bold">
+                  ⚡ {currentQuestion + 1}/{totalQuestions}
+                </span>
+              </div>
+              <div className="text-white/60 text-sm">
+                Questão {currentQuestion + 1}
+              </div>
             </div>
-          )}
 
-          {myAnswered && !opponentAnswered && (
-            <div className="flex items-center justify-center gap-2 text-sm text-blue-600 bg-blue-50 dark:bg-blue-950 p-2 rounded-lg">
-              <Clock className="h-4 w-4" />
-              <span>Aguardando oponente...</span>
+            {/* Circular Timer */}
+            <div className="relative">
+              <svg className="transform -rotate-90" width="80" height="80">
+                <circle
+                  cx="40"
+                  cy="40"
+                  r="32"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.1)"
+                  strokeWidth="6"
+                />
+                <motion.circle
+                  cx="40"
+                  cy="40"
+                  r="32"
+                  fill="none"
+                  stroke={
+                    timeRemaining > 30 ? '#22c55e' : 
+                    timeRemaining > 10 ? '#eab308' : 
+                    '#ef4444'
+                  }
+                  strokeWidth="6"
+                  strokeDasharray={`${2 * Math.PI * 32}`}
+                  strokeDashoffset={`${2 * Math.PI * 32 * (1 - timeRemaining / 90)}`}
+                  strokeLinecap="round"
+                  animate={timeRemaining < 10 ? { 
+                    scale: [1, 1.1, 1],
+                    opacity: [1, 0.8, 1]
+                  } : {}}
+                  transition={timeRemaining < 10 ? { 
+                    duration: 1, 
+                    repeat: Infinity 
+                  } : {}}
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className={`text-2xl font-bold ${
+                  timeRemaining > 30 ? 'text-green-400' : 
+                  timeRemaining > 10 ? 'text-yellow-400' : 
+                  'text-red-400'
+                }`}>
+                  {timeRemaining}
+                </span>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
 
-        <AnimatePresence mode="wait">
+          {/* Progress bar */}
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${((currentQuestion + 1) / totalQuestions) * 100}%` }}
+            className="h-2 bg-gradient-to-r from-primary to-secondary rounded-full"
+          />
+        </CardHeader>
+
+        <CardContent className="space-y-6">
           <motion.div
             key={currentQuestion}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">{question.question}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {question.options.map((option: any, index: number) => (
+            {/* Question */}
+            <div className="glass-card p-6 mb-6 border-2 border-primary/30">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-xl">
+                  {currentQuestion + 1}
+                </div>
+                <div className="flex-1">
+                  <p className="text-white/60 text-sm mb-2">📚 Educação Financeira</p>
+                  <CardTitle className="text-2xl text-white leading-relaxed">
+                    {question.question}
+                  </CardTitle>
+                </div>
+              </div>
+            </div>
+
+            {/* Options */}
+            <div className="space-y-3">
+              {question.options.map((option: any, index: number) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: myAnswered ? 1 : 1.02 }}
+                  whileTap={{ scale: myAnswered ? 1 : 0.98 }}
+                >
                   <Button
-                    key={index}
-                    variant={selectedAnswer === index ? "default" : "outline"}
-                    className="w-full justify-start text-left h-auto py-4 px-6"
                     onClick={() => !myAnswered && setSelectedAnswer(index)}
+                    variant={selectedAnswer === index ? "default" : "outline"}
+                    className={`w-full justify-start text-left h-auto py-5 px-6 relative overflow-hidden group transition-all ${
+                      selectedAnswer === index 
+                        ? 'bg-gradient-to-r from-primary to-secondary border-primary text-white shadow-lg' 
+                        : 'bg-background/50 hover:bg-accent/50 border-white/20'
+                    }`}
                     disabled={myAnswered}
                   >
-                    <span className="mr-3 font-bold">{String.fromCharCode(65 + index)}.</span>
-                    <span>{option.text}</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 group-hover:via-primary/20 transition-all" />
+                    
+                    <div className="flex items-center gap-4 relative z-10">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
+                        selectedAnswer === index
+                          ? 'bg-white/20 text-white'
+                          : 'bg-primary/20 text-primary'
+                      }`}>
+                        {String.fromCharCode(65 + index)}
+                      </div>
+                      <span className="text-base flex-1">{option.text}</span>
+                    </div>
                   </Button>
-                ))}
-
-                <Button
-                  onClick={handleAnswer}
-                  disabled={selectedAnswer === null || loading || myAnswered}
-                  className="w-full mt-6"
-                  size="lg"
-                >
-                  {loading ? "Enviando..." : myAnswered ? "Resposta Enviada ✓" : "Confirmar Resposta"}
-                </Button>
-              </CardContent>
-            </Card>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
-        </AnimatePresence>
-      </div>
+
+          {/* Status Bar */}
+          <div className="glass-card p-4 flex justify-between items-center border border-white/10">
+            <motion.div 
+              className="flex items-center gap-2"
+              animate={myAnswered ? { scale: [1, 1.1, 1] } : {}}
+            >
+              <div className={`w-3 h-3 rounded-full ${myAnswered ? 'bg-green-400' : 'bg-yellow-400'} animate-pulse`} />
+              <span className="text-white/90 text-sm font-medium">
+                {myAnswered ? '✓ Você respondeu' : '⏳ Selecione sua resposta'}
+              </span>
+            </motion.div>
+            <motion.div 
+              className="flex items-center gap-2"
+              animate={opponentAnswered ? { scale: [1, 1.1, 1] } : {}}
+            >
+              <span className="text-white/90 text-sm font-medium">
+                {opponentAnswered ? '✓ Oponente respondeu' : '⏳ Aguardando...'}
+              </span>
+              <div className={`w-3 h-3 rounded-full ${opponentAnswered ? 'bg-green-400' : 'bg-yellow-400'} animate-pulse`} />
+            </motion.div>
+          </div>
+
+          {/* Confirm Button */}
+          {!myAnswered && selectedAnswer !== null && (
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+            >
+              <Button
+                onClick={handleAnswer}
+                className="w-full arcade-button text-xl py-7 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold shadow-2xl"
+              >
+                ✓ CONFIRMAR RESPOSTA
+              </Button>
+            </motion.div>
+          )}
+
+          {/* Score Display */}
+          <div className="text-center pt-2">
+            <motion.p 
+              key={myTotalScore}
+              initial={{ scale: 1.2 }}
+              animate={{ scale: 1 }}
+              className="text-white font-bold text-lg"
+            >
+              💎 Seu Placar: <span className="text-yellow-400 text-2xl">{myTotalScore}</span> pts
+            </motion.p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

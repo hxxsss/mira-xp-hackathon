@@ -545,6 +545,7 @@ export type Database = {
           created_at: string | null
           current_round: number | null
           difficulty_level: string | null
+          host_ready: boolean | null
           host_score: number | null
           host_user_id: string
           id: string
@@ -552,6 +553,7 @@ export type Database = {
           match_mode: string | null
           max_groups: number | null
           module_id: string | null
+          opponent_ready: boolean | null
           opponent_score: number | null
           opponent_user_id: string | null
           questions_data: Json
@@ -565,6 +567,7 @@ export type Database = {
           created_at?: string | null
           current_round?: number | null
           difficulty_level?: string | null
+          host_ready?: boolean | null
           host_score?: number | null
           host_user_id: string
           id?: string
@@ -572,6 +575,7 @@ export type Database = {
           match_mode?: string | null
           max_groups?: number | null
           module_id?: string | null
+          opponent_ready?: boolean | null
           opponent_score?: number | null
           opponent_user_id?: string | null
           questions_data?: Json
@@ -585,6 +589,7 @@ export type Database = {
           created_at?: string | null
           current_round?: number | null
           difficulty_level?: string | null
+          host_ready?: boolean | null
           host_score?: number | null
           host_user_id?: string
           id?: string
@@ -592,6 +597,7 @@ export type Database = {
           match_mode?: string | null
           max_groups?: number | null
           module_id?: string | null
+          opponent_ready?: boolean | null
           opponent_score?: number | null
           opponent_user_id?: string | null
           questions_data?: Json

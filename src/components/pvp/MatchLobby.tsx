@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Copy, Users, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MatchLobbyProps {
   match: any;
@@ -12,6 +14,23 @@ interface MatchLobbyProps {
 export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
   const { toast } = useToast();
   const isHost = match.host_user_id === userId;
+
+  // Detectar quando oponente entra e transicionar para ready_check
+  useEffect(() => {
+    if (match.opponent_user_id && match.status === 'waiting') {
+      // Transicionar para ready_check quando oponente entrar
+      supabase
+        .from('pvp_matches')
+        .update({ status: 'ready_check' })
+        .eq('id', match.id)
+        .then(() => {
+          toast({
+            title: "Oponente encontrado!",
+            description: "Preparem-se para a batalha!",
+          });
+        });
+    }
+  }, [match.opponent_user_id, match.status, match.id]);
 
   const copyMatchCode = () => {
     navigator.clipboard.writeText(match.match_code);
