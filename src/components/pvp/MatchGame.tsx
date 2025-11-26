@@ -660,7 +660,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                   {currentQuestion + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-white/60 text-sm mb-2">📚 Educação Financeira</p>
+                  <p className="text-gray-600 text-sm mb-2">📚 Educação Financeira</p>
             <CardTitle className="text-2xl text-gray-800 leading-relaxed">
               {question.question}
             </CardTitle>
@@ -714,7 +714,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
               animate={myAnswered ? { scale: [1, 1.1, 1] } : {}}
             >
               <div className={`w-3 h-3 rounded-full ${myAnswered ? 'bg-green-400' : 'bg-yellow-400'} animate-pulse`} />
-              <span className="text-white/90 text-sm font-medium">
+              <span className="text-gray-700 text-sm font-medium">
                 {myAnswered ? '✓ Você respondeu' : '⏳ Selecione sua resposta'}
               </span>
             </motion.div>
@@ -722,7 +722,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
               className="flex items-center gap-2"
               animate={opponentAnswered ? { scale: [1, 1.1, 1] } : {}}
             >
-              <span className="text-white/90 text-sm font-medium">
+              <span className="text-gray-700 text-sm font-medium">
                 {opponentAnswered ? '✓ Oponente respondeu' : '⏳ Aguardando...'}
               </span>
               <div className={`w-3 h-3 rounded-full ${opponentAnswered ? 'bg-green-400' : 'bg-yellow-400'} animate-pulse`} />

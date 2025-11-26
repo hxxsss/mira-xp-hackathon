@@ -91,30 +91,18 @@ const PvP = () => {
             
             if (fullMatch) {
               const newMatch = fullMatch as Match;
+              
+              // APENAS observar e atualizar estado - não fazer UPDATE aqui
               setCurrentMatch(newMatch);
               
-              // Se oponente entrou e ainda está em waiting, transicionar para ready_check
-              if (newMatch.opponent_user_id && newMatch.status === 'waiting') {
-                const { data: updatedMatch } = await supabase
-                  .from('pvp_matches')
-                  .update({ status: 'ready_check' })
-                  .eq('id', newMatch.id)
-                  .select()
-                  .single();
-                
-                // ATUALIZAR estado local COM o novo status
-                if (updatedMatch) {
-                  setCurrentMatch(updatedMatch as Match);
-                }
-                
+              // Notificações apropriadas
+              if (newMatch.status === 'ready_check' && currentMatch.status !== 'ready_check') {
                 toast({
                   title: "Oponente encontrado!",
                   description: "Preparem-se para a batalha!",
                 });
-                return;
               }
 
-              // Notificação quando jogo iniciar
               if (newMatch.status === 'in_progress' && currentMatch.status !== 'in_progress') {
                 toast({
                   title: "Partida iniciada!",
@@ -208,18 +196,28 @@ const PvP = () => {
   };
 
   const handleMatchJoined = async (match: Match) => {
-    // Se a partida tem host e oponente mas ainda está waiting, 
-    // a transição para ready_check pode não ter acontecido ainda
+    // O oponente que acabou de entrar SEMPRE transiciona para ready_check
     if (match.opponent_user_id && match.status === 'waiting') {
-      const { data: updatedMatch } = await supabase
+      const { data: updatedMatch, error } = await supabase
         .from('pvp_matches')
         .update({ status: 'ready_check' })
         .eq('id', match.id)
+        .eq('status', 'waiting') // Garantir que ainda está em waiting (evitar duplicação)
         .select()
         .single();
       
-      if (updatedMatch) {
+      if (updatedMatch && !error) {
         setCurrentMatch(updatedMatch as Match);
+      } else {
+        // Se falhou, buscar estado atual (pode ter sido atualizado por outro)
+        const { data: currentState } = await supabase
+          .from('pvp_matches')
+          .select('*')
+          .eq('id', match.id)
+          .single();
+        if (currentState) {
+          setCurrentMatch(currentState as Match);
+        }
       }
     } else {
       setCurrentMatch(match);
@@ -261,17 +259,26 @@ const PvP = () => {
       
       if (data) {
         const match = data as Match;
-        // Se a partida tem host e oponente mas ainda está waiting, transicionar
+        // Transicionar para ready_check se necessário
         if (match.opponent_user_id && match.status === 'waiting') {
-          const { data: updatedMatch } = await supabase
+          const { data: updatedMatch, error } = await supabase
             .from('pvp_matches')
             .update({ status: 'ready_check' })
             .eq('id', match.id)
+            .eq('status', 'waiting')
             .select()
             .single();
           
-          if (updatedMatch) {
+          if (updatedMatch && !error) {
             setCurrentMatch(updatedMatch as Match);
+          } else {
+            // Refetch estado atual se a atualização falhou
+            const { data: currentState } = await supabase
+              .from('pvp_matches')
+              .select('*')
+              .eq('id', match.id)
+              .single();
+            if (currentState) setCurrentMatch(currentState as Match);
           }
         } else {
           setCurrentMatch(match);
@@ -347,6 +354,17 @@ const PvP = () => {
 
     // 1v1 mode lobby (waiting for opponent)
     if (currentMatch.match_mode === '1v1' && currentMatch.status === 'waiting') {
+      // Fallback: Se tem oponente mas ainda está waiting, mostrar ReadyScreen
+      if (currentMatch.opponent_user_id) {
+        return (
+          <ReadyScreen
+            match={currentMatch}
+            userId={userId}
+            onBothReady={() => {}}
+          />
+        );
+      }
+      // Senão, mostrar MatchLobby
       return (
         <MatchLobby
           match={currentMatch}
