@@ -114,6 +114,16 @@ const PvP = () => {
               if (newMatch.status === 'completed') {
                 handleMatchCompleted(newMatch);
               }
+              
+              // Handle opponent disconnect (1v1 only)
+              if (newMatch.match_mode === '1v1' && newMatch.status === 'abandoned') {
+                toast({
+                  title: "Oponente desconectou!",
+                  description: "Você venceu por W.O.",
+                  variant: "default",
+                });
+                handleMatchCompleted(newMatch);
+              }
             }
           }
         }
@@ -229,11 +239,43 @@ const PvP = () => {
     if (!currentMatch) return;
 
     try {
+      // Se está em waiting, apenas deletar/sair
       if (currentMatch.status === 'waiting' && currentMatch.host_user_id === userId) {
         await supabase
           .from('pvp_matches')
           .delete()
           .eq('id', currentMatch.id);
+      } else if (currentMatch.match_mode === '1v1' && 
+                 (currentMatch.status === 'ready_check' || currentMatch.status === 'in_progress')) {
+        // 1v1: Marcar como abandonado e dar vitória ao outro
+        const winnerId = currentMatch.host_user_id === userId 
+          ? currentMatch.opponent_user_id 
+          : currentMatch.host_user_id;
+          
+        await supabase
+          .from('pvp_matches')
+          .update({ 
+            status: 'abandoned',
+            winner_user_id: winnerId,
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', currentMatch.id);
+          
+        // Dar XP ao vencedor
+        if (winnerId) {
+          const { data: winner } = await supabase
+            .from('profiles')
+            .select('current_xp')
+            .eq('id', winnerId)
+            .single();
+            
+          if (winner) {
+            await supabase
+              .from('profiles')
+              .update({ current_xp: winner.current_xp + (currentMatch.xp_bet * 2) })
+              .eq('id', winnerId);
+          }
+        }
       }
 
       setCurrentMatch(null);

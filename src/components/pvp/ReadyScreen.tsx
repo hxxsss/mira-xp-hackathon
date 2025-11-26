@@ -353,7 +353,7 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
               </div>
               <div>
                 <p className="text-gray-600 text-sm mb-1">TEMPO/QUESTÃO</p>
-                <p className="text-2xl font-bold text-blue-600">30s</p>
+                <p className="text-2xl font-bold text-blue-600">60s</p>
               </div>
             </div>
           </motion.div>
