@@ -13,14 +13,22 @@ interface ReadyScreenProps {
 
 export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) => {
   const { toast } = useToast();
+  const isHost = match.host_user_id === userId;
+  
   const [hostReady, setHostReady] = useState(match.host_ready || false);
   const [opponentReady, setOpponentReady] = useState(match.opponent_ready || false);
   const [countdown, setCountdown] = useState<number | null>(null);
-  const [myReady, setMyReady] = useState(false);
-
-  const isHost = match.host_user_id === userId;
+  const [myReady, setMyReady] = useState(() => {
+    // Initialize myReady based on current state
+    return isHost ? (match.host_ready || false) : (match.opponent_ready || false);
+  });
 
   useEffect(() => {
+    // Check if both are already ready when component mounts
+    if (match.host_ready && match.opponent_ready && countdown === null) {
+      startCountdown();
+    }
+
     // Listen for ready status changes
     const channel = supabase
       .channel(`ready-${match.id}`)
@@ -48,7 +56,7 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [match.id, countdown]);
+  }, [match.id, countdown, match.host_ready, match.opponent_ready]);
 
   const startCountdown = () => {
     setCountdown(3);
