@@ -94,9 +94,8 @@ serve(async (req) => {
             xp_bet: player1.xp_bet,
             difficulty_level: player1.difficulty_level,
             questions_data: shuffled,
-            status: "in_progress",
+            status: "ready_check",
             match_mode: "1v1",
-            started_at: new Date().toISOString(),
           })
           .select()
           .single();
