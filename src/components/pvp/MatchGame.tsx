@@ -31,11 +31,12 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const [startTime, setStartTime] = useState(Date.now());
   const [answers, setAnswers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(90);
+  const [timeRemaining, setTimeRemaining] = useState(60);
   const [myAnswered, setMyAnswered] = useState(false);
   const [opponentAnswered, setOpponentAnswered] = useState(false);
   const [showRoundResult, setShowRoundResult] = useState(false);
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
+  const [opponentDisconnected, setOpponentDisconnected] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hasSubmittedRef = useRef(false); // Evitar race conditions
 
@@ -73,11 +74,11 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     );
   }
 
-  // Timer de 90 segundos
+  // Timer de 60 segundos
   useEffect(() => {
     hasSubmittedRef.current = false; // Resetar ao mudar de questão
     setStartTime(Date.now());
-    setTimeRemaining(90);
+    setTimeRemaining(60);
     setMyAnswered(false);
     setOpponentAnswered(false);
     setSelectedAnswer(null);
@@ -98,7 +99,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     };
   }, [currentQuestion]);
 
-  // Listener para respostas (minha ou do oponente)
+  // Listener para respostas e desconexão
   useEffect(() => {
     const channel = supabase
       .channel(`match-answers-${match.id}-${currentQuestion}`)
@@ -115,8 +116,31 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
             if (payload.new.user_id === opponentUserId) {
               setOpponentAnswered(true);
             }
-            // Verificar se ambos responderam (independente de quem respondeu)
             checkBothAnswered();
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'pvp_matches',
+          filter: `id=eq.${match.id}`
+        },
+        async (payload) => {
+          const updatedMatch = payload.new as any;
+          
+          if (updatedMatch.status === 'abandoned') {
+            setOpponentDisconnected(true);
+            if (timerRef.current) clearInterval(timerRef.current);
+            toast({
+              title: "Oponente desconectou!",
+              description: "Você venceu por W.O.",
+            });
+            setTimeout(() => {
+              onComplete();
+            }, 2000);
           }
         }
       )
@@ -132,10 +156,10 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
       questionIndex: currentQuestion,
       myAnswer: myAnswerData?.selected_answer ?? -1,
       myCorrect: myAnswerData?.is_correct ?? false,
-      myTime: myAnswerData?.time_taken_seconds ?? 90,
+      myTime: myAnswerData?.time_taken_seconds ?? 60,
       myPoints: myAnswerData?.points_earned ?? 0,
       opponentCorrect: opponentAnswer?.is_correct ?? false,
-      opponentTime: opponentAnswer?.time_taken_seconds ?? 90,
+      opponentTime: opponentAnswer?.time_taken_seconds ?? 60,
       opponentPoints: opponentAnswer?.points_earned ?? 0,
     };
     
@@ -149,7 +173,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     // Se eu não respondi, enviar resposta anulada
     if (!hasSubmittedRef.current) {
       hasSubmittedRef.current = true;
-      await submitAnswer(null, 90);
+      await submitAnswer(null, 60);
       
       toast({
         title: "⏰ Tempo esgotado!",
@@ -193,7 +217,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const calculatePoints = (isCorrect: boolean, timeSeconds: number) => {
     if (!isCorrect) return 0;
     const basePoints = 100;
-    const speedBonus = Math.floor(100 * (1 - Math.min(timeSeconds / 30, 1)));
+    const speedBonus = Math.floor(100 * (1 - Math.min(timeSeconds / 60, 1)));
     return basePoints + speedBonus;
   };
 
@@ -412,7 +436,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                         ? 'Tempo esgotado' 
                         : roundResult.myCorrect ? 'Correto!' : 'Incorreto'}
                     </p>
-                    {roundResult.myTime < 90 && (
+                    {roundResult.myTime < 60 && (
                       <p className="text-sm text-white/70">
                         ⏱ {formatTime(roundResult.myTime)}
                       </p>
@@ -459,16 +483,16 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                       roundResult.opponentCorrect ? 'bg-green-500' : 'bg-red-500'
                     }`}
                   >
-                    {roundResult.opponentTime >= 90 ? '⏰' : roundResult.opponentCorrect ? '✓' : '✗'}
+                    {roundResult.opponentTime >= 60 ? '⏰' : roundResult.opponentCorrect ? '✓' : '✗'}
                   </motion.div>
 
                   <div className="text-white space-y-1">
                     <p className="font-semibold">
-                      {roundResult.opponentTime >= 90 
+                      {roundResult.opponentTime >= 60 
                         ? 'Tempo esgotado' 
                         : roundResult.opponentCorrect ? 'Correto!' : 'Incorreto'}
                     </p>
-                    {roundResult.opponentTime < 90 && (
+                    {roundResult.opponentTime < 60 && (
                       <p className="text-sm text-white/70">
                         ⏱ {formatTime(roundResult.opponentTime)}
                       </p>
@@ -614,7 +638,7 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                   }
                   strokeWidth="6"
                   strokeDasharray={`${2 * Math.PI * 32}`}
-                  strokeDashoffset={`${2 * Math.PI * 32 * (1 - timeRemaining / 90)}`}
+                  strokeDashoffset={`${2 * Math.PI * 32 * (1 - timeRemaining / 60)}`}
                   strokeLinecap="round"
                   animate={timeRemaining < 10 ? { 
                     scale: [1, 1.1, 1],
