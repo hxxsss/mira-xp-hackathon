@@ -44,8 +44,8 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const progress = (currentQuestion / totalQuestions) * 100;
   const opponentUserId = match.host_user_id === userId ? match.opponent_user_id : match.host_user_id;
 
-  // Protection against empty questions_data
-  if (totalQuestions === 0) {
+  // Validation: ensure we have all necessary data
+  if (!match.questions_data || totalQuestions === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
         <Card className="w-full max-w-lg text-center">
@@ -53,6 +53,20 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
             <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
             <h2 className="text-2xl font-bold mb-2">Carregando perguntas...</h2>
             <p className="text-muted-foreground">Aguarde enquanto preparamos a partida.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!opponentUserId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-lg text-center">
+          <CardContent className="pt-6">
+            <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
+            <h2 className="text-2xl font-bold mb-2">Aguardando oponente...</h2>
+            <p className="text-muted-foreground">A partida iniciará em breve.</p>
           </CardContent>
         </Card>
       </div>
@@ -189,6 +203,22 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
     const points = calculatePoints(isCorrect, time);
 
     try {
+      // Check if answer already exists to prevent duplicates
+      const { data: existingAnswer } = await supabase
+        .from('pvp_match_answers')
+        .select('id')
+        .eq('match_id', match.id)
+        .eq('user_id', userId)
+        .eq('question_index', currentQuestion)
+        .maybeSingle();
+
+      if (existingAnswer) {
+        console.log('Answer already exists, skipping duplicate submission');
+        setMyAnswered(true);
+        checkBothAnswered();
+        return;
+      }
+
       const { data, error } = await supabase
         .from('pvp_match_answers')
         .insert({
@@ -213,11 +243,14 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
       checkBothAnswered();
     } catch (error: any) {
       console.error('Error submitting answer:', error);
-      toast({
-        title: "Erro ao enviar resposta",
-        description: error.message,
-        variant: "destructive",
-      });
+      // Only show toast if it's not a duplicate key error
+      if (!error.message?.includes('duplicate key')) {
+        toast({
+          title: "Erro ao enviar resposta",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     }
   };
 

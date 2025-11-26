@@ -71,18 +71,18 @@ const PvP = () => {
           table: 'pvp_matches',
           filter: `id=eq.${currentMatch.id}`
         },
-          async (payload) => {
+        async (payload) => {
           console.log('Match update:', payload);
           const updatedMatch = payload.new as Match;
 
-          // Transição de waiting para ready_check quando oponente entra
-          if (updatedMatch.status === 'ready_check' && currentMatch.status === 'waiting') {
-            setCurrentMatch(updatedMatch);
-          }
+          // SEMPRE refetch dados completos quando houver mudanças importantes
+          const shouldRefetch = 
+            updatedMatch.status !== currentMatch.status ||
+            updatedMatch.opponent_user_id !== currentMatch.opponent_user_id ||
+            updatedMatch.host_ready !== currentMatch.host_ready ||
+            updatedMatch.opponent_ready !== currentMatch.opponent_ready;
 
-          // Quando a partida iniciar, recarregar dados completos
-          if (updatedMatch.status === 'in_progress' && (currentMatch.status === 'waiting' || currentMatch.status === 'ready_check')) {
-            // Refetch complete match data to ensure host has all fields
+          if (shouldRefetch) {
             const { data: fullMatch } = await supabase
               .from('pvp_matches')
               .select('*')
@@ -90,21 +90,36 @@ const PvP = () => {
               .single();
             
             if (fullMatch) {
-              setCurrentMatch(fullMatch as Match);
-            } else {
-              setCurrentMatch(updatedMatch);
+              const newMatch = fullMatch as Match;
+              setCurrentMatch(newMatch);
+              
+              // Se oponente entrou e ainda está em waiting, transicionar para ready_check
+              if (newMatch.opponent_user_id && newMatch.status === 'waiting') {
+                await supabase
+                  .from('pvp_matches')
+                  .update({ status: 'ready_check' })
+                  .eq('id', newMatch.id);
+                
+                toast({
+                  title: "Oponente encontrado!",
+                  description: "Preparem-se para a batalha!",
+                });
+                return;
+              }
+
+              // Notificação quando jogo iniciar
+              if (newMatch.status === 'in_progress' && currentMatch.status !== 'in_progress') {
+                toast({
+                  title: "Partida iniciada!",
+                  description: "A batalha começou. Boa sorte!",
+                });
+              }
+
+              // Handle match completion
+              if (newMatch.status === 'completed') {
+                handleMatchCompleted(newMatch);
+              }
             }
-
-            toast({
-              title: "Partida iniciada!",
-              description: "A batalha começou. Boa sorte!",
-            });
-          } else {
-            setCurrentMatch(updatedMatch);
-          }
-
-          if (updatedMatch.status === 'completed') {
-            handleMatchCompleted(updatedMatch);
           }
         }
       )
