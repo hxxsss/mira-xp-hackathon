@@ -347,9 +347,12 @@ const PvP = () => {
       );
     }
 
-    // 1v1 mode lobby (waiting for opponent)
-    if (currentMatch.match_mode === '1v1' && currentMatch.status === 'waiting') {
-      // Fallback: Se tem oponente mas ainda está waiting, mostrar ReadyScreen
+    // 1v1 mode lobby (waiting / starting)
+    if (
+      currentMatch.match_mode === '1v1' &&
+      (currentMatch.status === 'waiting' || currentMatch.status === 'starting')
+    ) {
+      // Se já existe oponente, sempre mostrar a tela de ready check (lobby sincronizado)
       if (currentMatch.opponent_user_id) {
         return (
           <ReadyScreen
@@ -359,7 +362,7 @@ const PvP = () => {
           />
         );
       }
-      // Senão, mostrar MatchLobby
+      // Senão, mostrar MatchLobby aguardando oponente
       return (
         <MatchLobby
           match={currentMatch}
