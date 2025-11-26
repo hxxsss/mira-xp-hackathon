@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Zap, Trophy, Clock, CheckCircle2 } from "lucide-react";
+import { Zap, Trophy, Clock, CheckCircle2, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -44,6 +44,30 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
   const totalQuestions = questions.length;
   const progress = (currentQuestion / totalQuestions) * 100;
   const opponentUserId = match.host_user_id === userId ? match.opponent_user_id : match.host_user_id;
+
+  const handleLeaveMatch = async () => {
+    try {
+      const { error } = await supabase
+        .from("pvp_matches")
+        .update({ status: "abandoned" })
+        .eq("id", match.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Você saiu da partida",
+        description: "A vitória foi concedida ao seu oponente",
+      });
+      onComplete();
+    } catch (error) {
+      console.error("Erro ao sair da partida:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível sair da partida",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Validation: ensure we have all necessary data
   if (!match.questions_data || totalQuestions === 0) {
@@ -614,6 +638,16 @@ export const MatchGame = ({ match, userId, onComplete }: MatchGameProps) => {
                 Questão {currentQuestion + 1}
               </div>
             </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLeaveMatch}
+              className="text-red-500 hover:text-red-600 hover:bg-red-50 gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Sair
+            </Button>
 
             {/* Circular Timer */}
             <div className="relative">

@@ -8,6 +8,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
+const PREDEFINED_CATEGORIES = [
+  { name: "Alimentação", icon: "🍽️" },
+  { name: "Transporte", icon: "🚗" },
+  { name: "Moradia", icon: "🏠" },
+  { name: "Saúde", icon: "⚕️" },
+  { name: "Educação", icon: "📚" },
+  { name: "Lazer", icon: "🎮" },
+  { name: "Vestuário", icon: "👔" },
+  { name: "Outras", icon: "📝" },
+];
+
 interface TransactionFormProps {
   transaction?: any;
   onClose: () => void;
@@ -20,6 +31,8 @@ export const TransactionForm = ({
   onSuccess,
 }: TransactionFormProps) => {
   const [loading, setLoading] = useState(false);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [customCategory, setCustomCategory] = useState("");
   const [formData, setFormData] = useState({
     type: "expense",
     amount: "",
@@ -32,20 +45,60 @@ export const TransactionForm = ({
 
   useEffect(() => {
     if (transaction) {
+      const category = transaction.category || "";
+      const isPredefined = PREDEFINED_CATEGORIES.some(c => c.name === category);
+      
       setFormData({
         type: transaction.type || "expense",
         amount: transaction.amount?.toString() || "",
         description: transaction.description || "",
-        category: transaction.category || "",
+        category: isPredefined ? category : "Outras",
         date: transaction.date || new Date().toISOString().split("T")[0],
         is_recurring: transaction.is_recurring || false,
         is_impulse: transaction.is_impulse || false,
       });
+      
+      if (!isPredefined && category) {
+        setShowCustomCategory(true);
+        setCustomCategory(category);
+      }
     }
   }, [transaction]);
 
+  const handleCategorySelect = (categoryName: string) => {
+    if (categoryName === "Outras") {
+      setShowCustomCategory(true);
+      setFormData({ ...formData, category: categoryName });
+    } else {
+      setShowCustomCategory(false);
+      setCustomCategory("");
+      setFormData({ ...formData, category: categoryName });
+    }
+  };
+
+  const handleAmountKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '-') {
+      e.preventDefault();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.amount || parseFloat(formData.amount) <= 0) {
+      toast.error("Por favor, insira um valor válido");
+      return;
+    }
+
+    const finalCategory = showCustomCategory && customCategory 
+      ? customCategory 
+      : formData.category;
+
+    if (!finalCategory) {
+      toast.error("Por favor, selecione uma categoria");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -54,6 +107,7 @@ export const TransactionForm = ({
 
       const data = {
         ...formData,
+        category: finalCategory,
         amount: parseFloat(formData.amount),
         user_id: user.id,
       };
@@ -114,10 +168,13 @@ export const TransactionForm = ({
               id="amount"
               type="number"
               step="0.01"
+              min="0"
               value={formData.amount}
               onChange={(e) =>
                 setFormData({ ...formData, amount: e.target.value })
               }
+              onKeyDown={handleAmountKeyDown}
+              placeholder="0.00"
               required
             />
           </div>
@@ -135,15 +192,30 @@ export const TransactionForm = ({
           </div>
 
           <div>
-            <Label htmlFor="category">Categoria</Label>
-            <Input
-              id="category"
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-              placeholder="Ex: Alimentação, Transporte, Lazer..."
-            />
+            <Label>Categoria</Label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {PREDEFINED_CATEGORIES.map((cat) => (
+                <Button
+                  key={cat.name}
+                  type="button"
+                  variant={formData.category === cat.name ? "default" : "outline"}
+                  onClick={() => handleCategorySelect(cat.name)}
+                  className="justify-start"
+                >
+                  <span className="mr-2">{cat.icon}</span>
+                  {cat.name}
+                </Button>
+              ))}
+            </div>
+            {showCustomCategory && (
+              <Input
+                className="mt-2"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                placeholder="Digite a categoria personalizada..."
+                required
+              />
+            )}
           </div>
 
           <div>
