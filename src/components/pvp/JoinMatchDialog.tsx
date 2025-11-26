@@ -125,13 +125,11 @@ export const JoinMatchDialog = ({
         .update({ current_xp: userXp - foundMatch.xp_bet })
         .eq('id', userId);
 
-      // Entrar na partida
+      // Entrar na partida (apenas definir oponente, listener cuidará da transição)
       const { data: match, error } = await supabase
         .from('pvp_matches')
         .update({
           opponent_user_id: userId,
-          status: 'in_progress',
-          started_at: new Date().toISOString(),
         })
         .eq('id', foundMatch.id)
         .select()
