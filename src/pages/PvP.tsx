@@ -13,6 +13,7 @@ import { UniversalJoinDialog } from "@/components/pvp/UniversalJoinDialog";
 import { GroupLobby } from "@/components/pvp/GroupLobby";
 import { MatchLobby } from "@/components/pvp/MatchLobby";
 import { MatchGame } from "@/components/pvp/MatchGame";
+import { ReadyScreen } from "@/components/pvp/ReadyScreen";
 import { MatchResultModal } from "@/components/pvp/MatchResultModal";
 import { PodiumModal } from "@/components/pvp/PodiumModal";
 import { ModeSelectionScreen } from "@/components/pvp/ModeSelectionScreen";
@@ -31,6 +32,8 @@ interface Match {
   opponent_score: number | null;
   winner_user_id: string | null;
   match_mode?: '1v1' | 'group';
+  host_ready?: boolean;
+  opponent_ready?: boolean;
 }
 
 const PvP = () => {
@@ -68,12 +71,17 @@ const PvP = () => {
           table: 'pvp_matches',
           filter: `id=eq.${currentMatch.id}`
         },
-        async (payload) => {
+          async (payload) => {
           console.log('Match update:', payload);
           const updatedMatch = payload.new as Match;
 
+          // Transição de waiting para ready_check quando oponente entra
+          if (updatedMatch.status === 'ready_check' && currentMatch.status === 'waiting') {
+            setCurrentMatch(updatedMatch);
+          }
+
           // Quando a partida iniciar, recarregar dados completos
-          if (updatedMatch.status === 'in_progress' && currentMatch.status === 'waiting') {
+          if (updatedMatch.status === 'in_progress' && (currentMatch.status === 'waiting' || currentMatch.status === 'ready_check')) {
             // Refetch complete match data to ensure host has all fields
             const { data: fullMatch } = await supabase
               .from('pvp_matches')
@@ -285,13 +293,24 @@ const PvP = () => {
       );
     }
 
-    // 1v1 mode lobby
+    // 1v1 mode lobby (waiting for opponent)
     if (currentMatch.match_mode === '1v1' && currentMatch.status === 'waiting') {
       return (
         <MatchLobby
           match={currentMatch}
           userId={userId}
           onLeave={handleLeaveMatch}
+        />
+      );
+    }
+
+    // Ready check screen (both players confirming)
+    if (currentMatch.status === 'ready_check') {
+      return (
+        <ReadyScreen
+          match={currentMatch}
+          userId={userId}
+          onBothReady={() => {}}
         />
       );
     }
