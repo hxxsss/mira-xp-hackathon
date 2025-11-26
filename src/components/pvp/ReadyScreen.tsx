@@ -283,18 +283,18 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
             >
               <div className="text-center">
                 <div className="text-4xl mb-4">👑</div>
-                <h3 className="text-2xl font-bold text-white mb-4">HOST</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">HOST</h3>
                 {hostReady ? (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="flex items-center justify-center gap-2 text-green-400 text-xl font-bold"
+                    className="flex items-center justify-center gap-2 text-green-600 text-xl font-bold"
                   >
                     <Check className="w-8 h-8" />
                     PRONTO!
                   </motion.div>
                 ) : (
-                  <div className="flex items-center justify-center gap-2 text-orange-400 text-xl">
+                  <div className="flex items-center justify-center gap-2 text-orange-600 text-xl">
                     <Loader2 className="w-6 h-6 animate-spin" />
                     Aguardando...
                   </div>
@@ -315,18 +315,18 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
             >
               <div className="text-center">
                 <div className="text-4xl mb-4">⚔️</div>
-                <h3 className="text-2xl font-bold text-white mb-4">OPONENTE</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">OPONENTE</h3>
                 {opponentReady ? (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="flex items-center justify-center gap-2 text-green-400 text-xl font-bold"
+                    className="flex items-center justify-center gap-2 text-green-600 text-xl font-bold"
                   >
                     <Check className="w-8 h-8" />
                     PRONTO!
                   </motion.div>
                 ) : (
-                  <div className="flex items-center justify-center gap-2 text-orange-400 text-xl">
+                  <div className="flex items-center justify-center gap-2 text-orange-600 text-xl">
                     <Loader2 className="w-6 h-6 animate-spin" />
                     Aguardando...
                   </div>
@@ -342,18 +342,18 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="grid grid-cols-3 gap-4 text-center text-white">
+            <div className="grid grid-cols-3 gap-4 text-center text-gray-800">
               <div>
-                <p className="text-white/60 text-sm mb-1">APOSTA</p>
-                <p className="text-2xl font-bold text-yellow-400">{match.xp_bet} XP</p>
+                <p className="text-gray-600 text-sm mb-1">APOSTA</p>
+                <p className="text-2xl font-bold text-yellow-600">{match.xp_bet} XP</p>
               </div>
               <div>
-                <p className="text-white/60 text-sm mb-1">PERGUNTAS</p>
-                <p className="text-2xl font-bold text-purple-400">5</p>
+                <p className="text-gray-600 text-sm mb-1">PERGUNTAS</p>
+                <p className="text-2xl font-bold text-purple-600">5</p>
               </div>
               <div>
-                <p className="text-white/60 text-sm mb-1">TEMPO/QUESTÃO</p>
-                <p className="text-2xl font-bold text-blue-400">30s</p>
+                <p className="text-gray-600 text-sm mb-1">TEMPO/QUESTÃO</p>
+                <p className="text-2xl font-bold text-blue-600">30s</p>
               </div>
             </div>
           </motion.div>

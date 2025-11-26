@@ -95,10 +95,17 @@ const PvP = () => {
               
               // Se oponente entrou e ainda está em waiting, transicionar para ready_check
               if (newMatch.opponent_user_id && newMatch.status === 'waiting') {
-                await supabase
+                const { data: updatedMatch } = await supabase
                   .from('pvp_matches')
                   .update({ status: 'ready_check' })
-                  .eq('id', newMatch.id);
+                  .eq('id', newMatch.id)
+                  .select()
+                  .single();
+                
+                // ATUALIZAR estado local COM o novo status
+                if (updatedMatch) {
+                  setCurrentMatch(updatedMatch as Match);
+                }
                 
                 toast({
                   title: "Oponente encontrado!",
@@ -200,8 +207,23 @@ const PvP = () => {
     setShowCreateGroupDialog(false);
   };
 
-  const handleMatchJoined = (match: Match) => {
-    setCurrentMatch(match);
+  const handleMatchJoined = async (match: Match) => {
+    // Se a partida tem host e oponente mas ainda está waiting, 
+    // a transição para ready_check pode não ter acontecido ainda
+    if (match.opponent_user_id && match.status === 'waiting') {
+      const { data: updatedMatch } = await supabase
+        .from('pvp_matches')
+        .update({ status: 'ready_check' })
+        .eq('id', match.id)
+        .select()
+        .single();
+      
+      if (updatedMatch) {
+        setCurrentMatch(updatedMatch as Match);
+      }
+    } else {
+      setCurrentMatch(match);
+    }
     setShowJoinDialog(false);
   };
 
@@ -238,7 +260,22 @@ const PvP = () => {
         .single();
       
       if (data) {
-        setCurrentMatch(data as Match);
+        const match = data as Match;
+        // Se a partida tem host e oponente mas ainda está waiting, transicionar
+        if (match.opponent_user_id && match.status === 'waiting') {
+          const { data: updatedMatch } = await supabase
+            .from('pvp_matches')
+            .update({ status: 'ready_check' })
+            .eq('id', match.id)
+            .select()
+            .single();
+          
+          if (updatedMatch) {
+            setCurrentMatch(updatedMatch as Match);
+          }
+        } else {
+          setCurrentMatch(match);
+        }
       }
     } else if (type === 'group' && groupId) {
       // Reload match and set group for group mode
