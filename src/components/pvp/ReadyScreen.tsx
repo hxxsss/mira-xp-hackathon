@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Crown } from "lucide-react";
 
 interface ReadyScreenProps {
   match: any;
@@ -18,6 +18,8 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
   const [opponentReady, setOpponentReady] = useState(match.opponent_ready || false);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [myReady, setMyReady] = useState(isHost ? match.host_ready : match.opponent_ready);
+  const [hostName, setHostName] = useState<string>("Jogador 1");
+  const [opponentName, setOpponentName] = useState<string>("Jogador 2");
 
   
   // Estado de prontidão e início do jogo agora é coordenado via banco de dados
@@ -69,6 +71,28 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
       description: "Aguardando oponente...",
     });
   };
+
+  // Buscar nomes reais dos jogadores
+  useEffect(() => {
+    const fetchPlayerNames = async () => {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .in('id', [match.host_user_id, match.opponent_user_id].filter(Boolean));
+      
+      if (profiles) {
+        const host = profiles.find(p => p.id === match.host_user_id);
+        const opponent = profiles.find(p => p.id === match.opponent_user_id);
+        
+        if (host) setHostName(host.name);
+        if (opponent) setOpponentName(opponent.name);
+      }
+    };
+    
+    if (match.opponent_user_id) {
+      fetchPlayerNames();
+    }
+  }, [match.host_user_id, match.opponent_user_id]);
 
   // Mantém myReady em sincronia com o estado vindo do backend
   useEffect(() => {
@@ -281,8 +305,15 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
               transition={{ duration: 0.3 }}
             >
               <div className="text-center">
-                <div className="text-4xl mb-4">👑</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">HOST</h3>
+                <div className="text-4xl mb-4">
+                  {isHost ? '👤' : '👥'}
+                </div>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  {userId === match.host_user_id && (
+                    <Crown className="w-5 h-5 text-yellow-500" />
+                  )}
+                  <h3 className="text-2xl font-bold text-gray-800">{hostName}</h3>
+                </div>
                 {hostReady ? (
                   <motion.div
                     initial={{ scale: 0 }}
@@ -313,8 +344,15 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
               transition={{ duration: 0.3 }}
             >
               <div className="text-center">
-                <div className="text-4xl mb-4">⚔️</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">OPONENTE</h3>
+                <div className="text-4xl mb-4">
+                  {!isHost ? '👤' : '👥'}
+                </div>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  {userId === match.opponent_user_id && match.opponent_user_id === match.host_user_id && (
+                    <Crown className="w-5 h-5 text-yellow-500" />
+                  )}
+                  <h3 className="text-2xl font-bold text-gray-800">{opponentName}</h3>
+                </div>
                 {opponentReady ? (
                   <motion.div
                     initial={{ scale: 0 }}
