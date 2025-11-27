@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { Swords, Users, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface ModeSelectionScreenProps {
   onSelectMode: (mode: '1v1' | 'group') => void;
@@ -14,41 +17,45 @@ export const ModeSelectionScreen = ({
   onQuickMatch,
   onJoinWithCode
 }: ModeSelectionScreenProps) => {
+  const [roomCode, setRoomCode] = useState("");
   const modes = [
     {
       id: '1v1',
       icon: Swords,
+      iconColor: 'text-cyan-400',
       title: 'DUELO CLÁSSICO',
       subtitle: 'Desafio Direto',
       description: 'Enfrente um oponente em um duelo de conhecimento. O mais rápido e preciso vence!',
-      gradient: 'from-purple-500/30 via-pink-500/20 to-purple-600/30',
-      innerGradient: 'from-purple-500/10 to-transparent',
-      hoverGlow: 'hover:shadow-[0_0_60px_rgba(168,85,247,0.5)]',
-      borderGlow: 'hover:border-purple-400/60',
+      gradient: 'from-cyan-500/30 via-blue-500/20 to-cyan-600/30',
+      innerGradient: 'from-cyan-500/10 to-transparent',
+      hoverGlow: 'hover:shadow-[0_0_60px_rgba(34,211,238,0.6)]',
+      borderGlow: 'hover:border-cyan-400/60',
       onClick: () => onSelectMode('1v1')
     },
     {
       id: 'quick',
       icon: Zap,
+      iconColor: 'text-orange-400',
       title: 'PARTIDA INSTANTÂNEA',
       subtitle: 'Jogue Agora',
       description: 'Entre em uma partida instantânea contra um oponente aleatório. Sem espera!',
-      gradient: 'from-blue-500/30 via-cyan-500/20 to-blue-600/30',
-      innerGradient: 'from-blue-500/10 to-transparent',
-      hoverGlow: 'hover:shadow-[0_0_60px_rgba(59,130,246,0.5)]',
-      borderGlow: 'hover:border-blue-400/60',
+      gradient: 'from-orange-500/30 via-yellow-500/20 to-orange-600/30',
+      innerGradient: 'from-orange-500/10 to-transparent',
+      hoverGlow: 'hover:shadow-[0_0_60px_rgba(251,146,60,0.6)]',
+      borderGlow: 'hover:border-orange-400/60',
       onClick: onQuickMatch
     },
     {
       id: 'group',
       icon: Users,
+      iconColor: 'text-purple-400',
       title: 'BATALHA ÉPICA',
       subtitle: 'Modo Épico',
       description: 'Reúna seu time e enfrente outros grupos. Trabalho em equipe e estratégia!',
-      gradient: 'from-green-500/30 via-emerald-500/20 to-green-600/30',
-      innerGradient: 'from-green-500/10 to-transparent',
-      hoverGlow: 'hover:shadow-[0_0_60px_rgba(34,197,94,0.5)]',
-      borderGlow: 'hover:border-green-400/60',
+      gradient: 'from-purple-500/30 via-fuchsia-500/20 to-purple-600/30',
+      innerGradient: 'from-purple-500/10 to-transparent',
+      hoverGlow: 'hover:shadow-[0_0_60px_rgba(192,132,252,0.6)]',
+      borderGlow: 'hover:border-purple-400/60',
       onClick: () => onSelectMode('group')
     }
   ];
@@ -83,13 +90,13 @@ export const ModeSelectionScreen = ({
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-4"
+            className="text-center space-y-3"
           >
-            <h1 className="text-6xl md:text-8xl font-black text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] tracking-tight">
-              ESCOLHA SUA BATALHA
+            <h1 className="text-7xl md:text-9xl font-extrabold text-white drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)] tracking-tight">
+              ARENA PVP
             </h1>
-            <p className="text-xl md:text-2xl text-white/80 font-bold drop-shadow-lg">
-              Teste seus conhecimentos e conquiste a vitória
+            <p className="text-lg md:text-xl text-white/60 font-medium drop-shadow-md">
+              Escolha sua batalha
             </p>
           </motion.div>
 
@@ -141,14 +148,14 @@ export const ModeSelectionScreen = ({
                       >
                         <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl" />
                         <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-white/30 to-white/10 flex items-center justify-center border-2 border-white/30 shadow-2xl">
-                          <Icon className="w-16 h-16 text-white drop-shadow-2xl" strokeWidth={2.5} />
+                          <Icon className={cn("w-16 h-16 drop-shadow-2xl", mode.iconColor)} strokeWidth={2.5} />
                         </div>
                       </motion.div>
 
                       {/* Text Content */}
                       <div className="space-y-4 flex-1 flex flex-col justify-center">
                         <div className="space-y-2">
-                          <h3 className="text-4xl font-black text-white drop-shadow-lg tracking-tight">
+                          <h3 className="text-4xl font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] tracking-tight">
                             {mode.title}
                           </h3>
                           <p className="text-xl font-bold text-white/80 drop-shadow-md">
@@ -177,15 +184,58 @@ export const ModeSelectionScreen = ({
             })}
           </div>
 
-          {/* How it Works Section */}
+          {/* Join by Code Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
+            className="max-w-2xl mx-auto"
+          >
+            <Card className="bg-white/5 backdrop-blur-xl border-2 border-white/10 rounded-3xl p-6">
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-white drop-shadow-md mb-1">
+                    🔑 Já tem um código de sala?
+                  </h3>
+                  <p className="text-white/60 text-sm">
+                    Digite o código para entrar em uma partida privada
+                  </p>
+                </div>
+                
+                <div className="flex gap-3 w-full max-w-md">
+                  <Input
+                    type="text"
+                    placeholder="Digite o código"
+                    value={roomCode}
+                    onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/40 text-lg font-mono tracking-wider focus:border-white/40 focus:ring-white/20"
+                    maxLength={6}
+                  />
+                  <Button
+                    onClick={() => {
+                      if (roomCode.trim()) {
+                        onJoinWithCode();
+                      }
+                    }}
+                    disabled={!roomCode.trim()}
+                    className="bg-white/10 hover:bg-white/20 text-white font-bold px-8 border-2 border-white/20 hover:border-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    ENTRAR
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* How it Works Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
             className="max-w-4xl mx-auto"
           >
             <Card className="bg-white/5 backdrop-blur-xl border-2 border-white/10 rounded-3xl p-8">
-              <h2 className="text-3xl font-black text-white text-center mb-8 drop-shadow-lg">
+              <h2 className="text-3xl font-black text-white text-center mb-8 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
                 ⚔️ COMO FUNCIONA
               </h2>
               
@@ -195,9 +245,9 @@ export const ModeSelectionScreen = ({
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-600/20 border-2 border-purple-400/30 flex items-center justify-center">
                     <span className="text-3xl">⚡</span>
                   </div>
-                  <h3 className="text-xl font-bold text-white drop-shadow-md">Velocidade Conta</h3>
+                  <h3 className="text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">Velocidade Conta</h3>
                   <p className="text-white/70 text-sm leading-relaxed">
-                    <strong className="text-white">Quem responde primeiro corretamente ganha mais pontos!</strong> Acertos rápidos valem ouro.
+                    <strong className="text-white drop-shadow-sm">Quem responde primeiro corretamente ganha mais pontos!</strong> Acertos rápidos valem ouro.
                   </p>
                 </div>
 
@@ -206,7 +256,7 @@ export const ModeSelectionScreen = ({
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-2 border-blue-400/30 flex items-center justify-center">
                     <span className="text-3xl">💰</span>
                   </div>
-                  <h3 className="text-xl font-bold text-white drop-shadow-md">Apostas de XP</h3>
+                  <h3 className="text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">Apostas de XP</h3>
                   <p className="text-white/70 text-sm leading-relaxed">
                     Aposte seus pontos de XP antes da partida. O vencedor leva tudo!
                   </p>
@@ -217,7 +267,7 @@ export const ModeSelectionScreen = ({
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500/20 to-green-600/20 border-2 border-green-400/30 flex items-center justify-center">
                     <span className="text-3xl">🏆</span>
                   </div>
-                  <h3 className="text-xl font-bold text-white drop-shadow-md">Critério de Desempate</h3>
+                  <h3 className="text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">Critério de Desempate</h3>
                   <p className="text-white/70 text-sm leading-relaxed">
                     Em caso de empate, vence quem teve o melhor tempo médio de resposta.
                   </p>
@@ -226,28 +276,6 @@ export const ModeSelectionScreen = ({
             </Card>
           </motion.div>
 
-          {/* Join with Code - Secondary Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            className="text-center"
-          >
-            <motion.button
-              onClick={onJoinWithCode}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-xl border-2 border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
-            >
-              <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                <span className="text-2xl">🔑</span>
-              </div>
-              <div className="text-left">
-                <p className="text-white font-bold text-lg drop-shadow-md">Já tem um código?</p>
-                <p className="text-white/60 text-sm drop-shadow-sm">Entrar com código de partida</p>
-              </div>
-            </motion.button>
-          </motion.div>
         </div>
       </div>
     </div>
