@@ -43,7 +43,7 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const hasSubmittedRef = useRef(false); // Evitar race conditions
+  const hasSubmittedRef = useRef(false);
 
   const questions = match.questions_data || [];
   const totalQuestions = questions.length;
@@ -51,45 +51,16 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   const opponentUserId = match.host_user_id === userId ? match.opponent_user_id : match.host_user_id;
 
   const handleLeaveMatch = () => {
-    // Limpa timers locais e delega a saída para o container
     if (timerRef.current) clearInterval(timerRef.current);
     onLeave?.();
-    // Força navegação imediata para a tela inicial do PvP
     navigate("/pvp");
   };
 
-  // Validation: ensure we have all necessary data
-  if (!match.questions_data || totalQuestions === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-lg text-center">
-          <CardContent className="pt-6">
-            <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
-            <h2 className="text-2xl font-bold mb-2">Carregando perguntas...</h2>
-            <p className="text-muted-foreground">Aguarde enquanto preparamos a partida.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (!opponentUserId) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-lg text-center">
-          <CardContent className="pt-6">
-            <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
-            <h2 className="text-2xl font-bold mb-2">Aguardando oponente...</h2>
-            <p className="text-muted-foreground">A partida iniciará em breve.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Timer de 60 segundos
+  // Timer de 60 segundos - HOOK #1
   useEffect(() => {
-    hasSubmittedRef.current = false; // Resetar ao mudar de questão
+    if (!match.questions_data || totalQuestions === 0 || !opponentUserId) return;
+    
+    hasSubmittedRef.current = false;
     setStartTime(Date.now());
     setTimeRemaining(60);
     setMyAnswered(false);
@@ -110,10 +81,12 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [currentQuestion]);
+  }, [currentQuestion, match.questions_data, totalQuestions, opponentUserId]);
 
-  // Listener para respostas e desconexão
+  // Listener para respostas e desconexão - HOOK #2
   useEffect(() => {
+    if (!match.questions_data || totalQuestions === 0 || !opponentUserId) return;
+
     const channel = supabase
       .channel(`match-answers-${match.id}-${currentQuestion}`)
       .on(
@@ -162,7 +135,18 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [match.id, currentQuestion, opponentUserId]);
+  }, [match.id, currentQuestion, opponentUserId, match.questions_data, totalQuestions]);
+
+  // Auto-advance after showing result - HOOK #3
+  useEffect(() => {
+    if (showRoundResult && roundResult) {
+      const autoAdvanceTimer = setTimeout(() => {
+        handleNextQuestion();
+      }, 5000);
+      
+      return () => clearTimeout(autoAdvanceTimer);
+    }
+  }, [showRoundResult, roundResult]);
 
   const showRoundResultScreen = (myAnswerData: any, opponentAnswer: any) => {
     const result: RoundResult = {
@@ -323,7 +307,36 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   };
 
   const myTotalScore = answers.reduce((sum, a) => sum + a.points, 0);
-  const opponentTotalScore = 0; // Não temos acesso aos dados do oponente localmente
+  const opponentTotalScore = 0;
+
+  // Validações de estado - renderizadas condicionalmente após TODOS os hooks
+  if (!match.questions_data || totalQuestions === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-lg text-center">
+          <CardContent className="pt-6">
+            <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
+            <h2 className="text-2xl font-bold mb-2">Carregando perguntas...</h2>
+            <p className="text-muted-foreground">Aguarde enquanto preparamos a partida.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!opponentUserId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-lg text-center">
+          <CardContent className="pt-6">
+            <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
+            <h2 className="text-2xl font-bold mb-2">Aguardando oponente...</h2>
+            <p className="text-muted-foreground">A partida iniciará em breve.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Mostrar animação de contagem regressiva antes da primeira pergunta
   if (showCountdown) {
@@ -333,17 +346,6 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
       />
     );
   }
-
-  // Auto-advance after showing result (5 segundos obrigatórios)
-  useEffect(() => {
-    if (showRoundResult && roundResult) {
-      const autoAdvanceTimer = setTimeout(() => {
-        handleNextQuestion();
-      }, 5000);
-      
-      return () => clearTimeout(autoAdvanceTimer);
-    }
-  }, [showRoundResult, roundResult]);
 
   if (currentQuestion >= totalQuestions) {
     return (
