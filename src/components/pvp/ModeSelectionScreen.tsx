@@ -5,19 +5,128 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { MatchConfirmCard } from "./MatchConfirmCard";
 
 interface ModeSelectionScreenProps {
   onSelectMode: (mode: '1v1' | 'group') => void;
   onQuickMatch: () => void;
-  onJoinWithCode: () => void;
+  onJoinWithCode: (matchId: string) => void;
+  userId: string;
 }
 
 export const ModeSelectionScreen = ({
   onSelectMode,
   onQuickMatch,
-  onJoinWithCode
+  onJoinWithCode,
+  userId
 }: ModeSelectionScreenProps) => {
   const [roomCode, setRoomCode] = useState("");
+  const [foundMatch, setFoundMatch] = useState<any>(null);
+  const [searching, setSearching] = useState(false);
+  const { toast } = useToast();
+  const handleSearchCode = async () => {
+    if (!roomCode || roomCode.length !== 6) {
+      toast({
+        title: "Código inválido",
+        description: "Digite um código de 6 caracteres",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setSearching(true);
+
+    try {
+      // Buscar partida pelo código
+      const { data: match, error } = await supabase
+        .from("pvp_matches")
+        .select("*")
+        .eq("match_code", roomCode.toUpperCase())
+        .eq("status", "waiting")
+        .eq("match_mode", "1v1")
+        .maybeSingle();
+
+      if (error || !match) {
+        toast({
+          title: "Partida não encontrada",
+          description: "Verifique o código ou a partida já iniciou",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (match.host_user_id === userId) {
+        toast({
+          title: "Erro",
+          description: "Você não pode entrar na sua própria partida",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setFoundMatch(match);
+    } catch (error) {
+      console.error("Search error:", error);
+      toast({
+        title: "Erro ao buscar",
+        description: "Tente novamente",
+        variant: "destructive"
+      });
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleMatchJoin = async () => {
+    if (foundMatch) {
+      // Verificar XP do usuário
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("current_xp")
+        .eq("id", userId)
+        .single();
+
+      if (!profile || profile.current_xp < foundMatch.xp_bet) {
+        toast({
+          title: "XP insuficiente",
+          description: `Você precisa de ${foundMatch.xp_bet} XP para entrar nesta partida.`,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Descontar XP
+      await supabase
+        .from("profiles")
+        .update({ current_xp: profile.current_xp - foundMatch.xp_bet })
+        .eq("id", userId);
+
+      // Entrar na partida
+      await supabase
+        .from("pvp_matches")
+        .update({
+          opponent_user_id: userId,
+        })
+        .eq("id", foundMatch.id);
+
+      toast({
+        title: "Partida iniciada!",
+        description: "Boa sorte!"
+      });
+
+      onJoinWithCode(foundMatch.id);
+      setFoundMatch(null);
+      setRoomCode("");
+    }
+  };
+
+  const handleCancelConfirm = () => {
+    setFoundMatch(null);
+    setRoomCode("");
+  };
+
   const modes = [
     {
       id: '1v1',
@@ -67,7 +176,17 @@ export const ModeSelectionScreen = ({
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <>
+      {foundMatch && (
+        <MatchConfirmCard
+          match={foundMatch}
+          onJoin={handleMatchJoin}
+          onCancel={handleCancelConfirm}
+          userId={userId}
+        />
+      )}
+
+      <div className="relative min-h-screen overflow-hidden">
       {/* Background Idêntico ao Dashboard */}
       <div className="fixed inset-0 z-0 geometric-bg gradient-background">
         {/* Neon Lines - Meteor Effect */}
@@ -230,15 +349,11 @@ export const ModeSelectionScreen = ({
                     maxLength={6}
                   />
                   <Button
-                    onClick={() => {
-                      if (roomCode.trim()) {
-                        onJoinWithCode();
-                      }
-                    }}
-                    disabled={!roomCode.trim()}
+                    onClick={handleSearchCode}
+                    disabled={!roomCode.trim() || searching}
                     className="bg-white/10 hover:bg-white/20 text-white font-semibold px-8 border border-white/20 hover:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Entrar
+                    {searching ? "Buscando..." : "Entrar"}
                   </Button>
                 </div>
               </div>
@@ -296,6 +411,7 @@ export const ModeSelectionScreen = ({
 
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
