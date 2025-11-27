@@ -482,121 +482,12 @@ const PvP = () => {
           </motion.div>
         </div>
 
-        {!selectedMode ? (
-          <ModeSelectionScreen 
-            onSelectMode={handleModeSelected}
-            onQuickMatch={() => setShowQuickMatchDialog(true)}
-            onJoinWithCode={() => setShowUniversalJoinDialog(true)}
-          />
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-6"
-          >
-            <Button
-              variant="ghost"
-              onClick={() => setSelectedMode(null)}
-              className="text-white hover:bg-white/20"
-            >
-              ← Voltar aos Modos
-            </Button>
+        <ModeSelectionScreen 
+          onSelectMode={handleModeSelected}
+          onQuickMatch={() => setShowQuickMatchDialog(true)}
+          onJoinWithCode={() => setShowUniversalJoinDialog(true)}
+        />
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card className="arcade-button cursor-pointer bg-gradient-to-br from-primary/20 to-accent/20 hover:scale-105 transition-transform" 
-                    onClick={() => selectedMode === '1v1' ? setShowCreateDialog(true) : setShowCreateGroupDialog(true)}>
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-primary/30 rounded-lg">
-                      <Plus className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-white">
-                        {selectedMode === '1v1' ? 'Criar Partida' : 'Criar Grupo'}
-                      </CardTitle>
-                      <CardDescription className="text-gray-200">
-                        {selectedMode === '1v1' 
-                          ? 'Crie uma partida 1v1' 
-                          : 'Crie um grupo e convide membros'}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-200">
-                    <li>• Escolha o módulo de perguntas</li>
-                    <li>• Defina a aposta de XP</li>
-                    <li>• Compartilhe o código</li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="arcade-button cursor-pointer bg-gradient-to-br from-secondary/20 to-primary/20 hover:scale-105 transition-transform" 
-                    onClick={() => selectedMode === '1v1' ? setShowJoinDialog(true) : setShowJoinGroupDialog(true)}>
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-secondary/30 rounded-lg">
-                      <LogIn className="h-6 w-6 text-secondary-foreground" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-white">Entrar {selectedMode === '1v1' ? 'na Partida' : 'no Grupo'}</CardTitle>
-                      <CardDescription className="text-gray-200">
-                        Use um código para entrar
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-200">
-                    <li>• Digite o código de 6 dígitos</li>
-                    <li>• Verifique a aposta de XP</li>
-                    <li>• Entre na batalha!</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Swords className="w-6 h-6 text-yellow-400" />
-                  Como Funciona
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-100">
-                <div>
-                  <h4 className="font-semibold mb-2 text-yellow-400">Sistema de Pontuação</h4>
-                  <p className="text-sm">
-                    Cada resposta correta vale pontos baseados na velocidade:
-                    <br />• Base: 100 pontos
-                    <br />• Bônus de velocidade: até +100 pontos
-                  </p>
-                </div>
-                {selectedMode === 'group' && (
-                  <div>
-                    <h4 className="font-semibold mb-2 text-purple-400">Modo Grupo</h4>
-                    <p className="text-sm">
-                      • Até 5 grupos competindo simultaneamente
-                      <br />• Cada membro joga sua vez contra membros de outros grupos
-                      <br />• Pontos individuais somam ao total do grupo
-                      <br />• Grupo com mais pontos vence e leva o prêmio!
-                    </p>
-                  </div>
-                )}
-                <div>
-                  <h4 className="font-semibold mb-2 text-green-400">Recompensas</h4>
-                  <p className="text-sm">
-                    {selectedMode === '1v1' ? (
-                      <>• Vencedor leva o dobro do XP apostado<br />• Empate: cada um recupera sua aposta</>
-                    ) : (
-                      <>• 1º lugar: 60% do pote total<br />• 2º lugar: 25% do pote<br />• 3º lugar: 15% do pote</>
-                    )}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
       </div>
 
       {/* Dialogs */}
