@@ -29,7 +29,6 @@ interface RoundResult {
 
 export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps) => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [showCountdown, setShowCountdown] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
