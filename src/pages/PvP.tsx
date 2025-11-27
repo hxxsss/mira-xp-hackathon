@@ -485,7 +485,18 @@ const PvP = () => {
         <ModeSelectionScreen 
           onSelectMode={handleModeSelected}
           onQuickMatch={() => setShowQuickMatchDialog(true)}
-          onJoinWithCode={() => setShowUniversalJoinDialog(true)}
+          onJoinWithCode={async (matchId: string) => {
+            const { data: match } = await supabase
+              .from('pvp_matches')
+              .select('*')
+              .eq('id', matchId)
+              .single();
+            
+            if (match) {
+              await handleMatchJoined(match as Match);
+            }
+          }}
+          userId={userId}
         />
 
       </div>
