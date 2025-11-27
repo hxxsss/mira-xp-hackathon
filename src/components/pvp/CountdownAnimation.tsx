@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface CountdownAnimationProps {
   onComplete: () => void;
@@ -8,7 +8,14 @@ interface CountdownAnimationProps {
 export const CountdownAnimation = ({ onComplete }: CountdownAnimationProps) => {
   const [count, setCount] = useState(3);
   const [showGo, setShowGo] = useState(false);
+  const onCompleteRef = useRef(onComplete);
 
+  // Atualiza a referência sem causar re-render
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
+  // Timer local isolado - não depende de props
   useEffect(() => {
     if (count > 0) {
       const timer = setTimeout(() => {
@@ -18,11 +25,11 @@ export const CountdownAnimation = ({ onComplete }: CountdownAnimationProps) => {
     } else {
       setShowGo(true);
       const goTimer = setTimeout(() => {
-        onComplete();
+        onCompleteRef.current();
       }, 800);
       return () => clearTimeout(goTimer);
     }
-  }, [count, onComplete]);
+  }, [count]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center battle-gradient">
