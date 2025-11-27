@@ -77,9 +77,9 @@ export const MatchConfirmCard = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Crown className="w-5 h-5 text-yellow-400" />
-                  <span className="text-sm font-medium text-black/80">Host</span>
+                  <span className="font-medium text-black/80 text-xl">Host</span>
                 </div>
-                <span className="text-white font-semibold">{hostName}</span>
+                <span className="font-semibold text-[#3706a2]/80 text-xl">{hostName}</span>
               </div>
             </div>
 
@@ -88,7 +88,7 @@ export const MatchConfirmCard = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Coins className="w-5 h-5 text-yellow-400" />
-                  <span className="text-white/80 text-sm font-medium">Aposta</span>
+                  <span className="font-medium text-black/80 text-xl">Aposta</span>
                 </div>
                 <span className="text-yellow-400 font-bold text-lg">{match.xp_bet} XP</span>
               </div>
@@ -99,9 +99,9 @@ export const MatchConfirmCard = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Target className="w-5 h-5 text-cyan-400" />
-                    <span className="text-white/80 text-sm font-medium">Nível</span>
+                    <span className="font-medium text-black/80 text-xl">Nível</span>
                   </div>
-                  <span className="text-white font-semibold capitalize">{match.difficulty_level}</span>
+                  <span className="font-semibold capitalize text-[#074aa3]/80">{match.difficulty_level}</span>
                 </div>
               </div>}
           </motion.div>
