@@ -602,19 +602,27 @@ const PvP = () => {
       {/* Dialogs */}
       <CreateMatchDialog
         open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
+        onOpenChange={(open) => {
+          setShowCreateDialog(open);
+          if (!open) {
+            setSelectedMode(null);
+          }
+        }}
         onMatchCreated={handleMatchCreated}
         userId={userId}
       />
 
-        <CreateGroupDialog
-          open={showCreateGroupDialog}
-          onOpenChange={(open) => {
-            setShowCreateGroupDialog(open);
-          }}
-          onGroupCreated={handleGroupCreated}
-          userId={userId}
-        />
+      <CreateGroupDialog
+        open={showCreateGroupDialog}
+        onOpenChange={(open) => {
+          setShowCreateGroupDialog(open);
+          if (!open) {
+            setSelectedMode(null);
+          }
+        }}
+        onGroupCreated={handleGroupCreated}
+        userId={userId}
+      />
 
         <QuickMatchDialog
           open={showQuickMatchDialog}
