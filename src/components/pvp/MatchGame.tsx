@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Zap, Trophy, Clock, CheckCircle2, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { CountdownAnimation } from "./CountdownAnimation";
 
 interface MatchGameProps {
   match: any;
@@ -29,6 +30,7 @@ interface RoundResult {
 export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [showCountdown, setShowCountdown] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [startTime, setStartTime] = useState(Date.now());
@@ -323,12 +325,21 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   const myTotalScore = answers.reduce((sum, a) => sum + a.points, 0);
   const opponentTotalScore = 0; // Não temos acesso aos dados do oponente localmente
 
-  // Auto-advance after showing result
+  // Mostrar animação de contagem regressiva antes da primeira pergunta
+  if (showCountdown) {
+    return (
+      <CountdownAnimation 
+        onComplete={() => setShowCountdown(false)} 
+      />
+    );
+  }
+
+  // Auto-advance after showing result (5 segundos obrigatórios)
   useEffect(() => {
     if (showRoundResult && roundResult) {
       const autoAdvanceTimer = setTimeout(() => {
         handleNextQuestion();
-      }, 4000);
+      }, 5000);
       
       return () => clearTimeout(autoAdvanceTimer);
     }
@@ -397,11 +408,11 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
               <motion.div
                 initial={{ width: '100%' }}
                 animate={{ width: '0%' }}
-                transition={{ duration: 4, ease: "linear" }}
+                transition={{ duration: 5, ease: "linear" }}
                 className="h-1 bg-primary rounded-full mt-4"
               />
               <p className="text-gray-600 text-sm mt-2">
-                Próxima questão em instantes... (ou clique para pular)
+                ⏱️ Próxima questão em 5 segundos...
               </p>
             </motion.div>
           </CardHeader>
@@ -573,13 +584,6 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
                 </div>
               </div>
             </motion.div>
-
-            <Button
-              onClick={handleNextQuestion}
-              className="w-full arcade-button text-xl py-6 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
-            >
-              {currentQuestion < totalQuestions - 1 ? '⚡ Próxima Questão' : '🏆 Ver Resultado Final'}
-            </Button>
           </CardContent>
         </Card>
       </div>
