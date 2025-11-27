@@ -8,6 +8,7 @@ import { Zap, Trophy, Clock, CheckCircle2, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { CountdownAnimation } from "./CountdownAnimation";
+import { PvPHeader } from "./PvPHeader";
 
 interface MatchGameProps {
   match: any;
@@ -310,7 +311,8 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   // Validações de estado - renderizadas condicionalmente após TODOS os hooks
   if (!match.questions_data || totalQuestions === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
+      <div className="min-h-screen pvp-bg-classic flex items-center justify-center p-4">
+        <PvPHeader />
         <Card className="w-full max-w-lg text-center">
           <CardContent className="pt-6">
             <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
@@ -324,7 +326,8 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
 
   if (!opponentUserId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
+      <div className="min-h-screen pvp-bg-classic flex items-center justify-center p-4">
+        <PvPHeader />
         <Card className="w-full max-w-lg text-center">
           <CardContent className="pt-6">
             <Clock className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
@@ -347,7 +350,8 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
 
   if (currentQuestion >= totalQuestions) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center p-4">
+      <div className="min-h-screen pvp-bg-classic flex items-center justify-center p-4">
+        <PvPHeader />
         <Card className="w-full max-w-lg text-center">
           <CardContent className="pt-6">
             <Trophy className="h-16 w-16 text-primary mx-auto mb-4 animate-bounce" />
@@ -367,7 +371,9 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   // Tela de resultado da rodada
   if (showRoundResult && roundResult) {
     return (
-      <div className="min-h-screen battle-gradient p-4 flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-screen pvp-bg-classic p-4 flex items-center justify-center relative overflow-hidden">
+        <PvPHeader />
+        
         {/* Confetti effect for correct answers */}
         {roundResult.myCorrect && (
           <div className="absolute inset-0 pointer-events-none">
@@ -395,7 +401,7 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
           </div>
         )}
 
-        <Card className="w-full max-w-3xl glass-card relative">
+        <Card className="w-full max-w-3xl glass-card relative backdrop-blur-2xl bg-white/10 border-white/20 rounded-3xl">
           <CardHeader className="text-center">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -591,13 +597,21 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen pvp-bg-classic flex items-center justify-center p-4 relative overflow-hidden">
+      <PvPHeader />
+      
       {/* Animated background particles */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(15)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-purple-400/30 rounded-full"
+            className="absolute w-1 h-1 rounded-full"
+            style={{
+              background: i % 3 === 0 ? '#0ea5e9' : i % 3 === 1 ? '#06b6d4' : '#3b82f6',
+              opacity: 0.3,
+              left: `${Math.random() * 100}%`,
+              top: '100%'
+            }}
             animate={{
               y: [-20, -1000],
               opacity: [0, 1, 0]
@@ -607,15 +621,11 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
               repeat: Infinity,
               delay: Math.random() * 3
             }}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: '100%'
-            }}
           />
         ))}
       </div>
 
-      <Card className="w-full max-w-3xl glass-card relative z-10">
+      <Card className="w-full max-w-3xl glass-card relative z-10 backdrop-blur-2xl bg-white/10 border-white/20 rounded-3xl">
         <CardHeader>
           {/* Timer and Progress */}
           <div className="flex items-center justify-between mb-4">

@@ -6,6 +6,7 @@ import { Copy, Users, Trophy, Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { avatars } from "@/components/ui/avatar-picker";
+import { PvPHeader } from "./PvPHeader";
 
 interface GroupLobbyProps {
   matchId: string;
@@ -162,14 +163,41 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
   }
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6 h-full">
+    <div className="grid lg:grid-cols-2 gap-6 h-full min-h-screen pvp-bg-group relative overflow-hidden p-6">
+      <PvPHeader />
+      
+      {/* Partículas de fundo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(30)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 rounded-full"
+            style={{
+              background: i % 3 === 0 ? '#a855f7' : i % 3 === 1 ? '#d946ef' : '#8b5cf6',
+              opacity: 0.3
+            }}
+            animate={{
+              y: [Math.random() * window.innerHeight, -100],
+              x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0]
+            }}
+            transition={{
+              duration: Math.random() * 5 + 3,
+              repeat: Infinity,
+              delay: Math.random() * 3
+            }}
+          />
+        ))}
+      </div>
+      
       {/* LEFT SIDE - Invite Code */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-6 relative z-10"
       >
-        <Card className="p-8 bg-gradient-to-br from-purple-900/80 to-pink-900/80 border-purple-500 border-2">
+        <Card className="p-8 glass-card backdrop-blur-2xl bg-white/10 border-white/20 rounded-3xl">
           <div className="text-center space-y-6">
             <div className="flex items-center justify-center gap-2">
               <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
@@ -178,20 +206,31 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
             </div>
             
             <div className="space-y-4">
-              <p className="text-purple-200 text-lg">Compartilhe o código do grupo:</p>
+              <p className="text-white/90 text-lg font-semibold">Compartilhe o código do grupo:</p>
               
               <motion.div 
-                className="bg-black/40 rounded-xl p-8 border-4 border-purple-400"
+                className="bg-white/5 rounded-xl p-8 border-4 border-purple-400/50 backdrop-blur-xl"
                 whileHover={{ scale: 1.02 }}
+                animate={{
+                  boxShadow: [
+                    '0 0 20px rgba(168,85,247,0.3)',
+                    '0 0 40px rgba(217,70,239,0.5)',
+                    '0 0 20px rgba(168,85,247,0.3)'
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
               >
-                <code className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 tracking-widest">
+                <code 
+                  className="text-7xl font-black text-white tracking-widest"
+                  style={{ textShadow: '0 0 30px rgba(217,70,239,0.8)' }}
+                >
                   {group.invite_code}
                 </code>
               </motion.div>
 
               <Button
                 onClick={() => copyCode(group.invite_code)}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-lg py-6"
+                className="w-full bg-purple-500/30 hover:bg-purple-500/50 border-2 border-purple-400/50 text-white font-bold text-lg py-6 rounded-xl backdrop-blur-xl"
               >
                 <Copy className="w-5 h-5 mr-2" />
                 Copiar Código

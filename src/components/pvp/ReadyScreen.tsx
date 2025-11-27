@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Check, Loader2, Crown } from "lucide-react";
+import { PvPHeader } from "./PvPHeader";
 
 interface ReadyScreenProps {
   match: any;
@@ -118,13 +119,19 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
   }, [match.host_ready, match.opponent_ready, match.status, isHost, match.id]);
 
   return (
-    <div className="min-h-screen battle-gradient relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen pvp-bg-classic relative overflow-hidden flex items-center justify-center">
+      <PvPHeader />
+      
       {/* Partículas de fundo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(30)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-purple-500/30 rounded-full"
+            className="absolute w-2 h-2 rounded-full"
+            style={{
+              background: i % 3 === 0 ? '#0ea5e9' : i % 3 === 1 ? '#06b6d4' : '#3b82f6',
+              opacity: 0.3
+            }}
             animate={{
               y: [Math.random() * window.innerHeight, -100],
               x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],

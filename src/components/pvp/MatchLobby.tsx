@@ -1,8 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Copy, Users, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { PvPHeader } from "./PvPHeader";
 
 interface MatchLobbyProps {
   match: any;
@@ -23,7 +23,9 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
   };
 
   return (
-    <div className="min-h-screen battle-gradient flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen pvp-bg-classic flex items-center justify-center p-4 relative overflow-hidden">
+      <PvPHeader />
+      
       {/* Partículas animadas de fundo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(25)].map((_, i) => (
@@ -34,7 +36,7 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
               width: Math.random() * 4 + 2,
               height: Math.random() * 4 + 2,
               background: `radial-gradient(circle, ${
-                i % 3 === 0 ? '#ff00ff' : i % 3 === 1 ? '#00ffff' : '#ffff00'
+                i % 3 === 0 ? '#0ea5e9' : i % 3 === 1 ? '#06b6d4' : '#3b82f6'
               }, transparent)`,
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -55,7 +57,7 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
       </div>
 
       <motion.div 
-        className="glass-card p-8 max-w-lg w-full relative z-10"
+        className="glass-card p-8 max-w-lg w-full relative z-10 rounded-3xl backdrop-blur-2xl bg-white/10 border border-white/20"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
@@ -76,51 +78,51 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
               repeat: Infinity,
             }}
           >
-            <Users className="h-20 w-20 text-primary mx-auto mb-4" 
+            <Users className="h-20 w-20 text-white mx-auto mb-4" 
                    style={{ filter: 'drop-shadow(0 0 20px currentColor)' }} />
           </motion.div>
-          <h1 className="text-4xl font-black neon-text mb-2">
+          <h1 className="text-4xl font-black text-white mb-2" style={{ textShadow: '0 0 30px rgba(255,255,255,0.5)' }}>
             ⚔️ AGUARDANDO OPONENTE
           </h1>
-          <p className="text-white/80 text-lg">
+          <p className="text-white/90 text-lg font-semibold">
             {isHost ? "Compartilhe o código com seu amigo!" : "O jogo iniciará em breve..."}
           </p>
         </motion.div>
 
         {/* Código da Sala - Estilo Arcade */}
         <motion.div 
-          className="glass-card p-6 mb-6 relative overflow-hidden"
+          className="glass-card p-6 mb-6 relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/30"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
           {/* Animated border */}
           <motion.div
-            className="absolute inset-0 border-2 border-primary/50 rounded-lg"
+            className="absolute inset-0 border-2 border-cyan-400/50 rounded-2xl"
             animate={{
               boxShadow: [
-                '0 0 20px rgba(255,0,255,0.3)',
-                '0 0 40px rgba(0,255,255,0.5)',
-                '0 0 20px rgba(255,0,255,0.3)'
+                '0 0 20px rgba(6,182,212,0.3)',
+                '0 0 40px rgba(59,130,246,0.5)',
+                '0 0 20px rgba(6,182,212,0.3)'
               ]
             }}
             transition={{ duration: 2, repeat: Infinity }}
           />
           
-          <p className="text-white/60 text-center mb-3 text-sm font-bold tracking-wider">
+          <p className="text-white/80 text-center mb-3 text-sm font-bold tracking-wider">
             🔑 CÓDIGO DA SALA
           </p>
           <div className="flex items-center justify-center gap-3">
             <motion.span 
               className="text-5xl font-bold font-mono tracking-[0.3em] text-white relative"
               style={{ 
-                textShadow: '0 0 20px #00ff88, 0 0 40px #00ff88, 0 0 60px #00ff88',
+                textShadow: '0 0 20px #06b6d4, 0 0 40px #06b6d4, 0 0 60px #06b6d4',
               }}
               animate={{
                 textShadow: [
-                  '0 0 20px #00ff88, 0 0 40px #00ff88',
-                  '0 0 30px #00ffff, 0 0 60px #00ffff',
-                  '0 0 20px #00ff88, 0 0 40px #00ff88'
+                  '0 0 20px #06b6d4, 0 0 40px #06b6d4',
+                  '0 0 30px #3b82f6, 0 0 60px #3b82f6',
+                  '0 0 20px #06b6d4, 0 0 40px #06b6d4'
                 ]
               }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -135,7 +137,7 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
                 variant="outline"
                 size="icon"
                 onClick={copyMatchCode}
-                className="arcade-button h-12 w-12 bg-primary/20 border-primary/50 hover:bg-primary/40"
+                className="h-12 w-12 bg-cyan-500/20 border-cyan-400/50 hover:bg-cyan-500/40 text-white"
               >
                 <Copy className="h-5 w-5" />
               </Button>
@@ -150,18 +152,18 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="glass-card p-4">
+          <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
             <div className="flex justify-between items-center">
-              <span className="text-white/70 text-sm">💰 Aposta:</span>
+              <span className="text-white/90 text-sm font-semibold">💰 Aposta:</span>
               <span className="font-bold text-xl text-yellow-400" 
                     style={{ textShadow: '0 0 10px currentColor' }}>
                 {match.xp_bet} XP
               </span>
             </div>
           </div>
-          <div className="glass-card p-4">
+          <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
             <div className="flex justify-between items-center">
-              <span className="text-white/70 text-sm">🏆 Prêmio do Vencedor:</span>
+              <span className="text-white/90 text-sm font-semibold">🏆 Prêmio do Vencedor:</span>
               <span className="font-bold text-xl text-green-400"
                     style={{ textShadow: '0 0 10px currentColor' }}>
                 {match.xp_bet * 2} XP
@@ -187,11 +189,11 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
               rotate: { duration: 2, repeat: Infinity, ease: "linear" }
             }}
           >
-            <Loader2 className="w-16 h-16 text-primary mx-auto" 
+            <Loader2 className="w-16 h-16 text-white mx-auto" 
                      style={{ filter: 'drop-shadow(0 0 10px currentColor)' }} />
           </motion.div>
           <motion.p 
-            className="text-white/80 mt-4 text-lg font-semibold"
+            className="text-white/90 mt-4 text-lg font-semibold"
             animate={{
               opacity: [0.5, 1, 0.5]
             }}
@@ -213,7 +215,7 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
           <Button
             variant="outline"
             onClick={onLeave}
-            className="w-full arcade-button bg-red-500/20 border-red-500/50 hover:bg-red-500/40 text-white"
+            className="w-full bg-red-500/20 border-red-500/50 hover:bg-red-500/40 text-white font-bold rounded-xl"
           >
             {isHost ? "❌ Cancelar Partida" : "🚪 Sair"}
           </Button>
