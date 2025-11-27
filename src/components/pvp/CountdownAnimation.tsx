@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 
 interface CountdownAnimationProps {
@@ -7,38 +7,55 @@ interface CountdownAnimationProps {
 
 export const CountdownAnimation = ({ onComplete }: CountdownAnimationProps) => {
   const [count, setCount] = useState(3);
-  const [showGo, setShowGo] = useState(false);
   const onCompleteRef = useRef(onComplete);
+  const safetyTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Atualiza a referência sem causar re-render
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
-  // Timer local isolado - não depende de props
+  // Timer de segurança: força início após 4 segundos
+  useEffect(() => {
+    safetyTimerRef.current = setTimeout(() => {
+      console.log("⚠️ Safety timeout triggered - forcing game start");
+      onCompleteRef.current();
+    }, 4000);
+
+    return () => {
+      if (safetyTimerRef.current) {
+        clearTimeout(safetyTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Timer da contagem: 3 -> 2 -> 1 -> GO
   useEffect(() => {
     if (count > 0) {
       const timer = setTimeout(() => {
-        setCount(count - 1);
+        setCount(prev => prev - 1);
       }, 1000);
       return () => clearTimeout(timer);
     } else {
-      setShowGo(true);
+      // Quando chegar a 0, mostra GO por 500ms e depois dispara onComplete
       const goTimer = setTimeout(() => {
+        if (safetyTimerRef.current) {
+          clearTimeout(safetyTimerRef.current);
+        }
         onCompleteRef.current();
-      }, 800);
+      }, 500);
       return () => clearTimeout(goTimer);
     }
   }, [count]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center battle-gradient">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-purple-600 via-purple-700 to-purple-900">
       {/* Animated background particles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(30)].map((_, i) => (
+        {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-primary/40 rounded-full"
+            className="absolute w-2 h-2 bg-white/40 rounded-full"
             initial={{
               x: "50%",
               y: "50%",
@@ -60,107 +77,32 @@ export const CountdownAnimation = ({ onComplete }: CountdownAnimationProps) => {
         ))}
       </div>
 
-      <AnimatePresence mode="wait">
-        {!showGo ? (
-          <motion.div
-            key={count}
-            initial={{ scale: 0, opacity: 0, rotate: -180 }}
-            animate={{ scale: 1, opacity: 1, rotate: 0 }}
-            exit={{ scale: 0, opacity: 0, rotate: 180 }}
-            transition={{ 
-              type: "spring", 
-              stiffness: 200, 
-              damping: 10 
-            }}
-            className="relative"
-          >
-            {/* Glow effect */}
-            <motion.div
-              animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.5, 0, 0.5],
-              }}
-              transition={{
-                duration: 1,
-                repeat: Infinity,
-              }}
-              className="absolute inset-0 bg-primary/30 rounded-full blur-3xl"
-            />
-            
-            {/* Number */}
-            <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 0.5,
-                repeat: Infinity,
-                repeatDelay: 0.5,
-              }}
-              className="relative z-10 w-64 h-64 rounded-full bg-gradient-to-br from-primary via-secondary to-primary flex items-center justify-center shadow-2xl border-8 border-white/20"
-            >
-              <span className="text-9xl font-black text-white drop-shadow-2xl">
-                {count}
-              </span>
-            </motion.div>
-          </motion.div>
+      {/* Número ou GO */}
+      <motion.div
+        key={count}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 200, 
+          damping: 15 
+        }}
+        className="relative z-10"
+      >
+        {count > 0 ? (
+          <div className="w-64 h-64 rounded-full bg-gradient-to-br from-white/20 via-white/10 to-white/5 flex items-center justify-center shadow-2xl border-8 border-white/30 backdrop-blur-sm">
+            <span className="text-9xl font-black text-white drop-shadow-2xl">
+              {count}
+            </span>
+          </div>
         ) : (
-          <motion.div
-            key="go"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: [0, 1.2, 1], opacity: 1 }}
-            transition={{ 
-              type: "spring", 
-              stiffness: 300, 
-              damping: 15 
-            }}
-            className="relative"
-          >
-            {/* Explosion effect */}
-            {[...Array(20)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-4 h-4 bg-yellow-400 rounded-full"
-                initial={{ 
-                  x: 0,
-                  y: 0,
-                  scale: 1,
-                }}
-                animate={{
-                  x: Math.cos((i * Math.PI * 2) / 20) * 200,
-                  y: Math.sin((i * Math.PI * 2) / 20) * 200,
-                  scale: [1, 0],
-                  opacity: [1, 0],
-                }}
-                transition={{
-                  duration: 0.8,
-                  ease: "easeOut",
-                }}
-                style={{
-                  left: '50%',
-                  top: '50%',
-                }}
-              />
-            ))}
-            
-            {/* GO text */}
-            <motion.div
-              animate={{
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{
-                duration: 0.3,
-                repeat: 2,
-              }}
-              className="relative z-10 px-20 py-12 rounded-3xl bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 shadow-2xl border-8 border-white/30"
-            >
-              <span className="text-9xl font-black text-white drop-shadow-2xl">
-                GO!
-              </span>
-            </motion.div>
-          </motion.div>
+          <div className="px-20 py-12 rounded-3xl bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 shadow-2xl border-8 border-white/30">
+            <span className="text-9xl font-black text-white drop-shadow-2xl">
+              GO!
+            </span>
+          </div>
         )}
-      </AnimatePresence>
+      </motion.div>
     </div>
   );
 };
