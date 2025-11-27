@@ -26,10 +26,12 @@ export const ModeSelectionScreen = ({
       title: 'DUELO CLÁSSICO',
       subtitle: 'Desafio Direto',
       description: 'Enfrente um oponente em um duelo de conhecimento. O mais rápido e preciso vence!',
-      gradient: 'from-cyan-500/30 via-blue-500/20 to-cyan-600/30',
-      innerGradient: 'from-cyan-500/10 to-transparent',
-      hoverGlow: 'hover:shadow-[0_0_60px_rgba(34,211,238,0.6)]',
-      borderGlow: 'hover:border-cyan-400/60',
+      gradient: 'from-cyan-500/40 via-blue-500/30 to-cyan-600/40',
+      innerGradient: 'from-cyan-500/20 to-transparent',
+      borderColor: 'border-cyan-400/40',
+      hoverGlow: 'hover:shadow-[0_0_80px_rgba(34,211,238,0.8)]',
+      borderGlow: 'hover:border-cyan-400/90',
+      patternOpacity: 'opacity-10',
       onClick: () => onSelectMode('1v1')
     },
     {
@@ -39,10 +41,12 @@ export const ModeSelectionScreen = ({
       title: 'PARTIDA INSTANTÂNEA',
       subtitle: 'Jogue Agora',
       description: 'Entre em uma partida instantânea contra um oponente aleatório. Sem espera!',
-      gradient: 'from-orange-500/30 via-yellow-500/20 to-orange-600/30',
-      innerGradient: 'from-orange-500/10 to-transparent',
-      hoverGlow: 'hover:shadow-[0_0_60px_rgba(251,146,60,0.6)]',
-      borderGlow: 'hover:border-orange-400/60',
+      gradient: 'from-orange-500/40 via-yellow-500/30 to-orange-600/40',
+      innerGradient: 'from-orange-500/20 to-transparent',
+      borderColor: 'border-orange-400/40',
+      hoverGlow: 'hover:shadow-[0_0_80px_rgba(251,146,60,0.8)]',
+      borderGlow: 'hover:border-orange-400/90',
+      patternOpacity: 'opacity-10',
       onClick: onQuickMatch
     },
     {
@@ -52,10 +56,12 @@ export const ModeSelectionScreen = ({
       title: 'BATALHA ÉPICA',
       subtitle: 'Modo Épico',
       description: 'Reúna seu time e enfrente outros grupos. Trabalho em equipe e estratégia!',
-      gradient: 'from-purple-500/30 via-fuchsia-500/20 to-purple-600/30',
-      innerGradient: 'from-purple-500/10 to-transparent',
-      hoverGlow: 'hover:shadow-[0_0_60px_rgba(192,132,252,0.6)]',
-      borderGlow: 'hover:border-purple-400/60',
+      gradient: 'from-purple-500/40 via-fuchsia-500/30 to-purple-600/40',
+      innerGradient: 'from-purple-500/20 to-transparent',
+      borderColor: 'border-purple-400/40',
+      hoverGlow: 'hover:shadow-[0_0_80px_rgba(192,132,252,0.8)]',
+      borderGlow: 'hover:border-purple-400/90',
+      patternOpacity: 'opacity-10',
       onClick: () => onSelectMode('group')
     }
   ];
@@ -85,17 +91,14 @@ export const ModeSelectionScreen = ({
 
       <div className="relative z-10 min-h-screen flex items-center justify-center py-12 px-4">
         <div className="max-w-7xl w-full space-y-12">
-          {/* Hero Title */}
+          {/* Subtitle Only - Centered */}
           <motion.div
-            initial={{ opacity: 0, y: -30 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-3"
+            className="text-center mb-8"
           >
-            <h1 className="text-7xl md:text-9xl font-extrabold text-white drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)] tracking-tight">
-              ARENA PVP
-            </h1>
-            <p className="text-lg md:text-xl text-white/60 font-medium drop-shadow-md">
+            <p className="text-xl md:text-2xl text-white/60 font-medium drop-shadow-md">
               Escolha sua batalha
             </p>
           </motion.div>
@@ -118,16 +121,27 @@ export const ModeSelectionScreen = ({
                   <Card
                     className={cn(
                       "relative group cursor-pointer overflow-hidden",
-                      "bg-white/5 backdrop-blur-xl border-2 border-white/10",
+                      "bg-white/5 backdrop-blur-xl border-[1px]",
+                      mode.borderColor,
                       "rounded-3xl p-8 h-[450px]",
                       "transition-all duration-500 ease-out",
+                      "hover:translate-y-[-12px]",
                       mode.hoverGlow,
                       mode.borderGlow
                     )}
                   >
+                    {/* Futuristic Pattern Overlay */}
+                    <div 
+                      className={cn(
+                        "absolute inset-0 bg-[linear-gradient(30deg,transparent_0%,transparent_48%,rgba(255,255,255,0.05)_49%,rgba(255,255,255,0.05)_51%,transparent_52%,transparent_100%)]",
+                        "bg-[length:20px_20px]",
+                        mode.patternOpacity
+                      )}
+                    />
+
                     {/* Inner Gradient - Always Visible */}
                     <div className={cn(
-                      "absolute inset-0 bg-gradient-to-br opacity-50",
+                      "absolute inset-0 bg-gradient-to-br opacity-60",
                       mode.innerGradient
                     )} />
 

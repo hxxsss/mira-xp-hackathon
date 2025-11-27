@@ -472,8 +472,8 @@ const PvP = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-5xl font-bold flex items-center gap-3 neon-text">
-              <Swords className="h-10 w-10" />
+            <h1 className="text-6xl font-bold flex items-center gap-3 neon-text">
+              <Swords className="h-12 w-12" />
               ARENA PvP
             </h1>
             <p className="text-gray-100 mt-2 text-lg">
