@@ -407,18 +407,18 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
             >
-              <CardTitle className="text-gray-800 text-3xl mb-2">
-                🎯 Rodada {currentQuestion + 1} - Resultado
+              <CardTitle className="text-white text-2xl mb-2 font-bold drop-shadow-lg">
+                Rodada {currentQuestion + 1} - Resultado
               </CardTitle>
               {/* Auto-advance progress bar */}
               <motion.div
                 initial={{ width: '100%' }}
                 animate={{ width: '0%' }}
                 transition={{ duration: 5, ease: "linear" }}
-                className="h-1 bg-primary rounded-full mt-4"
+                className="h-1 bg-cyan-400 rounded-full mt-4"
               />
-              <p className="text-gray-600 text-sm mt-2">
-                ⏱️ Próxima questão em 5 segundos...
+              <p className="text-white/70 text-sm mt-2 font-medium">
+                Próxima questão em 5 segundos
               </p>
             </motion.div>
           </CardHeader>
@@ -563,27 +563,27 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
               transition={{ delay: 0.8 }}
               className="glass-card p-6 border-2 border-primary/30"
             >
-              <h3 className="font-bold text-gray-800 text-center mb-4 text-xl">📊 Placar Atual</h3>
+              <h3 className="font-bold text-white text-center mb-4 text-lg drop-shadow-md">Placar Atual</h3>
               <div className="flex justify-around items-center">
                 <div className="text-center">
-                  <p className="text-gray-600 text-sm mb-1">Você</p>
+                  <p className="text-white/70 text-sm mb-1 font-medium">Você</p>
                   <motion.p
                     key={myTotalScore}
                     initial={{ scale: 1.5 }}
                     animate={{ scale: 1 }}
-                    className="text-4xl font-bold text-primary"
+                    className="text-4xl font-bold text-cyan-400"
                   >
                     {myTotalScore}
                   </motion.p>
                 </div>
-                <div className="text-gray-400 text-5xl font-bold px-8">—</div>
+                <div className="text-white/40 text-4xl font-bold px-8">—</div>
                 <div className="text-center">
-                  <p className="text-gray-600 text-sm mb-1">Oponente</p>
+                  <p className="text-white/70 text-sm mb-1 font-medium">Oponente</p>
                   <motion.p
                     key={opponentTotalScore}
                     initial={{ scale: 1.5 }}
                     animate={{ scale: 1 }}
-                    className="text-4xl font-bold text-secondary"
+                    className="text-4xl font-bold text-purple-400"
                   >
                     {opponentTotalScore || 0}
                   </motion.p>
@@ -714,14 +714,14 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
             transition={{ duration: 0.3 }}
           >
             {/* Question */}
-            <div className="glass-card p-6 mb-6 border-2 border-primary/30">
+            <div className="glass-card p-6 mb-6 border border-cyan-400/30 rounded-xl backdrop-blur-xl bg-white/5">
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-xl">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
                   {currentQuestion + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-gray-600 text-sm mb-2">📚 Educação Financeira</p>
-            <CardTitle className="text-2xl text-gray-800 leading-relaxed">
+                  <p className="text-cyan-400 text-xs mb-2 font-semibold tracking-wide uppercase">Educação Financeira</p>
+            <CardTitle className="text-xl text-white leading-relaxed font-semibold">
               {question.question}
             </CardTitle>
                 </div>
@@ -797,9 +797,9 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
             >
               <Button
                 onClick={handleAnswer}
-                className="w-full arcade-button text-xl py-7 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold shadow-2xl"
+                className="w-full text-lg py-7 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold shadow-xl rounded-xl"
               >
-                ✓ CONFIRMAR RESPOSTA
+                Confirmar Resposta
               </Button>
             </motion.div>
           )}
@@ -810,9 +810,9 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
               key={myTotalScore}
               initial={{ scale: 1.2 }}
               animate={{ scale: 1 }}
-              className="text-white font-bold text-lg"
+              className="text-white/80 font-semibold text-base"
             >
-              💎 Seu Placar: <span className="text-yellow-400 text-2xl">{myTotalScore}</span> pts
+              Seu Placar: <span className="text-yellow-400 text-xl font-bold">{myTotalScore}</span> pts
             </motion.p>
           </div>
         </CardContent>

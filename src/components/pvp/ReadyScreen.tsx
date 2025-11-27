@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Check, Loader2, Crown } from "lucide-react";
+import { Check, Loader2, Crown, User, Users as UsersIcon } from "lucide-react";
 import { PvPHeader } from "./PvPHeader";
 
 interface ReadyScreenProps {
@@ -274,17 +274,10 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
           animate={{ opacity: 1, y: 0 }}
         >
           <motion.h1 
-            className="text-6xl font-black text-center mb-12 neon-text"
-            animate={{
-              textShadow: [
-                '0 0 20px #ff00ff, 0 0 40px #ff00ff',
-                '0 0 40px #00ffff, 0 0 80px #00ffff',
-                '0 0 20px #ff00ff, 0 0 40px #ff00ff'
-              ]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
+            className="text-5xl font-bold text-center mb-12 text-white"
+            style={{ textShadow: '0 0 30px rgba(6,182,212,0.4)' }}
           >
-            ⚔️ PREPARAR PARA BATALHA! ⚔️
+            Preparar para Batalha
           </motion.h1>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
@@ -300,28 +293,28 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
               transition={{ duration: 0.3 }}
             >
               <div className="text-center">
-                <div className="text-4xl mb-4">
-                  {isHost ? '👤' : '👥'}
+                <div className="mb-4 flex justify-center">
+                  <User className="w-16 h-16 text-cyan-400" strokeWidth={1.5} />
                 </div>
                 <div className="flex items-center justify-center gap-2 mb-2">
                   {userId === match.host_user_id && (
-                    <Crown className="w-5 h-5 text-yellow-500" />
+                    <Crown className="w-5 h-5 text-yellow-400" />
                   )}
-                  <h3 className="text-2xl font-bold text-gray-800">{hostName}</h3>
+                  <h3 className="text-2xl font-semibold text-white">{hostName}</h3>
                 </div>
                 {hostReady ? (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="flex items-center justify-center gap-2 text-green-600 text-xl font-bold"
+                    className="flex items-center justify-center gap-2 text-green-400 text-lg font-semibold"
                   >
-                    <Check className="w-8 h-8" />
-                    PRONTO!
+                    <Check className="w-6 h-6" />
+                    Pronto
                   </motion.div>
                 ) : (
-                  <div className="flex items-center justify-center gap-2 text-orange-600 text-xl">
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    Aguardando...
+                  <div className="flex items-center justify-center gap-2 text-orange-400 text-lg font-medium">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Aguardando
                   </div>
                 )}
               </div>
@@ -339,28 +332,28 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
               transition={{ duration: 0.3 }}
             >
               <div className="text-center">
-                <div className="text-4xl mb-4">
-                  {!isHost ? '👤' : '👥'}
+                <div className="mb-4 flex justify-center">
+                  <UsersIcon className="w-16 h-16 text-cyan-400" strokeWidth={1.5} />
                 </div>
                 <div className="flex items-center justify-center gap-2 mb-2">
                   {userId === match.opponent_user_id && match.opponent_user_id === match.host_user_id && (
-                    <Crown className="w-5 h-5 text-yellow-500" />
+                    <Crown className="w-5 h-5 text-yellow-400" />
                   )}
-                  <h3 className="text-2xl font-bold text-gray-800">{opponentName}</h3>
+                  <h3 className="text-2xl font-semibold text-white">{opponentName}</h3>
                 </div>
                 {opponentReady ? (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="flex items-center justify-center gap-2 text-green-600 text-xl font-bold"
+                    className="flex items-center justify-center gap-2 text-green-400 text-lg font-semibold"
                   >
-                    <Check className="w-8 h-8" />
-                    PRONTO!
+                    <Check className="w-6 h-6" />
+                    Pronto
                   </motion.div>
                 ) : (
-                  <div className="flex items-center justify-center gap-2 text-orange-600 text-xl">
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    Aguardando...
+                  <div className="flex items-center justify-center gap-2 text-orange-400 text-lg font-medium">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Aguardando
                   </div>
                 )}
               </div>

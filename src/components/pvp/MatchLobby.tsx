@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Copy, Users, Loader2 } from "lucide-react";
+import { Copy, Users, Loader2, Trophy, Coins } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { PvPHeader } from "./PvPHeader";
@@ -81,11 +81,11 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
             <Users className="h-20 w-20 text-white mx-auto mb-4" 
                    style={{ filter: 'drop-shadow(0 0 20px currentColor)' }} />
           </motion.div>
-          <h1 className="text-4xl font-black text-white mb-2" style={{ textShadow: '0 0 30px rgba(255,255,255,0.5)' }}>
-            ⚔️ AGUARDANDO OPONENTE
+          <h1 className="text-4xl font-bold text-white mb-2" style={{ textShadow: '0 0 20px rgba(255,255,255,0.3)' }}>
+            Aguardando Oponente
           </h1>
-          <p className="text-white/90 text-lg font-semibold">
-            {isHost ? "Compartilhe o código com seu amigo!" : "O jogo iniciará em breve..."}
+          <p className="text-white/80 text-base font-medium">
+            {isHost ? "Compartilhe o código com seu amigo" : "O jogo iniciará em breve"}
           </p>
         </motion.div>
 
@@ -109,9 +109,12 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
             transition={{ duration: 2, repeat: Infinity }}
           />
           
-          <p className="text-white/80 text-center mb-3 text-sm font-bold tracking-wider">
-            🔑 CÓDIGO DA SALA
-          </p>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Copy className="w-4 h-4 text-cyan-400" />
+            <p className="text-white/80 text-center text-sm font-semibold tracking-wide">
+              CÓDIGO DA SALA
+            </p>
+          </div>
           <div className="flex items-center justify-center gap-3">
             <motion.span 
               className="text-5xl font-bold font-mono tracking-[0.3em] text-white relative"
@@ -154,18 +157,22 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
         >
           <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
             <div className="flex justify-between items-center">
-              <span className="text-white/90 text-sm font-semibold">💰 Aposta:</span>
-              <span className="font-bold text-xl text-yellow-400" 
-                    style={{ textShadow: '0 0 10px currentColor' }}>
+              <div className="flex items-center gap-2">
+                <Coins className="w-4 h-4 text-yellow-400" />
+                <span className="text-white/90 text-sm font-medium">Aposta</span>
+              </div>
+              <span className="font-bold text-lg text-yellow-400">
                 {match.xp_bet} XP
               </span>
             </div>
           </div>
           <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
             <div className="flex justify-between items-center">
-              <span className="text-white/90 text-sm font-semibold">🏆 Prêmio do Vencedor:</span>
-              <span className="font-bold text-xl text-green-400"
-                    style={{ textShadow: '0 0 10px currentColor' }}>
+              <div className="flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-green-400" />
+                <span className="text-white/90 text-sm font-medium">Prêmio</span>
+              </div>
+              <span className="font-bold text-lg text-green-400">
                 {match.xp_bet * 2} XP
               </span>
             </div>
@@ -193,7 +200,7 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
                      style={{ filter: 'drop-shadow(0 0 10px currentColor)' }} />
           </motion.div>
           <motion.p 
-            className="text-white/90 mt-4 text-lg font-semibold"
+            className="text-white/80 mt-4 text-base font-medium"
             animate={{
               opacity: [0.5, 1, 0.5]
             }}
@@ -202,7 +209,7 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
               repeat: Infinity
             }}
           >
-            ⏳ Procurando adversário...
+            Procurando adversário...
           </motion.p>
         </motion.div>
 
@@ -215,9 +222,9 @@ export const MatchLobby = ({ match, userId, onLeave }: MatchLobbyProps) => {
           <Button
             variant="outline"
             onClick={onLeave}
-            className="w-full bg-red-500/20 border-red-500/50 hover:bg-red-500/40 text-white font-bold rounded-xl"
+            className="w-full bg-red-500/20 border-red-500/50 hover:bg-red-500/40 text-white font-semibold rounded-xl"
           >
-            {isHost ? "❌ Cancelar Partida" : "🚪 Sair"}
+            {isHost ? "Cancelar Partida" : "Sair da Sala"}
           </Button>
         </motion.div>
       </motion.div>

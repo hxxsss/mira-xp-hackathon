@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Copy, Users, Trophy, Loader2, Sparkles } from "lucide-react";
+import { Copy, Users, Trophy, Loader2, UserPlus, Coins, Target } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { avatars } from "@/components/ui/avatar-picker";
@@ -200,13 +200,12 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
         <Card className="p-8 glass-card backdrop-blur-2xl bg-white/10 border-white/20 rounded-3xl">
           <div className="text-center space-y-6">
             <div className="flex items-center justify-center gap-2">
-              <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
-              <h2 className="text-3xl font-bold text-white">Convide Amigos!</h2>
-              <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
+              <UserPlus className="w-7 h-7 text-purple-400" strokeWidth={2} />
+              <h2 className="text-2xl font-bold text-white">Convide Amigos</h2>
             </div>
             
             <div className="space-y-4">
-              <p className="text-white/90 text-lg font-semibold">Compartilhe o código do grupo:</p>
+              <p className="text-white/80 text-base font-medium">Compartilhe o código do grupo</p>
               
               <motion.div 
                 className="bg-white/5 rounded-xl p-8 border-4 border-purple-400/50 backdrop-blur-xl"
@@ -230,15 +229,15 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
 
               <Button
                 onClick={() => copyCode(group.invite_code)}
-                className="w-full bg-purple-500/30 hover:bg-purple-500/50 border-2 border-purple-400/50 text-white font-bold text-lg py-6 rounded-xl backdrop-blur-xl"
+                className="w-full bg-purple-500/30 hover:bg-purple-500/50 border border-purple-400/50 text-white font-semibold text-base py-6 rounded-xl backdrop-blur-xl"
               >
                 <Copy className="w-5 h-5 mr-2" />
                 Copiar Código
               </Button>
             </div>
 
-            <div className="pt-4 border-t border-purple-500/50">
-              <p className="text-sm text-purple-300 mb-2">Código da Partida:</p>
+            <div className="pt-4 border-t border-purple-500/30">
+              <p className="text-sm text-purple-300/80 mb-2 font-medium">Código da Partida</p>
               <div className="flex items-center justify-center gap-2">
                 <code className="text-2xl font-bold text-white">{match.match_code}</code>
                 <Button size="sm" variant="ghost" onClick={() => copyCode(match.match_code)} className="text-purple-300">
@@ -247,10 +246,28 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
               </div>
             </div>
 
-            <div className="bg-purple-950/50 rounded-lg p-4 space-y-2 text-left">
-              <p className="text-sm text-purple-200"><strong>📊 Aposta:</strong> {match.xp_bet} XP</p>
-              <p className="text-sm text-purple-200"><strong>🎯 Dificuldade:</strong> {match.difficulty_level}</p>
-              <p className="text-sm text-purple-200"><strong>🏆 Máx. Grupos:</strong> {match.max_groups}</p>
+            <div className="bg-purple-950/30 rounded-lg p-4 space-y-2 text-left border border-purple-500/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Coins className="w-4 h-4 text-yellow-400" />
+                  <span className="text-sm text-purple-200 font-medium">Aposta</span>
+                </div>
+                <span className="text-sm text-white font-semibold">{match.xp_bet} XP</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Target className="w-4 h-4 text-cyan-400" />
+                  <span className="text-sm text-purple-200 font-medium">Dificuldade</span>
+                </div>
+                <span className="text-sm text-white font-semibold">{match.difficulty_level}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-green-400" />
+                  <span className="text-sm text-purple-200 font-medium">Máx. Grupos</span>
+                </div>
+                <span className="text-sm text-white font-semibold">{match.max_groups}</span>
+              </div>
             </div>
           </div>
         </Card>
@@ -265,15 +282,14 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
             <Button
               onClick={startMatch}
               disabled={members.length < 1}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-gray-600 disabled:to-gray-700 text-white font-black text-2xl py-12 rounded-xl shadow-2xl"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-bold text-xl py-10 rounded-xl shadow-xl"
             >
-              <Trophy className="w-8 h-8 mr-3" />
-              INICIAR JOGO
-              <Trophy className="w-8 h-8 ml-3" />
+              <Trophy className="w-6 h-6 mr-3" />
+              Iniciar Jogo
             </Button>
             {members.length < 1 && (
-              <p className="text-center text-yellow-300 mt-3 text-sm">
-                ⚠️ Aguarde pelo menos 1 membro entrar no grupo
+              <p className="text-center text-yellow-300 mt-3 text-sm font-medium">
+                Aguarde pelo menos 1 membro entrar no grupo
               </p>
             )}
           </motion.div>
