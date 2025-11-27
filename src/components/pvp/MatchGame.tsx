@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -53,7 +53,6 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   const handleLeaveMatch = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     onLeave?.();
-    navigate("/pvp");
   };
 
   // Timer de 60 segundos - HOOK #1
