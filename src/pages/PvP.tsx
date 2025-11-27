@@ -105,6 +105,7 @@ const PvP = () => {
               }
 
               if (newMatch.status === 'in_progress' && currentMatch.status !== 'in_progress') {
+                console.log('[PvP] Match status is now in_progress, rendering game screen');
                 toast({
                   title: "Partida iniciada!",
                   description: "A batalha começou. Boa sorte!",
@@ -135,6 +136,48 @@ const PvP = () => {
       supabase.removeChannel(channel);
     };
   }, [currentMatch?.id]);
+
+  // Polling de segurança: garante navegação mesmo se o Realtime falhar
+  useEffect(() => {
+    if (!currentMatch) return;
+
+    console.log('[PvP] Starting safety polling for match status', currentMatch.id);
+
+    const intervalId = window.setInterval(async () => {
+      try {
+        const { data, error } = await supabase
+          .from('pvp_matches')
+          .select('status')
+          .eq('id', currentMatch.id)
+          .single();
+
+        if (error) {
+          console.error('[PvP] Polling error while checking match status', error);
+          return;
+        }
+
+        if (data && data.status !== currentMatch.status) {
+          console.log('[PvP] Polling detected status change', currentMatch.status, '->', data.status);
+
+          const { data: fullMatch } = await supabase
+            .from('pvp_matches')
+            .select('*')
+            .eq('id', currentMatch.id)
+            .single();
+
+          if (fullMatch) {
+            setCurrentMatch(fullMatch as Match);
+          }
+        }
+      } catch (err) {
+        console.error('[PvP] Polling exception while checking match status', err);
+      }
+    }, 2000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [currentMatch?.id, currentMatch?.status]);
 
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();

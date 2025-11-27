@@ -44,16 +44,7 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
   };
 
   const startGame = async () => {
-    if (isHost) {
-      await supabase
-        .from('pvp_matches')
-        .update({ 
-          status: 'in_progress',
-          started_at: new Date().toISOString()
-        })
-        .eq('id', match.id)
-        .eq('status', 'starting');
-    }
+    // Navegação é coordenada pelo status da partida (in_progress) via listener no PvP
     onBothReady();
   };
 
@@ -100,34 +91,31 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
     setMyReady(!!myReadyField);
   }, [isHost, match.host_ready, match.opponent_ready, match.id]);
 
-  // Coordena transição para "starting" e início da contagem via status da partida
+  // Coordena transição para "in_progress" via status da partida no banco
   useEffect(() => {
     setHostReady(!!match.host_ready);
     setOpponentReady(!!match.opponent_ready);
 
     const bothReady = !!match.host_ready && !!match.opponent_ready;
 
-    // Apenas o host promove o estado para "starting" no banco
+    // Apenas o host promove o estado para "in_progress" no banco
     if (bothReady && match.status === 'waiting' && isHost) {
-      console.log('[ReadyScreen] Both players ready, host setting status=starting', match.id);
+      console.log('[ReadyScreen] Both players ready, host setting status=in_progress', match.id);
       supabase
         .from('pvp_matches')
-        .update({ status: 'starting' })
+        .update({ 
+          status: 'in_progress',
+          started_at: new Date().toISOString()
+        })
         .eq('id', match.id)
         .eq('status', 'waiting')
         .then(({ error }) => {
           if (error) {
-            console.error('[ReadyScreen] Error updating match to starting', error);
+            console.error('[ReadyScreen] Error updating match to in_progress', error);
           }
         });
     }
-
-    // Quando o status muda para "starting", ambos os clientes iniciam a contagem localmente
-    if (match.status === 'starting' && countdown === null) {
-      console.log('[ReadyScreen] Match status is starting, triggering countdown', match.id);
-      startCountdown();
-    }
-  }, [match.host_ready, match.opponent_ready, match.status, isHost, match.id, countdown]);
+  }, [match.host_ready, match.opponent_ready, match.status, isHost, match.id]);
 
   return (
     <div className="min-h-screen battle-gradient relative overflow-hidden flex items-center justify-center">
