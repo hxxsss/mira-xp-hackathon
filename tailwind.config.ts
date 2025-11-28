@@ -60,6 +60,9 @@ export default {
         yellow: {
           soft: "hsl(var(--yellow-soft))",
         },
+        mascot: {
+          bg: "#0891b2",
+        },
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],
