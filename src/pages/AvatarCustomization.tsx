@@ -208,17 +208,13 @@ export default function AvatarCustomization() {
               <div className="absolute -top-10 lg:-top-20 left-1/2 -translate-x-1/2 w-40 h-40 lg:w-80 lg:h-80 xl:w-96 xl:h-96 bg-yellow-300/10 lg:bg-yellow-300/15 rounded-full blur-3xl" />
               
               {/* Full Body Character Display */}
-              <motion.div 
-                className="relative z-10 flex items-end justify-center"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              >
+              <div className="relative z-10 flex items-end justify-center">
                 <img 
                   src={fullBodyAvatars.find(a => a.id === avatarId)?.img || fullBodyAvatars[0].img}
                   alt={fullBodyAvatars.find(a => a.id === avatarId)?.alt || fullBodyAvatars[0].alt}
-                  className="h-64 md:h-72 lg:h-80 xl:h-96 w-auto object-contain drop-shadow-2xl"
+                  className="h-96 md:h-[28rem] lg:h-[32rem] xl:h-[36rem] w-auto object-contain drop-shadow-2xl"
                 />
-              </motion.div>
+              </div>
 
               {/* Pedestal */}
               <div className="absolute -bottom-2 lg:-bottom-4 left-1/2 -translate-x-1/2 w-32 lg:w-48 xl:w-64 h-6 lg:h-8 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full blur-sm" />
