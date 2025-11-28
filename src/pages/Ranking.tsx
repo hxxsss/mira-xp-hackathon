@@ -171,7 +171,7 @@ export default function Ranking() {
           }} transition={{
             delay: 0.2
           }} className="mb-8">
-                    <Card className="glass-card backdrop-blur-2xl border-white/20 p-8 rounded-3xl bg-[#65219e]">
+                    <Card className="backdrop-blur-2xl border-white/20 p-8 rounded-3xl bg-purple-800">
                       <h2 className="text-2xl font-bold text-white mb-6 text-center flex items-center justify-center gap-2">
                         <Crown className="w-7 h-7 text-yellow-400" />
                         Pódio
