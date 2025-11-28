@@ -62,6 +62,24 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
   };
   const [api, setApi] = React.useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [hasInitialized, setHasInitialized] = React.useState(false);
+  
+  // Encontra o índice do card atual (último desbloqueado ou em progresso)
+  const currentCardIndex = React.useMemo(() => {
+    // Prioridade: in_progress > unlocked > primeiro completed (do fim)
+    const inProgressIndex = items.findIndex(item => item.status === 'in_progress');
+    if (inProgressIndex !== -1) return inProgressIndex;
+    
+    const unlockedIndex = items.findIndex(item => item.status === 'unlocked');
+    if (unlockedIndex !== -1) return unlockedIndex;
+    
+    // Se todos completados, vai para o último completado
+    const lastCompletedIndex = items.map((item, idx) => 
+      item.status === 'completed' ? idx : -1
+    ).filter(idx => idx !== -1).pop();
+    
+    return lastCompletedIndex ?? 0;
+  }, [items]);
   
   // Limitar visualização: mostrar apenas módulos completos + atual + 2 bloqueados + mensagem
   const visibleItems = React.useMemo(() => {
@@ -90,11 +108,24 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
     return visibleModules;
   }, [items]);
 
+  // Inicializa o carrossel no card atual do usuário
+  useEffect(() => {
+    if (!api || hasInitialized) return;
+
+    // Encontra o índice no array visível que corresponde ao card atual
+    const targetIndex = Math.min(currentCardIndex, visibleItems.length - 1);
+    
+    // Scroll para o card atual após um pequeno delay para garantir renderização
+    const timer = setTimeout(() => {
+      api.scrollTo(targetIndex, true);
+      setHasInitialized(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [api, currentCardIndex, visibleItems.length, hasInitialized]);
+
   useEffect(() => {
     if (!api) return;
-
-    // Sempre inicializa no primeiro card
-    api.scrollTo(0, true);
     
     // Atualiza o índice selecionado quando muda
     const onSelect = () => {
@@ -107,7 +138,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
     return () => {
       api.off("select", onSelect);
     };
-  }, [api, items]);
+  }, [api]);
 
   useEffect(() => {
     if (!api) return;

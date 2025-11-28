@@ -264,20 +264,232 @@ const ModulePage = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Verifica se o módulo já foi completado anteriormente
+      const { data: existingProgress } = await supabase
+        .from('user_module_progress')
+        .select('status, completed_at')
+        .eq('module_id', moduleId)
+        .eq('user_id', user.id)
+        .single();
+
+      const isFirstCompletion = existingProgress?.status !== 'completed';
+
+      // Atualiza o progresso do módulo
       await supabase
         .from('user_module_progress')
         .update({ 
           status: 'completed', 
-          completed_at: new Date().toISOString(),
+          completed_at: existingProgress?.completed_at || new Date().toISOString(),
           progress_percent: 100,
           quiz_score: quizScore
         })
         .eq('module_id', moduleId)
         .eq('user_id', user.id);
 
-      setShowRewardModal(true);
+      // Só dá recompensas na primeira vez
+      if (isFirstCompletion) {
+        // Atualiza XP e pontos do usuário
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('current_xp, total_xp, weekly_xp, monthly_xp, dream_points')
+          .eq('id', user.id)
+          .single();
+
+        if (profile) {
+          await supabase
+            .from('profiles')
+            .update({
+              current_xp: (profile.current_xp || 0) + (module.xp_reward || 0),
+              total_xp: (profile.total_xp || 0) + (module.xp_reward || 0),
+              weekly_xp: (profile.weekly_xp || 0) + (module.xp_reward || 0),
+              monthly_xp: (profile.monthly_xp || 0) + (module.xp_reward || 0),
+              dream_points: (profile.dream_points || 0) + (module.points_reward || 0)
+            })
+            .eq('id', user.id);
+        }
+
+        // Desbloqueia o próximo módulo
+        await unlockNextModule(user.id);
+
+        setShowRewardModal(true);
+      } else {
+        // Modo revisão - apenas mostra toast de conclusão
+        toast({
+          title: "Revisão Concluída! 📚",
+          description: "Você revisou este módulo com sucesso. Nenhum XP adicional foi ganho.",
+        });
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error("Error completing module:", error);
+    }
+  };
+
+  const unlockNextModule = async (userId: string) => {
+    if (!module) return;
+
+    try {
+      // Busca o módulo atual para saber a track_id e order_index
+      const { data: currentModule } = await supabase
+        .from('learning_modules')
+        .select('track_id, order_index')
+        .eq('id', moduleId)
+        .single();
+
+      if (!currentModule) return;
+
+      // Busca o próximo módulo na mesma trilha
+      const { data: nextModule } = await supabase
+        .from('learning_modules')
+        .select('id')
+        .eq('track_id', currentModule.track_id)
+        .gt('order_index', currentModule.order_index)
+        .order('order_index', { ascending: true })
+        .limit(1)
+        .single();
+
+      if (nextModule) {
+        // Verifica se já existe progresso para o próximo módulo
+        const { data: existingProgress } = await supabase
+          .from('user_module_progress')
+          .select('id, status')
+          .eq('module_id', nextModule.id)
+          .eq('user_id', userId)
+          .single();
+
+        if (!existingProgress) {
+          // Cria progresso desbloqueado para o próximo módulo
+          await supabase
+            .from('user_module_progress')
+            .insert({
+              user_id: userId,
+              module_id: nextModule.id,
+              status: 'unlocked'
+            });
+        } else if (existingProgress.status === 'locked') {
+          // Atualiza para desbloqueado
+          await supabase
+            .from('user_module_progress')
+            .update({ status: 'unlocked' })
+            .eq('id', existingProgress.id);
+        }
+      } else {
+        // Não há próximo módulo na trilha - verifica se deve desbloquear próxima trilha
+        await unlockNextTrack(userId, currentModule.track_id);
+      }
+    } catch (error) {
+      console.error("Error unlocking next module:", error);
+    }
+  };
+
+  const unlockNextTrack = async (userId: string, currentTrackId: string) => {
+    try {
+      // Verifica se todos os módulos da trilha atual foram completados
+      const { data: trackModules } = await supabase
+        .from('learning_modules')
+        .select('id')
+        .eq('track_id', currentTrackId);
+
+      if (!trackModules || trackModules.length === 0) return;
+
+      const moduleIds = trackModules.map(m => m.id);
+      
+      const { data: completedModules } = await supabase
+        .from('user_module_progress')
+        .select('module_id')
+        .eq('user_id', userId)
+        .eq('status', 'completed')
+        .in('module_id', moduleIds);
+
+      // Se todos módulos da trilha estão completos
+      if (completedModules && completedModules.length >= trackModules.length) {
+        // Marca trilha atual como completa
+        await supabase
+          .from('user_track_progress')
+          .update({ 
+            status: 'completed',
+            completed_at: new Date().toISOString()
+          })
+          .eq('track_id', currentTrackId)
+          .eq('user_id', userId);
+
+        // Busca a trilha atual
+        const { data: currentTrack } = await supabase
+          .from('learning_tracks')
+          .select('order_index')
+          .eq('id', currentTrackId)
+          .single();
+
+        if (!currentTrack) return;
+
+        // Busca a próxima trilha
+        const { data: nextTrack } = await supabase
+          .from('learning_tracks')
+          .select('id')
+          .gt('order_index', currentTrack.order_index)
+          .order('order_index', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (nextTrack) {
+          // Desbloqueia a próxima trilha
+          const { data: existingTrackProgress } = await supabase
+            .from('user_track_progress')
+            .select('id, status')
+            .eq('track_id', nextTrack.id)
+            .eq('user_id', userId)
+            .single();
+
+          if (!existingTrackProgress) {
+            await supabase
+              .from('user_track_progress')
+              .insert({
+                user_id: userId,
+                track_id: nextTrack.id,
+                status: 'unlocked',
+                unlocked_at: new Date().toISOString()
+              });
+          } else if (existingTrackProgress.status === 'locked') {
+            await supabase
+              .from('user_track_progress')
+              .update({ 
+                status: 'unlocked',
+                unlocked_at: new Date().toISOString()
+              })
+              .eq('id', existingTrackProgress.id);
+          }
+
+          // Desbloqueia o primeiro módulo da próxima trilha
+          const { data: firstModuleNextTrack } = await supabase
+            .from('learning_modules')
+            .select('id')
+            .eq('track_id', nextTrack.id)
+            .order('order_index', { ascending: true })
+            .limit(1)
+            .single();
+
+          if (firstModuleNextTrack) {
+            const { data: existingModuleProgress } = await supabase
+              .from('user_module_progress')
+              .select('id')
+              .eq('module_id', firstModuleNextTrack.id)
+              .eq('user_id', userId)
+              .single();
+
+            if (!existingModuleProgress) {
+              await supabase
+                .from('user_module_progress')
+                .insert({
+                  user_id: userId,
+                  module_id: firstModuleNextTrack.id,
+                  status: 'unlocked'
+                });
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error unlocking next track:", error);
     }
   };
 
