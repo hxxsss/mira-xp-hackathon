@@ -119,12 +119,22 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby 
       .single();
     
     if (data?.status === 'in_progress') {
-      toast({
-        title: "Partida iniciada!",
-        description: "A batalha começou"
-      });
+      console.log('[MatchRoomLobby] Match status is in_progress, transitioning to game...');
+      
+      // Make sure we have the user's group ID before transitioning
       if (userGroupId) {
         onGroupSelected(userGroupId);
+      } else {
+        // Try to get user's group one more time
+        const { data: groupData } = await supabase
+          .from('pvp_group_members')
+          .select('group_id')
+          .eq('user_id', userId)
+          .single();
+        
+        if (groupData) {
+          onGroupSelected(groupData.group_id);
+        }
       }
     }
   };
@@ -220,22 +230,44 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby 
 
   const handleCountdownComplete = async () => {
     // Set the group ID first before changing status
-    // This ensures the parent has the groupId when realtime triggers
     if (userGroupId) {
       onGroupSelected(userGroupId);
     }
 
-    // Small delay to ensure state is set before status change
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    // Update match status to in_progress
-    await supabase
-      .from("pvp_matches")
-      .update({ 
-        status: 'in_progress',
-        started_at: new Date().toISOString()
-      })
-      .eq("id", matchId);
+    // Call edge function to generate pairings and start match
+    // This will update the match status to 'in_progress' as well
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-group-pairings', {
+        body: { matchId }
+      });
+      
+      if (error) {
+        console.error('[MatchRoomLobby] Error generating pairings:', error);
+        toast({
+          title: "Erro ao iniciar partida",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      console.log('[MatchRoomLobby] Pairings generated:', data);
+      toast({
+        title: "Partida iniciada!",
+        description: `${data.pairingsCount} batalhas criadas`
+      });
+    } catch (err) {
+      console.error('[MatchRoomLobby] Error:', err);
+      
+      // Fallback: just update status if edge function fails
+      await supabase
+        .from("pvp_matches")
+        .update({ 
+          status: 'in_progress',
+          started_at: new Date().toISOString()
+        })
+        .eq("id", matchId);
+    }
   };
 
   const createOrJoinTeam = async (teamIndex: number) => {
