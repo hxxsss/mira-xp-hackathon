@@ -21,6 +21,7 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
   const [creatingGroup, setCreatingGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [currentXp, setCurrentXp] = useState(0);
+  const [userGroupId, setUserGroupId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -57,7 +58,16 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
       ]);
 
       if (matchRes.data) setMatch(matchRes.data);
-      if (groupsRes.data) setGroups(groupsRes.data);
+      if (groupsRes.data) {
+        setGroups(groupsRes.data);
+        // Check if user is already in a group
+        const userGroup = groupsRes.data.find((g: any) => 
+          g.pvp_group_members?.some((m: any) => m.user_id === userId)
+        );
+        if (userGroup) {
+          setUserGroupId(userGroup.id);
+        }
+      }
       if (profileRes.data) setCurrentXp(profileRes.data.current_xp);
     } catch (error) {
       console.error("Erro ao carregar sala:", error);
@@ -89,6 +99,15 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
   const createGroup = async () => {
     if (!newGroupName.trim()) {
       toast({ title: "Digite o nome do grupo", variant: "destructive" });
+      return;
+    }
+
+    if (userGroupId) {
+      toast({
+        title: "Você já está em um grupo",
+        description: "Saia do grupo atual para criar outro",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -130,12 +149,17 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
         user_id: userId
       });
 
+      setUserGroupId(group.id);
+      setNewGroupName("");
+      setCurrentXp(prev => prev - match.xp_bet);
+      
       toast({
         title: "Grupo criado!",
         description: `${newGroupName} foi criado com sucesso`
       });
 
-      onGroupSelected(group.id);
+      // Reload data to show updated groups
+      loadData();
     } catch (error: any) {
       console.error("Erro ao criar grupo:", error);
       toast({
@@ -149,6 +173,15 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
   };
 
   const joinGroup = async (groupId: string, xpBet: number) => {
+    if (userGroupId) {
+      toast({
+        title: "Você já está em um grupo",
+        description: "Saia do grupo atual para entrar em outro",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (currentXp < xpBet) {
       toast({
         title: "XP insuficiente",
@@ -169,8 +202,13 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
         user_id: userId
       });
 
+      setUserGroupId(groupId);
+      setCurrentXp(prev => prev - xpBet);
+      
       toast({ title: "Entrou no grupo!" });
-      onGroupSelected(groupId);
+      
+      // Reload data to show updated groups
+      loadData();
     } catch (error: any) {
       console.error("Erro ao entrar no grupo:", error);
       
@@ -300,6 +338,7 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
           <AnimatePresence>
             {groups.map((group, index) => {
               const isHost = group.id === hostGroup?.id;
+              const isUserInGroup = group.id === userGroupId;
               const memberCount = group.pvp_group_members?.length || 0;
               
               return (
@@ -310,10 +349,12 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className={`backdrop-blur-2xl border-2 p-6 rounded-2xl hover:scale-105 transition-transform ${
-                    isHost 
-                      ? 'bg-gradient-to-br from-yellow-900/40 to-orange-900/40 border-yellow-500/50' 
-                      : 'bg-white/10 border-white/20'
+                  <Card className={`backdrop-blur-2xl border-2 p-6 rounded-2xl transition-transform ${
+                    isUserInGroup 
+                      ? 'bg-gradient-to-br from-green-900/40 to-emerald-900/40 border-green-500/50 ring-2 ring-green-400/50' 
+                      : isHost 
+                        ? 'bg-gradient-to-br from-yellow-900/40 to-orange-900/40 border-yellow-500/50 hover:scale-105' 
+                        : 'bg-white/10 border-white/20 hover:scale-105'
                   }`}>
                     <div className="space-y-4">
                       <div className="flex items-start justify-between">
@@ -327,7 +368,11 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
                           </p>
                         </div>
                         
-                        {isHost && (
+                        {isUserInGroup ? (
+                          <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-xs font-bold border border-green-500/50">
+                            ✓ Seu Grupo
+                          </span>
+                        ) : isHost && (
                           <span className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-xs font-bold border border-yellow-500/50">
                             Grupo do Host
                           </span>
@@ -335,35 +380,43 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
                       </div>
 
                       <div className="flex flex-wrap gap-2">
-                        {group.pvp_group_members?.slice(0, 4).map((member: any) => (
+                        {group.pvp_group_members?.map((member: any) => (
                           <div
                             key={member.id}
-                            className="bg-purple-900/50 px-3 py-1 rounded-lg text-white text-sm"
+                            className={`px-3 py-1 rounded-lg text-sm ${
+                              member.user_id === userId 
+                                ? 'bg-green-500/30 text-green-200 border border-green-500/50' 
+                                : 'bg-purple-900/50 text-white'
+                            }`}
                           >
                             {member.profiles?.name || 'Jogador'}
+                            {member.user_id === userId && ' (você)'}
                           </div>
                         ))}
-                        {memberCount > 4 && (
-                          <div className="bg-purple-900/50 px-3 py-1 rounded-lg text-white text-sm">
-                            +{memberCount - 4}
-                          </div>
-                        )}
                       </div>
 
-                      <Button
-                        onClick={() => joinGroup(group.id, match.xp_bet)}
-                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold"
-                        disabled={currentXp < match.xp_bet}
-                      >
-                        {currentXp < match.xp_bet ? (
-                          "XP Insuficiente"
-                        ) : (
-                          <>
-                            Entrar no Grupo
-                            <ArrowRight className="w-4 h-4 ml-2" />
-                          </>
-                        )}
-                      </Button>
+                      {!isUserInGroup && !userGroupId && (
+                        <Button
+                          onClick={() => joinGroup(group.id, match.xp_bet)}
+                          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold"
+                          disabled={currentXp < match.xp_bet}
+                        >
+                          {currentXp < match.xp_bet ? (
+                            "XP Insuficiente"
+                          ) : (
+                            <>
+                              Entrar no Grupo
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      
+                      {isUserInGroup && (
+                        <div className="text-center text-green-300 text-sm font-medium py-2">
+                          Aguardando início da partida...
+                        </div>
+                      )}
                     </div>
                   </Card>
                 </motion.div>
@@ -372,7 +425,7 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
           </AnimatePresence>
 
           {/* Create New Group */}
-          {canCreateGroup && (
+          {canCreateGroup && !userGroupId && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
