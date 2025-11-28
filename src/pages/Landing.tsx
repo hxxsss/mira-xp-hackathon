@@ -342,7 +342,7 @@ const Landing = () => {
               Escolha seu companheiro de jornada e personalize sua experiência
             </p>
           </div>
-          <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-8 md:p-12 rounded-3xl max-w-6xl mx-auto">
+          <div className="bg-mascot-bg p-8 md:p-12 rounded-3xl max-w-6xl mx-auto">
             <div className="flex flex-col items-center gap-8">
               <img 
                 src={charactersGroup} 
