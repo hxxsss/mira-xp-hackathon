@@ -18,6 +18,12 @@ interface Avatar {
   name: string;
 }
 
+// Full body character images
+import rickyFullBody from "@/assets/characters/ricky-fullbody.png";
+import milaFullBody from "@/assets/characters/mila-fullbody.png";
+import aleFullBody from "@/assets/characters/ale-fullbody.png";
+import trixFullBody from "@/assets/characters/trix-fullbody.png";
+
 export const avatars: Avatar[] = [
   {
     id: 1,
@@ -40,6 +46,33 @@ export const avatars: Avatar[] = [
   {
     id: 4,
     img: coelhaImg,
+    alt: "Trix",
+    name: "Trix",
+  },
+];
+
+export const fullBodyAvatars = [
+  {
+    id: 1,
+    img: rickyFullBody,
+    alt: "Ricky",
+    name: "Ricky",
+  },
+  {
+    id: 2,
+    img: milaFullBody,
+    alt: "Mila",
+    name: "Mila",
+  },
+  {
+    id: 3,
+    img: aleFullBody,
+    alt: "Ale",
+    name: "Ale",
+  },
+  {
+    id: 4,
+    img: trixFullBody,
     alt: "Trix",
     name: "Trix",
   },
