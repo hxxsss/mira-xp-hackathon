@@ -209,13 +209,15 @@ export default function AvatarCustomization() {
               
               {/* Avatar Display - Responsive sizing */}
               <motion.div 
-                className="relative z-10 w-32 h-32 md:w-40 md:h-40 lg:w-64 lg:h-64 xl:w-80 xl:h-80 rounded-full bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl border-2 lg:border-4 border-white/30 flex items-center justify-center shadow-2xl"
+                className="relative z-10 w-32 h-32 md:w-40 md:h-40 lg:w-64 lg:h-64 xl:w-80 xl:h-80 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-50 backdrop-blur-xl border-2 lg:border-4 border-white/30 flex items-center justify-center shadow-2xl overflow-hidden"
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
-                <div className="scale-[3] md:scale-[4] lg:scale-[7] xl:scale-[9]">
-                  {avatars.find(a => a.id === avatarId)?.svg || avatars[0].svg}
-                </div>
+                <img 
+                  src={avatars.find(a => a.id === avatarId)?.img || avatars[0].img}
+                  alt={avatars.find(a => a.id === avatarId)?.alt || avatars[0].alt}
+                  className="w-full h-full object-cover"
+                />
               </motion.div>
 
               {/* Pedestal */}

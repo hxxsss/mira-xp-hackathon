@@ -5,321 +5,43 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
+// Import character images
+import macacoImg from "@/assets/characters/macaco.png";
+import ursaImg from "@/assets/characters/ursa.png";
+import leaoImg from "@/assets/characters/leao.png";
+import coelhaImg from "@/assets/characters/coelha.png";
+
 interface Avatar {
   id: number;
-  svg: React.ReactNode;
+  img: string;
   alt: string;
+  name: string;
 }
 
 export const avatars: Avatar[] = [
   {
     id: 1,
-    svg: (
-      <svg
-        viewBox="0 0 36 36"
-        fill="none"
-        role="img"
-        xmlns="http://www.w3.org/2000/svg"
-        width="40"
-        height="40"
-        aria-label="Avatar 1"
-      >
-        <mask
-          id=":r111:"
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width="36"
-          height="36"
-        >
-          <rect width="36" height="36" rx="72" fill="#FFFFFF" />
-        </mask>
-        <g mask="url(#:r111:)">
-          <rect width="36" height="36" fill="#ff005b" />
-          <rect
-            x="0"
-            y="0"
-            width="36"
-            height="36"
-            transform="translate(9 -5) rotate(219 18 18) scale(1)"
-            fill="#ffb238"
-            rx="6"
-          />
-          <g transform="translate(4.5 -4) rotate(9 18 18)">
-            <path
-              d="M15 19c2 1 4 1 6 0"
-              stroke="#000000"
-              fill="none"
-              strokeLinecap="round"
-            />
-            <rect
-              x="10"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#000000"
-            />
-            <rect
-              x="24"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#000000"
-            />
-          </g>
-        </g>
-      </svg>
-    ),
-    alt: "Avatar 1",
+    img: macacoImg,
+    alt: "O Macaco",
+    name: "Macaco",
   },
   {
     id: 2,
-    svg: (
-      <svg
-        viewBox="0 0 36 36"
-        fill="none"
-        role="img"
-        xmlns="http://www.w3.org/2000/svg"
-        width="40"
-        height="40"
-      >
-        <mask
-          id=":R4mrttb:"
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width="36"
-          height="36"
-        >
-          <rect width="36" height="36" rx="72" fill="#FFFFFF"></rect>
-        </mask>
-        <g mask="url(#:R4mrttb:)">
-          <rect width="36" height="36" fill="#ff7d10"></rect>
-          <rect
-            x="0"
-            y="0"
-            width="36"
-            height="36"
-            transform="translate(5 -1) rotate(55 18 18) scale(1.1)"
-            fill="#0a0310"
-            rx="6"
-          />
-          <g transform="translate(7 -6) rotate(-5 18 18)">
-            <path
-              d="M15 20c2 1 4 1 6 0"
-              stroke="#FFFFFF"
-              fill="none"
-              strokeLinecap="round"
-            />
-            <rect
-              x="14"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#FFFFFF"
-            />
-            <rect
-              x="20"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#FFFFFF"
-            />
-          </g>
-        </g>
-      </svg>
-    ),
-    alt: "Avatar 2",
+    img: ursaImg,
+    alt: "A Ursa",
+    name: "Ursa",
   },
   {
     id: 3,
-    svg: (
-      <svg
-        viewBox="0 0 36 36"
-        fill="none"
-        role="img"
-        xmlns="http://www.w3.org/2000/svg"
-        width="40"
-        height="40"
-      >
-        <mask
-          id=":r11c:"
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width="36"
-          height="36"
-        >
-          <rect width="36" height="36" rx="72" fill="#FFFFFF"></rect>
-        </mask>
-        <g mask="url(#:r11c:)">
-          <rect width="36" height="36" fill="#0a0310" />
-          <rect
-            x="0"
-            y="0"
-            width="36"
-            height="36"
-            transform="translate(-3 7) rotate(227 18 18) scale(1.2)"
-            fill="#ff005b"
-            rx="36"
-          />
-          <g transform="translate(-3 3.5) rotate(7 18 18)">
-            <path d="M13,21 a1,0.75 0 0,0 10,0" fill="#FFFFFF" />
-            <rect
-              x="12"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#FFFFFF"
-            />
-            <rect
-              x="22"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#FFFFFF"
-            />
-          </g>
-        </g>
-      </svg>
-    ),
-    alt: "Avatar 3",
+    img: leaoImg,
+    alt: "O Leão",
+    name: "Leão",
   },
   {
     id: 4,
-    svg: (
-      <svg
-        viewBox="0 0 36 36"
-        fill="none"
-        role="img"
-        xmlns="http://www.w3.org/2000/svg"
-        width="40"
-        height="40"
-      >
-        <mask
-          id=":r1gg:"
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width="36"
-          height="36"
-        >
-          <rect width="36" height="36" rx="72" fill="#FFFFFF"></rect>
-        </mask>
-        <g mask="url(#:r1gg:)">
-          <rect width="36" height="36" fill="#d8fcb3"></rect>
-          <rect
-            x="0"
-            y="0"
-            width="36"
-            height="36"
-            transform="translate(9 -5) rotate(219 18 18) scale(1)"
-            fill="#89fcb3"
-            rx="6"
-          ></rect>
-          <g transform="translate(4.5 -4) rotate(9 18 18)">
-            <path
-              d="M15 19c2 1 4 1 6 0"
-              stroke="#000000"
-              fill="none"
-              strokeLinecap="round"
-            ></path>
-            <rect
-              x="10"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#000000"
-            ></rect>
-            <rect
-              x="24"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#000000"
-            ></rect>
-          </g>
-        </g>
-      </svg>
-    ),
-    alt: "Avatar 4",
-  },
-  {
-    id: 5,
-    svg: (
-      <svg
-        viewBox="0 0 36 36"
-        fill="none"
-        role="img"
-        xmlns="http://www.w3.org/2000/svg"
-        width="40"
-        height="40"
-      >
-        <mask
-          id=":r1hh:"
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width="36"
-          height="36"
-        >
-          <rect width="36" height="36" rx="72" fill="#FFFFFF"></rect>
-        </mask>
-        <g mask="url(#:r1hh:)">
-          <rect width="36" height="36" fill="#4f46e5"></rect>
-          <rect
-            x="0"
-            y="0"
-            width="36"
-            height="36"
-            transform="translate(-4 4) rotate(184 18 18) scale(1.1)"
-            fill="#fbbf24"
-            rx="36"
-          ></rect>
-          <g transform="translate(3.5 -2) rotate(-8 18 18)">
-            <path
-              d="M13,19 a1,0.75 0 0,0 10,0"
-              fill="#000000"
-            />
-            <rect
-              x="11"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#000000"
-            />
-            <rect
-              x="23"
-              y="14"
-              width="1.5"
-              height="2"
-              rx="1"
-              stroke="none"
-              fill="#000000"
-            />
-          </g>
-        </g>
-      </svg>
-    ),
-    alt: "Avatar 5",
+    img: coelhaImg,
+    alt: "A Coelha",
+    name: "Coelha",
   },
 ];
 
@@ -445,12 +167,14 @@ export function AvatarPicker({ selectedAvatarId, onAvatarChange }: AvatarPickerP
           <div className="px-6 pb-6 -mt-12">
             {/* Main avatar display */}
             <motion.div
-              className="relative w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-background bg-background flex items-center justify-center shadow-lg"
+              className="relative w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-background bg-gradient-to-br from-cyan-100 to-cyan-50 flex items-center justify-center shadow-lg"
               variants={mainAvatarVariants}
               layoutId="selectedAvatar"
             >
-              <motion.div
-                className="w-full h-full flex items-center justify-center scale-[3]"
+              <motion.img
+                src={selectedAvatar.img}
+                alt={selectedAvatar.alt}
+                className="w-full h-full object-cover"
                 animate={{
                   rotate: rotationCount,
                 }}
@@ -458,9 +182,19 @@ export function AvatarPicker({ selectedAvatarId, onAvatarChange }: AvatarPickerP
                   duration: 0.8,
                   ease: [0.4, 0, 0.2, 1],
                 }}
-              >
-                {selectedAvatar.svg}
-              </motion.div>
+              />
+            </motion.div>
+
+            {/* Character name */}
+            <motion.div
+              className="text-center mt-3"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <p className="text-lg font-semibold text-foreground">
+                {selectedAvatar.name}
+              </p>
             </motion.div>
 
             {/* Avatar selection */}
@@ -469,7 +203,7 @@ export function AvatarPicker({ selectedAvatarId, onAvatarChange }: AvatarPickerP
               variants={pickerVariants.container}
             >
               <motion.div
-                className="flex justify-center gap-3"
+                className="grid grid-cols-4 gap-3 max-w-xs mx-auto"
                 variants={pickerVariants.container}
               >
                 {avatars.map((avatar) => (
@@ -477,7 +211,7 @@ export function AvatarPicker({ selectedAvatarId, onAvatarChange }: AvatarPickerP
                     key={avatar.id}
                     onClick={() => handleAvatarSelect(avatar)}
                     className={cn(
-                      "relative w-12 h-12 rounded-full overflow-hidden border-2 bg-background",
+                      "relative aspect-square rounded-full overflow-hidden border-2 bg-gradient-to-br from-cyan-100 to-cyan-50",
                       "transition-all duration-300"
                     )}
                     variants={pickerVariants.item}
@@ -489,12 +223,14 @@ export function AvatarPicker({ selectedAvatarId, onAvatarChange }: AvatarPickerP
                       y: 0,
                       transition: { duration: 0.2 },
                     }}
-                    aria-label={`Select ${avatar.alt}`}
+                    aria-label={`Selecionar ${avatar.alt}`}
                     aria-pressed={selectedAvatar.id === avatar.id}
                   >
-                    <div className="w-full h-full flex items-center justify-center">
-                      {avatar.svg}
-                    </div>
+                    <img
+                      src={avatar.img}
+                      alt={avatar.alt}
+                      className="w-full h-full object-cover"
+                    />
                     {selectedAvatar.id === avatar.id && (
                       <motion.div
                         className="absolute inset-0 bg-primary/20 ring-2 ring-primary ring-offset-2 ring-offset-background rounded-full"

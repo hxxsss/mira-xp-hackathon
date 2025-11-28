@@ -20,12 +20,12 @@ export function NavigationDock({ avatarId = 1 }: NavigationDockProps) {
       title: "Perfil",
       icon: (
         <motion.div 
-          className="w-8 h-8 flex items-center justify-center"
+          className="w-8 h-8 flex items-center justify-center rounded-full overflow-hidden"
           whileHover={{ scale: 1.15, rotate: 5 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
         >
-          {selectedAvatar.svg}
+          <img src={selectedAvatar.img} alt={selectedAvatar.alt} className="w-full h-full object-cover" />
         </motion.div>
       ),
       href: "/profile",

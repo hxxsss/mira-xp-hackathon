@@ -199,16 +199,20 @@ export default function Profile() {
               {/* Mascot Display */}
               <div className="text-center">
                 <motion.div 
-                  className="w-40 h-40 mx-auto mb-4 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl border-4 border-white"
+                  className="w-40 h-40 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-50 flex items-center justify-center shadow-2xl border-4 border-white overflow-hidden"
                   whileHover={{ scale: 1.05, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <div className="scale-[4]">
-                    {avatars.find(a => a.id === profile?.avatar_id)?.svg || avatars[0].svg}
-                  </div>
+                  <img 
+                    src={avatars.find(a => a.id === profile?.avatar_id)?.img || avatars[0].img}
+                    alt={avatars.find(a => a.id === profile?.avatar_id)?.alt || avatars[0].alt}
+                    className="w-full h-full object-cover"
+                  />
                 </motion.div>
-                <p className="text-sm text-gray-600 font-medium">Seu Mascote</p>
-                <p className="text-xs text-gray-500 mt-1">Avatar #{profile?.avatar_id}</p>
+                <p className="text-sm text-gray-600 font-medium">
+                  {avatars.find(a => a.id === profile?.avatar_id)?.name || avatars[0].name}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Seu Mascote</p>
               </div>
 
               {/* Edit Button */}

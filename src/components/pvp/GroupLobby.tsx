@@ -334,12 +334,14 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
                         : 'bg-blue-950/40 border-blue-600'
                     }`}
                   >
-                    <div className={`w-10 h-10 sm:w-16 sm:h-16 rounded-full flex items-center justify-center border-2 sm:border-4 ${
+                    <div className={`w-10 h-10 sm:w-16 sm:h-16 rounded-full flex items-center justify-center border-2 sm:border-4 overflow-hidden bg-gradient-to-br from-cyan-100 to-cyan-50 ${
                       isGroupLeader ? 'border-yellow-400' : 'border-blue-400'
                     }`}>
-                      <div className="w-8 h-8 sm:w-14 sm:h-14 flex items-center justify-center">
-                        {avatar.svg}
-                      </div>
+                      <img 
+                        src={avatar.img} 
+                        alt={avatar.alt}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     
                     <div className="flex-1 min-w-0">
