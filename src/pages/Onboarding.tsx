@@ -108,7 +108,6 @@ const Onboarding = () => {
     name: "",
     age: "",
     email: "",
-    nickname: "",
     goalName: "",
     goalAmount: "",
     goalTimeline: "",
@@ -136,27 +135,6 @@ const Onboarding = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      // Verificar se o nickname já existe
-      const { data: existingNickname, error: nicknameCheckError } = await supabase
-        .from("profiles")
-        .select("nickname")
-        .eq("nickname", formData.nickname)
-        .maybeSingle();
-
-      if (nicknameCheckError && nicknameCheckError.code !== "PGRST116") {
-        throw nicknameCheckError;
-      }
-
-      if (existingNickname) {
-        toast({
-          title: "Nickname já existe",
-          description: "Usuário já cadastrado, use outro.",
-          variant: "destructive"
-        });
-        setLoading(false);
-        return;
-      }
-
       const {
         data: authData,
         error: authError
@@ -186,7 +164,6 @@ const Onboarding = () => {
         id: authData.user.id,
         name: formData.name,
         email: formData.email,
-        nickname: formData.nickname,
         age: parseInt(formData.age),
         income_type: formData.incomeType,
         monthly_income: monthlyIncomeValue,
@@ -195,18 +172,7 @@ const Onboarding = () => {
       }, {
         onConflict: "id"
       });
-      if (profileError) {
-        if (profileError.code === "23505") {
-          toast({
-            title: "Nickname já existe",
-            description: "Usuário já cadastrado, use outro.",
-            variant: "destructive"
-          });
-          setLoading(false);
-          return;
-        }
-        throw profileError;
-      }
+      if (profileError) throw profileError;
       
       // Criar meta
       const {
@@ -252,7 +218,7 @@ const Onboarding = () => {
   const isStepValid = () => {
     switch (currentStep) {
       case 0:
-        return formData.name && formData.age && formData.email && formData.nickname && formData.password.length >= 6;
+        return formData.name && formData.age && formData.email && formData.password.length >= 6;
       case 1:
         return formData.goalName;
       case 2:
@@ -374,10 +340,6 @@ const Onboarding = () => {
                         <motion.div variants={fadeInUp} className="space-y-1.5">
                           <Label htmlFor="email">Email</Label>
                           <Input id="email" type="email" placeholder="seu.email@exemplo.com" value={formData.email} onChange={e => updateField("email", e.target.value)} className="transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600" />
-                        </motion.div>
-                        <motion.div variants={fadeInUp} className="space-y-1.5">
-                          <Label htmlFor="nickname">Nickname (único)</Label>
-                          <Input id="nickname" type="text" placeholder="Seu apelido único" value={formData.nickname} onChange={e => updateField("nickname", e.target.value.toLowerCase().replace(/\s/g, ''))} className="transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600" />
                         </motion.div>
                         <motion.div variants={fadeInUp} className="space-y-1.5">
                           <Label htmlFor="password">Senha</Label>
