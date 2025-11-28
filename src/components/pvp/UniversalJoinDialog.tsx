@@ -229,11 +229,11 @@ export const UniversalJoinDialog = ({ open, onOpenChange, onJoinSuccess, userId 
         }}
         matchId={foundGroupMatch?.id || ""}
         userId={userId}
-        onJoinSuccess={() => {
+        onJoinSuccess={(groupId) => {
           setShowJoinRoomDialog(false);
           const matchId = foundGroupMatch?.id;
           if (matchId) {
-            onJoinSuccess('group', matchId);
+            onJoinSuccess('group', matchId, groupId);
           }
         }}
       />

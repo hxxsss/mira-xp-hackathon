@@ -13,7 +13,7 @@ interface JoinMatchRoomDialogProps {
   onOpenChange: (open: boolean) => void;
   matchId: string;
   userId: string;
-  onJoinSuccess: () => void;
+  onJoinSuccess: (groupId: string) => void;
 }
 
 interface Group {
@@ -137,7 +137,7 @@ export const JoinMatchRoomDialog = ({
         description: "Você entrou no grupo!",
       });
 
-      onJoinSuccess();
+      onJoinSuccess(groupId);
       onOpenChange(false);
     } catch (error: any) {
       toast({
@@ -245,7 +245,7 @@ export const JoinMatchRoomDialog = ({
         description: `Grupo "${newGroupName}" criado com sucesso!`,
       });
 
-      onJoinSuccess();
+      onJoinSuccess(newGroup.id);
       onOpenChange(false);
     } catch (error: any) {
       toast({
@@ -301,26 +301,45 @@ export const JoinMatchRoomDialog = ({
                 <div>
                   <h3 className="text-lg font-bold mb-3 text-white">Grupos Disponíveis</h3>
                   <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {groups.map((group) => (
-                      <Card 
-                        key={group.id}
-                        className="p-4 bg-white/5 border-cyan-400/50 hover:border-cyan-400 transition-all cursor-pointer"
-                        onClick={() => handleJoinGroup(group.id)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <Users className="w-6 h-6 text-cyan-400" />
-                            <div>
-                              <p className="font-bold text-white">{group.name}</p>
-                              <p className="text-sm text-gray-400">{group.member_count} membros</p>
+                    {groups
+                      .sort((a, b) => {
+                        if (!match) return 0;
+                        const aIsHost = a.leader_user_id === match.host_user_id;
+                        const bIsHost = b.leader_user_id === match.host_user_id;
+                        if (aIsHost && !bIsHost) return -1;
+                        if (!aIsHost && bIsHost) return 1;
+                        return 0;
+                      })
+                      .map((group) => {
+                        const isHostGroup = match && group.leader_user_id === match.host_user_id;
+                        return (
+                          <Card 
+                            key={group.id}
+                            className="p-4 bg-white/5 border-cyan-400/50 hover:border-cyan-400 transition-all cursor-pointer"
+                            onClick={() => handleJoinGroup(group.id)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <Users className="w-6 h-6 text-cyan-400" />
+                                <div>
+                                  <p className="font-bold text-white flex items-center gap-2">
+                                    {group.name}
+                                    {isHostGroup && (
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-400/60">
+                                        Grupo do Host
+                                      </span>
+                                    )}
+                                  </p>
+                                  <p className="text-sm text-gray-400">{group.member_count} membros</p>
+                                </div>
+                              </div>
+                              <Button size="sm" variant="outline">
+                                Entrar
+                              </Button>
                             </div>
-                          </div>
-                          <Button size="sm" variant="outline">
-                            Entrar
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
+                          </Card>
+                        );
+                      })}
                   </div>
                 </div>
 
