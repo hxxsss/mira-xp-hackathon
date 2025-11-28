@@ -329,52 +329,83 @@ const ModulePage = () => {
     if (!module) return;
 
     try {
+      console.log("Iniciando desbloqueio do próximo módulo...");
+      
       // Busca o módulo atual para saber a track_id e order_index
-      const { data: currentModule } = await supabase
+      const { data: currentModule, error: currentModuleError } = await supabase
         .from('learning_modules')
         .select('track_id, order_index')
         .eq('id', moduleId)
         .single();
 
-      if (!currentModule) return;
+      if (currentModuleError || !currentModule) {
+        console.error("Erro ao buscar módulo atual:", currentModuleError);
+        return;
+      }
 
-      // Busca o próximo módulo na mesma trilha
-      const { data: nextModule } = await supabase
+      console.log("Módulo atual:", currentModule);
+
+      // Busca o próximo módulo na mesma trilha (usando maybeSingle para evitar erro)
+      const { data: nextModules, error: nextModuleError } = await supabase
         .from('learning_modules')
-        .select('id')
+        .select('id, title, order_index')
         .eq('track_id', currentModule.track_id)
         .gt('order_index', currentModule.order_index)
         .order('order_index', { ascending: true })
-        .limit(1)
-        .single();
+        .limit(1);
+
+      if (nextModuleError) {
+        console.error("Erro ao buscar próximo módulo:", nextModuleError);
+        return;
+      }
+
+      const nextModule = nextModules?.[0];
 
       if (nextModule) {
-        // Verifica se já existe progresso para o próximo módulo
-        const { data: existingProgress } = await supabase
+        console.log("Próximo módulo encontrado:", nextModule);
+        
+        // Verifica se já existe progresso (usando maybeSingle)
+        const { data: existingProgressList } = await supabase
           .from('user_module_progress')
           .select('id, status')
           .eq('module_id', nextModule.id)
           .eq('user_id', userId)
-          .single();
+          .limit(1);
+
+        const existingProgress = existingProgressList?.[0];
 
         if (!existingProgress) {
-          // Cria progresso desbloqueado para o próximo módulo
-          await supabase
+          console.log("Criando registro de progresso para próximo módulo...");
+          const { error: insertError } = await supabase
             .from('user_module_progress')
             .insert({
               user_id: userId,
               module_id: nextModule.id,
               status: 'unlocked'
             });
+          
+          if (insertError) {
+            console.error("Erro ao criar progresso:", insertError);
+          } else {
+            console.log("Próximo módulo desbloqueado com sucesso!");
+          }
         } else if (existingProgress.status === 'locked') {
-          // Atualiza para desbloqueado
-          await supabase
+          console.log("Atualizando status para desbloqueado...");
+          const { error: updateError } = await supabase
             .from('user_module_progress')
             .update({ status: 'unlocked' })
             .eq('id', existingProgress.id);
+          
+          if (updateError) {
+            console.error("Erro ao atualizar progresso:", updateError);
+          } else {
+            console.log("Módulo atualizado para desbloqueado!");
+          }
+        } else {
+          console.log("Módulo já estava desbloqueado:", existingProgress.status);
         }
       } else {
-        // Não há próximo módulo na trilha - verifica se deve desbloquear próxima trilha
+        console.log("Não há próximo módulo na trilha, verificando próxima trilha...");
         await unlockNextTrack(userId, currentModule.track_id);
       }
     } catch (error) {
