@@ -10,6 +10,7 @@ import { JoinGroupDialog } from "@/components/pvp/JoinGroupDialog";
 import { CreateGroupDialog } from "@/components/pvp/CreateGroupDialog";
 import { QuickMatchDialog } from "@/components/pvp/QuickMatchDialog";
 import { UniversalJoinDialog } from "@/components/pvp/UniversalJoinDialog";
+import { MatchRoomLobby } from "@/components/pvp/MatchRoomLobby";
 import { GroupLobby } from "@/components/pvp/GroupLobby";
 import { MatchLobby } from "@/components/pvp/MatchLobby";
 import { MatchGame } from "@/components/pvp/MatchGame";
@@ -322,8 +323,8 @@ const PvP = () => {
         const match = data as Match;
         setCurrentMatch(match);
       }
-    } else if (type === 'group' && groupId) {
-      // Reload match and set group for group mode
+    } else if (type === 'group') {
+      // Reload match for group mode - will show MatchRoomLobby first
       const { data } = await supabase
         .from("pvp_matches")
         .select("*")
@@ -332,7 +333,9 @@ const PvP = () => {
       
       if (data) {
         setCurrentMatch(data as Match);
-        setCurrentGroupId(groupId);
+        if (groupId) {
+          setCurrentGroupId(groupId);
+        }
       }
     }
     setShowUniversalJoinDialog(false);
@@ -356,7 +359,18 @@ const PvP = () => {
 
   // Game screens
   if (currentMatch) {
-    // Group mode lobby
+    // Group mode - show MatchRoomLobby if no group selected yet
+    if (currentMatch.match_mode === 'group' && currentMatch.status === 'waiting' && !currentGroupId) {
+      return (
+        <MatchRoomLobby
+          matchId={currentMatch.id}
+          userId={userId}
+          onGroupSelected={(groupId) => setCurrentGroupId(groupId)}
+        />
+      );
+    }
+
+    // Group mode lobby - user has selected a group
     if (currentMatch.match_mode === 'group' && currentMatch.status === 'waiting' && currentGroupId) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 p-4">
@@ -387,6 +401,18 @@ const PvP = () => {
             />
           </div>
         </div>
+      );
+    }
+
+    // Group mode - game in progress
+    if (currentMatch.match_mode === 'group' && currentMatch.status === 'in_progress') {
+      return (
+        <MatchGame
+          match={currentMatch}
+          userId={userId}
+          onComplete={handleGameComplete}
+          onLeave={handleLeaveMatch}
+        />
       );
     }
 

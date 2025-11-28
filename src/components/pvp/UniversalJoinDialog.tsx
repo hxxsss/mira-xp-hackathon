@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Search, Loader2, Swords, Users } from "lucide-react";
-import { JoinMatchRoomDialog } from "./JoinMatchRoomDialog";
 
 interface UniversalJoinDialogProps {
   open: boolean;
@@ -22,8 +21,7 @@ export const UniversalJoinDialog = ({ open, onOpenChange, onJoinSuccess, userId 
   const [foundMatch, setFoundMatch] = useState<any>(null);
   const [foundGroup, setFoundGroup] = useState<any>(null);
   const [foundGroupMatch, setFoundGroupMatch] = useState<any>(null);
-  const [matchType, setMatchType] = useState<'1v1' | 'group' | 'match_room' | null>(null);
-  const [showJoinRoomDialog, setShowJoinRoomDialog] = useState(false);
+  const [matchType, setMatchType] = useState<'1v1' | 'group' | null>(null);
   const { toast } = useToast();
 
   const searchCode = async () => {
@@ -39,7 +37,6 @@ export const UniversalJoinDialog = ({ open, onOpenChange, onJoinSuccess, userId 
     setSearching(true);
     setFoundMatch(null);
     setFoundGroup(null);
-    setFoundGroupMatch(null);
     setMatchType(null);
 
     try {
@@ -69,15 +66,13 @@ export const UniversalJoinDialog = ({ open, onOpenChange, onJoinSuccess, userId 
         .maybeSingle();
 
       if (matchGroup) {
-        setFoundGroupMatch(matchGroup);
-        setMatchType('match_room');
-        setSearching(false);
-        setShowJoinRoomDialog(true);
-        onOpenChange(false); // Fecha este dialog
         toast({
           title: "Sala de Grupo Encontrada!",
-          description: "Escolha um grupo para entrar ou crie o seu."
+          description: "Redirecionando para o lobby da sala..."
         });
+        onJoinSuccess('group', matchGroup.id);
+        onOpenChange(false);
+        setSearching(false);
         return;
       }
 
@@ -217,32 +212,11 @@ export const UniversalJoinDialog = ({ open, onOpenChange, onJoinSuccess, userId 
   };
 
   return (
-    <>
-      <JoinMatchRoomDialog
-        open={showJoinRoomDialog}
-        onOpenChange={(open) => {
-          setShowJoinRoomDialog(open);
-          if (!open) {
-            setFoundGroupMatch(null);
-            setCode("");
-          }
-        }}
-        matchId={foundGroupMatch?.id || ""}
-        userId={userId}
-        onJoinSuccess={(groupId) => {
-          setShowJoinRoomDialog(false);
-          const matchId = foundGroupMatch?.id;
-          if (matchId) {
-            onJoinSuccess('group', matchId, groupId);
-          }
-        }}
-      />
-
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md bg-gradient-to-br from-purple-900/95 to-pink-900/95 border-purple-500 text-white">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center text-white">🔑 Entrar com Código</DialogTitle>
-          </DialogHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-purple-900/95 to-pink-900/95 border-purple-500 text-white">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold text-center text-white">🔑 Entrar com Código</DialogTitle>
+        </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
@@ -301,9 +275,8 @@ export const UniversalJoinDialog = ({ open, onOpenChange, onJoinSuccess, userId 
                 </div>
               </Card>
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
