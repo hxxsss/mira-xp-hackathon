@@ -5,14 +5,15 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import charactersGroup from "@/assets/characters-group.png";
-
 const Landing = () => {
   const navigate = useNavigate();
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
     }
   };
   useEffect(() => {
@@ -59,17 +60,10 @@ const Landing = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button 
-              onClick={() => navigate("/login")} 
-              variant="ghost"
-              className="text-gray-700 hover:text-gray-900 px-5 py-2.5 rounded-full font-medium hover:bg-gray-100 transition-colors"
-            >
+            <Button onClick={() => navigate("/login")} variant="ghost" className="text-gray-700 hover:text-gray-900 px-5 py-2.5 rounded-full font-medium hover:bg-gray-100 transition-colors">
               Login
             </Button>
-            <Button 
-              onClick={() => navigate("/onboarding")} 
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:shadow-indigo-200 transition-all duration-300"
-            >
+            <Button onClick={() => navigate("/onboarding")} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:shadow-indigo-200 transition-all duration-300">
               Criar conta
             </Button>
           </div>
@@ -291,10 +285,7 @@ const Landing = () => {
                   </div>
                 </div>
                 
-                <button 
-                  onClick={() => navigate("/onboarding")}
-                  className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center gap-3 whitespace-nowrap cursor-pointer arcade-button"
-                >
+                <button onClick={() => navigate("/onboarding")} className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center gap-3 whitespace-nowrap cursor-pointer arcade-button">
                   <span>Entrar na Arena</span>
                   <Swords className="w-5 h-5" />
                 </button>
@@ -313,7 +304,9 @@ const Landing = () => {
                       </div>
                     </div>
                     <div className="text-white font-bold text-6xl drop-shadow-lg animate-bounce neon-text">VS</div>
-                    <div className="flex flex-col items-center gap-3 animate-pulse" style={{ animationDelay: '0.5s' }}>
+                    <div className="flex flex-col items-center gap-3 animate-pulse" style={{
+                    animationDelay: '0.5s'
+                  }}>
                       <div className="w-20 h-20 bg-white/90 rounded-full shadow-xl flex items-center justify-center border-4 border-pink-400">
                         <User className="w-8 h-8 text-pink-600" />
                       </div>
@@ -342,22 +335,15 @@ const Landing = () => {
               Escolha seu companheiro de jornada e personalize sua experiência
             </p>
           </div>
-          <div className="bg-mascot-bg p-8 md:p-12 rounded-3xl max-w-6xl mx-auto">
+          <div className="p-8 md:p-12 rounded-3xl max-w-6xl mx-auto bg-[#91f0ff]">
             <div className="flex flex-col items-center gap-8">
-              <img 
-                src={charactersGroup} 
-                alt="Ricky, Mila, Ale e Trix - Os mascotes do MIRA"
-                className="w-full max-w-4xl h-auto"
-              />
+              <img src={charactersGroup} alt="Ricky, Mila, Ale e Trix - Os mascotes do MIRA" className="w-full max-w-4xl h-auto" />
               <div className="text-center space-y-4">
-                <h3 className="text-2xl font-bold text-gray-900">Ricky, Mila, Ale e Trix</h3>
+                <h3 className="text-2xl font-bold bg-transparent text-[#008abc]">Ricky, Mila, Ale e Trix</h3>
                 <p className="text-lg text-gray-700 max-w-2xl">
                   Cada mascote tem sua própria personalidade e vai te acompanhar em toda sua jornada de educação financeira
                 </p>
-                <Button 
-                  onClick={() => navigate("/onboarding")}
-                  className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-8 py-6 text-lg rounded-full font-bold shadow-lg hover:shadow-xl transition-all"
-                >
+                <Button onClick={() => navigate("/onboarding")} className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-8 py-6 text-lg rounded-full font-bold shadow-lg hover:shadow-xl transition-all">
                   Escolher Meu Mascote
                 </Button>
               </div>
