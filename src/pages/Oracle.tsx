@@ -19,10 +19,11 @@ interface Message {
   verdict?: {
     verdict: "approved" | "warning" | "denied";
     delay_months: number;
-    reasoning: string;
-    advice?: string;
     summary: string;
     math_summary?: string;
+    pqpa_analysis?: string;
+    behavior_context?: string;
+    smart_advice?: string;
   };
 }
 interface UserContext {
@@ -373,10 +374,11 @@ const Oracle = () => {
                       verdict: {
                         verdict: verdictData.verdict_status,
                         delay_months: verdictData.delay_months,
-                        reasoning: verdictData.verdict_reasoning,
-                        advice: verdictData.suggestion,
                         summary: verdictData.verdict_title,
-                        math_summary: verdictData.math_summary
+                        math_summary: verdictData.math_summary,
+                        pqpa_analysis: verdictData.pqpa_analysis,
+                        behavior_context: verdictData.behavior_context,
+                        smart_advice: verdictData.smart_advice
                       }
                     }]);
                     setIsTyping(false);
@@ -579,9 +581,11 @@ const VerdictCard = ({
   verdict: {
     verdict: "approved" | "warning" | "denied";
     delay_months: number;
-    reasoning: string;
-    advice?: string;
     summary: string;
+    math_summary?: string;
+    pqpa_analysis?: string;
+    behavior_context?: string;
+    smart_advice?: string;
   };
 }) => {
   const getVerdictStyle = () => {
@@ -591,21 +595,24 @@ const VerdictCard = ({
           bg: "bg-success/10",
           border: "border-success",
           icon: <CheckCircle className="w-6 h-6 text-success" />,
-          title: "✅ Aprovado"
+          title: "✅ Aprovado",
+          highlightBg: "bg-success/5"
         };
       case "warning":
         return {
           bg: "bg-accent/10",
           border: "border-accent",
           icon: <AlertTriangle className="w-6 h-6 text-accent" />,
-          title: "⚠️ Atenção"
+          title: "⚠️ Atenção",
+          highlightBg: "bg-accent/5"
         };
       case "denied":
         return {
           bg: "bg-destructive/10",
           border: "border-destructive",
           icon: <XCircle className="w-6 h-6 text-destructive" />,
-          title: "🚫 Não Recomendado"
+          title: "🚫 Não Recomendado",
+          highlightBg: "bg-destructive/5"
         };
     }
   };
@@ -616,21 +623,49 @@ const VerdictCard = ({
   }} animate={{
     opacity: 1,
     scale: 1
-  }} className={`mt-4 p-4 rounded-2xl border-2 ${style.bg} ${style.border}`}>
-      <div className="flex items-start gap-3 mb-3">
+  }} className={`mt-4 rounded-2xl border-2 overflow-hidden ${style.bg} ${style.border}`}>
+      
+      {/* A. CABEÇALHO - O Impacto */}
+      <div className="p-4 flex items-start gap-3">
         {style.icon}
         <div>
           <h3 className="font-bold text-lg">{style.title}</h3>
-          {verdict.delay_months > 0 && <p className="text-sm text-muted-foreground">
-              Atrasa meta em ~{verdict.delay_months} {verdict.delay_months !== 1 ? "meses" : "mês"}
+          {verdict.delay_months > 0 && <p className="text-sm font-medium text-muted-foreground">
+              Atraso estimado: ~{verdict.delay_months} {verdict.delay_months !== 1 ? "meses" : "mês"}
             </p>}
         </div>
       </div>
-      <p className="text-sm mb-2">{verdict.reasoning}</p>
-      {verdict.advice && <p className="text-sm font-medium mt-2">💡 {verdict.advice}</p>}
-      <p className="text-sm font-semibold mt-3 pt-3 border-t border-border">
-        {verdict.summary}
-      </p>
+      
+      {/* B. CORPO - A Análise Dividida */}
+      <div className="px-4 pb-4 space-y-3">
+        
+        {/* Contexto (Math Summary) */}
+        {verdict.math_summary && <div className="flex items-start gap-2">
+            <span className="text-base">📊</span>
+            <p className="text-sm text-muted-foreground">{verdict.math_summary}</p>
+          </div>}
+        
+        {/* Análise PQPA */}
+        {verdict.pqpa_analysis && <div className="flex items-start gap-2">
+            <span className="text-base">🧠</span>
+            <p className="text-sm">{verdict.pqpa_analysis}</p>
+          </div>}
+        
+        {/* Comportamento (destaque visual diferente) */}
+        {verdict.behavior_context && <div className={`flex items-start gap-2 p-2 rounded-lg ${style.highlightBg}`}>
+            <span className="text-base">🛍️</span>
+            <p className="text-sm italic">{verdict.behavior_context}</p>
+          </div>}
+      </div>
+      
+      {/* C. RODAPÉ - A Dica de Ouro */}
+      {verdict.smart_advice && <div className="border-t border-border bg-background/50 p-4">
+          <div className="flex items-start gap-2">
+            <span className="text-base">💡</span>
+            <p className="text-sm font-semibold">{verdict.smart_advice}</p>
+          </div>
+        </div>}
+      
     </motion.div>;
 };
 export default Oracle;

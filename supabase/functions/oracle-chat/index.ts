@@ -331,7 +331,19 @@ IMPORTANTE SOBRE update_goal_deadline:
                   },
                   math_summary: {
                     type: "string",
-                    description: "Texto breve com os números (Ex: Meta: R$4000, Economia mensal: R$100, Item: R$450 = 4.5x sua economia) (SEMPRE EM PT-BR)"
+                    description: "Contexto numérico breve: renda, meta, valor do item, economia mensal (Ex: 'Sua renda é R$2500, a meta é R$4000, o item custa R$700') (SEMPRE EM PT-BR)"
+                  },
+                  pqpa_analysis: {
+                    type: "string",
+                    description: "Análise usando o framework PQPA. Comece com 'Pelo filtro PQPA...' ou 'No radar do PQPA...'. Seja direto sobre qual letra está vermelha/verde. (SEMPRE EM PT-BR)"
+                  },
+                  behavior_context: {
+                    type: "string",
+                    description: "Observação sobre gastos passados do usuário que sejam relevantes (Ex: 'Você já gastou R$400 em roupa esse mês'). Deixe vazio se não houver padrão relevante. (SEMPRE EM PT-BR)"
+                  },
+                  smart_advice: {
+                    type: "string",
+                    description: "Dica prática e acionável (Ex: 'Considere alugar em vez de comprar', 'Procure no marketplace usado') (SEMPRE EM PT-BR)"
                   },
                   verdict_status: {
                     type: "string",
@@ -340,22 +352,14 @@ IMPORTANTE SOBRE update_goal_deadline:
                   },
                   verdict_title: {
                     type: "string",
-                    description: "Declaração curta de impacto (Ex: 'Atrasa a meta em ~4.5 meses') (SEMPRE EM PT-BR)"
-                  },
-                  verdict_reasoning: {
-                    type: "string",
-                    description: "Explicação direta do porquê (SEMPRE EM PT-BR)"
-                  },
-                  suggestion: {
-                    type: "string",
-                    description: "Dica prática (Ex: 'Procure um modelo similar mais barato') (SEMPRE EM PT-BR)"
+                    description: "Declaração curta de impacto (Ex: 'Atrasa a meta em ~1.4 meses') (SEMPRE EM PT-BR)"
                   },
                   delay_months: {
                     type: "number",
                     description: "Meses estimados de atraso na meta"
                   }
                 },
-                required: ["empathy_message", "math_summary", "verdict_status", "verdict_title", "verdict_reasoning", "suggestion", "delay_months"]
+                required: ["empathy_message", "math_summary", "pqpa_analysis", "smart_advice", "verdict_status", "verdict_title", "delay_months"]
               }
             }
           },
