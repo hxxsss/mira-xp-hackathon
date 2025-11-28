@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import charactersGroup from "@/assets/characters-group.png";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -336,15 +337,31 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <Users className="w-16 h-16 text-cyan-600 mx-auto mb-4" />
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Mascotes</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Conheça os Mascotes</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Personalize sua experiência escolhendo seu avatar favorito
+              Escolha seu companheiro de jornada e personalize sua experiência
             </p>
           </div>
-          <div className="bg-white p-12 rounded-3xl max-w-4xl mx-auto text-center">
-            <p className="text-xl text-gray-700">
-              Desbloqueie mascotes especiais conforme avança na sua jornada de educação financeira
-            </p>
+          <div className="bg-white p-8 md:p-12 rounded-3xl max-w-6xl mx-auto">
+            <div className="flex flex-col items-center gap-8">
+              <img 
+                src={charactersGroup} 
+                alt="Ricky, Mila, Ale e Trix - Os mascotes do MIRA"
+                className="w-full max-w-3xl h-auto"
+              />
+              <div className="text-center space-y-4">
+                <h3 className="text-2xl font-bold text-gray-900">Ricky, Mila, Ale e Trix</h3>
+                <p className="text-lg text-gray-700 max-w-2xl">
+                  Cada mascote tem sua própria personalidade e vai te acompanhar em toda sua jornada de educação financeira
+                </p>
+                <Button 
+                  onClick={() => navigate("/onboarding")}
+                  className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-8 py-6 text-lg rounded-full font-bold shadow-lg hover:shadow-xl transition-all"
+                >
+                  Escolher Meu Mascote
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
