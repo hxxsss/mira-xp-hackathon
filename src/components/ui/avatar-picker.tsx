@@ -22,26 +22,26 @@ export const avatars: Avatar[] = [
   {
     id: 1,
     img: macacoImg,
-    alt: "O Macaco",
-    name: "Macaco",
+    alt: "Ricky",
+    name: "Ricky",
   },
   {
     id: 2,
     img: ursaImg,
-    alt: "A Ursa",
-    name: "Ursa",
+    alt: "Mila",
+    name: "Mila",
   },
   {
     id: 3,
     img: leaoImg,
-    alt: "O Leão",
-    name: "Leão",
+    alt: "Ale",
+    name: "Ale",
   },
   {
     id: 4,
     img: coelhaImg,
-    alt: "A Coelha",
-    name: "Coelha",
+    alt: "Trix",
+    name: "Trix",
   },
 ];
 
