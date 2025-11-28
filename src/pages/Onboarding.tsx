@@ -152,7 +152,7 @@ const Onboarding = () => {
       if (!authData.user) throw new Error("Usuário não foi criado");
       
       // Criar perfil
-      const monthlyIncomeValue = formData.incomeType === "renda" && formData.monthlyIncome 
+      const monthlyIncomeValue = formData.incomeType === "trabalho" && formData.monthlyIncome 
         ? parseFloat(formData.monthlyIncome) 
         : null;
       
@@ -226,7 +226,7 @@ const Onboarding = () => {
       case 3:
         return formData.goalTimeline;
       case 4:
-        return formData.incomeType && (formData.incomeType !== "renda" || formData.monthlyIncome);
+        return formData.incomeType && (formData.incomeType !== "trabalho" || formData.monthlyIncome);
       case 5:
         return formData.avatarId;
       default:
@@ -430,7 +430,7 @@ const Onboarding = () => {
                             <div className="font-semibold">Mesada</div>
                             <div className="text-sm text-muted-foreground">Dos pais/família</div>
                           </motion.button>
-                          <motion.button onClick={() => updateField("incomeType", "renda")} className={cn("p-4 rounded-2xl border-2 transition-all", formData.incomeType === "renda" ? "border-purple-600 bg-purple-50" : "border-gray-200 hover:bg-gray-50")} whileHover={{
+                          <motion.button onClick={() => updateField("incomeType", "trabalho")} className={cn("p-4 rounded-2xl border-2 transition-all", formData.incomeType === "trabalho" ? "border-purple-600 bg-purple-50" : "border-gray-200 hover:bg-gray-50")} whileHover={{
                         scale: 1.02
                       }} whileTap={{
                         scale: 0.98
@@ -441,7 +441,7 @@ const Onboarding = () => {
                           </motion.button>
                         </motion.div>
 
-                        {formData.incomeType === "renda" && (
+                        {formData.incomeType === "trabalho" && (
                           <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
