@@ -79,24 +79,24 @@ const Landing = () => {
       <section id="inicio" className="relative w-full pt-12 pb-0 px-6 overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto relative">
           {/* Floating Icons - Left Side */}
-          <div className="absolute top-24 left-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl animate-float z-20 flex items-center justify-center">
+          <div className="absolute top-24 left-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl animate-float z-20 hidden lg:flex items-center justify-center">
             <DollarSign className="text-indigo-600 w-10 h-10" />
           </div>
-          <div className="absolute top-48 left-[12%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
+          <div className="absolute top-48 left-[12%] w-20 h-20 bg-white rounded-3xl shadow-xl hidden lg:flex items-center justify-center animate-float-delayed z-20">
             <PiggyBank className="text-green-600 w-10 h-10" />
           </div>
-          <div className="absolute top-72 left-[18%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
+          <div className="absolute top-72 left-[18%] w-20 h-20 bg-white rounded-3xl shadow-xl hidden lg:flex items-center justify-center animate-float z-20">
             <Wallet className="text-purple-600 w-10 h-10" />
           </div>
 
           {/* Floating Icons - Right Side */}
-          <div className="absolute top-20 right-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
+          <div className="absolute top-20 right-[15%] w-20 h-20 bg-white rounded-3xl shadow-xl hidden lg:flex items-center justify-center animate-float-delayed z-20">
             <CreditCard className="text-blue-600 w-10 h-10" />
           </div>
-          <div className="absolute top-44 right-[12%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float z-20">
+          <div className="absolute top-44 right-[12%] w-20 h-20 bg-white rounded-3xl shadow-xl hidden lg:flex items-center justify-center animate-float z-20">
             <BarChart3 className="text-orange-600 w-10 h-10" />
           </div>
-          <div className="absolute top-68 right-[18%] w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center animate-float-delayed z-20">
+          <div className="absolute top-68 right-[18%] w-20 h-20 bg-white rounded-3xl shadow-xl hidden lg:flex items-center justify-center animate-float-delayed z-20">
             <TrendingUp className="text-emerald-600 w-10 h-10" />
           </div>
 
