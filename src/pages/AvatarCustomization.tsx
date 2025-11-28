@@ -243,18 +243,6 @@ export default function AvatarCustomization() {
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 lg:border-l-12 border-r-4 lg:border-r-12 border-t-4 lg:border-t-12 border-l-transparent border-r-transparent border-t-white/90" />
               </motion.div>
             </div>
-
-            {/* XP Progress Bar */}
-            <div className="mt-6 lg:mt-16 xl:mt-20 w-48 md:w-56 lg:w-80 xl:w-96 bg-white/20 backdrop-blur-md rounded-full p-2 lg:p-4 xl:p-5">
-              <div className="flex justify-between text-white text-xs lg:text-base xl:text-lg mb-1 lg:mb-3 px-2 lg:px-4">
-                <span>Nível 5</span>
-                <span className="font-bold">{currentXP}/500</span>
-              </div>
-              <Progress 
-                value={(currentXP / 500) * 100} 
-                className="h-2 lg:h-4 xl:h-5 bg-white/30"
-              />
-            </div>
           </div>
 
           {/* Wardrobe */}
