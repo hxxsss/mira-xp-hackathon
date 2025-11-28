@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -9,10 +9,8 @@ import {
   CarouselApi,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
-interface CoverFlowItem {
+export interface CoverFlowItem {
   id: string;
   number: string;
   title: string;
@@ -30,68 +28,48 @@ interface CoverFlowCarouselProps {
 }
 
 export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCarouselProps) {
-  // Determina cores baseadas no nome da trilha
-  const getTrackColors = () => {
-    const name = trackName.toLowerCase();
-    if (name.includes('mentalidade')) {
-      return {
-        badgeBg: '#8B5CF6', // Roxo
-        badgeBorder: '#C4B5FD', // Roxo claro
-        cardColor: '#8B5CF6', // Cor principal para elementos do card
-      };
-    }
-    if (name.includes('organização')) {
-      return {
-        badgeBg: '#F59E0B', // Laranja/Amarelo
-        badgeBorder: '#FDE68A', // Amarelo claro
-        cardColor: '#F59E0B',
-      };
-    }
-    if (name.includes('aceleração')) {
-      return {
-        badgeBg: '#10B981', // Verde
-        badgeBorder: '#A7F3D0', // Verde claro
-        cardColor: '#10B981',
-      };
-    }
-    return {
-      badgeBg: '#8B5CF6',
-      badgeBorder: '#C4B5FD',
-      cardColor: '#8B5CF6',
-    };
-  };
   const [api, setApi] = React.useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [hasInitialized, setHasInitialized] = React.useState(false);
-  
-  // Encontra o índice do card atual (último desbloqueado ou em progresso)
-  const currentCardIndex = React.useMemo(() => {
-    // Prioridade: in_progress > unlocked > primeiro completed (do fim)
-    const inProgressIndex = items.findIndex(item => item.status === 'in_progress');
-    if (inProgressIndex !== -1) return inProgressIndex;
-    
-    const unlockedIndex = items.findIndex(item => item.status === 'unlocked');
-    if (unlockedIndex !== -1) return unlockedIndex;
-    
-    // Se todos completados, vai para o último completado
-    const lastCompletedIndex = items.map((item, idx) => 
-      item.status === 'completed' ? idx : -1
-    ).filter(idx => idx !== -1).pop();
-    
-    return lastCompletedIndex ?? 0;
+
+  // Cores baseadas na trilha
+  const getTrackColors = useCallback(() => {
+    const name = trackName.toLowerCase();
+    if (name.includes('mentalidade')) {
+      return { badgeBg: '#8B5CF6', badgeBorder: '#C4B5FD', cardColor: '#8B5CF6' };
+    }
+    if (name.includes('organização')) {
+      return { badgeBg: '#F59E0B', badgeBorder: '#FDE68A', cardColor: '#F59E0B' };
+    }
+    if (name.includes('aceleração')) {
+      return { badgeBg: '#10B981', badgeBorder: '#A7F3D0', cardColor: '#10B981' };
+    }
+    return { badgeBg: '#8B5CF6', badgeBorder: '#C4B5FD', cardColor: '#8B5CF6' };
+  }, [trackName]);
+
+  // REGRA 1: Encontra o índice do card ATUAL (primeiro unlocked/in_progress)
+  const findCurrentCardIndex = useCallback(() => {
+    // Prioridade: in_progress > unlocked > último completed
+    const inProgressIdx = items.findIndex(item => item.status === 'in_progress');
+    if (inProgressIdx !== -1) return inProgressIdx;
+
+    const unlockedIdx = items.findIndex(item => item.status === 'unlocked');
+    if (unlockedIdx !== -1) return unlockedIdx;
+
+    // Se todos completados, último completado
+    for (let i = items.length - 1; i >= 0; i--) {
+      if (items[i].status === 'completed') return i;
+    }
+
+    return 0;
   }, [items]);
-  
-  // Limitar visualização: mostrar apenas módulos completos + atual + 2 bloqueados + mensagem
+
+  // Limita visualização: completos + atual + 2 bloqueados + mensagem
   const visibleItems = React.useMemo(() => {
-    const firstUnlockedIndex = items.findIndex(item => 
-      item.status === 'unlocked' || item.status === 'in_progress'
-    );
-    
-    if (firstUnlockedIndex === -1) return items;
-    
-    const visibleEndIndex = firstUnlockedIndex + 3;
+    const currentIdx = findCurrentCardIndex();
+    const visibleEndIndex = currentIdx + 3;
     const visibleModules = items.slice(0, visibleEndIndex);
-    
+
     if (visibleEndIndex < items.length) {
       visibleModules.push({
         id: 'continue-message',
@@ -104,69 +82,68 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
         progress: 0
       });
     }
-    
-    return visibleModules;
-  }, [items]);
 
-  // Inicializa o carrossel no card atual do usuário
+    return visibleModules;
+  }, [items, findCurrentCardIndex]);
+
+  // REGRA 1: Inicialização - scroll automático para o card atual
   useEffect(() => {
     if (!api || hasInitialized) return;
 
-    // Encontra o índice no array visível que corresponde ao card atual
-    const targetIndex = Math.min(currentCardIndex, visibleItems.length - 1);
+    const targetIndex = Math.min(findCurrentCardIndex(), visibleItems.length - 1);
     
-    // Scroll para o card atual após um pequeno delay para garantir renderização
     const timer = setTimeout(() => {
-      api.scrollTo(targetIndex, true);
+      api.scrollTo(targetIndex, false); // false = sem animação na inicialização
       setHasInitialized(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [api, currentCardIndex, visibleItems.length, hasInitialized]);
+    }, 50);
 
+    return () => clearTimeout(timer);
+  }, [api, findCurrentCardIndex, visibleItems.length, hasInitialized]);
+
+  // Reset hasInitialized quando items mudam (para refocar após desbloqueio)
+  useEffect(() => {
+    setHasInitialized(false);
+  }, [items]);
+
+  // Atualiza selectedIndex ao navegar
   useEffect(() => {
     if (!api) return;
-    
-    // Atualiza o índice selecionado quando muda
+
     const onSelect = () => {
       setSelectedIndex(api.selectedScrollSnap());
     };
-    
+
     api.on("select", onSelect);
     onSelect();
-    
+
     return () => {
       api.off("select", onSelect);
     };
   }, [api]);
 
+  // Efeito de escala/opacidade no scroll
   useEffect(() => {
     if (!api) return;
 
     const applyScaleStyle = () => {
       const slideNodes = api.slideNodes();
-      
+
       slideNodes.forEach((slideNode) => {
-        // Pega a posição do slide em relação ao viewport
         const slideRect = slideNode.getBoundingClientRect();
         const viewportRect = api.rootNode().getBoundingClientRect();
-        
-        // Calcula distância do centro
+
         const centerDiff = Math.abs(
-          (slideRect.left + slideRect.width / 2) - 
+          (slideRect.left + slideRect.width / 2) -
           (viewportRect.left + viewportRect.width / 2)
         );
-        
-        // Lógica de Escala: 1 no centro, diminui conforme afasta
-        let scale = 1 - Math.min(centerDiff * 0.002, 0.25); // Ajuste 0.002 para sensibilidade
-        let opacity = 1 - Math.min(centerDiff * 0.003, 0.5);
 
-        // Aplica no container visual dentro do CarouselItem
+        const scale = 1 - Math.min(centerDiff * 0.002, 0.25);
+        const opacity = 1 - Math.min(centerDiff * 0.003, 0.5);
+
         const innerContent = slideNode.querySelector('.card-visual') as HTMLElement;
         if (innerContent) {
           innerContent.style.transform = `scale(${scale})`;
           innerContent.style.opacity = `${opacity}`;
-          // Garante transição suave apenas se não estiver arrastando
           innerContent.style.transition = 'transform 0.1s ease-out, opacity 0.1s ease-out';
         }
       });
@@ -182,13 +159,18 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
     };
   }, [api]);
 
-  const cardColors = [
-    '#FF6B6B', // Vermelho coral
-    '#FFD93D', // Amarelo
-    '#6BCB77', // Verde
-    '#4D96FF', // Azul claro
-    '#9D4EDD', // Roxo
-  ];
+  // REGRA 4: Estado visual
+  const getButtonText = (status: string) => {
+    switch (status) {
+      case 'completed': return 'REVISAR'; // REGRA 3: Modo revisão
+      case 'in_progress': return 'CONTINUAR';
+      case 'unlocked': return 'COMEÇAR';
+      case 'locked': return '🔒 BLOQUEADO';
+      default: return 'INICIAR';
+    }
+  };
+
+  const trackColors = getTrackColors();
 
   return (
     <Carousel
@@ -205,14 +187,13 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
           const isLocked = item.status === 'locked';
           const isCompleted = item.status === 'completed';
           const isInProgress = item.status === 'in_progress';
-          const trackColors = getTrackColors();
-          const color = trackColors.cardColor; // Usa a cor da trilha
-
+          const isUnlocked = item.status === 'unlocked';
           const isCenterCard = index === selectedIndex;
+          const isClickable = !isLocked && isCenterCard && item.id !== 'continue-message';
 
           return (
-            <CarouselItem 
-              key={item.id} 
+            <CarouselItem
+              key={item.id}
               className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3"
             >
               <div className="card-visual p-2 pb-8 h-full">
@@ -220,46 +201,50 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                   className={cn(
                     "relative bg-white transition-all duration-300 border-0 shadow-xl pb-8",
                     "rounded-[35px] w-full aspect-[3/4] max-h-[350px] md:max-h-[400px] lg:max-h-[450px]",
-                    isCenterCard && !isLocked ? "cursor-pointer" : "cursor-default",
+                    isClickable && "cursor-pointer hover:shadow-2xl",
                     isLocked && "cursor-not-allowed opacity-60",
                     !isCenterCard && !isLocked && "opacity-70"
                   )}
                   style={{ fontFamily: "'Nunito', sans-serif" }}
-                  onClick={() => isCenterCard && !isLocked && item.id !== 'continue-message' && onItemClick(item.id, item.status)}
+                  onClick={() => isClickable && onItemClick(item.id, item.status)}
                 >
                   <CardContent className="p-0 h-full flex flex-col relative">
-                    {/* Header com cor da trilha */}
-                    <div 
+                    {/* Header colorido */}
+                    <div
                       className="relative h-[55%] w-full rounded-t-[35px] flex items-center justify-center overflow-visible"
                       style={{
-                        backgroundColor: color,
+                        backgroundColor: trackColors.cardColor,
                         borderBottomLeftRadius: '40px',
                         borderBottomRightRadius: '40px'
                       }}
                     >
-                      {/* Ícone/Ilustração */}
                       <div className="z-10 -translate-y-2 drop-shadow-lg">
                         {isLocked ? (
                           <div className="text-7xl">🔒</div>
+                        ) : isCompleted ? (
+                          <div className="relative">
+                            <div className="text-7xl">{item.icon}</div>
+                            <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                              <span className="text-white text-lg">✓</span>
+                            </div>
+                          </div>
                         ) : (
                           <div className="text-7xl">{item.icon}</div>
                         )}
                       </div>
                     </div>
 
-                    {/* Texto */}
+                    {/* Conteúdo */}
                     <div className="px-8 pt-6 pb-8 text-center flex-1 flex flex-col justify-between relative">
-                      {/* Badge com número na parte inferior */}
-                      <div 
+                      {/* Badge número */}
+                      <div
                         className="absolute -left-5 top-1/2 w-12 h-12 rounded-full flex items-center justify-center shadow-md z-20"
                         style={{
                           backgroundColor: trackColors.badgeBg,
                           border: `4px solid ${trackColors.badgeBorder}`
                         }}
                       >
-                        <span 
-                          className="font-extrabold text-lg text-white"
-                        >
+                        <span className="font-extrabold text-lg text-white">
                           {item.number}
                         </span>
                       </div>
@@ -274,36 +259,52 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                       </div>
 
                       {/* Barra de Progresso */}
-                      {item.progress !== undefined && item.progress > 0 && (
+                      {item.progress !== undefined && item.progress > 0 && !isCompleted && (
                         <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden mt-4">
                           <div
                             className="h-full rounded-full transition-all duration-500"
-                            style={{ 
+                            style={{
                               width: `${item.progress}%`,
-                              backgroundColor: color
+                              backgroundColor: trackColors.cardColor
                             }}
                           />
                         </div>
                       )}
+
+                      {/* Badge de completado */}
+                      {isCompleted && (
+                        <div className="mt-4 flex items-center justify-center gap-1 text-green-600 font-semibold text-sm">
+                          <span>✓</span>
+                          <span>Concluído</span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Botão Amarelo Flutuante */}
+                    {/* Botão de ação */}
                     {item.id !== 'continue-message' && (
                       <button
-                        className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-bold py-3 px-8 rounded-full shadow-lg transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className={cn(
+                          "absolute -bottom-6 left-1/2 transform -translate-x-1/2 font-bold py-3 px-8 rounded-full shadow-lg transition-all text-sm whitespace-nowrap",
+                          isLocked || !isCenterCard
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : isCompleted
+                            ? "bg-green-400 hover:bg-green-300 text-green-900"
+                            : "bg-yellow-400 hover:bg-yellow-300 text-indigo-950"
+                        )}
                         style={{
-                          boxShadow: '0 4px 10px rgba(255, 193, 7, 0.4)'
+                          boxShadow: isLocked || !isCenterCard
+                            ? 'none'
+                            : isCompleted
+                            ? '0 4px 10px rgba(34, 197, 94, 0.4)'
+                            : '0 4px 10px rgba(255, 193, 7, 0.4)'
                         }}
                         disabled={isLocked || !isCenterCard}
                       >
-                        {isCompleted && 'REVISAR'}
-                        {isInProgress && 'CONTINUAR'}
-                        {item.status === 'unlocked' && 'COMEÇAR'}
-                        {isLocked && '🔒 BLOQUEADO'}
+                        {getButtonText(item.status)}
                       </button>
                     )}
 
-                    {/* Overlay para cards bloqueados */}
+                    {/* Overlay para bloqueados */}
                     {isLocked && (
                       <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center z-10 rounded-[35px]">
                         <div className="text-center">
@@ -322,7 +323,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
           );
         })}
       </CarouselContent>
-      
+
       <CarouselPrevious className="-left-12 bg-white shadow-lg hover:bg-gray-50 border-2 border-gray-200" />
       <CarouselNext className="-right-12 bg-white shadow-lg hover:bg-gray-50 border-2 border-gray-200" />
     </Carousel>
