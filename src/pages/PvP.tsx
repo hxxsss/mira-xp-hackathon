@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Swords, Plus, LogIn, ArrowLeft, Users, Search } from "lucide-react";
 import { CreateMatchDialog } from "@/components/pvp/CreateMatchDialog";
 import { JoinMatchDialog } from "@/components/pvp/JoinMatchDialog";
-import { JoinGroupDialog } from "@/components/pvp/JoinGroupDialog";
-import { CreateGroupDialog } from "@/components/pvp/CreateGroupDialog";
+import { CreateRoomDialog } from "@/components/pvp/CreateRoomDialog";
+import { JoinRoomDialog } from "@/components/pvp/JoinRoomDialog";
 import { QuickMatchDialog } from "@/components/pvp/QuickMatchDialog";
 import { UniversalJoinDialog } from "@/components/pvp/UniversalJoinDialog";
 import { MatchRoomLobby } from "@/components/pvp/MatchRoomLobby";
@@ -45,9 +45,9 @@ const PvP = () => {
   const [currentGroupId, setCurrentGroupId] = useState<string | null>(null);
   const [selectedMode, setSelectedMode] = useState<'1v1' | 'group' | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showCreateGroupDialog, setShowCreateGroupDialog] = useState(false);
+  const [showCreateRoomDialog, setShowCreateRoomDialog] = useState(false);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
-  const [showJoinGroupDialog, setShowJoinGroupDialog] = useState(false);
+  const [showJoinRoomDialog, setShowJoinRoomDialog] = useState(false);
   const [showQuickMatchDialog, setShowQuickMatchDialog] = useState(false);
   const [showUniversalJoinDialog, setShowUniversalJoinDialog] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
@@ -226,8 +226,34 @@ const PvP = () => {
     if (mode === '1v1') {
       setShowCreateDialog(true);
     } else {
-      setShowCreateGroupDialog(true);
+      setShowCreateRoomDialog(true);
     }
+  };
+
+  const handleRoomCreated = async (matchId: string) => {
+    const { data } = await supabase
+      .from("pvp_matches")
+      .select("*")
+      .eq("id", matchId)
+      .single();
+    
+    if (data) {
+      setCurrentMatch(data as Match);
+    }
+    setShowCreateRoomDialog(false);
+  };
+
+  const handleRoomJoined = async (matchId: string) => {
+    const { data } = await supabase
+      .from("pvp_matches")
+      .select("*")
+      .eq("id", matchId)
+      .single();
+    
+    if (data) {
+      setCurrentMatch(data as Match);
+    }
+    setShowJoinRoomDialog(false);
   };
 
   const handleMatchCreated = (match: Match) => {
@@ -247,7 +273,6 @@ const PvP = () => {
           setCurrentGroupId(groupId);
         }
       });
-    setShowCreateGroupDialog(false);
   };
 
   const handleMatchJoined = async (match: Match) => {
@@ -540,24 +565,24 @@ const PvP = () => {
         userId={userId}
       />
 
-      <CreateGroupDialog
-        open={showCreateGroupDialog}
+      <CreateRoomDialog
+        open={showCreateRoomDialog}
         onOpenChange={(open) => {
-          setShowCreateGroupDialog(open);
+          setShowCreateRoomDialog(open);
           if (!open) {
             setSelectedMode(null);
           }
         }}
-        onGroupCreated={handleGroupCreated}
+        onRoomCreated={handleRoomCreated}
         userId={userId}
       />
 
-        <QuickMatchDialog
-          open={showQuickMatchDialog}
-          onOpenChange={setShowQuickMatchDialog}
-          onMatchFound={handleMatchJoined}
-          userId={userId}
-        />
+      <QuickMatchDialog
+        open={showQuickMatchDialog}
+        onOpenChange={setShowQuickMatchDialog}
+        onMatchFound={handleMatchJoined}
+        userId={userId}
+      />
 
       <JoinMatchDialog
         open={showJoinDialog}
@@ -566,10 +591,10 @@ const PvP = () => {
         userId={userId}
       />
 
-      <JoinGroupDialog
-        open={showJoinGroupDialog}
-        onOpenChange={setShowJoinGroupDialog}
-        onGroupJoined={handleGroupCreated}
+      <JoinRoomDialog
+        open={showJoinRoomDialog}
+        onOpenChange={setShowJoinRoomDialog}
+        onRoomJoined={handleRoomJoined}
         userId={userId}
       />
 

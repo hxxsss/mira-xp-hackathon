@@ -46,25 +46,24 @@ export const ModeSelectionScreen = ({
     setSearching(true);
 
     try {
-      // Buscar partida pelo código
+      // Buscar partida pelo código (1v1 ou group)
       const { data: match, error } = await supabase
         .from("pvp_matches")
         .select("*")
         .eq("match_code", roomCode.toUpperCase())
         .eq("status", "waiting")
-        .eq("match_mode", "1v1")
         .maybeSingle();
 
       if (error || !match) {
         toast({
-          title: "Partida não encontrada",
-          description: "Verifique o código ou a partida já iniciou",
+          title: "Sala não encontrada",
+          description: "Verifique o código ou a sala já iniciou",
           variant: "destructive"
         });
         return;
       }
 
-      if (match.host_user_id === userId) {
+      if (match.host_user_id === userId && match.match_mode === '1v1') {
         toast({
           title: "Erro",
           description: "Você não pode entrar na sua própria partida",
@@ -88,7 +87,19 @@ export const ModeSelectionScreen = ({
 
   const handleMatchJoin = async () => {
     if (foundMatch) {
-      // Verificar XP do usuário
+      // Se é modo grupo, apenas redirecionar para a sala (sem descontar XP ainda)
+      if (foundMatch.match_mode === 'group') {
+        toast({
+          title: "Entrando na sala...",
+          description: "Escolha ou crie seu grupo!"
+        });
+        onJoinWithCode(foundMatch.id);
+        setFoundMatch(null);
+        setRoomCode("");
+        return;
+      }
+
+      // Modo 1v1 - verificar XP e descontar
       const { data: profile } = await supabase
         .from("profiles")
         .select("current_xp")

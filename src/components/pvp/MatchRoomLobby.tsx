@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Plus, Trophy, Zap, Target, ArrowRight, Crown, Loader2 } from "lucide-react";
+import { Users, Plus, Trophy, Zap, Target, ArrowRight, Crown, Loader2, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { PvPHeader } from "./PvPHeader";
@@ -243,34 +243,53 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10 space-y-6">
-        {/* Match Info */}
+        {/* Match Info with Code */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <Card className="backdrop-blur-2xl bg-white/10 border-white/20 p-6 rounded-2xl">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-2">
+              <div className="text-center md:text-left">
+                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center justify-center md:justify-start gap-2">
                   <Trophy className="w-8 h-8 text-yellow-400" />
                   Sala de Batalha Épica
                 </h1>
                 <p className="text-purple-200 text-sm">Escolha ou crie seu grupo para começar</p>
               </div>
               
-              <div className="flex flex-wrap gap-4 items-center">
-                <div className="flex items-center gap-2 bg-purple-900/50 px-4 py-2 rounded-lg">
-                  <Zap className="w-5 h-5 text-yellow-400" />
-                  <span className="text-white font-semibold">{match.xp_bet} XP</span>
-                </div>
-                <div className="flex items-center gap-2 bg-purple-900/50 px-4 py-2 rounded-lg">
-                  <Target className="w-5 h-5 text-cyan-400" />
-                  <span className="text-white font-semibold">{match.difficulty_level}</span>
-                </div>
-                <div className="flex items-center gap-2 bg-purple-900/50 px-4 py-2 rounded-lg">
-                  <Users className="w-5 h-5 text-green-400" />
-                  <span className="text-white font-semibold">{groups.length}/{match.max_groups}</span>
-                </div>
+              <div className="flex flex-col items-center gap-2 bg-purple-900/50 px-6 py-4 rounded-xl border-2 border-purple-400/50">
+                <span className="text-purple-300 text-xs font-medium">Código da Sala</span>
+                <code className="text-3xl md:text-4xl font-black text-white tracking-widest">
+                  {match.match_code}
+                </code>
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  onClick={() => {
+                    navigator.clipboard.writeText(match.match_code);
+                    toast({ title: "Código copiado!", description: match.match_code });
+                  }}
+                  className="text-purple-300 hover:text-white hover:bg-purple-500/30"
+                >
+                  <Copy className="w-4 h-4 mr-1" />
+                  Copiar
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap gap-4 items-center justify-center md:justify-start mt-4 pt-4 border-t border-purple-500/30">
+              <div className="flex items-center gap-2 bg-purple-900/50 px-4 py-2 rounded-lg">
+                <Zap className="w-5 h-5 text-yellow-400" />
+                <span className="text-white font-semibold">{match.xp_bet} XP</span>
+              </div>
+              <div className="flex items-center gap-2 bg-purple-900/50 px-4 py-2 rounded-lg">
+                <Target className="w-5 h-5 text-cyan-400" />
+                <span className="text-white font-semibold">{match.difficulty_level}</span>
+              </div>
+              <div className="flex items-center gap-2 bg-purple-900/50 px-4 py-2 rounded-lg">
+                <Users className="w-5 h-5 text-green-400" />
+                <span className="text-white font-semibold">{groups.length}/{match.max_groups} grupos</span>
               </div>
             </div>
           </Card>

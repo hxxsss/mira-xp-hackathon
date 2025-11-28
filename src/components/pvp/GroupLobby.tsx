@@ -205,7 +205,7 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
             </div>
             
             <div className="space-y-3 sm:space-y-4">
-              <p className="text-white/80 text-sm sm:text-base font-medium">Compartilhe o código do grupo</p>
+              <p className="text-white/80 text-sm sm:text-base font-medium">Compartilhe o código da sala</p>
               
               <motion.div 
                 className="bg-white/5 rounded-xl p-4 sm:p-8 border-2 sm:border-4 border-purple-400/50 backdrop-blur-xl"
@@ -223,27 +223,17 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
                   className="text-4xl sm:text-7xl font-black text-white tracking-widest"
                   style={{ textShadow: '0 0 30px rgba(217,70,239,0.8)' }}
                 >
-                  {group.invite_code}
+                  {match.match_code}
                 </code>
               </motion.div>
 
               <Button
-                onClick={() => copyCode(group.invite_code)}
+                onClick={() => copyCode(match.match_code)}
                 className="w-full bg-purple-500/30 hover:bg-purple-500/50 border border-purple-400/50 text-white font-semibold text-sm sm:text-base py-4 sm:py-6 rounded-xl backdrop-blur-xl"
               >
                 <Copy className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Copiar Código
               </Button>
-            </div>
-
-            <div className="pt-3 sm:pt-4 border-t border-purple-500/30">
-              <p className="text-xs sm:text-sm text-purple-300/80 mb-1 sm:mb-2 font-medium">Código da Partida</p>
-              <div className="flex items-center justify-center gap-2">
-                <code className="text-lg sm:text-2xl font-bold text-white">{match.match_code}</code>
-                <Button size="sm" variant="ghost" onClick={() => copyCode(match.match_code)} className="text-purple-300">
-                  <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
-                </Button>
-              </div>
             </div>
 
             <div className="bg-purple-950/30 rounded-lg p-3 sm:p-4 space-y-2 text-left border border-purple-500/20">
