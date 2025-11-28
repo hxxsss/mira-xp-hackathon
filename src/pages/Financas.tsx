@@ -11,11 +11,13 @@ import { DebtCard } from "@/components/financas/DebtCard";
 import { TransactionForm } from "@/components/financas/TransactionForm";
 import { DebtForm } from "@/components/financas/DebtForm";
 import { BudgetCategoryForm } from "@/components/financas/BudgetCategoryForm";
+import { IncomeManagement } from "@/components/financas/IncomeManagement";
 import { toast } from "sonner";
 
 const Financas = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string>("");
   const [transactions, setTransactions] = useState<any[]>([]);
   const [debts, setDebts] = useState<any[]>([]);
   const [budgetCategories, setBudgetCategories] = useState<any[]>([]);
@@ -34,6 +36,8 @@ const Financas = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       navigate("/login");
+    } else {
+      setUserId(session.user.id);
     }
   };
 
@@ -110,6 +114,12 @@ const Financas = () => {
           debts={debts}
           loading={loading}
         />
+
+        {userId && (
+          <div className="mt-8">
+            <IncomeManagement userId={userId} />
+          </div>
+        )}
 
         <Tabs defaultValue="transacoes" className="mt-8">
           <TabsList className="grid w-full grid-cols-3">
