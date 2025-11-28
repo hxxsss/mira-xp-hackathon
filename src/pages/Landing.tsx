@@ -329,7 +329,7 @@ const Landing = () => {
       <section id="mascotes" className="py-24 px-6 bg-gradient-to-br from-cyan-50 to-blue-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <Users className="w-16 h-16 text-cyan-600 mx-auto mb-4" />
+            <Users className="w-16 h-16 mx-auto mb-4 text-[#16bed8]" />
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Conheça os Mascotes</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Escolha seu companheiro de jornada e personalize sua experiência
