@@ -5,7 +5,7 @@ import { ArrowLeft, Lock, Sparkles, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { avatars } from "@/components/ui/avatar-picker";
+import { avatars, fullBodyAvatars } from "@/components/ui/avatar-picker";
 import { Progress } from "@/components/ui/progress";
 
 type Category = "head" | "body" | "background";
@@ -203,25 +203,25 @@ export default function AvatarCustomization() {
 
           {/* Avatar Stage */}
           <div className="order-1 lg:order-2 lg:col-span-4 xl:col-span-3 flex flex-col items-center justify-center py-6 lg:py-0">
-            <div className="relative">
-              {/* Spotlight Effect - Smaller on mobile */}
-              <div className="absolute -top-10 lg:-top-32 left-1/2 -translate-x-1/2 w-40 h-40 lg:w-80 lg:h-80 xl:w-96 xl:h-96 bg-yellow-300/10 lg:bg-yellow-300/15 rounded-full blur-3xl" />
+            <div className="relative flex items-center justify-center">
+              {/* Spotlight Effect */}
+              <div className="absolute -top-10 lg:-top-20 left-1/2 -translate-x-1/2 w-40 h-40 lg:w-80 lg:h-80 xl:w-96 xl:h-96 bg-yellow-300/10 lg:bg-yellow-300/15 rounded-full blur-3xl" />
               
-              {/* Avatar Display - Responsive sizing */}
+              {/* Full Body Character Display */}
               <motion.div 
-                className="relative z-10 w-32 h-32 md:w-40 md:h-40 lg:w-64 lg:h-64 xl:w-80 xl:h-80 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-50 backdrop-blur-xl border-2 lg:border-4 border-white/30 flex items-center justify-center shadow-2xl overflow-hidden"
+                className="relative z-10 flex items-end justify-center"
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
                 <img 
-                  src={avatars.find(a => a.id === avatarId)?.img || avatars[0].img}
-                  alt={avatars.find(a => a.id === avatarId)?.alt || avatars[0].alt}
-                  className="w-full h-full object-cover"
+                  src={fullBodyAvatars.find(a => a.id === avatarId)?.img || fullBodyAvatars[0].img}
+                  alt={fullBodyAvatars.find(a => a.id === avatarId)?.alt || fullBodyAvatars[0].alt}
+                  className="h-64 md:h-72 lg:h-80 xl:h-96 w-auto object-contain drop-shadow-2xl"
                 />
               </motion.div>
 
               {/* Pedestal */}
-              <div className="absolute -bottom-2 lg:-bottom-6 left-1/2 -translate-x-1/2 w-32 lg:w-64 xl:w-80 h-6 lg:h-10 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full blur-sm" />
+              <div className="absolute -bottom-2 lg:-bottom-4 left-1/2 -translate-x-1/2 w-32 lg:w-48 xl:w-64 h-6 lg:h-8 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full blur-sm" />
 
               {/* Thought Bubble - Equipped Items - Repositioned for mobile */}
               <motion.div 
