@@ -674,9 +674,131 @@ const ModulePage = () => {
                 <h2 className="text-2xl font-bold mb-4">{currentLesson.title}</h2>
               </div>
 
-              {currentLesson.type === 'text' ? (
+              {/* Video Type */}
+              {currentLesson.type === 'video' && (
+                <div className="space-y-6">
+                  <div className="relative aspect-video bg-black rounded-xl overflow-hidden">
+                    <video
+                      src={currentLesson.video_url}
+                      controls
+                      className="w-full h-full object-contain"
+                      poster="/placeholder.svg"
+                    >
+                      Seu navegador não suporta vídeos.
+                    </video>
+                  </div>
+                  {currentLesson.content && (
+                    <p className="text-lg text-gray-700 leading-relaxed">{currentLesson.content}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Quiz Slider Type */}
+              {currentLesson.type === 'quiz_slider' && (
+                <div className="space-y-6">
+                  {currentLesson.context && (
+                    <p className="text-gray-600 italic">{currentLesson.context}</p>
+                  )}
+                  <p className="text-lg font-medium">{currentLesson.question}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {currentLesson.options?.map((option: string, idx: number) => (
+                      <Button
+                        key={idx}
+                        variant={selectedJourneyOption === idx ? "default" : "outline"}
+                        className="py-4 h-auto"
+                        onClick={() => setSelectedJourneyOption(idx)}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                  {selectedJourneyOption !== null && currentLesson.feedback && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-4 bg-purple-50 rounded-lg border border-purple-200"
+                    >
+                      <p className="text-purple-800">{currentLesson.feedback}</p>
+                    </motion.div>
+                  )}
+                </div>
+              )}
+
+              {/* Fill Blank Type */}
+              {currentLesson.type === 'fill_blank' && (
+                <div className="space-y-6">
+                  <p className="text-lg font-medium">{currentLesson.sentence}</p>
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    {currentLesson.options?.map((option: string, idx: number) => (
+                      <Button
+                        key={idx}
+                        variant={selectedJourneyOption === idx ? "default" : "outline"}
+                        className="px-6 py-3"
+                        onClick={() => setSelectedJourneyOption(idx)}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                  {selectedJourneyOption !== null && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`p-4 rounded-lg border ${
+                        selectedJourneyOption === currentLesson.correct_answer
+                          ? 'bg-green-50 border-green-200'
+                          : 'bg-red-50 border-red-200'
+                      }`}
+                    >
+                      <p className={selectedJourneyOption === currentLesson.correct_answer ? 'text-green-800' : 'text-red-800'}>
+                        {selectedJourneyOption === currentLesson.correct_answer 
+                          ? '✓ Correto! ' + (currentLesson.justification || '')
+                          : '✗ Tente novamente!'}
+                      </p>
+                    </motion.div>
+                  )}
+                </div>
+              )}
+
+              {/* Icon Selection Type */}
+              {currentLesson.type === 'icon_selection' && (
+                <div className="space-y-6">
+                  {currentLesson.context && (
+                    <p className="text-gray-600 italic">{currentLesson.context}</p>
+                  )}
+                  <p className="text-lg font-medium">{currentLesson.question}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    {currentLesson.options?.map((option: { emoji: string; label: string }, idx: number) => (
+                      <Button
+                        key={idx}
+                        variant={selectedJourneyOption === idx ? "default" : "outline"}
+                        className="flex flex-col items-center gap-2 py-6 h-auto"
+                        onClick={() => setSelectedJourneyOption(idx)}
+                      >
+                        <span className="text-3xl">{option.emoji}</span>
+                        <span className="text-sm">{option.label}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Info Type */}
+              {currentLesson.type === 'info' && (
+                <div className="space-y-6">
+                  <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-100">
+                    <p className="text-lg text-gray-700 leading-relaxed">{currentLesson.content}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Legacy text type */}
+              {currentLesson.type === 'text' && (
                 <LessonContent lesson={currentLesson} />
-              ) : (
+              )}
+
+              {/* Legacy quiz type */}
+              {currentLesson.type === 'quiz' && (
                 <QuizComponent 
                   key={quizKey}
                   lesson={currentLesson} 
@@ -694,12 +816,15 @@ const ModulePage = () => {
                   Anterior
                 </Button>
 
-                {currentLesson.type === 'text' && (
+                {currentLesson.type !== 'quiz' && (
                   <Button
-                    onClick={handleNextLesson}
+                    onClick={() => {
+                      setSelectedJourneyOption(null);
+                      handleNextLesson();
+                    }}
                     disabled={currentLessonIndex === totalItems - 1}
                   >
-                    Próxima Lição
+                    {currentLessonIndex === totalItems - 1 ? 'Finalizar' : 'Próxima Lição'}
                   </Button>
                 )}
               </div>
