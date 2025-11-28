@@ -397,6 +397,11 @@ const PvP = () => {
             setCurrentGroupId(null);
             setSelectedMode(null);
           }}
+          onGameStart={(matchData, groupId) => {
+            console.log('[PvP] onGameStart called with match:', matchData.status, 'groupId:', groupId);
+            setCurrentMatch(matchData as Match);
+            setCurrentGroupId(groupId);
+          }}
         />
       );
     }
