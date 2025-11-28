@@ -61,7 +61,7 @@ export default {
           soft: "hsl(var(--yellow-soft))",
         },
         mascot: {
-          bg: "#0891b2",
+          bg: "#22d3ee",
         },
       },
       fontFamily: {
