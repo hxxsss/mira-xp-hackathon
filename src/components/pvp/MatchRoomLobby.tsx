@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Trophy, Zap, Target, Crown, Loader2, Copy, Swords, UserPlus, ArrowLeft, Check, Clock } from "lucide-react";
+import { Users, Trophy, Zap, Target, Crown, Loader2, Copy, Swords, UserPlus, ArrowLeft, Check, Clock, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { PvPHeader } from "./PvPHeader";
@@ -13,13 +13,14 @@ interface MatchRoomLobbyProps {
   matchId: string;
   userId: string;
   onGroupSelected: (groupId: string) => void;
+  onLeaveLobby: () => void;
 }
 
 const TEAM_NAMES = ["Time Alfa", "Time Beta"];
 const MAX_PLAYERS_PER_TEAM = 3;
 const MIN_PLAYERS_PER_TEAM = 2;
 
-export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLobbyProps) => {
+export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby }: MatchRoomLobbyProps) => {
   const navigate = useNavigate();
   const [match, setMatch] = useState<any>(null);
   const [groups, setGroups] = useState<any[]>([]);
@@ -151,7 +152,38 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
       description: "Seu XP foi devolvido"
     });
     
-    navigate("/pvp");
+    // Call parent handler to clear state
+    onLeaveLobby();
+  };
+
+  const handleLeaveTeam = async () => {
+    if (!userGroupId) return;
+
+    // Remove from group
+    await supabase
+      .from("pvp_group_members")
+      .delete()
+      .eq("group_id", userGroupId)
+      .eq("user_id", userId);
+    
+    // Refund XP
+    if (match) {
+      await supabase
+        .from("profiles")
+        .update({ current_xp: currentXp + match.xp_bet })
+        .eq("id", userId);
+      setCurrentXp(prev => prev + match.xp_bet);
+    }
+
+    setUserGroupId(null);
+    setIsReady(false);
+    
+    toast({
+      title: "Você saiu do time",
+      description: "Seu XP foi devolvido. Escolha outro time!"
+    });
+    
+    loadData();
   };
 
   const handleToggleReady = async () => {
@@ -187,6 +219,15 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
   };
 
   const handleCountdownComplete = async () => {
+    // Set the group ID first before changing status
+    // This ensures the parent has the groupId when realtime triggers
+    if (userGroupId) {
+      onGroupSelected(userGroupId);
+    }
+
+    // Small delay to ensure state is set before status change
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     // Update match status to in_progress
     await supabase
       .from("pvp_matches")
@@ -195,10 +236,6 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
         started_at: new Date().toISOString()
       })
       .eq("id", matchId);
-
-    if (userGroupId) {
-      onGroupSelected(userGroupId);
-    }
   };
 
   const createOrJoinTeam = async (teamIndex: number) => {
@@ -592,27 +629,39 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
             className="space-y-4"
           >
             <Card className="backdrop-blur-2xl bg-white/10 border-white/20 p-6 rounded-2xl text-center">
-              <Button
-                onClick={handleToggleReady}
-                size="lg"
-                className={`w-full max-w-md text-xl font-bold py-6 transition-all ${
-                  isReady 
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
-                    : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
-                }`}
-              >
-                {isReady ? (
-                  <>
-                    <Check className="w-6 h-6 mr-2" />
-                    PRONTO!
-                  </>
-                ) : (
-                  <>
-                    <Clock className="w-6 h-6 mr-2" />
-                    ESTOU PRONTO!
-                  </>
-                )}
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button
+                  onClick={handleToggleReady}
+                  size="lg"
+                  className={`flex-1 max-w-md text-xl font-bold py-6 transition-all ${
+                    isReady 
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                      : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
+                  }`}
+                >
+                  {isReady ? (
+                    <>
+                      <Check className="w-6 h-6 mr-2" />
+                      PRONTO!
+                    </>
+                  ) : (
+                    <>
+                      <Clock className="w-6 h-6 mr-2" />
+                      ESTOU PRONTO!
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  onClick={handleLeaveTeam}
+                  variant="outline"
+                  size="lg"
+                  className="border-red-500/50 text-red-300 hover:bg-red-500/20 hover:text-red-200 py-6"
+                >
+                  <LogOut className="w-5 h-5 mr-2" />
+                  Sair do Time
+                </Button>
+              </div>
               <p className="text-white/60 text-sm mt-3">
                 {isReady ? "Clique novamente para cancelar" : "Clique quando estiver pronto para começar"}
               </p>
