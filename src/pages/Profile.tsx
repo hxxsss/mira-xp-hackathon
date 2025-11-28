@@ -213,6 +213,7 @@ export default function Profile() {
 
               {/* Edit Button */}
               <motion.button
+                onClick={() => navigate("/avatar-customization")}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 className="absolute top-6 right-6 w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center hover:bg-indigo-200 transition-all shadow-lg"
