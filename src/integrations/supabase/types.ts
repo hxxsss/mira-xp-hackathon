@@ -423,6 +423,7 @@ export type Database = {
           group_id: string
           has_played: boolean
           id: string
+          is_ready: boolean | null
           joined_at: string
           score: number
           user_id: string
@@ -431,6 +432,7 @@ export type Database = {
           group_id: string
           has_played?: boolean
           id?: string
+          is_ready?: boolean | null
           joined_at?: string
           score?: number
           user_id: string
@@ -439,6 +441,7 @@ export type Database = {
           group_id?: string
           has_played?: boolean
           id?: string
+          is_ready?: boolean | null
           joined_at?: string
           score?: number
           user_id?: string
@@ -447,6 +450,70 @@ export type Database = {
           {
             foreignKeyName: "pvp_group_members_group_id_fkey"
             columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "pvp_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pvp_group_pairings: {
+        Row: {
+          created_at: string | null
+          id: string
+          match_id: string
+          player1_group_id: string
+          player1_id: string
+          player1_score: number | null
+          player2_group_id: string
+          player2_id: string
+          player2_score: number | null
+          round_number: number
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          match_id: string
+          player1_group_id: string
+          player1_id: string
+          player1_score?: number | null
+          player2_group_id: string
+          player2_id: string
+          player2_score?: number | null
+          round_number?: number
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          match_id?: string
+          player1_group_id?: string
+          player1_id?: string
+          player1_score?: number | null
+          player2_group_id?: string
+          player2_id?: string
+          player2_score?: number | null
+          round_number?: number
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pvp_group_pairings_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "pvp_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pvp_group_pairings_player1_group_id_fkey"
+            columns: ["player1_group_id"]
+            isOneToOne: false
+            referencedRelation: "pvp_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pvp_group_pairings_player2_group_id_fkey"
+            columns: ["player2_group_id"]
             isOneToOne: false
             referencedRelation: "pvp_groups"
             referencedColumns: ["id"]
