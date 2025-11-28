@@ -597,223 +597,119 @@ export const MatchGame = ({ match, userId, onComplete, onLeave }: MatchGameProps
   }
 
   return (
-    <div className="min-h-screen pvp-bg-classic flex items-center justify-center p-2 sm:p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
       <PvPHeader />
       
-      {/* Animated background particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(10)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 rounded-full"
-            style={{
-              background: i % 3 === 0 ? '#0ea5e9' : i % 3 === 1 ? '#06b6d4' : '#3b82f6',
-              opacity: 0.3,
-              left: `${Math.random() * 100}%`,
-              top: '100%'
-            }}
-            animate={{
-              y: [-20, -1000],
-              opacity: [0, 1, 0]
-            }}
-            transition={{
-              duration: Math.random() * 5 + 5,
-              repeat: Infinity,
-              delay: Math.random() * 3
-            }}
-          />
-        ))}
-      </div>
-
-      <Card className="w-full max-w-3xl glass-card relative z-10 backdrop-blur-2xl bg-white/10 border-white/20 rounded-2xl sm:rounded-3xl">
-        <CardHeader className="p-3 sm:p-6">
-          {/* Timer and Progress */}
-          <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="px-2 sm:px-4 py-1 sm:py-2 bg-primary/20 rounded-full border-2 border-primary/50">
-                <span className="text-gray-800 font-bold text-xs sm:text-base">
-                  ⚡ {currentQuestion + 1}/{totalQuestions}
-                </span>
+      <div className="max-w-2xl mx-auto space-y-4">
+        {/* Header with scores */}
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20">
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                  {myTotalScore}
+                </div>
+                <span className="text-white font-medium">Você</span>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-purple-300">Pergunta</span>
+                <span className="text-xl font-bold text-white">{currentQuestion + 1}/{totalQuestions}</span>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <span className="text-white font-medium">Oponente</span>
+                <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-white font-bold">
+                  {opponentTotalScore}
+                </div>
               </div>
             </div>
+            
+            <Progress 
+              value={(currentQuestion / totalQuestions) * 100} 
+              className="mt-3 h-2 bg-white/20"
+            />
+          </CardContent>
+        </Card>
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleLeaveMatch}
-              disabled={loading}
-              className="text-red-500 hover:text-red-600 hover:bg-red-50 gap-1 sm:gap-2 disabled:opacity-50 text-xs sm:text-sm px-2 sm:px-3"
-            >
-              <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
-              Sair
-            </Button>
-
-            {/* Circular Timer */}
-            <div className="relative flex-shrink-0">
-              <svg className="transform -rotate-90" width="50" height="50">
-                <circle
-                  cx="25"
-                  cy="25"
-                  r="20"
-                  fill="none"
-                  stroke="rgba(255,255,255,0.1)"
-                  strokeWidth="4"
-                />
-                <motion.circle
-                  cx="25"
-                  cy="25"
-                  r="20"
-                  fill="none"
-                  stroke={
-                    timeRemaining > 30 ? '#22c55e' : 
-                    timeRemaining > 10 ? '#eab308' : 
-                    '#ef4444'
-                  }
-                  strokeWidth="4"
-                  strokeDasharray={`${2 * Math.PI * 20}`}
-                  strokeDashoffset={`${2 * Math.PI * 20 * (1 - timeRemaining / 60)}`}
-                  strokeLinecap="round"
-                  animate={timeRemaining < 10 ? { 
-                    scale: [1, 1.1, 1],
-                    opacity: [1, 0.8, 1]
-                  } : {}}
-                  transition={timeRemaining < 10 ? { 
-                    duration: 1, 
-                    repeat: Infinity 
-                  } : {}}
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className={`text-base sm:text-lg font-bold ${
-                  timeRemaining > 30 ? 'text-green-400' : 
-                  timeRemaining > 10 ? 'text-yellow-400' : 
-                  'text-red-400'
-                }`}>
-                  {timeRemaining}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Progress bar */}
+        {/* Timer */}
+        <div className="flex justify-center">
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${((currentQuestion + 1) / totalQuestions) * 100}%` }}
-            className="h-1.5 sm:h-2 bg-gradient-to-r from-primary to-secondary rounded-full"
-          />
-        </CardHeader>
-
-        <CardContent className="space-y-3 sm:space-y-6 p-3 sm:p-6 pt-0">
-          <motion.div
-            key={currentQuestion}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
+            animate={{ scale: timeRemaining <= 10 ? [1, 1.1, 1] : 1 }}
+            transition={{ duration: 0.5, repeat: timeRemaining <= 10 ? Infinity : 0 }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-full ${
+              timeRemaining <= 10 ? 'bg-red-500/30' : 'bg-white/10'
+            } backdrop-blur-xl border border-white/20`}
           >
-            {/* Question */}
-            <div className="glass-card p-3 sm:p-6 mb-3 sm:mb-6 border border-cyan-400/30 rounded-lg sm:rounded-xl backdrop-blur-xl bg-white/5">
-              <div className="flex items-start gap-2 sm:gap-4">
-                <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold text-sm sm:text-lg">
-                  {currentQuestion + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-cyan-400 text-xs mb-1 sm:mb-2 font-semibold tracking-wide uppercase">Educação Financeira</p>
-                  <CardTitle className="text-sm sm:text-xl text-white leading-relaxed font-semibold">
-                    {question.question}
-                  </CardTitle>
-                </div>
-              </div>
-            </div>
-
-            {/* Options */}
-            <div className="space-y-2 sm:space-y-3">
-              {question.options.map((option: any, index: number) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: myAnswered ? 1 : 1.02 }}
-                  whileTap={{ scale: myAnswered ? 1 : 0.98 }}
-                >
-                  <Button
-                    onClick={() => !myAnswered && setSelectedAnswer(index)}
-                    variant={selectedAnswer === index ? "default" : "outline"}
-                    className={`w-full justify-start text-left h-auto py-3 sm:py-5 px-3 sm:px-6 relative overflow-hidden group transition-all ${
-                      selectedAnswer === index 
-                        ? 'bg-gradient-to-r from-primary to-secondary border-primary text-white shadow-lg' 
-                        : 'bg-background/50 hover:bg-accent/50 border-white/20'
-                    }`}
-                    disabled={myAnswered}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 group-hover:via-primary/20 transition-all" />
-                    
-                    <div className="flex items-center gap-2 sm:gap-4 relative z-10">
-                      <div className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg flex-shrink-0 ${
-                        selectedAnswer === index
-                          ? 'bg-white/20 text-white'
-                          : 'bg-primary/20 text-primary'
-                      }`}>
-                        {String.fromCharCode(65 + index)}
-                      </div>
-                      <span className="text-sm sm:text-base flex-1">{option.text}</span>
-                    </div>
-                  </Button>
-                </motion.div>
-              ))}
-            </div>
+            <Clock className={`h-6 w-6 ${
+              timeRemaining <= 10 ? 'text-red-500' : timeRemaining <= 30 ? 'text-yellow-500' : 'text-cyan-400'
+            }`} />
+            <span className={`text-3xl font-bold ${
+              timeRemaining <= 10 ? 'text-red-500' : timeRemaining <= 30 ? 'text-yellow-500' : 'text-cyan-400'
+            }`}>{timeRemaining}s</span>
           </motion.div>
+        </div>
 
-          {/* Status Bar */}
-          <div className="glass-card p-2 sm:p-4 flex flex-col sm:flex-row justify-between items-center gap-2 border border-white/10">
-            <motion.div 
-              className="flex items-center gap-2"
-              animate={myAnswered ? { scale: [1, 1.1, 1] } : {}}
-            >
-              <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${myAnswered ? 'bg-green-400' : 'bg-yellow-400'} animate-pulse`} />
-              <span className="text-gray-700 text-xs sm:text-sm font-medium">
-                {myAnswered ? '✓ Respondeu' : '⏳ Selecione'}
-              </span>
-            </motion.div>
-            <motion.div 
-              className="flex items-center gap-2"
-              animate={opponentAnswered ? { scale: [1, 1.1, 1] } : {}}
-            >
-              <span className="text-gray-700 text-xs sm:text-sm font-medium">
-                {opponentAnswered ? '✓ Oponente' : '⏳ Aguardando'}
-              </span>
-              <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${opponentAnswered ? 'bg-green-400' : 'bg-yellow-400'} animate-pulse`} />
-            </motion.div>
-          </div>
-
-          {/* Confirm Button */}
-          {!myAnswered && selectedAnswer !== null && (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-            >
-              <Button
-                onClick={handleAnswer}
-                className="w-full text-sm sm:text-lg py-4 sm:py-7 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold shadow-xl rounded-lg sm:rounded-xl"
+        {/* Question */}
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white text-xl leading-relaxed">
+              {question.question}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {question.options.map((option: any, index: number) => (
+              <motion.button
+                key={index}
+                whileHover={{ scale: myAnswered ? 1 : 1.02 }}
+                whileTap={{ scale: myAnswered ? 1 : 0.98 }}
+                onClick={() => !myAnswered && setSelectedAnswer(index)}
+                disabled={myAnswered}
+                className={`w-full p-4 rounded-xl text-left transition-all ${
+                  selectedAnswer === index
+                    ? 'bg-cyan-500 text-white border-2 border-cyan-300'
+                    : 'bg-white/10 text-white border-2 border-white/20 hover:bg-white/20'
+                } ${myAnswered ? 'opacity-60' : ''}`}
               >
-                Confirmar
-              </Button>
-            </motion.div>
-          )}
+                <div className="flex items-center gap-3">
+                  <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                    selectedAnswer === index ? 'bg-white/20' : 'bg-white/10'
+                  }`}>
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                  <span className="flex-1">{option.text}</span>
+                  {selectedAnswer === index && (
+                    <CheckCircle2 className="w-6 h-6" />
+                  )}
+                </div>
+              </motion.button>
+            ))}
+          </CardContent>
+        </Card>
 
-          {/* Score Display */}
-          <div className="text-center pt-1 sm:pt-2">
-            <motion.p 
-              key={myTotalScore}
-              initial={{ scale: 1.2 }}
-              animate={{ scale: 1 }}
-              className="text-white/80 font-semibold text-sm sm:text-base"
-            >
-              Placar: <span className="text-yellow-400 text-base sm:text-xl font-bold">{myTotalScore}</span> pts
-            </motion.p>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Submit button */}
+        {!myAnswered && (
+          <Button
+            onClick={handleAnswer}
+            disabled={selectedAnswer === null}
+            size="lg"
+            className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold text-lg py-6"
+          >
+            <Zap className="w-5 h-5 mr-2" />
+            CONFIRMAR RESPOSTA
+          </Button>
+        )}
+
+        {/* Waiting for opponent */}
+        {myAnswered && !showRoundResult && (
+          <Card className="backdrop-blur-xl bg-yellow-500/20 border-yellow-400/50">
+            <CardContent className="py-4 text-center">
+              <Clock className="w-6 h-6 animate-spin text-yellow-400 mx-auto mb-2" />
+              <p className="text-yellow-200">Aguardando oponente responder...</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
