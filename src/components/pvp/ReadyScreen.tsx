@@ -269,21 +269,21 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
       {/* Ready Screen Content */}
       {countdown === null && (
         <motion.div 
-          className="relative z-10 max-w-4xl mx-auto p-8"
+          className="relative z-10 max-w-4xl mx-auto p-4 sm:p-8 w-full"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <motion.h1 
-            className="text-5xl font-bold text-center mb-12 text-white"
+            className="text-2xl sm:text-4xl md:text-5xl font-bold text-center mb-6 sm:mb-12 text-white"
             style={{ textShadow: '0 0 30px rgba(6,182,212,0.4)' }}
           >
             Preparar para Batalha
           </motion.h1>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 mb-6 sm:mb-12">
             {/* Host Status */}
             <motion.div 
-              className="glass-card p-8"
+              className="glass-card p-4 sm:p-8"
               animate={{
                 borderColor: hostReady ? '#00ff00' : '#ff8800',
                 boxShadow: hostReady 
@@ -293,27 +293,27 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
               transition={{ duration: 0.3 }}
             >
               <div className="text-center">
-                <div className="mb-4 flex justify-center">
-                  <User className="w-16 h-16 text-cyan-400" strokeWidth={1.5} />
+                <div className="mb-2 sm:mb-4 flex justify-center">
+                  <User className="w-10 h-10 sm:w-16 sm:h-16 text-cyan-400" strokeWidth={1.5} />
                 </div>
-                <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="flex items-center justify-center gap-2 mb-1 sm:mb-2">
                   {userId === match.host_user_id && (
-                    <Crown className="w-5 h-5 text-yellow-400" />
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
                   )}
-                  <h3 className="text-2xl font-semibold text-white">{hostName}</h3>
+                  <h3 className="text-lg sm:text-2xl font-semibold text-white">{hostName}</h3>
                 </div>
                 {hostReady ? (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="flex items-center justify-center gap-2 text-green-400 text-lg font-semibold"
+                    className="flex items-center justify-center gap-2 text-green-400 text-sm sm:text-lg font-semibold"
                   >
-                    <Check className="w-6 h-6" />
+                    <Check className="w-4 h-4 sm:w-6 sm:h-6" />
                     Pronto
                   </motion.div>
                 ) : (
-                  <div className="flex items-center justify-center gap-2 text-orange-400 text-lg font-medium">
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                  <div className="flex items-center justify-center gap-2 text-orange-400 text-sm sm:text-lg font-medium">
+                    <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                     Aguardando
                   </div>
                 )}
@@ -322,7 +322,7 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
 
             {/* Opponent Status */}
             <motion.div 
-              className="glass-card p-8"
+              className="glass-card p-4 sm:p-8"
               animate={{
                 borderColor: opponentReady ? '#00ff00' : '#ff8800',
                 boxShadow: opponentReady 
@@ -332,27 +332,27 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
               transition={{ duration: 0.3 }}
             >
               <div className="text-center">
-                <div className="mb-4 flex justify-center">
-                  <UsersIcon className="w-16 h-16 text-cyan-400" strokeWidth={1.5} />
+                <div className="mb-2 sm:mb-4 flex justify-center">
+                  <UsersIcon className="w-10 h-10 sm:w-16 sm:h-16 text-cyan-400" strokeWidth={1.5} />
                 </div>
-                <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="flex items-center justify-center gap-2 mb-1 sm:mb-2">
                   {userId === match.opponent_user_id && match.opponent_user_id === match.host_user_id && (
-                    <Crown className="w-5 h-5 text-yellow-400" />
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
                   )}
-                  <h3 className="text-2xl font-semibold text-white">{opponentName}</h3>
+                  <h3 className="text-lg sm:text-2xl font-semibold text-white">{opponentName}</h3>
                 </div>
                 {opponentReady ? (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="flex items-center justify-center gap-2 text-green-400 text-lg font-semibold"
+                    className="flex items-center justify-center gap-2 text-green-400 text-sm sm:text-lg font-semibold"
                   >
-                    <Check className="w-6 h-6" />
+                    <Check className="w-4 h-4 sm:w-6 sm:h-6" />
                     Pronto
                   </motion.div>
                 ) : (
-                  <div className="flex items-center justify-center gap-2 text-orange-400 text-lg font-medium">
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                  <div className="flex items-center justify-center gap-2 text-orange-400 text-sm sm:text-lg font-medium">
+                    <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                     Aguardando
                   </div>
                 )}
@@ -362,23 +362,23 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
 
           {/* Match Info */}
           <motion.div 
-            className="glass-card p-6 mb-8"
+            className="glass-card p-4 sm:p-6 mb-4 sm:mb-8"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="grid grid-cols-3 gap-4 text-center text-gray-800">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center text-gray-800">
               <div>
-                <p className="text-gray-600 text-sm mb-1">APOSTA</p>
-                <p className="text-2xl font-bold text-yellow-600">{match.xp_bet} XP</p>
+                <p className="text-gray-600 text-xs sm:text-sm mb-1">APOSTA</p>
+                <p className="text-lg sm:text-2xl font-bold text-yellow-600">{match.xp_bet} XP</p>
               </div>
               <div>
-                <p className="text-gray-600 text-sm mb-1">PERGUNTAS</p>
-                <p className="text-2xl font-bold text-purple-600">5</p>
+                <p className="text-gray-600 text-xs sm:text-sm mb-1">PERGUNTAS</p>
+                <p className="text-lg sm:text-2xl font-bold text-purple-600">5</p>
               </div>
               <div>
-                <p className="text-gray-600 text-sm mb-1">TEMPO/QUESTÃO</p>
-                <p className="text-2xl font-bold text-blue-600">60s</p>
+                <p className="text-gray-600 text-xs sm:text-sm mb-1">TEMPO</p>
+                <p className="text-lg sm:text-2xl font-bold text-blue-600">60s</p>
               </div>
             </div>
           </motion.div>
@@ -392,13 +392,13 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
             >
               <Button
                 onClick={handleReady}
-                className="w-full h-20 text-3xl font-black arcade-button"
+                className="w-full h-14 sm:h-20 text-xl sm:text-3xl font-black arcade-button"
                 style={{
                   background: 'linear-gradient(135deg, #ff00ff, #00ffff)',
                   boxShadow: '0 0 40px rgba(255,0,255,0.6)'
                 }}
               >
-                🎮 ESTOU PRONTO! 🎮
+                🎮 PRONTO! 🎮
               </Button>
             </motion.div>
           )}
