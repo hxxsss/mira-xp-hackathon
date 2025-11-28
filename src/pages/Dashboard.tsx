@@ -70,8 +70,18 @@ const Dashboard = () => {
   const [goalFormOpen, setGoalFormOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 
+  // Carrega dados na montagem e quando a janela ganha foco (volta de outro módulo)
   useEffect(() => {
     loadData();
+
+    // Recarrega dados quando a janela ganha foco (usuário volta do módulo)
+    const handleFocus = () => {
+      console.log("Window focused - recarregando dados do dashboard");
+      loadData();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   const loadData = async () => {
