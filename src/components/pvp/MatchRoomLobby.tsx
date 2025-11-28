@@ -14,13 +14,14 @@ interface MatchRoomLobbyProps {
   userId: string;
   onGroupSelected: (groupId: string) => void;
   onLeaveLobby: () => void;
+  onGameStart?: (matchData: any, groupId: string) => void;
 }
 
 const TEAM_NAMES = ["Time Alfa", "Time Beta"];
 const MAX_PLAYERS_PER_TEAM = 3;
 const MIN_PLAYERS_PER_TEAM = 2;
 
-export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby }: MatchRoomLobbyProps) => {
+export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby, onGameStart }: MatchRoomLobbyProps) => {
   const navigate = useNavigate();
   const [match, setMatch] = useState<any>(null);
   const [groups, setGroups] = useState<any[]>([]);
@@ -35,6 +36,7 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby 
 
   useEffect(() => {
     loadData();
+    loadMatchStatus();
     
     const channel = supabase
       .channel(`match-room-${matchId}`)
@@ -49,14 +51,17 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby 
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pvp_matches', filter: `id=eq.${matchId}` }, loadMatchStatus)
       .subscribe();
 
-    // Polling backup every 2 seconds
-    const pollInterval = setInterval(loadData, 2000);
+    // Polling backup every 2 seconds - also check match status
+    const pollInterval = setInterval(() => {
+      loadData();
+      loadMatchStatus();
+    }, 2000);
 
     return () => {
       supabase.removeChannel(channel);
       clearInterval(pollInterval);
     };
-  }, [matchId]);
+  }, [matchId, userGroupId]);
 
   const loadData = async () => {
     try {
@@ -112,19 +117,19 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby 
   };
 
   const loadMatchStatus = async () => {
-    const { data } = await supabase
+    const { data: matchData } = await supabase
       .from("pvp_matches")
-      .select("status")
+      .select("*")
       .eq("id", matchId)
       .single();
     
-    if (data?.status === 'in_progress') {
+    if (matchData?.status === 'in_progress') {
       console.log('[MatchRoomLobby] Match status is in_progress, transitioning to game...');
       
-      // Make sure we have the user's group ID before transitioning
-      if (userGroupId) {
-        onGroupSelected(userGroupId);
-      } else {
+      // Get user's group ID
+      let groupId = userGroupId;
+      
+      if (!groupId) {
         // Try to get user's group one more time
         const { data: groupData } = await supabase
           .from('pvp_group_members')
@@ -133,9 +138,20 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby 
           .single();
         
         if (groupData) {
-          onGroupSelected(groupData.group_id);
+          groupId = groupData.group_id;
         }
       }
+      
+      if (groupId) {
+        // Use onGameStart if available to pass full match data
+        if (onGameStart) {
+          onGameStart(matchData, groupId);
+        } else {
+          onGroupSelected(groupId);
+        }
+      }
+    } else if (matchData) {
+      setMatch(matchData);
     }
   };
 
