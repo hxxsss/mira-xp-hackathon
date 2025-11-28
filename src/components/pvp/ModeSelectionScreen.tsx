@@ -269,26 +269,27 @@ export const ModeSelectionScreen = ({
             </p>
           </motion.div>
 
-          {/* Mode Cards Carousel - Horizontal Slider */}
+          {/* Mode Cards Carousel - Horizontal Slider - Full Width */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="-mx-3 sm:-mx-4"
           >
             <Carousel
               opts={{
-                align: "center",
+                align: "start",
                 loop: false,
               }}
-              className="w-full max-w-5xl mx-auto"
+              className="w-full"
             >
-              <CarouselContent className="-ml-2 sm:-ml-4">
+              <CarouselContent className="ml-3 sm:ml-4">
                 {modes.map((mode, index) => {
                   const Icon = mode.icon;
                   return (
                     <CarouselItem 
                       key={mode.id} 
-                      className="pl-2 sm:pl-4 basis-[75%] sm:basis-1/2 md:basis-1/3"
+                      className="pl-3 sm:pl-4 basis-[70%] sm:basis-[45%] md:basis-1/3 last:pr-3 sm:last:pr-4"
                     >
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -352,54 +353,52 @@ export const ModeSelectionScreen = ({
                   );
                 })}
               </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex -left-4 bg-white/10 border-white/20 hover:bg-white/20 text-white" />
-              <CarouselNext className="hidden sm:flex -right-4 bg-white/10 border-white/20 hover:bg-white/20 text-white" />
             </Carousel>
           </motion.div>
 
-          {/* How it Works Section - Compact on mobile */}
+          {/* How it Works Section - Full Details */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
             className="max-w-4xl mx-auto"
           >
-            <Card className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-6">
-              <h2 className="text-sm sm:text-xl font-bold text-white text-center mb-3 sm:mb-6 drop-shadow-lg">
+            <Card className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-8">
+              <h2 className="text-lg sm:text-2xl font-bold text-white text-center mb-4 sm:mb-8 drop-shadow-lg">
                 Como Funciona
               </h2>
               
-              <div className="grid grid-cols-3 gap-2 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8">
                 {/* Rule 1 */}
-                <div className="flex flex-col items-center text-center space-y-1 sm:space-y-2">
-                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-500/15 to-purple-600/15 border border-purple-400/20 flex items-center justify-center">
-                    <Zap className="w-4 h-4 sm:w-6 sm:h-6 text-purple-400" strokeWidth={2} />
+                <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3 p-3 sm:p-4 rounded-xl bg-white/5">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-400/30 flex items-center justify-center">
+                    <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" strokeWidth={2} />
                   </div>
-                  <h3 className="text-xs sm:text-base font-bold text-white drop-shadow-md">Velocidade</h3>
-                  <p className="text-white/60 text-[10px] sm:text-xs leading-tight font-medium hidden sm:block">
-                    Responda rápido para mais pontos
+                  <h3 className="text-sm sm:text-lg font-bold text-white drop-shadow-md">Velocidade é Tudo</h3>
+                  <p className="text-white/60 text-xs sm:text-sm leading-relaxed font-medium">
+                    Quanto mais rápido você responder corretamente, mais pontos você ganha. O tempo é seu aliado!
                   </p>
                 </div>
 
                 {/* Rule 2 */}
-                <div className="flex flex-col items-center text-center space-y-1 sm:space-y-2">
-                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-blue-500/15 to-blue-600/15 border border-blue-400/20 flex items-center justify-center">
-                    <Coins className="w-4 h-4 sm:w-6 sm:h-6 text-blue-400" strokeWidth={2} />
+                <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3 p-3 sm:p-4 rounded-xl bg-white/5">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/20 border border-amber-400/30 flex items-center justify-center">
+                    <Coins className="w-6 h-6 sm:w-8 sm:h-8 text-amber-400" strokeWidth={2} />
                   </div>
-                  <h3 className="text-xs sm:text-base font-bold text-white drop-shadow-md">Apostas</h3>
-                  <p className="text-white/60 text-[10px] sm:text-xs leading-tight font-medium hidden sm:block">
-                    Aposte XP, vencedor leva tudo
+                  <h3 className="text-sm sm:text-lg font-bold text-white drop-shadow-md">Sistema de Apostas</h3>
+                  <p className="text-white/60 text-xs sm:text-sm leading-relaxed font-medium">
+                    Aposte seu XP antes da partida. O vencedor leva todo o prêmio acumulado. Alto risco, alta recompensa!
                   </p>
                 </div>
 
                 {/* Rule 3 */}
-                <div className="flex flex-col items-center text-center space-y-1 sm:space-y-2">
-                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-green-500/15 to-green-600/15 border border-green-400/20 flex items-center justify-center">
-                    <Trophy className="w-4 h-4 sm:w-6 sm:h-6 text-green-400" strokeWidth={2} />
+                <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3 p-3 sm:p-4 rounded-xl bg-white/5">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-400/30 flex items-center justify-center">
+                    <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-400" strokeWidth={2} />
                   </div>
-                  <h3 className="text-xs sm:text-base font-bold text-white drop-shadow-md">Desempate</h3>
-                  <p className="text-white/60 text-[10px] sm:text-xs leading-tight font-medium hidden sm:block">
-                    Melhor tempo médio vence
+                  <h3 className="text-sm sm:text-lg font-bold text-white drop-shadow-md">Desempate Justo</h3>
+                  <p className="text-white/60 text-xs sm:text-sm leading-relaxed font-medium">
+                    Em caso de empate nos pontos, o jogador com o melhor tempo médio de resposta é declarado vencedor.
                   </p>
                 </div>
               </div>
