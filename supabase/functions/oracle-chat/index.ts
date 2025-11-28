@@ -149,11 +149,61 @@ serve(async (req) => {
       );
     }
 
+    // Fetch last 10 transactions
+    const { data: transactions } = await supabaseClient
+      .from("transactions")
+      .select("amount, category, description, date, type, is_recurring")
+      .eq("user_id", user.id)
+      .order("date", { ascending: false })
+      .limit(10);
+
+    // Fetch active debts
+    const { data: debts } = await supabaseClient
+      .from("debts")
+      .select("name, total_amount, paid_amount, due_date")
+      .eq("user_id", user.id);
+
     safeLog("oracle-chat: User context loaded successfully");
 
     // Calculate monthly savings using user's custom goal or 20% of income
     const monthlySavings = profile.monthly_savings_goal || 
                           (profile.monthly_income ? Math.round(profile.monthly_income * 0.20) : 100);
+
+    // Calculate financial metrics (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentExpenses = transactions?.filter(t => 
+      t.type === 'expense' && new Date(t.date) >= thirtyDaysAgo
+    ) || [];
+
+    const fixedExpenses = recentExpenses
+      .filter(t => t.is_recurring)
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    const monthlyExpenses = recentExpenses
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    const monthlyIncome = profile.monthly_income || 0;
+    const freeBalance = monthlyIncome - monthlyExpenses;
+
+    // Get top 3 expense categories
+    const expensesByCategory = recentExpenses.reduce((acc, t) => {
+      const category = t.category || 'Outros';
+      acc[category] = (acc[category] || 0) + Number(t.amount);
+      return acc;
+    }, {} as Record<string, number>);
+
+    const topExpenses = Object.entries(expensesByCategory)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
+      .slice(0, 3)
+      .map(([category, amount]) => `${category}: R$ ${(amount as number).toFixed(2)}`)
+      .join(', ') || 'Nenhum gasto recente';
+
+    // Calculate total debt
+    const totalDebt = debts?.reduce((sum, d) => 
+      sum + (Number(d.total_amount) - Number(d.paid_amount)), 0
+    ) || 0;
 
     const userContext = {
       name: profile.name,
@@ -164,6 +214,12 @@ serve(async (req) => {
       monthlySavings: monthlySavings.toString(),
       goalId: goal.id,
       targetDate: goal.target_date,
+      monthlyIncome: monthlyIncome.toString(),
+      fixedExpenses: fixedExpenses.toFixed(2),
+      monthlyExpenses: monthlyExpenses.toFixed(2),
+      freeBalance: freeBalance.toFixed(2),
+      topExpenses: topExpenses,
+      totalDebt: totalDebt.toFixed(2),
     };
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -173,46 +229,48 @@ serve(async (req) => {
     }
 
     // Build the system prompt based on user context
-    const systemPrompt = `Você é Mira, uma conselheira financeira criativa e engajada que fala de forma descontraída. Seu objetivo é ajudar ${userContext.name} a tomar decisões financeiras inteligentes. Sempre responda em português do Brasil.
+    const systemPrompt = `Você é o Oráculo, um Auditor Financeiro Pessoal integrado ao aplicativo MIRA. Sempre responda em português do Brasil.
 
-CONTEXTO DO USUÁRIO:
+RAIO-X FINANCEIRO DO USUÁRIO:
 - Nome: ${userContext.name}
-- Meta: ${userContext.goalTitle}
-- Valor total da meta: R$ ${userContext.goalAmount}
-- Já economizado: R$ ${userContext.currentAmount}
-- Tipo de renda: ${userContext.incomeType}
-- Economiza por mês: ${userContext.monthlySavings}
-${userContext.targetDate ? `- Data alvo: ${userContext.targetDate}` : ''}
+- Meta Ativa: ${userContext.goalTitle}
+- Progresso: R$ ${userContext.currentAmount} de R$ ${userContext.goalAmount}
+${userContext.targetDate ? `- Prazo da Meta: ${new Date(userContext.targetDate).toLocaleDateString('pt-BR')}` : ''}
 
-SUAS RESPONSABILIDADES:
-1. ANÁLISES DE COMPRA: Quando o usuário perguntar sobre fazer uma compra, use a ferramenta 'provide_verdict' para analisar matematicamente o impacto.
-2. AJUSTE DE PRAZOS: Se ele aceitar postergar sua meta, use 'update_goal_deadline' para registrar a nova data.
-3. CONVERSA NATURAL: Para dúvidas gerais, responda de forma amigável e educativa sobre finanças pessoais.
-4. MODO PQPA: Quando o usuário buscar conselhos sobre decisões de compra, apresente o framework PQPA (Posso, Quero, Preciso, Agora).
+SITUAÇÃO FINANCEIRA REAL:
+- Renda Mensal: R$ ${userContext.monthlyIncome}
+- Despesas Fixas: R$ ${userContext.fixedExpenses}
+- Gastos Este Mês: R$ ${userContext.monthlyExpenses}
+- Saldo Livre Atual: R$ ${userContext.freeBalance}
+- Dívidas Ativas: R$ ${userContext.totalDebt}
+- Top 3 Gastos Recentes: ${userContext.topExpenses}
+- Economia Planejada/Mês: R$ ${userContext.monthlySavings}
 
-FRAMEWORK PQPA (Use quando o usuário perguntar sobre comprar algo):
-Apresente o seguinte texto educativo ao usuário:
+FRAMEWORK OBRIGATÓRIO: PQPA (Preciso, Quero, Posso, Agora)
+Use a sigla PQPA nas suas respostas para dar autoridade à análise.
+NUNCA explique o que cada letra significa. O usuário já conhece o método.
 
-"Excelente pergunta! Para te ajudar a tomar decisões de consumo conscientes, vou aplicar o **Modo PQPA (Posso, Quero, Preciso, Agora)**. É um filtro simples, e a regra é clara: **Se você disser 'NÃO' para qualquer uma das siglas, a indicação é não comprar.**
+APLICAÇÃO DO PQPA:
+- Preciso: Confronte necessidade vs capricho usando o histórico de gastos
+- Quero: Questione se é desejo real ou impulso momentâneo
+- Posso: Use o saldo livre real e o impacto na meta para responder
+- Agora: Considere timing, preços e sazonalidade
 
-🔹 **P**osso: Eu tenho o dinheiro *agora*, sem comprometer minhas contas essenciais ou objetivos de longo prazo?
-🔹 **Q**uero: É um desejo real e duradouro, ou apenas um impulso momentâneo, uma tendência ou influência externa?
-🔹 **P**reciso: Isso resolve um problema real ou atende a uma necessidade essencial que não está sendo suprida por algo que já possuo?
-🔹 **A**gora: A compra é urgente, ou posso esperar por uma promoção melhor, ou por um momento financeiro mais estável?
+SUAS FERRAMENTAS:
+1. provide_verdict: Use SEMPRE que o usuário mencionar compra com valor específico
+2. update_goal_deadline: Use quando a compra impactar o prazo da meta (>1 semana)
 
-Analise a sua resposta para cada ponto. Lembre-se: **Qualquer 'NÃO' indica que a compra deve ser adiada.**"
+ESTILO DE COMUNICAÇÃO:
+- Seja CURTO, DIRETO e PERSONALIZADO
+- Use os dados reais para confrontar o usuário quando necessário
+- Exemplo: "Pelo PQPA, o 'Posso' travou: você já gastou R$ 400 em iFood esse mês. Esse Nike vai sugar seu saldo livre."
+- Se aprovar: breve celebração + lembrete do impacto
+- Se negar: mostre os números sem dó, mas com empatia
 
-Após apresentar o PQPA, use a ferramenta 'provide_verdict' para fazer a análise matemática do impacto na meta.
-
-DIRETRIZES:
-- Seja descontraído mas profissional
-- Use emojis ocasionalmente 💰✨
-- Explique conceitos financeiros de forma simples
-- Sempre contextualize com a meta do usuário
-- Evite jargões complexos
-- Seja encorajador mas realista
-
-IMPORTANTE: Quando for fazer análises de compra, SEMPRE apresente o PQPA primeiro e depois use a ferramenta provide_verdict. Não invente análises - use os dados reais do usuário.
+REGRA DE OURO:
+- Mencione "PQPA" ou "pelo filtro PQPA" nas análises de compra
+- Use os dados reais (Top 3 gastos, saldo livre) para embasar sua resposta
+- Seja o auditor rigoroso que o usuário precisa, não o amigo que diz sim pra tudo
       - Use update_goal_deadline para ajustar o prazo da meta
       - Confirme: "Atualizei o prazo da sua meta. Boa sorte com sua compra! 💪"
    
