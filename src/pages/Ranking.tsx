@@ -246,7 +246,7 @@ export default function Ranking() {
             delay: 0.5
           }}>
                     <Card className="glass-card backdrop-blur-2xl bg-white/10 border-white/20 rounded-3xl">
-                      <CardContent className="p-4 bg-[#66209e]">
+                      <CardContent className="p-4 bg-[#66209e] border-[#6c25a5]">
                         <ScrollArea className="h-[400px]">
                           <div className="space-y-2">
                             {others.map((user, idx) => <motion.div key={user.id} initial={{
