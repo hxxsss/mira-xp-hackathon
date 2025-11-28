@@ -147,9 +147,12 @@ export const CreateGroupDialog = ({ open, onOpenChange, onGroupCreated, userId }
       });
 
       toast({
-        title: "Grupo criado!",
-        description: `Compartilhe o código: ${groupCode}`
+        title: "🎮 Grupo criado com sucesso!",
+        description: `Código para entrar: ${groupCode} - Compartilhe com seus amigos!`,
+        duration: 10000
       });
+      
+      console.log("✅ Grupo criado - Código do grupo:", groupCode, "Código da partida:", matchCode);
 
       onGroupCreated(match.id, group.id);
       onOpenChange(false);
