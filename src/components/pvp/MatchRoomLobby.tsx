@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Trophy, Zap, Target, Crown, Loader2, Copy, Swords, UserPlus } from "lucide-react";
+import { Users, Trophy, Zap, Target, Crown, Loader2, Copy, Swords, UserPlus, ArrowLeft, Check, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { PvPHeader } from "./PvPHeader";
+import { CountdownAnimation } from "./CountdownAnimation";
 
 interface MatchRoomLobbyProps {
   matchId: string;
@@ -15,14 +17,19 @@ interface MatchRoomLobbyProps {
 
 const TEAM_NAMES = ["Time Alfa", "Time Beta"];
 const MAX_PLAYERS_PER_TEAM = 3;
+const MIN_PLAYERS_PER_TEAM = 2;
 
 export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLobbyProps) => {
+  const navigate = useNavigate();
   const [match, setMatch] = useState<any>(null);
   const [groups, setGroups] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [joiningTeam, setJoiningTeam] = useState<string | null>(null);
   const [currentXp, setCurrentXp] = useState(0);
   const [userGroupId, setUserGroupId] = useState<string | null>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [showCountdown, setShowCountdown] = useState(false);
+  const [allPlayersReady, setAllPlayersReady] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -30,13 +37,23 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
     
     const channel = supabase
       .channel(`match-room-${matchId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pvp_groups', filter: `match_id=eq.${matchId}` }, loadData)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pvp_group_members' }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pvp_groups', filter: `match_id=eq.${matchId}` }, () => {
+        console.log('Groups changed, reloading...');
+        loadData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pvp_group_members' }, () => {
+        console.log('Members changed, reloading...');
+        loadData();
+      })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pvp_matches', filter: `id=eq.${matchId}` }, loadMatchStatus)
       .subscribe();
 
+    // Polling backup every 2 seconds
+    const pollInterval = setInterval(loadData, 2000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(pollInterval);
     };
   }, [matchId]);
 
@@ -51,6 +68,7 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
             pvp_group_members(
               id,
               user_id,
+              is_ready,
               profiles(name, avatar_id)
             )
           `)
@@ -61,24 +79,32 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
 
       if (matchRes.data) setMatch(matchRes.data);
       if (groupsRes.data) {
+        console.log('Loaded groups:', groupsRes.data);
         setGroups(groupsRes.data);
         const userGroup = groupsRes.data.find((g: any) => 
           g.pvp_group_members?.some((m: any) => m.user_id === userId)
         );
         if (userGroup) {
           setUserGroupId(userGroup.id);
+          // Check if current user is ready
+          const userMember = userGroup.pvp_group_members?.find((m: any) => m.user_id === userId);
+          if (userMember) {
+            setIsReady(userMember.is_ready || false);
+          }
         } else {
           setUserGroupId(null);
+          setIsReady(false);
         }
+
+        // Check if all players are ready
+        const allMembers = groupsRes.data.flatMap((g: any) => g.pvp_group_members || []);
+        const allReady = allMembers.length >= MIN_PLAYERS_PER_TEAM * 2 && 
+                         allMembers.every((m: any) => m.is_ready);
+        setAllPlayersReady(allReady);
       }
       if (profileRes.data) setCurrentXp(profileRes.data.current_xp);
     } catch (error) {
       console.error("Erro ao carregar sala:", error);
-      toast({
-        title: "Erro ao carregar sala",
-        description: "Tente novamente",
-        variant: "destructive"
-      });
     } finally {
       setLoading(false);
     }
@@ -96,6 +122,82 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
         title: "Partida iniciada!",
         description: "A batalha começou"
       });
+      if (userGroupId) {
+        onGroupSelected(userGroupId);
+      }
+    }
+  };
+
+  const handleLeaveLobby = async () => {
+    if (userGroupId) {
+      // Remove from group
+      await supabase
+        .from("pvp_group_members")
+        .delete()
+        .eq("group_id", userGroupId)
+        .eq("user_id", userId);
+      
+      // Refund XP
+      if (match) {
+        await supabase
+          .from("profiles")
+          .update({ current_xp: currentXp + match.xp_bet })
+          .eq("id", userId);
+      }
+    }
+    
+    toast({
+      title: "Você saiu do lobby",
+      description: "Seu XP foi devolvido"
+    });
+    
+    navigate("/pvp");
+  };
+
+  const handleToggleReady = async () => {
+    if (!userGroupId) return;
+
+    const newReadyState = !isReady;
+    
+    const { error } = await supabase
+      .from("pvp_group_members")
+      .update({ is_ready: newReadyState })
+      .eq("group_id", userGroupId)
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Error updating ready status:", error);
+      toast({
+        title: "Erro ao atualizar status",
+        description: "Tente novamente",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsReady(newReadyState);
+    toast({
+      title: newReadyState ? "Você está pronto!" : "Você não está mais pronto",
+    });
+  };
+
+  const handleStartMatch = async () => {
+    // Start countdown
+    setShowCountdown(true);
+  };
+
+  const handleCountdownComplete = async () => {
+    // Update match status to in_progress
+    await supabase
+      .from("pvp_matches")
+      .update({ 
+        status: 'in_progress',
+        started_at: new Date().toISOString()
+      })
+      .eq("id", matchId);
+
+    if (userGroupId) {
+      onGroupSelected(userGroupId);
     }
   };
 
@@ -215,12 +317,15 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
   const betaMembers = teamBeta?.pvp_group_members || [];
   
   const totalPlayers = alfaMembers.length + betaMembers.length;
-  const isReady = alfaMembers.length === MAX_PLAYERS_PER_TEAM && betaMembers.length === MAX_PLAYERS_PER_TEAM;
+  const canStart = alfaMembers.length >= MIN_PLAYERS_PER_TEAM && betaMembers.length >= MIN_PLAYERS_PER_TEAM;
+  const isHost = match?.host_user_id === userId;
 
   const renderPlayerSlot = (member: any, slotIndex: number, teamColor: string) => {
     if (member) {
       const isCurrentUser = member.user_id === userId;
       const isLeader = slotIndex === 0;
+      const memberIsReady = member.is_ready;
+      
       return (
         <motion.div
           key={member.id}
@@ -228,11 +333,13 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
           animate={{ opacity: 1, x: 0 }}
           className={`flex items-center gap-3 p-3 rounded-xl ${
             isCurrentUser 
-              ? `bg-${teamColor}-500/30 border border-${teamColor}-400/50` 
+              ? teamColor === "blue" ? 'bg-blue-500/30 border border-blue-400/50' : 'bg-red-500/30 border border-red-400/50'
               : 'bg-white/10'
           }`}
         >
-          <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-${teamColor}-400 to-${teamColor}-600 flex items-center justify-center text-white font-bold`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
+            teamColor === "blue" ? 'bg-gradient-to-br from-blue-400 to-blue-600' : 'bg-gradient-to-br from-red-400 to-red-600'
+          }`}>
             {member.profiles?.name?.[0]?.toUpperCase() || '?'}
           </div>
           <div className="flex-1">
@@ -241,6 +348,16 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
               {isCurrentUser && <span className="text-xs text-green-400">(você)</span>}
               {isLeader && <Crown className="w-4 h-4 text-yellow-400" />}
             </p>
+          </div>
+          {/* Ready indicator */}
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+            memberIsReady ? 'bg-green-500' : 'bg-white/20'
+          }`}>
+            {memberIsReady ? (
+              <Check className="w-5 h-5 text-white" />
+            ) : (
+              <Clock className="w-4 h-4 text-white/60" />
+            )}
           </div>
         </motion.div>
       );
@@ -338,9 +455,25 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
     );
   };
 
+  if (showCountdown) {
+    return <CountdownAnimation onComplete={handleCountdownComplete} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4 md:p-6 relative overflow-hidden">
       <PvPHeader />
+      
+      {/* Exit Button */}
+      <div className="absolute top-4 left-4 z-20">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleLeaveLobby}
+          className="text-white hover:bg-white/20 bg-black/30 backdrop-blur-sm"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
       
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -449,22 +582,65 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
           )}
         </div>
 
-        {/* Ready State */}
-        {isReady && (
+        {/* Ready Button for user */}
+        {userGroupId && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4"
+          >
+            <Card className="backdrop-blur-2xl bg-white/10 border-white/20 p-6 rounded-2xl text-center">
+              <Button
+                onClick={handleToggleReady}
+                size="lg"
+                className={`w-full max-w-md text-xl font-bold py-6 transition-all ${
+                  isReady 
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                    : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
+                }`}
+              >
+                {isReady ? (
+                  <>
+                    <Check className="w-6 h-6 mr-2" />
+                    PRONTO!
+                  </>
+                ) : (
+                  <>
+                    <Clock className="w-6 h-6 mr-2" />
+                    ESTOU PRONTO!
+                  </>
+                )}
+              </Button>
+              <p className="text-white/60 text-sm mt-3">
+                {isReady ? "Clique novamente para cancelar" : "Clique quando estiver pronto para começar"}
+              </p>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Start Button for host when all ready */}
+        {isHost && canStart && allPlayersReady && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
           >
             <Card className="backdrop-blur-2xl bg-gradient-to-r from-green-900/40 to-emerald-900/40 border-green-500/50 p-6 rounded-2xl text-center">
               <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-2">Todos os jogadores prontos!</h2>
-              <p className="text-green-300">A batalha começará em breve...</p>
+              <h2 className="text-2xl font-bold text-white mb-4">Todos os jogadores prontos!</h2>
+              <Button
+                onClick={handleStartMatch}
+                size="lg"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-xl px-12 py-6"
+              >
+                <Swords className="w-6 h-6 mr-2" />
+                INICIAR BATALHA!
+              </Button>
             </Card>
           </motion.div>
         )}
 
-        {/* Waiting message if user is in a team */}
-        {userGroupId && !isReady && (
+        {/* Status messages */}
+        {userGroupId && !canStart && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -473,7 +649,22 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
             <Card className="backdrop-blur-2xl bg-white/5 border-white/20 p-4 rounded-xl inline-block">
               <p className="text-purple-200">
                 <Loader2 className="w-4 h-4 animate-spin inline mr-2" />
-                Aguardando mais jogadores entrarem...
+                Aguardando mais jogadores (mínimo 2 por time)...
+              </p>
+            </Card>
+          </motion.div>
+        )}
+
+        {userGroupId && canStart && !allPlayersReady && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center"
+          >
+            <Card className="backdrop-blur-2xl bg-yellow-900/30 border-yellow-500/50 p-4 rounded-xl inline-block">
+              <p className="text-yellow-200">
+                <Clock className="w-4 h-4 inline mr-2" />
+                Aguardando todos ficarem prontos...
               </p>
             </Card>
           </motion.div>
