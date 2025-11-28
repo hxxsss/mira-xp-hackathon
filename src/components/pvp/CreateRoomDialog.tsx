@@ -19,7 +19,6 @@ export const CreateRoomDialog = ({ open, onOpenChange, onRoomCreated, userId }: 
   const [loading, setLoading] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<string>("");
   const [xpBet, setXpBet] = useState(50);
-  const [maxGroups, setMaxGroups] = useState(2);
   const [currentXp, setCurrentXp] = useState(0);
   const { toast } = useToast();
 
@@ -92,7 +91,7 @@ export const CreateRoomDialog = ({ open, onOpenChange, onRoomCreated, userId }: 
         .sort(() => Math.random() - 0.5)
         .slice(0, 5);
 
-      // Criar apenas a partida (sala)
+      // Criar a partida (sala) - sempre 3v3 (2 grupos)
       const matchCode = generateCode();
       const { data: match, error: matchError } = await supabase
         .from("pvp_matches")
@@ -104,7 +103,7 @@ export const CreateRoomDialog = ({ open, onOpenChange, onRoomCreated, userId }: 
           match_code: matchCode,
           questions_data: shuffledQuestions,
           match_mode: 'group',
-          max_groups: maxGroups,
+          max_groups: 2, // Sempre 2 grupos para 3v3
           status: 'waiting'
         })
         .select()
@@ -113,7 +112,7 @@ export const CreateRoomDialog = ({ open, onOpenChange, onRoomCreated, userId }: 
       if (matchError) throw matchError;
 
       toast({
-        title: "🏟️ Sala criada!",
+        title: "🏟️ Sala 3v3 criada!",
         description: `Código: ${matchCode} - Compartilhe com os amigos!`,
         duration: 10000
       });
@@ -124,7 +123,6 @@ export const CreateRoomDialog = ({ open, onOpenChange, onRoomCreated, userId }: 
       // Reset form states
       setSelectedLevel("");
       setXpBet(50);
-      setMaxGroups(2);
     } catch (error: any) {
       console.error("❌ Erro ao criar sala:", error);
       
@@ -157,6 +155,16 @@ export const CreateRoomDialog = ({ open, onOpenChange, onRoomCreated, userId }: 
         </DialogHeader>
 
         <div className="space-y-4">
+          {/* Info sobre o modo 3v3 */}
+          <div className="bg-purple-800/50 p-4 rounded-xl border border-purple-500/30">
+            <p className="text-purple-100 text-center font-medium">
+              ⚔️ Modo 3v3 - 2 equipes de 3 jogadores
+            </p>
+            <p className="text-purple-300 text-sm text-center mt-1">
+              6 jogadores no total para iniciar a batalha
+            </p>
+          </div>
+
           <div>
             <Label className="text-purple-200">Nível de Dificuldade</Label>
             <Select value={selectedLevel} onValueChange={setSelectedLevel}>
@@ -170,19 +178,6 @@ export const CreateRoomDialog = ({ open, onOpenChange, onRoomCreated, userId }: 
                 <SelectItem value="Avançado">🚀 Avançado</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          <div>
-            <Label className="text-purple-200">Número de Grupos (2-5)</Label>
-            <Slider
-              value={[maxGroups]}
-              onValueChange={([value]) => setMaxGroups(value)}
-              min={2}
-              max={5}
-              step={1}
-              className="my-4"
-            />
-            <p className="text-center text-lg font-bold text-purple-300">{maxGroups} grupos</p>
           </div>
 
           <div>
