@@ -219,26 +219,26 @@ export default function AvatarCustomization() {
               {/* Pedestal */}
               <div className="absolute -bottom-2 lg:-bottom-4 left-1/2 -translate-x-1/2 w-32 lg:w-48 xl:w-64 h-6 lg:h-8 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full blur-sm" />
 
-              {/* Thought Bubble - Equipped Items - Repositioned for mobile */}
+              {/* Thought Bubble - Equipped Items */}
               <motion.div 
-                className="absolute -top-8 lg:-top-24 xl:-top-32 -right-4 lg:-right-12 xl:-right-16 bg-white/90 backdrop-blur-md rounded-2xl lg:rounded-3xl xl:rounded-4xl p-2 lg:p-4 xl:p-6 shadow-xl border border-white lg:border-2"
+                className="absolute top-0 lg:top-4 right-0 lg:right-8 bg-white/90 backdrop-blur-md rounded-2xl lg:rounded-3xl p-3 lg:p-5 shadow-xl border-2 border-white"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.5, type: "spring" }}
               >
-                <div className="flex gap-1 lg:gap-3 xl:gap-4">
+                <div className="flex gap-2 lg:gap-3">
                   {Array.from(equippedItems).slice(0, 3).map((itemId) => {
                     const item = items.find(i => i.id === itemId);
                     return item ? (
-                      <div key={itemId} className="text-lg lg:text-3xl xl:text-5xl">{item.preview}</div>
+                      <div key={itemId} className="text-2xl lg:text-4xl">{item.preview}</div>
                     ) : null;
                   })}
                   {equippedItems.size === 0 && (
-                    <div className="text-gray-400 text-xs lg:text-sm xl:text-base">Sem itens</div>
+                    <div className="text-gray-400 text-sm">Sem itens</div>
                   )}
                 </div>
                 {/* Speech bubble triangle */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 lg:border-l-12 border-r-4 lg:border-r-12 border-t-4 lg:border-t-12 border-l-transparent border-r-transparent border-t-white/90" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] lg:border-l-[12px] lg:border-r-[12px] lg:border-t-[12px] border-l-transparent border-r-transparent border-t-white/90" />
               </motion.div>
             </div>
           </div>
