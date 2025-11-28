@@ -142,12 +142,8 @@ const Landing = () => {
 
           {/* Text Below Tablet */}
           <div className="relative z-10 text-center max-w-2xl mx-auto mt-16">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Onde suas metas se tornam
-            </h2>
-            <span className="text-6xl md:text-8xl font-bold text-gray-900">
-              realidade
-            </span>
+            
+            
           </div>
 
         </div>
