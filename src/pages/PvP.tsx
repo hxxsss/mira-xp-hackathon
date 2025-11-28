@@ -384,48 +384,19 @@ const PvP = () => {
 
   // Game screens
   if (currentMatch) {
-    // Group mode - show MatchRoomLobby if no group selected yet
-    if (currentMatch.match_mode === 'group' && currentMatch.status === 'waiting' && !currentGroupId) {
+    // Group mode - always show MatchRoomLobby while waiting
+    if (currentMatch.match_mode === 'group' && currentMatch.status === 'waiting') {
       return (
         <MatchRoomLobby
           matchId={currentMatch.id}
           userId={userId}
           onGroupSelected={(groupId) => setCurrentGroupId(groupId)}
+          onLeaveLobby={() => {
+            setCurrentMatch(null);
+            setCurrentGroupId(null);
+            setSelectedMode(null);
+          }}
         />
-      );
-    }
-
-    // Group mode lobby - user has selected a group
-    if (currentMatch.match_mode === 'group' && currentMatch.status === 'waiting' && currentGroupId) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 p-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex items-center gap-4 mb-8">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLeaveMatch}
-                className="text-white hover:bg-white/20"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <motion.h1
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-4xl font-bold neon-text"
-              >
-                🎮 ARENA DE GRUPOS
-              </motion.h1>
-            </div>
-            
-            <GroupLobby
-              matchId={currentMatch.id}
-              groupId={currentGroupId}
-              userId={userId}
-              onStartGame={handleStartGroupGame}
-            />
-          </div>
-        </div>
       );
     }
 
