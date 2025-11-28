@@ -235,7 +235,7 @@ const Landing = () => {
       </section>
 
       {/* Arena PvP Section */}
-      <section id="arena-pvp" className="py-24 px-6 bg-gradient-to-br from-[#581c87] via-[#831843] to-[#c2410c] bg-[#631b75]/[0.58]">
+      <section id="arena-pvp" className="py-24 px-6 bg-gradient-to-br from-[#581c87] via-[#831843] to-[#c2410c]">
         <div className="max-w-7xl mx-auto">
           <div className="bg-gradient-to-br from-[#6b21a8]/40 via-[#9f1239]/40 to-[#c2410c]/40 backdrop-blur-sm rounded-[3rem] p-8 md:p-16 shadow-2xl border border-[#a855f7]/30">
             <div className="flex flex-col lg:flex-row items-center gap-12">
