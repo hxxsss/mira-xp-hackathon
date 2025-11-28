@@ -235,83 +235,83 @@ const Landing = () => {
       </section>
 
       {/* Arena PvP Section */}
-      <section id="arena-pvp" className="py-24 px-6 bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900">
+      <section id="arena-pvp" className="py-24 px-6 bg-gradient-to-br from-[#581c87] via-[#831843] to-[#c2410c]">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-br from-purple-800/40 via-pink-800/40 to-orange-800/40 backdrop-blur-sm rounded-[3rem] p-8 md:p-16 shadow-2xl border border-purple-500/30">
+          <div className="bg-gradient-to-br from-[#6b21a8]/40 via-[#9f1239]/40 to-[#c2410c]/40 backdrop-blur-sm rounded-[3rem] p-8 md:p-16 shadow-2xl border border-[#a855f7]/30">
             <div className="flex flex-col lg:flex-row items-center gap-12">
               <div className="flex-1 space-y-6">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl text-white font-bold shadow-lg">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-2xl text-white font-bold shadow-lg">
                   <Swords className="w-5 h-5" />
                   <span>PvP</span>
                 </div>
                 <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight neon-text">Arena de Batalha</h2>
-                <p className="text-lg text-purple-100 leading-relaxed">
+                <p className="text-lg text-[#e9d5ff] leading-relaxed">
                   Desafie amigos em duelos épicos de conhecimento financeiro. Teste suas habilidades, ganhe recompensas e suba no ranking global.
                 </p>
                 
                 <div className="grid grid-cols-2 gap-4 pt-4">
-                  <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm p-6 rounded-2xl shadow-md border-2 border-purple-400/50 hover:border-pink-400 transition-all hover:scale-105 cursor-pointer group">
+                  <div className="bg-gradient-to-br from-[#a855f7]/20 to-[#ec4899]/20 backdrop-blur-sm p-6 rounded-2xl shadow-md border-2 border-[#c084fc]/50 hover:border-[#f9a8d4] transition-all hover:scale-105 cursor-pointer group">
                     <div className="flex items-center justify-center gap-3 mb-2">
-                      <User className="text-2xl text-purple-300 group-hover:scale-110 transition-transform" />
+                      <User className="text-2xl text-[#d8b4fe] group-hover:scale-110 transition-transform" />
                       <span className="text-xl font-bold text-white">vs</span>
-                      <User className="text-2xl text-pink-300 group-hover:scale-110 transition-transform" />
+                      <User className="text-2xl text-[#fbcfe8] group-hover:scale-110 transition-transform" />
                     </div>
-                    <p className="text-center font-semibold text-purple-100">Duelo 1 vs 1</p>
+                    <p className="text-center font-semibold text-[#e9d5ff]">Duelo 1 vs 1</p>
                   </div>
-                  <div className="bg-gradient-to-br from-pink-500/20 to-orange-500/20 backdrop-blur-sm p-6 rounded-2xl shadow-md border-2 border-pink-400/50 hover:border-orange-400 transition-all hover:scale-105 cursor-pointer group">
+                  <div className="bg-gradient-to-br from-[#ec4899]/20 to-[#f97316]/20 backdrop-blur-sm p-6 rounded-2xl shadow-md border-2 border-[#f9a8d4]/50 hover:border-[#fdba74] transition-all hover:scale-105 cursor-pointer group">
                     <div className="flex items-center justify-center gap-2 mb-2">
-                      <Users className="text-3xl text-orange-300 group-hover:scale-110 transition-transform" />
+                      <Users className="text-3xl text-[#fed7aa] group-hover:scale-110 transition-transform" />
                     </div>
-                    <p className="text-center font-semibold text-purple-100">Batalha em Grupo</p>
+                    <p className="text-center font-semibold text-[#e9d5ff]">Batalha em Grupo</p>
                   </div>
                 </div>
                 
                 <div className="flex flex-wrap gap-3 pt-2">
-                  <div className="flex items-center gap-2 bg-purple-500/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-purple-400/50">
-                    <Trophy className="w-5 h-5 text-yellow-400" />
-                    <span className="text-sm font-semibold text-purple-100">Ranking Global</span>
+                  <div className="flex items-center gap-2 bg-[#a855f7]/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-[#c084fc]/50">
+                    <Trophy className="w-5 h-5 text-[#fbbf24]" />
+                    <span className="text-sm font-semibold text-[#e9d5ff]">Ranking Global</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-pink-500/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-pink-400/50">
-                    <Gift className="w-5 h-5 text-purple-300" />
-                    <span className="text-sm font-semibold text-purple-100">Recompensas</span>
+                  <div className="flex items-center gap-2 bg-[#ec4899]/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-[#f9a8d4]/50">
+                    <Gift className="w-5 h-5 text-[#d8b4fe]" />
+                    <span className="text-sm font-semibold text-[#e9d5ff]">Recompensas</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-orange-500/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-orange-400/50">
-                    <Clock className="w-5 h-5 text-orange-300" />
-                    <span className="text-sm font-semibold text-purple-100">Tempo Real</span>
+                  <div className="flex items-center gap-2 bg-[#f97316]/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-[#fdba74]/50">
+                    <Clock className="w-5 h-5 text-[#fed7aa]" />
+                    <span className="text-sm font-semibold text-[#e9d5ff]">Tempo Real</span>
                   </div>
                 </div>
                 
-                <button onClick={() => navigate("/onboarding")} className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center gap-3 whitespace-nowrap cursor-pointer arcade-button">
+                <button onClick={() => navigate("/onboarding")} className="bg-gradient-to-r from-[#a855f7] via-[#ec4899] to-[#f97316] text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center gap-3 whitespace-nowrap cursor-pointer arcade-button">
                   <span>Entrar na Arena</span>
                   <Swords className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="flex-1 w-full">
-                <div className="relative h-80 lg:h-96 w-full bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600 rounded-3xl shadow-2xl flex items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 to-pink-900/30 backdrop-blur-sm"></div>
+                <div className="relative h-80 lg:h-96 w-full bg-gradient-to-br from-[#9333ea] via-[#db2777] to-[#ea580c] rounded-3xl shadow-2xl flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#581c87]/30 to-[#831843]/30 backdrop-blur-sm"></div>
                   <div className="relative z-10 flex items-center justify-center gap-8">
                     <div className="flex flex-col items-center gap-3 animate-pulse">
-                      <div className="w-20 h-20 bg-white/90 rounded-full shadow-xl flex items-center justify-center border-4 border-purple-400">
-                        <User className="w-8 h-8 text-purple-600" />
+                      <div className="w-20 h-20 bg-white/90 rounded-full shadow-xl flex items-center justify-center border-4 border-[#c084fc]">
+                        <User className="w-8 h-8 text-[#9333ea]" />
                       </div>
                       <div className="bg-white/90 px-4 py-2 rounded-full shadow-lg">
-                        <span className="font-bold text-purple-600">Você</span>
+                        <span className="font-bold text-[#9333ea]">Você</span>
                       </div>
                     </div>
                     <div className="text-white font-bold text-6xl drop-shadow-lg animate-bounce neon-text">VS</div>
                     <div className="flex flex-col items-center gap-3 animate-pulse" style={{
                     animationDelay: '0.5s'
                   }}>
-                      <div className="w-20 h-20 bg-white/90 rounded-full shadow-xl flex items-center justify-center border-4 border-pink-400">
-                        <User className="w-8 h-8 text-pink-600" />
+                      <div className="w-20 h-20 bg-white/90 rounded-full shadow-xl flex items-center justify-center border-4 border-[#f9a8d4]">
+                        <User className="w-8 h-8 text-[#db2777]" />
                       </div>
                       <div className="bg-white/90 px-4 py-2 rounded-full shadow-lg">
-                        <span className="font-bold text-pink-600">Rival</span>
+                        <span className="font-bold text-[#db2777]">Rival</span>
                       </div>
                     </div>
                   </div>
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-orange-600 shadow-lg">
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-[#ea580c] shadow-lg">
                     <Flame className="w-4 h-4 inline mr-1" /> Em Andamento
                   </div>
                 </div>
