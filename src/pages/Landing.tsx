@@ -342,12 +342,12 @@ const Landing = () => {
               Escolha seu companheiro de jornada e personalize sua experiência
             </p>
           </div>
-          <div className="bg-white p-8 md:p-12 rounded-3xl max-w-6xl mx-auto">
+          <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-8 md:p-12 rounded-3xl max-w-6xl mx-auto">
             <div className="flex flex-col items-center gap-8">
               <img 
                 src={charactersGroup} 
                 alt="Ricky, Mila, Ale e Trix - Os mascotes do MIRA"
-                className="w-full max-w-3xl h-auto"
+                className="w-full max-w-4xl h-auto"
               />
               <div className="text-center space-y-4">
                 <h3 className="text-2xl font-bold text-gray-900">Ricky, Mila, Ale e Trix</h3>
