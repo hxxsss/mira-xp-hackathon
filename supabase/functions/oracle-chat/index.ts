@@ -125,7 +125,7 @@ serve(async (req) => {
     
     const { data: profile } = await supabaseClient
       .from("profiles")
-      .select("name, income_type, monthly_income")
+      .select("name, income_type, monthly_income, monthly_savings_goal")
       .eq("id", user.id)
       .single();
 
@@ -151,8 +151,9 @@ serve(async (req) => {
 
     safeLog("oracle-chat: User context loaded successfully");
 
-    // Calculate monthly savings (simplified)
-    const monthlySavings = profile.monthly_income ? Math.round(profile.monthly_income * 0.1) : 100;
+    // Calculate monthly savings using user's custom goal or 20% of income
+    const monthlySavings = profile.monthly_savings_goal || 
+                          (profile.monthly_income ? Math.round(profile.monthly_income * 0.20) : 100);
 
     const userContext = {
       name: profile.name,

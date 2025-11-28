@@ -368,6 +368,7 @@ export type Database = {
           id: string
           income_type: string
           monthly_income: number | null
+          monthly_savings_goal: number | null
           monthly_xp: number
           name: string
           nickname: string | null
@@ -387,6 +388,7 @@ export type Database = {
           id: string
           income_type: string
           monthly_income?: number | null
+          monthly_savings_goal?: number | null
           monthly_xp?: number
           name: string
           nickname?: string | null
@@ -406,6 +408,7 @@ export type Database = {
           id?: string
           income_type?: string
           monthly_income?: number | null
+          monthly_savings_goal?: number | null
           monthly_xp?: number
           name?: string
           nickname?: string | null

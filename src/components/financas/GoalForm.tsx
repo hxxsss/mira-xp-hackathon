@@ -88,6 +88,15 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
+      // Buscar economia mensal do usuário
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("monthly_savings_goal, monthly_income")
+        .eq("id", user.id)
+        .single();
+
+      const monthlySavings = profile?.monthly_savings_goal || (profile?.monthly_income ? profile.monthly_income * 0.20 : 0);
+
       const goalData = {
         title: data.title,
         total_amount: data.total_amount,
@@ -104,7 +113,16 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
           .eq("id", goal.id);
 
         if (error) throw error;
-        toast.success("Meta atualizada com sucesso! 🎯");
+        
+        // Calcular novo prazo estimado baseado na economia mensal
+        if (monthlySavings > 0) {
+          const remaining = data.total_amount - data.current_amount;
+          const monthsNeeded = Math.ceil(remaining / monthlySavings);
+          
+          toast.success(`Meta atualizada! 🎯 Com sua economia mensal de R$ ${monthlySavings.toFixed(2)}, você alcançará sua meta em aproximadamente ${monthsNeeded} meses.`);
+        } else {
+          toast.success("Meta atualizada com sucesso! 🎯");
+        }
       } else {
         // Desativar metas anteriores
         await supabase
@@ -117,7 +135,13 @@ export const GoalForm = ({ goal, open, onOpenChange, onSuccess }: GoalFormProps)
           .insert(goalData);
 
         if (error) throw error;
-        toast.success("Meta criada com sucesso! 🚀");
+        
+        if (monthlySavings > 0) {
+          const monthsNeeded = Math.ceil(data.total_amount / monthlySavings);
+          toast.success(`Meta criada! 🚀 Economizando R$ ${monthlySavings.toFixed(2)}/mês, você alcançará em ${monthsNeeded} meses.`);
+        } else {
+          toast.success("Meta criada com sucesso! 🚀");
+        }
       }
 
       onSuccess();

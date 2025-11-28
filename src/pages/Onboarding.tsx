@@ -113,6 +113,7 @@ const Onboarding = () => {
     goalAmount: "",
     goalTimeline: "",
     incomeType: "",
+    monthlyIncome: "",
     avatarId: 1,
     password: ""
   });
@@ -173,6 +174,12 @@ const Onboarding = () => {
       if (!authData.user) throw new Error("Usuário não foi criado");
       
       // Criar perfil
+      const monthlyIncomeValue = formData.incomeType === "renda" && formData.monthlyIncome 
+        ? parseFloat(formData.monthlyIncome) 
+        : null;
+      
+      const monthlySavingsGoal = monthlyIncomeValue ? monthlyIncomeValue * 0.20 : null;
+      
       const {
         error: profileError
       } = await supabase.from("profiles").upsert({
@@ -182,6 +189,8 @@ const Onboarding = () => {
         nickname: formData.nickname,
         age: parseInt(formData.age),
         income_type: formData.incomeType,
+        monthly_income: monthlyIncomeValue,
+        monthly_savings_goal: monthlySavingsGoal,
         avatar_id: formData.avatarId
       }, {
         onConflict: "id"
@@ -251,7 +260,7 @@ const Onboarding = () => {
       case 3:
         return formData.goalTimeline;
       case 4:
-        return formData.incomeType;
+        return formData.incomeType && (formData.incomeType !== "renda" || formData.monthlyIncome);
       case 5:
         return formData.avatarId;
       default:
@@ -459,7 +468,7 @@ const Onboarding = () => {
                             <div className="font-semibold">Mesada</div>
                             <div className="text-sm text-muted-foreground">Dos pais/família</div>
                           </motion.button>
-                          <motion.button onClick={() => updateField("incomeType", "trabalho")} className={cn("p-4 rounded-2xl border-2 transition-all", formData.incomeType === "trabalho" ? "border-purple-600 bg-purple-50" : "border-gray-200 hover:bg-gray-50")} whileHover={{
+                          <motion.button onClick={() => updateField("incomeType", "renda")} className={cn("p-4 rounded-2xl border-2 transition-all", formData.incomeType === "renda" ? "border-purple-600 bg-purple-50" : "border-gray-200 hover:bg-gray-50")} whileHover={{
                         scale: 1.02
                       }} whileTap={{
                         scale: 0.98
@@ -469,6 +478,36 @@ const Onboarding = () => {
                             <div className="text-sm text-muted-foreground">De trabalho/freela</div>
                           </motion.button>
                         </motion.div>
+
+                        {formData.incomeType === "renda" && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="space-y-2 pt-2"
+                          >
+                            <Label htmlFor="monthlyIncome">Quanto você recebe por mês?</Label>
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                R$
+                              </span>
+                              <Input
+                                id="monthlyIncome"
+                                type="text"
+                                value={formatCurrency(formData.monthlyIncome)}
+                                onChange={e => {
+                                  const formatted = e.target.value;
+                                  const rawValue = parseCurrency(formatted);
+                                  updateField("monthlyIncome", rawValue);
+                                }}
+                                placeholder="0,00"
+                                className="pl-9 transition-all duration-300 focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600"
+                              />
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              💡 Vamos usar isso para calcular sua meta de economia (20% da renda)
+                            </p>
+                          </motion.div>
+                        )}
                       </CardContent>
                     </>}
 
