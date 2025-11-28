@@ -145,7 +145,7 @@ export default function AvatarCustomization() {
   }
 
   return (
-    <div className="h-screen bg-[#e3c5ff] overflow-hidden flex flex-col pb-24 md:pb-0">
+    <div className="h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 overflow-hidden flex flex-col pb-24 md:pb-0">
       {/* Header */}
       <div className="border-b border-white/10 bg-black/20 backdrop-blur-sm z-50 flex-shrink-0">
         <div className="w-full px-4 md:px-6 lg:px-8 py-3 md:py-4">
