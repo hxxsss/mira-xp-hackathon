@@ -370,6 +370,7 @@ export type Database = {
           monthly_income: number | null
           monthly_xp: number
           name: string
+          nickname: string | null
           total_xp: number
           updated_at: string
           weekly_xp: number
@@ -388,6 +389,7 @@ export type Database = {
           monthly_income?: number | null
           monthly_xp?: number
           name: string
+          nickname?: string | null
           total_xp?: number
           updated_at?: string
           weekly_xp?: number
@@ -406,6 +408,7 @@ export type Database = {
           monthly_income?: number | null
           monthly_xp?: number
           name?: string
+          nickname?: string | null
           total_xp?: number
           updated_at?: string
           weekly_xp?: number
