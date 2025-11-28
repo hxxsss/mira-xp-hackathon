@@ -202,6 +202,8 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
   };
 
   const createOrJoinTeam = async (teamIndex: number) => {
+    const teamName = TEAM_NAMES[teamIndex];
+    
     if (userGroupId) {
       toast({
         title: "Você já está em um time",
@@ -220,11 +222,11 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected }: MatchRoomLo
       return;
     }
 
-    setJoiningTeam(TEAM_NAMES[teamIndex]);
+    setJoiningTeam(teamName);
     
     try {
-      // Check if team already exists
-      let team = groups[teamIndex];
+      // Check if team already exists by NAME, not by array index
+      let team = groups.find(g => g.name === teamName);
       
       if (!team) {
         // Create team if it doesn't exist
