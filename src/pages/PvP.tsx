@@ -14,6 +14,7 @@ import { MatchRoomLobby } from "@/components/pvp/MatchRoomLobby";
 import { GroupLobby } from "@/components/pvp/GroupLobby";
 import { MatchLobby } from "@/components/pvp/MatchLobby";
 import { MatchGame } from "@/components/pvp/MatchGame";
+import { GroupMatchGame } from "@/components/pvp/GroupMatchGame";
 import { ReadyScreen } from "@/components/pvp/ReadyScreen";
 import { MatchResultModal } from "@/components/pvp/MatchResultModal";
 import { PodiumModal } from "@/components/pvp/PodiumModal";
@@ -403,7 +404,7 @@ const PvP = () => {
     // Group mode - game in progress
     if (currentMatch.match_mode === 'group' && currentMatch.status === 'in_progress') {
       return (
-        <MatchGame
+        <GroupMatchGame
           match={currentMatch}
           userId={userId}
           onComplete={handleGameComplete}
