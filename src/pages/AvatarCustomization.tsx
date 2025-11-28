@@ -221,7 +221,7 @@ export default function AvatarCustomization() {
 
               {/* Thought Bubble - Equipped Items */}
               <motion.div 
-                className="absolute top-0 lg:top-4 right-0 lg:right-8 bg-white/90 backdrop-blur-md rounded-2xl lg:rounded-3xl p-3 lg:p-5 shadow-xl border-2 border-white"
+                className="absolute -top-8 lg:-top-12 right-4 lg:right-12 bg-white/90 backdrop-blur-md rounded-2xl lg:rounded-3xl p-3 lg:p-5 shadow-xl border-2 border-white z-20"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.5, type: "spring" }}
