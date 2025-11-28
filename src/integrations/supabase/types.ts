@@ -454,6 +454,13 @@ export type Database = {
             referencedRelation: "pvp_groups"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "pvp_group_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       pvp_group_pairings: {
