@@ -23,7 +23,7 @@ export const CuriosityCardSession = ({
   const totalCards = cards.length;
   const currentCard = cards[currentCardIndex];
   
-  // Auto-complete cada card após 4 segundos
+  // Auto-complete cada card após 8 segundos
   useEffect(() => {
     const timer = setTimeout(() => {
       if (currentCardIndex < totalCards - 1) {
@@ -33,7 +33,7 @@ export const CuriosityCardSession = ({
         // Último card, completa a sessão
         onComplete();
       }
-    }, 4000);
+    }, 8000);
 
     return () => clearTimeout(timer);
   }, [currentCardIndex, totalCards, onComplete]);
@@ -189,7 +189,7 @@ export const CuriosityCardSession = ({
                     <motion.div
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: "100%" }}
-                      transition={{ delay: 0.6, duration: 3.4 }}
+                      transition={{ delay: 0.6, duration: 7.4 }}
                       className={cn(
                         "absolute bottom-0 left-0 h-1 rounded-b-2xl",
                         cardBgColor === "yellow" && "bg-yellow-400",
