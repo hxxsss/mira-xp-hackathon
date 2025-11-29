@@ -96,6 +96,13 @@ export interface SliderConfig {
   prefix?: string;           // "R$" (para currency)
 }
 
+// Sessão: Reflexão (Completa a Frase - Sem Resposta Certa)
+export interface ReflectionSentenceData {
+  sentence: string;          // "Para mim, guardar dinheiro é ____."
+  options: string[];         // ["Difícil", "Moleza", "Normal"]
+  category?: string;         // "perfil_financeiro" para agrupar respostas
+}
+
 // Tipo união de todas as sessões possíveis
 export type SessionType =
   | "complete_sentence"
@@ -106,7 +113,8 @@ export type SessionType =
   | "progressive_text"
   | "swipe_game"
   | "drag_drop"
-  | "dual_slider";
+  | "dual_slider"
+  | "reflection_sentence";
 
 export type SessionData =
   | { type: "complete_sentence"; data: CompleteSentenceData }
@@ -117,4 +125,5 @@ export type SessionData =
   | { type: "progressive_text"; data: ProgressiveTextData }
   | { type: "swipe_game"; data: SwipeGameData }
   | { type: "drag_drop"; data: DragDropData }
-  | { type: "dual_slider"; data: DualSliderData };
+  | { type: "dual_slider"; data: DualSliderData }
+  | { type: "reflection_sentence"; data: ReflectionSentenceData };

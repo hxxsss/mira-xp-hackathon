@@ -7,14 +7,16 @@ import { ProgressiveTextSession } from "./ProgressiveTextSession";
 import { SwipeGameSession } from "./SwipeGameSession";
 import { DragDropSession } from "./DragDropSession";
 import { DualSliderSession } from "./DualSliderSession";
+import { ReflectionSentenceSession } from "./ReflectionSentenceSession";
 import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
   session: SessionData;
+  sessionIndex: number;
   onComplete: () => void;
 }
 
-export const InteractiveSession = ({ session, onComplete }: InteractiveSessionProps) => {
+export const InteractiveSession = ({ session, sessionIndex, onComplete }: InteractiveSessionProps) => {
   switch (session.type) {
     case "complete_sentence":
       return (
@@ -95,6 +97,17 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
       return (
         <DualSliderSession
           sliders={session.data.sliders}
+          onComplete={onComplete}
+        />
+      );
+    
+    case "reflection_sentence":
+      return (
+        <ReflectionSentenceSession
+          sentence={session.data.sentence}
+          options={session.data.options}
+          category={session.data.category}
+          sessionIndex={sessionIndex}
           onComplete={onComplete}
         />
       );

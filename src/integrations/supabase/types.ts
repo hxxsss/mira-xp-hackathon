@@ -991,6 +991,36 @@ export type Database = {
           },
         ]
       }
+      user_session_responses: {
+        Row: {
+          created_at: string | null
+          id: string
+          module_id: string
+          response: Json
+          session_index: number
+          session_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          module_id: string
+          response: Json
+          session_index: number
+          session_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          module_id?: string
+          response?: Json
+          session_index?: number
+          session_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_track_progress: {
         Row: {
           completed_at: string | null

@@ -71,6 +71,7 @@ export const SessionNavigator = ({ sessions, onAllSessionsComplete }: SessionNav
         >
           <InteractiveSession 
             session={currentSession}
+            sessionIndex={currentIndex}
             onComplete={handleSessionComplete}
           />
         </motion.div>
