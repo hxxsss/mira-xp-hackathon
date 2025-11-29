@@ -17,7 +17,7 @@ export interface CarouselData {
 }
 
 // Sessão: Quiz ou Pesquisa de Seleção
-export interface SelectionSessionData {
+export interface SelectionData {
   mode: "quiz" | "survey";           // Quiz = tem resposta certa | Survey = coleta opinião
   question: string;                  // "Como foi o pagamento da sua última fatura?"
   options: Array<{
@@ -57,29 +57,45 @@ export interface SwipeGameData {
   cards: Array<{
     id: string;
     title: string;
+    description?: string;
     price: number;
     emoji: string;
-    isImpulsive: boolean;  // true = gasto supérfluo
-    description?: string;
+    isImpulsive: boolean;
   }>;
 }
 
-// Futuros tipos de sessão (placeholder)
-export interface MultipleChoiceData {
-  question: string;
-  options: string[];
-  correctIndex: number;
-}
-
+// Sessão: Drag & Drop (Classificação)
 export interface DragDropData {
-  items: string[];
-  correctOrder: number[];
+  title?: string;
+  zones: Array<{
+    id: number;
+    label: string;
+    color: string;
+  }>;
+  items: Array<{
+    id: string;
+    label: string;
+    correctZone: number;
+  }>;
 }
 
 // Tipo união de todas as sessões possíveis
-export type SessionType = "complete_sentence" | "carousel" | "selection" | "curiosity_card" | "audio_player" | "progressive_text" | "swipe_game" | "multiple_choice" | "drag_drop" | "slider" | "text_input";
+export type SessionType =
+  | "complete_sentence"
+  | "carousel"
+  | "selection"
+  | "curiosity_card"
+  | "audio_player"
+  | "progressive_text"
+  | "swipe_game"
+  | "drag_drop";
 
-export interface SessionData {
-  type: SessionType;
-  data: CompleteSentenceData | CarouselData | SelectionSessionData | CuriosityCardData | AudioPlayerData | ProgressiveTextData | SwipeGameData | MultipleChoiceData | DragDropData | any;
-}
+export type SessionData =
+  | { type: "complete_sentence"; data: CompleteSentenceData }
+  | { type: "carousel"; data: CarouselData }
+  | { type: "selection"; data: SelectionData }
+  | { type: "curiosity_card"; data: CuriosityCardData }
+  | { type: "audio_player"; data: AudioPlayerData }
+  | { type: "progressive_text"; data: ProgressiveTextData }
+  | { type: "swipe_game"; data: SwipeGameData }
+  | { type: "drag_drop"; data: DragDropData };
