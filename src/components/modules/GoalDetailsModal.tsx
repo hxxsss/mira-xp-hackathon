@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Target, TrendingUp, Calendar, CheckCircle, DollarSign, Sparkles } from "lucide-react";
+import { Target, TrendingUp, Calendar, CheckCircle, DollarSign, Sparkles, Plus } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 interface Goal {
@@ -18,12 +18,14 @@ interface GoalDetailsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEdit?: () => void;
+  onAddValue?: () => void;
 }
 export function GoalDetailsModal({
   goal,
   open,
   onOpenChange,
-  onEdit
+  onEdit,
+  onAddValue
 }: GoalDetailsModalProps) {
   if (!goal) return null;
   const progressPercentage = goal.current_amount / goal.total_amount * 100;
@@ -189,13 +191,27 @@ export function GoalDetailsModal({
 
           {/* Botões de Ação */}
           <div className="flex gap-2 pt-2">
+            <Button 
+              onClick={() => {
+                onOpenChange(false);
+                if (onAddValue) onAddValue();
+              }}
+              className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold shadow-lg"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Guardar Dinheiro
+            </Button>
             
-              <Button variant="outline" onClick={() => {
-            onOpenChange(false);
-            if (onEdit) onEdit();
-          }} className="flex-1 hover:border-yellow-400 transition-colors bg-indigo-600 hover:bg-indigo-500 text-slate-50">
-                Editar Meta
-              </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                onOpenChange(false);
+                if (onEdit) onEdit();
+              }} 
+              className="flex-1 hover:border-indigo-400 transition-colors bg-indigo-600 hover:bg-indigo-500 text-slate-50"
+            >
+              Editar Meta
+            </Button>
           </div>
         </div>
       </DialogContent>

@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { GoalDetailsModal } from "@/components/modules/GoalDetailsModal";
 import { CoverFlowCarousel } from "@/components/CoverFlowCarousel";
 import { GoalForm } from "@/components/financas/GoalForm";
+import { AddValueDialog } from "@/components/financas/AddValueDialog";
 import { NavigationDock } from "@/components/NavigationDock";
 import crystalBall from "@/assets/crystal-ball.png";
 
@@ -68,6 +69,7 @@ const Dashboard = () => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [goalModalOpen, setGoalModalOpen] = useState(false);
   const [goalFormOpen, setGoalFormOpen] = useState(false);
+  const [addValueDialogOpen, setAddValueDialogOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 
   // Carrega dados na montagem e quando a janela ganha foco (volta de outro módulo)
@@ -695,6 +697,7 @@ const Dashboard = () => {
           setGoalModalOpen(false);
           setGoalFormOpen(true);
         }}
+        onAddValue={() => setAddValueDialogOpen(true)}
       />
 
       {/* Goal Form Modal */}
@@ -706,6 +709,14 @@ const Dashboard = () => {
           loadData();
           setEditingGoal(null);
         }}
+      />
+
+      {/* Add Value Dialog */}
+      <AddValueDialog
+        goal={goal}
+        open={addValueDialogOpen}
+        onOpenChange={setAddValueDialogOpen}
+        onSuccess={loadData}
       />
 
     </div>
