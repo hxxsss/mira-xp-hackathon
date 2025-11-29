@@ -17,6 +17,15 @@ interface InteractiveSessionProps {
 }
 
 export const InteractiveSession = ({ session, sessionIndex, onComplete }: InteractiveSessionProps) => {
+  // Debug: Verificar tipo de sessão recebido
+  console.log('🔍 [InteractiveSession] Session:', {
+    type: session.type,
+    sessionIndex,
+    dataKeys: Object.keys(session.data),
+    hasCorrectIndex: 'correctIndex' in session.data,
+    hasCategory: 'category' in session.data
+  });
+  
   switch (session.type) {
     case "complete_sentence":
       return (
