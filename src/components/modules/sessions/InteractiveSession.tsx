@@ -3,6 +3,7 @@ import { CarouselSession } from "./CarouselSession";
 import { SelectionSession } from "./SelectionSession";
 import { CuriosityCardSession } from "./CuriosityCardSession";
 import { AudioPlayerSession } from "./AudioPlayerSession";
+import { ProgressiveTextSession } from "./ProgressiveTextSession";
 import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
@@ -56,6 +57,15 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
           subtitle={session.data.subtitle}
           audioUrl={session.data.audioUrl}
           transcript={session.data.transcript}
+          onComplete={onComplete}
+        />
+      );
+    
+    case "progressive_text":
+      return (
+        <ProgressiveTextSession
+          blocks={session.data.blocks}
+          title={session.data.title}
           onComplete={onComplete}
         />
       );

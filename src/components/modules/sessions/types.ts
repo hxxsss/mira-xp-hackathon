@@ -46,6 +46,12 @@ export interface AudioPlayerData {
   duration?: number;                 // Duração em segundos (opcional, será detectada)
 }
 
+// Sessão: Texto Progressivo (Tap to Reveal)
+export interface ProgressiveTextData {
+  blocks: string[];                  // Array de blocos de texto (parágrafos)
+  title?: string;                    // Título opcional acima do texto
+}
+
 // Futuros tipos de sessão (placeholder)
 export interface MultipleChoiceData {
   question: string;
@@ -59,9 +65,9 @@ export interface DragDropData {
 }
 
 // Tipo união de todas as sessões possíveis
-export type SessionType = "complete_sentence" | "carousel" | "selection" | "curiosity_card" | "audio_player" | "multiple_choice" | "drag_drop" | "slider" | "text_input";
+export type SessionType = "complete_sentence" | "carousel" | "selection" | "curiosity_card" | "audio_player" | "progressive_text" | "multiple_choice" | "drag_drop" | "slider" | "text_input";
 
 export interface SessionData {
   type: SessionType;
-  data: CompleteSentenceData | CarouselData | SelectionSessionData | CuriosityCardData | AudioPlayerData | MultipleChoiceData | DragDropData | any;
+  data: CompleteSentenceData | CarouselData | SelectionSessionData | CuriosityCardData | AudioPlayerData | ProgressiveTextData | MultipleChoiceData | DragDropData | any;
 }
