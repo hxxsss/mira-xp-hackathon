@@ -19,10 +19,12 @@ export const CompleteSentenceSession = ({
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [wrongOptions, setWrongOptions] = useState<Set<number>>(new Set());
   const [shakeIndex, setShakeIndex] = useState<number | null>(null);
 
   const handleOptionClick = (index: number) => {
-    if (isCorrect !== null) return; // Já respondeu
+    if (isCorrect !== null) return; // Já acertou
+    if (wrongOptions.has(index)) return; // Já tentou essa e errou
 
     setSelectedOption(index);
 
@@ -33,8 +35,8 @@ export const CompleteSentenceSession = ({
       onComplete(); // Chama onComplete imediatamente
     } else {
       // Resposta errada
-      setIsCorrect(false);
       setShakeIndex(index);
+      setWrongOptions(prev => new Set([...prev, index]));
       
       // Remove o shake após a animação
       setTimeout(() => {
@@ -91,7 +93,7 @@ export const CompleteSentenceSession = ({
       <div className="flex flex-wrap justify-center gap-4 max-w-2xl">
         {options.map((option, index) => {
           const isSelected = selectedOption === index;
-          const isWrong = isSelected && !isCorrect;
+          const isWrong = wrongOptions.has(index);
           const shouldShake = shakeIndex === index;
 
           return (
@@ -104,15 +106,15 @@ export const CompleteSentenceSession = ({
             >
               <Button
                 onClick={() => handleOptionClick(index)}
-                disabled={isCorrect !== null}
+                disabled={isCorrect !== null || isWrong}
                 variant="outline"
                 className={`
                   px-6 py-3 text-lg font-medium rounded-xl transition-all duration-200
                   ${isSelected && isCorrect 
                     ? "bg-success text-success-foreground border-success hover:bg-success/90" 
                     : isWrong
-                    ? "bg-destructive text-destructive-foreground border-destructive"
-                    : "bg-card hover:bg-accent hover:scale-105"
+                    ? "bg-destructive/20 text-destructive border-destructive line-through opacity-60"
+                    : "bg-card hover:bg-muted hover:scale-105"
                   }
                 `}
               >
