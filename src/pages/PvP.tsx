@@ -456,10 +456,20 @@ const PvP = () => {
         <GroupReadyScreen
           matchId={currentMatch.id}
           userId={userId}
-          onAllReady={() => {
-            // A edge function já muda o status para in_progress
-            // Não precisamos fazer nada aqui, o realtime vai detectar a mudança
-            console.log('[PvP] GroupReadyScreen countdown finished, waiting for status change...');
+          onAllReady={async () => {
+            try {
+              console.log('[PvP] All players ready, setting match to in_progress...', currentMatch.id);
+              await supabase
+                .from('pvp_matches')
+                .update({
+                  status: 'in_progress',
+                  started_at: new Date().toISOString(),
+                })
+                .eq('id', currentMatch.id)
+                .eq('status', 'ready_check');
+            } catch (error) {
+              console.error('[PvP] Error promoting match to in_progress from ready_check', error);
+            }
           }}
         />
       );
