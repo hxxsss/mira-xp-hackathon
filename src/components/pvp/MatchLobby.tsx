@@ -55,8 +55,8 @@ export const MatchLobby = ({
       scale: 1
     }} transition={{
       duration: 0.3
-    }} className="glass-card p-4 sm:p-8 max-w-lg w-full relative z-10 rounded-2xl sm:rounded-3xl backdrop-blur-2xl border border-white/20 bg-[#318beb]">
-        {/* Título Neon */}
+    }} className="p-4 sm:p-8 max-w-lg w-full relative z-10 rounded-2xl sm:rounded-3xl backdrop-blur-xl border-2 border-white/30 bg-gradient-to-br from-blue-900/95 via-blue-800/95 to-indigo-900/95 shadow-2xl">
+        {/* Título */}
         <motion.div className="text-center mb-4 sm:mb-8" initial={{
         y: -20,
         opacity: 0
@@ -72,21 +72,19 @@ export const MatchLobby = ({
           duration: 2,
           repeat: Infinity
         }}>
-            <Users className="h-12 w-12 sm:h-20 sm:w-20 text-white mx-auto mb-2 sm:mb-4" style={{
-            filter: 'drop-shadow(0 0 20px currentColor)'
+            <Users className="h-12 w-12 sm:h-20 sm:w-20 text-cyan-300 mx-auto mb-2 sm:mb-4" style={{
+            filter: 'drop-shadow(0 0 15px rgba(103, 232, 249, 0.6))'
           }} />
           </motion.div>
-          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-1 sm:mb-2" style={{
-          textShadow: '0 0 20px rgba(255,255,255,0.3)'
-        }}>
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-white mb-1 sm:mb-2 drop-shadow-lg">
             Aguardando Oponente
           </h1>
-          <p className="text-white/80 text-sm sm:text-base font-medium">
+          <p className="text-cyan-100 text-sm sm:text-base font-semibold drop-shadow-md">
             {isHost ? "Compartilhe o código com seu amigo" : "O jogo iniciará em breve"}
           </p>
         </motion.div>
 
-        {/* Código da Sala - Estilo Arcade */}
+        {/* Código da Sala */}
         <motion.div initial={{
         opacity: 0,
         y: 20
@@ -95,26 +93,24 @@ export const MatchLobby = ({
         y: 0
       }} transition={{
         delay: 0.2
-      }} className="glass-card p-4 sm:p-6 mb-4 sm:mb-6 relative overflow-hidden rounded-xl sm:rounded-2xl backdrop-blur-xl border border-white/30 bg-blue-700">
+      }} className="p-4 sm:p-6 mb-4 sm:mb-6 relative overflow-hidden rounded-xl sm:rounded-2xl border-2 border-cyan-400/40 bg-gradient-to-br from-slate-900/90 to-blue-950/90 shadow-lg">
           {/* Animated border */}
-          <motion.div className="absolute inset-0 border-2 border-cyan-400/50 rounded-xl sm:rounded-2xl" animate={{
-          boxShadow: ['0 0 20px rgba(6,182,212,0.3)', '0 0 40px rgba(59,130,246,0.5)', '0 0 20px rgba(6,182,212,0.3)']
+          <motion.div className="absolute inset-0 border-2 border-cyan-400/30 rounded-xl sm:rounded-2xl pointer-events-none" animate={{
+          boxShadow: ['0 0 15px rgba(6,182,212,0.2)', '0 0 25px rgba(6,182,212,0.4)', '0 0 15px rgba(6,182,212,0.2)']
         }} transition={{
           duration: 2,
           repeat: Infinity
         }} />
           
           <div className="flex items-center justify-center gap-2 mb-2 sm:mb-3">
-            <Copy className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-400" />
-            <p className="text-white/80 text-center text-xs sm:text-sm font-semibold tracking-wide">
-              CÓDIGO DA SALA
+            <Copy className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-300" />
+            <p className="text-cyan-100 text-center text-xs sm:text-sm font-bold tracking-widest uppercase">
+              Código da Sala
             </p>
           </div>
           <div className="flex items-center justify-center gap-2 sm:gap-3">
-            <motion.span className="text-3xl sm:text-5xl font-bold font-mono tracking-[0.2em] sm:tracking-[0.3em] text-white relative" style={{
-            textShadow: '0 0 20px #06b6d4, 0 0 40px #06b6d4, 0 0 60px #06b6d4'
-          }} animate={{
-            textShadow: ['0 0 20px #06b6d4, 0 0 40px #06b6d4', '0 0 30px #3b82f6, 0 0 60px #3b82f6', '0 0 20px #06b6d4, 0 0 40px #06b6d4']
+            <motion.span className="text-3xl sm:text-5xl font-black font-mono tracking-[0.2em] sm:tracking-[0.3em] text-white drop-shadow-lg" animate={{
+            textShadow: ['0 0 10px rgba(6,182,212,0.5)', '0 0 20px rgba(6,182,212,0.7)', '0 0 10px rgba(6,182,212,0.5)']
           }} transition={{
             duration: 2,
             repeat: Infinity
@@ -126,7 +122,7 @@ export const MatchLobby = ({
           }} whileTap={{
             scale: 0.95
           }}>
-              <Button variant="outline" size="icon" onClick={copyMatchCode} className="h-10 w-10 sm:h-12 sm:w-12 bg-cyan-500/20 border-cyan-400/50 hover:bg-cyan-500/40 text-white">
+              <Button variant="outline" size="icon" onClick={copyMatchCode} className="h-10 w-10 sm:h-12 sm:w-12 bg-cyan-500/30 border-cyan-300/60 hover:bg-cyan-400/50 text-white shadow-md">
                 <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </motion.div>
@@ -143,24 +139,24 @@ export const MatchLobby = ({
       }} transition={{
         delay: 0.3
       }}>
-          <div className="glass-card p-3 sm:p-4 rounded-lg sm:rounded-xl backdrop-blur-xl border border-white/20 bg-blue-700">
+          <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl border border-yellow-500/30 bg-gradient-to-r from-yellow-900/40 to-amber-900/40 shadow-md">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
-                <span className="text-xs sm:text-sm font-medium text-[#ededed]/90">Aposta</span>
+                <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300" />
+                <span className="text-sm sm:text-base font-bold text-yellow-100">Aposta</span>
               </div>
-              <span className="font-bold text-base sm:text-lg text-yellow-400">
+              <span className="font-black text-lg sm:text-xl text-yellow-300 drop-shadow-md">
                 {match.xp_bet} XP
               </span>
             </div>
           </div>
-          <div className="glass-card p-3 sm:p-4 rounded-lg sm:rounded-xl backdrop-blur-xl border border-white/20 bg-blue-700">
+          <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-900/40 to-green-900/40 shadow-md">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" />
-                <span className="text-white/90 text-xs sm:text-sm font-medium">Prêmio</span>
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-300" />
+                <span className="text-sm sm:text-base font-bold text-emerald-100">Prêmio</span>
               </div>
-              <span className="font-bold text-base sm:text-lg text-green-400">
+              <span className="font-black text-lg sm:text-xl text-emerald-300 drop-shadow-md">
                 {match.xp_bet * 2} XP
               </span>
             </div>
@@ -189,12 +185,12 @@ export const MatchLobby = ({
             ease: "linear"
           }
         }}>
-            <Loader2 className="w-10 h-10 sm:w-16 sm:h-16 text-white mx-auto" style={{
-            filter: 'drop-shadow(0 0 10px currentColor)'
+            <Loader2 className="w-10 h-10 sm:w-16 sm:h-16 text-cyan-300 mx-auto" style={{
+            filter: 'drop-shadow(0 0 12px rgba(103, 232, 249, 0.6))'
           }} />
           </motion.div>
-          <motion.p className="text-white/80 mt-2 sm:mt-4 text-sm sm:text-base font-medium" animate={{
-          opacity: [0.5, 1, 0.5]
+          <motion.p className="text-cyan-100 mt-2 sm:mt-4 text-sm sm:text-base font-bold drop-shadow-md" animate={{
+          opacity: [0.7, 1, 0.7]
         }} transition={{
           duration: 1.5,
           repeat: Infinity
@@ -213,7 +209,7 @@ export const MatchLobby = ({
       }} transition={{
         delay: 0.5
       }}>
-          <Button variant="outline" onClick={onLeave} className="w-full bg-red-500/20 border-red-500/50 hover:bg-red-500/40 text-white font-semibold rounded-lg sm:rounded-xl text-sm sm:text-base py-2 sm:py-3">
+          <Button variant="outline" onClick={onLeave} className="w-full bg-red-600/30 border-2 border-red-400/60 hover:bg-red-500/50 text-white font-bold rounded-lg sm:rounded-xl text-sm sm:text-base py-3 sm:py-4 shadow-lg transition-all">
             {isHost ? "Cancelar Partida" : "Sair da Sala"}
           </Button>
         </motion.div>
