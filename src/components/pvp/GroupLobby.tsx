@@ -112,7 +112,9 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
     
     if (data) {
       setMatch(data);
-      if (data.status === 'in_progress') {
+      // Transição para tela de ready check
+      if (data.status === 'ready_check' || data.status === 'in_progress') {
+        console.log('[GroupLobby] Match status changed to', data.status, '- transitioning...');
         onStartGame();
       }
     } else if (error) {
@@ -146,10 +148,52 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
       return;
     }
 
+    // Check if we have at least 2 groups
+    const { data: allGroupsData } = await supabase
+      .from("pvp_groups")
+      .select("id")
+      .eq("match_id", matchId);
+    
+    if (!allGroupsData || allGroupsData.length < 2) {
+      toast({ 
+        title: "Aguarde mais grupos", 
+        description: "É necessário pelo menos 2 grupos para iniciar",
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    // Mark this group as ready
     await supabase
-      .from("pvp_matches")
-      .update({ status: 'in_progress', started_at: new Date().toISOString() })
-      .eq("id", matchId);
+      .from("pvp_groups")
+      .update({ ready_to_start: true })
+      .eq("id", groupId);
+
+    // Check if ALL groups are ready now
+    const { data: updatedGroups } = await supabase
+      .from("pvp_groups")
+      .select("ready_to_start")
+      .eq("match_id", matchId);
+    
+    const allReady = updatedGroups?.every(g => g.ready_to_start) || false;
+    
+    if (allReady) {
+      // Start the match
+      await supabase
+        .from("pvp_matches")
+        .update({ status: 'ready_check', started_at: new Date().toISOString() })
+        .eq("id", matchId);
+        
+      toast({
+        title: "Todos os grupos estão prontos!",
+        description: "Iniciando contagem regressiva..."
+      });
+    } else {
+      toast({
+        title: "Grupo pronto!",
+        description: "Aguardando outros grupos ficarem prontos..."
+      });
+    }
   };
 
   if (!group || !match) {
