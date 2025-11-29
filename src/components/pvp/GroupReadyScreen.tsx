@@ -101,6 +101,7 @@ export const GroupReadyScreen = ({ matchId, userId, onAllReady }: GroupReadyScre
     const allReady = allMembers.every(m => m.is_ready);
 
     if (allReady && countdown === null) {
+      console.log('[GroupReadyScreen] All members are ready! Starting countdown...');
       startCountdown();
     }
   }, [allMembers]);

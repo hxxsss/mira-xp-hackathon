@@ -16,6 +16,7 @@ import { MatchLobby } from "@/components/pvp/MatchLobby";
 import { MatchGame } from "@/components/pvp/MatchGame";
 import { GroupMatchGame } from "@/components/pvp/GroupMatchGame";
 import { ReadyScreen } from "@/components/pvp/ReadyScreen";
+import { GroupReadyScreen } from "@/components/pvp/GroupReadyScreen";
 import { MatchResultModal } from "@/components/pvp/MatchResultModal";
 import { PodiumModal } from "@/components/pvp/PodiumModal";
 import { ModeSelectionScreen } from "@/components/pvp/ModeSelectionScreen";
@@ -94,6 +95,8 @@ const PvP = () => {
             if (fullMatch) {
               const newMatch = fullMatch as Match;
               
+              console.log('[PvP] Match status changed:', currentMatch.status, '->', newMatch.status);
+              
               // APENAS observar e atualizar estado - não fazer UPDATE aqui
               setCurrentMatch(newMatch);
               
@@ -111,6 +114,14 @@ const PvP = () => {
                 toast({
                   title: "Partida iniciada!",
                   description: "A batalha começou. Boa sorte!",
+                });
+              }
+
+              if (newMatch.status === 'ready_check' && currentMatch.status !== 'ready_check') {
+                console.log('[PvP] Match status is now ready_check, showing ready screen');
+                toast({
+                  title: "Todos os grupos prontos!",
+                  description: "Preparando para iniciar...",
                 });
               }
 
@@ -385,8 +396,23 @@ const PvP = () => {
 
   // Game screens
   if (currentMatch) {
-    // Group mode - always show MatchRoomLobby while waiting
+    // Group mode - waiting for game to start
     if (currentMatch.match_mode === 'group' && currentMatch.status === 'waiting') {
+      // Se o usuário já tem um groupId, mostrar GroupLobby
+      if (currentGroupId) {
+        return (
+          <GroupLobby
+            matchId={currentMatch.id}
+            groupId={currentGroupId}
+            userId={userId}
+            onStartGame={() => {
+              // Atualizar status da partida para in_progress
+            }}
+          />
+        );
+      }
+      
+      // Senão, mostrar MatchRoomLobby para escolher/criar time
       return (
         <MatchRoomLobby
           matchId={currentMatch.id}
@@ -401,6 +427,23 @@ const PvP = () => {
             console.log('[PvP] onGameStart called with match:', matchData.status, 'groupId:', groupId);
             setCurrentMatch(matchData as Match);
             setCurrentGroupId(groupId);
+          }}
+        />
+      );
+    }
+
+    // Group mode - ready check (countdown before game)
+    if (currentMatch.match_mode === 'group' && currentMatch.status === 'ready_check') {
+      return (
+        <GroupReadyScreen
+          matchId={currentMatch.id}
+          userId={userId}
+          onAllReady={() => {
+            // Transition to in_progress
+            supabase
+              .from("pvp_matches")
+              .update({ status: 'in_progress' })
+              .eq("id", currentMatch.id);
           }}
         />
       );
