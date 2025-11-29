@@ -1,12 +1,6 @@
 import { CompleteSentenceSession } from "./CompleteSentenceSession";
 import { CarouselSession } from "./CarouselSession";
-
-export type SessionType = "complete_sentence" | "carousel" | "multiple_choice" | "slider" | "text_input";
-
-export interface SessionData {
-  type: SessionType;
-  data: any;
-}
+import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
   session: SessionData;
