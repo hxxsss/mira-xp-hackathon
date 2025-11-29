@@ -8,7 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import { LessonContent } from '@/components/modules/LessonContent';
 import { QuizComponent } from '@/components/modules/QuizComponent';
 import { RewardModal } from '@/components/modules/RewardModal';
-import { InteractiveSession, SessionData } from '@/components/modules/sessions';
+import { SessionNavigator } from '@/components/modules/sessions';
 import { useToast } from '@/hooks/use-toast';
 import { VideoPlaceholder } from '@/components/journey/VideoPlaceholder';
 import { EmotionGrid } from '@/components/journey/EmotionGrid';
@@ -795,20 +795,19 @@ const ModulePage = () => {
 
               {/* Interactive Sessions Type */}
               {currentLesson.type === 'interactive_sessions' && currentLesson.sessions && (
-                <div className="space-y-6">
-                  {currentLesson.sessions.map((session: SessionData, index: number) => (
-                    <InteractiveSession
-                      key={index}
-                      session={session}
-                      onComplete={() => {
-                        // Se for a última sessão, marcar como completo
-                        if (index === currentLesson.sessions.length - 1) {
-                          setSelectedJourneyOption(0); // Marca como completo para habilitar o botão
-                        }
-                      }}
-                    />
-                  ))}
-                </div>
+                <SessionNavigator
+                  sessions={currentLesson.sessions}
+                  onAllSessionsComplete={() => {
+                    // Se é a última lição, completa o módulo
+                    if (currentLessonIndex === totalItems - 1) {
+                      completeModule(100);
+                      setShowConfetti(true);
+                    } else {
+                      // Avança para próxima lição
+                      handleNextLesson();
+                    }
+                  }}
+                />
               )}
 
               {/* Legacy text type */}
@@ -826,39 +825,29 @@ const ModulePage = () => {
                 />
               )}
 
-              <div className="flex justify-between mt-8">
-                <Button
-                  onClick={handlePreviousLesson}
-                  disabled={currentLessonIndex === 0}
-                  variant="outline"
-                >
-                  Anterior
-                </Button>
+              {currentLesson.type !== 'interactive_sessions' && (
+                <div className="flex justify-between mt-8">
+                  <Button
+                    onClick={handlePreviousLesson}
+                    disabled={currentLessonIndex === 0}
+                    variant="outline"
+                  >
+                    Anterior
+                  </Button>
 
-                {currentLesson.type !== 'quiz' && currentLesson.type !== 'interactive_sessions' && (
-                  <Button
-                    onClick={() => {
-                      setSelectedJourneyOption(null);
-                      handleNextLesson();
-                    }}
-                    disabled={currentLessonIndex === totalItems - 1}
-                  >
-                    {currentLessonIndex === totalItems - 1 ? 'Finalizar' : 'Próxima Lição'}
-                  </Button>
-                )}
-                
-                {currentLesson.type === 'interactive_sessions' && (
-                  <Button
-                    onClick={() => {
-                      setSelectedJourneyOption(null);
-                      handleNextLesson();
-                    }}
-                    disabled={selectedJourneyOption === null}
-                  >
-                    {currentLessonIndex === totalItems - 1 ? 'Finalizar' : 'Próxima Lição'}
-                  </Button>
-                )}
-              </div>
+                  {currentLesson.type !== 'quiz' && (
+                    <Button
+                      onClick={() => {
+                        setSelectedJourneyOption(null);
+                        handleNextLesson();
+                      }}
+                      disabled={currentLessonIndex === totalItems - 1}
+                    >
+                      {currentLessonIndex === totalItems - 1 ? 'Finalizar' : 'Próxima Lição'}
+                    </Button>
+                  )}
+                </div>
+              )}
             </Card>
           )}
         </div>
