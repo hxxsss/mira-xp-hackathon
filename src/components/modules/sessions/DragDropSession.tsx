@@ -38,23 +38,21 @@ export const DragDropSession = ({
     type: "success" | "error";
   } | null>(null);
   const [isComplete, setIsComplete] = useState(false);
+  const [hoveredZone, setHoveredZone] = useState<number | null>(null);
 
-  const handleDragStart = (item: DragDropItem) => {
-    setDraggedItem(item);
-  };
+  const handleDrop = (zoneId: number, itemId: string) => {
+    const item = availableItems.find(i => i.id === itemId);
+    if (!item) return;
 
-  const handleDrop = (zoneId: number) => {
-    if (!draggedItem) return;
-
-    const isCorrect = draggedItem.correctZone === zoneId;
+    const isCorrect = item.correctZone === zoneId;
 
     if (isCorrect) {
       // Item correto - adiciona à zona
       setZoneItems((prev) => ({
         ...prev,
-        [zoneId]: [...prev[zoneId], draggedItem],
+        [zoneId]: [...prev[zoneId], item],
       }));
-      setAvailableItems((prev) => prev.filter((i) => i.id !== draggedItem.id));
+      setAvailableItems((prev) => prev.filter((i) => i.id !== item.id));
       
       // Feedback de sucesso
       setFeedback({ zoneId, type: "success" });
@@ -73,7 +71,6 @@ export const DragDropSession = ({
       setTimeout(() => setFeedback(null), 600);
     }
 
-    setDraggedItem(null);
   };
 
   const getZoneColor = (zone: DragDropZone) => {
@@ -129,12 +126,14 @@ export const DragDropSession = ({
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    drag
-                    dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
-                    dragElastic={0.1}
-                    onDragStart={() => handleDragStart(item)}
-                    whileDrag={{ scale: 1.1, zIndex: 50 }}
-                    className="px-4 py-2 bg-background border-2 border-primary rounded-lg cursor-grab active:cursor-grabbing shadow-md hover:shadow-lg transition-shadow"
+                    className="px-4 py-2 bg-background border-2 border-primary rounded-lg cursor-grab active:cursor-grabbing shadow-md hover:shadow-lg transition-shadow touch-none"
+                    draggable="true"
+                    onDragStartCapture={(e: React.DragEvent) => {
+                      e.dataTransfer.setData("text/plain", item.id);
+                      e.dataTransfer.effectAllowed = "move";
+                      setDraggedItem(item);
+                    }}
+                    onDragEndCapture={() => setDraggedItem(null)}
                   >
                     <span className="text-sm font-medium text-foreground">
                       {item.label}
@@ -149,6 +148,7 @@ export const DragDropSession = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl">
             {zones.map((zone) => {
               const isFeedbackActive = feedback?.zoneId === zone.id;
+              const isHovered = hoveredZone === zone.id;
               const feedbackClass =
                 isFeedbackActive && feedback.type === "error"
                   ? "animate-pulse border-destructive bg-destructive/20"
@@ -162,11 +162,25 @@ export const DragDropSession = ({
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: zone.id * 0.1 }}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDrop(zone.id)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  }}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    setHoveredZone(zone.id);
+                  }}
+                  onDragLeave={() => setHoveredZone(null)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const itemId = e.dataTransfer.getData("text/plain");
+                    handleDrop(zone.id, itemId);
+                    setHoveredZone(null);
+                  }}
                   className={`
                     relative min-h-[200px] p-6 border-2 border-dashed rounded-xl
                     ${getZoneColor(zone)} ${feedbackClass}
+                    ${isHovered ? "scale-105 border-solid shadow-lg" : ""}
                     transition-all duration-300
                   `}
                 >
