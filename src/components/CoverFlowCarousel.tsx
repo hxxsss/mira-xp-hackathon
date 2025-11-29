@@ -64,27 +64,10 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
     return 0;
   }, [items]);
 
-  // Limita visualização: completos + atual + 2 bloqueados + mensagem
+  // Mostra todos os módulos reais
   const visibleItems = React.useMemo(() => {
-    const currentIdx = findCurrentCardIndex();
-    const visibleEndIndex = currentIdx + 3;
-    const visibleModules = items.slice(0, visibleEndIndex);
-
-    if (visibleEndIndex < items.length) {
-      visibleModules.push({
-        id: 'continue-message',
-        number: '...',
-        title: 'Continue para desbloquear',
-        description: 'Complete os módulos anteriores',
-        icon: '🔒',
-        color: '#94a3b8',
-        status: 'locked' as const,
-        progress: 0
-      });
-    }
-
-    return visibleModules;
-  }, [items, findCurrentCardIndex]);
+    return items;
+  }, [items]);
 
   // REGRA 1: Inicialização - scroll automático para o card atual
   useEffect(() => {
@@ -186,7 +169,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
           const isInProgress = item.status === 'in_progress';
           const isUnlocked = item.status === 'unlocked';
           const isCenterCard = index === selectedIndex;
-          const isClickable = !isLocked && isCenterCard && item.id !== 'continue-message';
+          const isClickable = !isLocked && isCenterCard;
 
           return (
             <CarouselItem
@@ -278,8 +261,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                     </div>
 
                     {/* Botão de ação */}
-                    {item.id !== 'continue-message' && (
-                      <button
+                    <button
                         className={cn(
                           "absolute -bottom-6 left-1/2 transform -translate-x-1/2 font-bold py-3 px-8 rounded-full shadow-lg transition-all text-sm whitespace-nowrap",
                           isLocked || !isCenterCard
@@ -299,7 +281,6 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
                       >
                         {getButtonText(item.status)}
                       </button>
-                    )}
 
                     {/* Overlay para bloqueados */}
                     {isLocked && (
