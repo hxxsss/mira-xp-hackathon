@@ -4,6 +4,7 @@ import { SelectionSession } from "./SelectionSession";
 import { CuriosityCardSession } from "./CuriosityCardSession";
 import { AudioPlayerSession } from "./AudioPlayerSession";
 import { ProgressiveTextSession } from "./ProgressiveTextSession";
+import { SwipeGameSession } from "./SwipeGameSession";
 import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
@@ -66,6 +67,14 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
         <ProgressiveTextSession
           blocks={session.data.blocks}
           title={session.data.title}
+          onComplete={onComplete}
+        />
+      );
+    
+    case "swipe_game":
+      return (
+        <SwipeGameSession
+          cards={session.data.cards}
           onComplete={onComplete}
         />
       );

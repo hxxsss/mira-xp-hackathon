@@ -308,7 +308,144 @@ O player usa HTML5 Audio, que suporta:
 
 ---
 
-## 6. `multiple_choice` - Múltipla Escolha (Futuro)
+## 6. `progressive_text` - Texto Progressivo
+
+**Objetivo:** Revelar texto progressivamente, bloco por bloco, através de interação do usuário (toque/clique).
+
+### Comportamento
+- Blocos de texto aparecem um de cada vez
+- Usuário precisa tocar/clicar para revelar o próximo bloco
+- Animação suave de fade-in em cada bloco
+- Ideal para storytelling e narrativas que precisam de ritmo
+- Auto-complete ao revelar o último bloco
+
+### Estrutura de Dados
+```typescript
+{
+  type: "progressive_text",
+  data: {
+    title: "O Ciclo do Consumo",           // Título opcional
+    blocks: [
+      "Todo mundo já passou por isso: você está triste, entediado ou estressado...",
+      "Aí você pensa: vou dar uma olhadinha nas promoções, só pra distrair.",
+      "Antes que perceba, já comprou algo que nem precisava tanto assim.",
+      "No momento, você se sente bem. O cérebro libera dopamina.",
+      "Mas alguns dias depois, chega a fatura. E junto com ela, vem a culpa.",
+      "Esse é o ciclo vicioso do consumo emocional.",
+      "A boa notícia? Reconhecer esse padrão é o primeiro passo para quebrá-lo."
+    ]
+  }
+}
+```
+
+### Exemplo Visual
+```
+┌────────────────────────────────────────────┐
+│  O Ciclo do Consumo                        │
+│                                            │
+│  Todo mundo já passou por isso: você      │
+│  está triste, entediado ou estressado...  │
+│                                            │
+│  Aí você pensa: vou dar uma olhadinha     │
+│  nas promoções, só pra distrair.          │
+│                                            │
+│  [Tap para continuar...]                   │
+└────────────────────────────────────────────┘
+```
+
+---
+
+## 7. `swipe_game` - Jogo de Swipe (Compra ou Passa)
+
+**Objetivo:** Minigame estilo Tinder onde o usuário decide se compra ou economiza em produtos apresentados.
+
+### Comportamento
+- Pilha de cartões aparece no centro
+- Usuário pode deslizar o cartão ou usar botões:
+  - **LEFT/X** (Esquerda): Passa / Economiza
+  - **RIGHT/♥** (Direita): Compra / Gasta
+- Feedback imediato após cada decisão
+- Cartões com animação fluida de swipe
+- Ao final, mostra resumo com valor economizado
+- Indicadores visuais "PASSA" e "COMPRA" aparecem durante o arrasto
+
+### Estrutura de Dados
+```typescript
+{
+  type: "swipe_game",
+  data: {
+    cards: [
+      {
+        id: "1",
+        title: "Tênis de Marca",
+        price: 899.90,
+        emoji: "👟",
+        isImpulsive: true,              // true = gasto supérfluo
+        description: "Edição limitada com influencer"
+      },
+      {
+        id: "2",
+        title: "Conta de Luz",
+        price: 145.00,
+        emoji: "💡",
+        isImpulsive: false,             // false = gasto necessário
+        description: "Vencimento em 5 dias"
+      }
+    ]
+  }
+}
+```
+
+### Lógica de Pontuação
+- **Swipe LEFT em isImpulsive=true**: ✅ Feedback positivo + adiciona ao valor economizado
+- **Swipe RIGHT em isImpulsive=true**: ❌ Feedback educativo ("Cuidado! Isso era um gatilho.")
+- **Swipe LEFT em isImpulsive=false**: ❌ Feedback educativo ("Ops! Esse era necessário.")
+- **Swipe RIGHT em isImpulsive=false**: ✅ Feedback positivo ("Correto! Gasto importante.")
+
+### Exemplo Visual
+```
+┌────────────────────────────────────────────┐
+│  Cartão 1 de 5    💰 R$ 0.00 economizado   │
+│  ▓▓▓▓░░░░░░░░░░                            │
+│                                            │
+│                👟                          │
+│         Tênis de Marca                     │
+│     Edição limitada com influencer         │
+│                                            │
+│           R$ 899,90                        │
+│                                            │
+│      ← Deslize para decidir →              │
+│                                            │
+│       ❌              ♥                     │
+└────────────────────────────────────────────┘
+```
+
+### Tela Final (Resumo)
+```
+┌────────────────────────────────────────────┐
+│              🎉                            │
+│          Parabéns!                         │
+│                                            │
+│  ┌──────────────────────────────────────┐  │
+│  │  Você economizou hoje:               │  │
+│  │                                      │  │
+│  │       R$ 2.219,90                    │  │
+│  └──────────────────────────────────────┘  │
+│                                            │
+│  Continue fazendo escolhas conscientes! 💪 │
+└────────────────────────────────────────────┘
+```
+
+### Dicas de Uso
+- Use 5-7 cartões por sessão
+- Misture gastos impulsivos e necessários (não deixe óbvio)
+- Emojis expressivos e preços realistas
+- Descrições curtas e impactantes
+- Ajuste `isImpulsive` conforme objetivo educacional
+
+---
+
+## 8. `multiple_choice` - Múltipla Escolha (Futuro)
 
 **Objetivo:** Pergunta com múltiplas opções e apenas uma correta.
 
@@ -331,7 +468,7 @@ O player usa HTML5 Audio, que suporta:
 
 ---
 
-## 7. `drag_drop` - Arrastar e Soltar (Futuro)
+## 9. `drag_drop` - Arrastar e Soltar (Futuro)
 
 **Objetivo:** Organizar itens na ordem correta.
 

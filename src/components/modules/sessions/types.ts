@@ -52,6 +52,18 @@ export interface ProgressiveTextData {
   title?: string;                    // Título opcional acima do texto
 }
 
+// Sessão: Swipe Game (Compra ou Passa)
+export interface SwipeGameData {
+  cards: Array<{
+    id: string;
+    title: string;
+    price: number;
+    emoji: string;
+    isImpulsive: boolean;  // true = gasto supérfluo
+    description?: string;
+  }>;
+}
+
 // Futuros tipos de sessão (placeholder)
 export interface MultipleChoiceData {
   question: string;
@@ -65,9 +77,9 @@ export interface DragDropData {
 }
 
 // Tipo união de todas as sessões possíveis
-export type SessionType = "complete_sentence" | "carousel" | "selection" | "curiosity_card" | "audio_player" | "progressive_text" | "multiple_choice" | "drag_drop" | "slider" | "text_input";
+export type SessionType = "complete_sentence" | "carousel" | "selection" | "curiosity_card" | "audio_player" | "progressive_text" | "swipe_game" | "multiple_choice" | "drag_drop" | "slider" | "text_input";
 
 export interface SessionData {
   type: SessionType;
-  data: CompleteSentenceData | CarouselData | SelectionSessionData | CuriosityCardData | AudioPlayerData | ProgressiveTextData | MultipleChoiceData | DragDropData | any;
+  data: CompleteSentenceData | CarouselData | SelectionSessionData | CuriosityCardData | AudioPlayerData | ProgressiveTextData | SwipeGameData | MultipleChoiceData | DragDropData | any;
 }
