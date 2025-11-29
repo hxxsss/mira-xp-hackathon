@@ -578,6 +578,11 @@ const Dashboard = () => {
                 </motion.button>
               );
             })}
+            
+            {/* Indicador de mais trilhas por vir */}
+            <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm md:text-base font-bold text-gray-400">
+              <span className="animate-pulse">...</span>
+            </div>
           </div>
         </div>
       </div>
