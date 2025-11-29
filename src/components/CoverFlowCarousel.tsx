@@ -100,10 +100,7 @@ export function CoverFlowCarousel({ items, trackName, onItemClick }: CoverFlowCa
     return () => clearTimeout(timer);
   }, [api, findCurrentCardIndex, visibleItems.length, hasInitialized]);
 
-  // Reset hasInitialized quando items mudam (para refocar após desbloqueio)
-  useEffect(() => {
-    setHasInitialized(false);
-  }, [items]);
+  // Removed automatic reset to prevent carousel from jumping back on data reload
 
   // Atualiza selectedIndex ao navegar
   useEffect(() => {
