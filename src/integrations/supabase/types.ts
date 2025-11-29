@@ -622,6 +622,7 @@ export type Database = {
       pvp_matches: {
         Row: {
           completed_at: string | null
+          countdown_start_at: string | null
           created_at: string | null
           current_round: number | null
           difficulty_level: string | null
@@ -644,6 +645,7 @@ export type Database = {
         }
         Insert: {
           completed_at?: string | null
+          countdown_start_at?: string | null
           created_at?: string | null
           current_round?: number | null
           difficulty_level?: string | null
@@ -666,6 +668,7 @@ export type Database = {
         }
         Update: {
           completed_at?: string | null
+          countdown_start_at?: string | null
           created_at?: string | null
           current_round?: number | null
           difficulty_level?: string | null

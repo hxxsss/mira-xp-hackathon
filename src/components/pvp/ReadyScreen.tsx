@@ -21,33 +21,11 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
   const [myReady, setMyReady] = useState(isHost ? match.host_ready : match.opponent_ready);
   const [hostName, setHostName] = useState<string>("Jogador 1");
   const [opponentName, setOpponentName] = useState<string>("Jogador 2");
+  const [countdownStartAt, setCountdownStartAt] = useState<Date | null>(null);
 
   
   // Estado de prontidão e início do jogo agora é coordenado via banco de dados
   // O status da partida é usado como "fonte da verdade" para sincronizar o início entre os dois jogadores.
-
-  const startCountdown = () => {
-    let count = 3;
-    setCountdown(count);
-
-    const interval = setInterval(() => {
-      count--;
-      if (count === 0) {
-        setCountdown(0);
-        clearInterval(interval);
-        setTimeout(() => {
-          startGame();
-        }, 1000);
-      } else {
-        setCountdown(count);
-      }
-    }, 1000);
-  };
-
-  const startGame = async () => {
-    // Navegação é coordenada pelo status da partida (in_progress) via listener no PvP
-    onBothReady();
-  };
 
   const handleReady = async () => {
     setMyReady(true);
@@ -99,24 +77,72 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
 
     const bothReady = !!match.host_ready && !!match.opponent_ready;
 
-    // Apenas o host promove o estado para "in_progress" no banco
-    if (bothReady && match.status === 'waiting' && isHost) {
-      console.log('[ReadyScreen] Both players ready, host setting status=in_progress', match.id);
-      supabase
-        .from('pvp_matches')
-        .update({ 
-          status: 'in_progress',
-          started_at: new Date().toISOString()
-        })
-        .eq('id', match.id)
-        .eq('status', 'waiting')
-        .then(({ error }) => {
-          if (error) {
-            console.error('[ReadyScreen] Error updating match to in_progress', error);
+    // Apenas o host inicia o countdown sincronizado
+    if (bothReady && match.status === 'waiting' && !countdownStartAt) {
+      console.log('[ReadyScreen] Both players ready, starting synchronized countdown', match.id);
+      
+      const initCountdown = async () => {
+        if (!match.countdown_start_at) {
+          // Host salva timestamp do servidor
+          if (isHost) {
+            const { data: updated } = await supabase
+              .from('pvp_matches')
+              .update({ countdown_start_at: new Date().toISOString() })
+              .eq('id', match.id)
+              .is('countdown_start_at', null)
+              .select()
+              .single();
+
+            if (updated?.countdown_start_at) {
+              setCountdownStartAt(new Date(updated.countdown_start_at));
+            }
           }
-        });
+        } else {
+          setCountdownStartAt(new Date(match.countdown_start_at));
+        }
+      };
+
+      initCountdown();
     }
-  }, [match.host_ready, match.opponent_ready, match.status, isHost, match.id]);
+  }, [match.host_ready, match.opponent_ready, match.status, match.countdown_start_at, isHost, match.id, countdownStartAt]);
+
+  // Calcular contagem baseada na timestamp sincronizada
+  useEffect(() => {
+    if (!countdownStartAt) return;
+
+    const updateCountdown = () => {
+      const elapsed = (Date.now() - countdownStartAt.getTime()) / 1000;
+      const remaining = Math.ceil(3 - elapsed);
+
+      if (remaining <= 0) {
+        setCountdown(0);
+        
+        // Após 500ms do GO!, atualizar status e ir para o jogo
+        if (isHost) {
+          setTimeout(() => {
+            supabase
+              .from('pvp_matches')
+              .update({ 
+                status: 'in_progress',
+                started_at: new Date().toISOString()
+              })
+              .eq('id', match.id)
+              .eq('status', 'waiting');
+          }, 500);
+        }
+        
+        setTimeout(() => onBothReady(), 500);
+      } else {
+        setCountdown(remaining);
+      }
+    };
+
+    // Atualizar a cada 100ms para animação suave
+    const interval = setInterval(updateCountdown, 100);
+    updateCountdown(); // Executar imediatamente
+
+    return () => clearInterval(interval);
+  }, [countdownStartAt, isHost, match.id, onBothReady]);
 
   return (
     <div className="min-h-screen pvp-bg-classic relative overflow-hidden flex items-center justify-center">

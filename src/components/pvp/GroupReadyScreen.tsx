@@ -27,6 +27,7 @@ export const GroupReadyScreen = ({ matchId, userId, onAllReady }: GroupReadyScre
   const [myMember, setMyMember] = useState<GroupMember | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [countdownStartAt, setCountdownStartAt] = useState<Date | null>(null);
 
   // Buscar todos os membros de todos os grupos desta partida
   const loadAllMembers = async () => {
@@ -73,7 +74,7 @@ export const GroupReadyScreen = ({ matchId, userId, onAllReady }: GroupReadyScre
   useEffect(() => {
     loadAllMembers();
 
-    // Listener para atualizações de prontidão
+    // Listener para atualizações de prontidão e countdown_start_at
     const channel = supabase
       .channel('group-ready-updates')
       .on(
@@ -87,44 +88,90 @@ export const GroupReadyScreen = ({ matchId, userId, onAllReady }: GroupReadyScre
           loadAllMembers();
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'pvp_matches',
+          filter: `id=eq.${matchId}`,
+        },
+        (payload) => {
+          const updated = payload.new as any;
+          if (updated.countdown_start_at && !countdownStartAt) {
+            setCountdownStartAt(new Date(updated.countdown_start_at));
+          }
+        }
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [matchId, userId]);
+  }, [matchId, userId, countdownStartAt]);
 
-  // Verificar se todos estão prontos
+  // Verificar se todos estão prontos e iniciar countdown sincronizado
   useEffect(() => {
     if (allMembers.length === 0) return;
 
     const allReady = allMembers.every(m => m.is_ready);
 
-    if (allReady && countdown === null) {
-      console.log('[GroupReadyScreen] All members are ready! Starting countdown...');
-      startCountdown();
+    if (allReady && !countdownStartAt) {
+      console.log('[GroupReadyScreen] All members are ready! Starting synchronized countdown...');
+      
+      // Apenas o primeiro a detectar salva a timestamp do servidor
+      const initCountdown = async () => {
+        const { data: match } = await supabase
+          .from('pvp_matches')
+          .select('countdown_start_at')
+          .eq('id', matchId)
+          .single();
+
+        if (!match?.countdown_start_at) {
+          // Salva timestamp do servidor
+          const { data: updated } = await supabase
+            .from('pvp_matches')
+            .update({ countdown_start_at: new Date().toISOString() })
+            .eq('id', matchId)
+            .is('countdown_start_at', null)
+            .select()
+            .single();
+
+          if (updated?.countdown_start_at) {
+            setCountdownStartAt(new Date(updated.countdown_start_at));
+          }
+        } else {
+          setCountdownStartAt(new Date(match.countdown_start_at));
+        }
+      };
+
+      initCountdown();
     }
-  }, [allMembers]);
+  }, [allMembers, countdownStartAt, matchId]);
 
-  const startCountdown = () => {
-    let count = 3;
-    setCountdown(count);
+  // Calcular contagem baseada na timestamp sincronizada
+  useEffect(() => {
+    if (!countdownStartAt) return;
 
-    const interval = setInterval(() => {
-      count--;
-      if (count === 0) {
+    const updateCountdown = () => {
+      const elapsed = (Date.now() - countdownStartAt.getTime()) / 1000;
+      const remaining = Math.ceil(3 - elapsed);
+
+      if (remaining <= 0) {
         setCountdown(0);
-        clearInterval(interval);
-        // Damos um pequeno delay para mostrar o "GO!" e então
-        // deixamos o PvP.tsx mudar o status da partida para in_progress
-        setTimeout(() => {
-          onAllReady();
-        }, 1000);
+        // Após 500ms do GO!, ir para o jogo
+        setTimeout(() => onAllReady(), 500);
       } else {
-        setCountdown(count);
+        setCountdown(remaining);
       }
-    }, 1000);
-  };
+    };
+
+    // Atualizar a cada 100ms para animação suave
+    const interval = setInterval(updateCountdown, 100);
+    updateCountdown(); // Executar imediatamente
+
+    return () => clearInterval(interval);
+  }, [countdownStartAt, onAllReady]);
 
   const handleReady = async () => {
     if (!myMember) return;
