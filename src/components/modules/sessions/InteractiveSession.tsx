@@ -1,5 +1,6 @@
 import { CompleteSentenceSession } from "./CompleteSentenceSession";
 import { CarouselSession } from "./CarouselSession";
+import { SelectionSession } from "./SelectionSession";
 import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
@@ -23,6 +24,17 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
       return (
         <CarouselSession
           slides={session.data.slides}
+          onComplete={onComplete}
+        />
+      );
+    
+    case "selection":
+      return (
+        <SelectionSession
+          mode={session.data.mode}
+          question={session.data.question}
+          options={session.data.options}
+          correctIndex={session.data.correctIndex}
           onComplete={onComplete}
         />
       );

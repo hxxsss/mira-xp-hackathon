@@ -94,7 +94,92 @@ Este documento define todos os tipos de sessões interativas disponíveis para o
 
 ---
 
-## 3. `multiple_choice` - Múltipla Escolha (Futuro)
+## 3. `selection` - Quiz e Seleção
+
+**Objetivo:** Lista vertical de seleção que suporta dois modos: Quiz (com resposta correta) e Pesquisa (coleta de opinião).
+
+### Comportamento
+
+#### Modo Quiz:
+- Exibe pergunta e opções verticais
+- Usuário clica em uma opção
+- Valida instantaneamente (verde ✓ = acerto, vermelho X = erro)
+- Se errar: permite nova tentativa após shake animation
+- Se acertar: chama `onComplete()` e mostra feedback de sucesso
+
+#### Modo Pesquisa (Survey):
+- Exibe pergunta e opções verticais
+- Usuário clica em uma opção
+- Não há certo ou errado
+- Qualquer seleção é válida e chama `onComplete()` imediatamente
+- Mostra checkmark em brand color
+
+### Estrutura de Dados
+
+#### Modo Quiz (Teste de Conhecimento)
+```typescript
+{
+  type: "selection",
+  data: {
+    mode: "quiz",
+    question: "Qual é a primeira regra do dinheiro?",
+    options: [
+      { emoji: "💸", text: "Gastar menos do que ganha" },
+      { emoji: "💰", text: "Ganhar mais dinheiro" },
+      { emoji: "🎰", text: "Investir tudo em risco" }
+    ],
+    correctIndex: 0  // "Gastar menos do que ganha" é a resposta correta
+  }
+}
+```
+
+#### Modo Pesquisa (Coleta de Dados)
+```typescript
+{
+  type: "selection",
+  data: {
+    mode: "survey",
+    question: "Sejamos sinceros: Como foi o pagamento da sua última fatura?",
+    options: [
+      { emoji: "🥷", text: "Ninja: Paguei o valor total." },
+      { emoji: "🐢", text: "Parcelador: Paguei uma parte ou parcelei." },
+      { emoji: "🆘", text: "Deu Ruim: Paguei o mínimo ou atrasei." }
+    ]
+    // Não tem correctIndex no modo survey
+  }
+}
+```
+
+### Exemplo Visual (Modo Pesquisa)
+```
+┌────────────────────────────────────────────┐
+│  Sejamos sinceros: Como foi o pagamento    │
+│  da sua última fatura?                     │
+│                                            │
+│  ┌──────────────────────────────────────┐  │
+│  │ 🥷  Ninja: Paguei o valor total.    ✓│  │ ← Selecionado
+│  └──────────────────────────────────────┘  │
+│                                            │
+│  ┌──────────────────────────────────────┐  │
+│  │ 🐢  Parcelador: Paguei uma parte... │  │
+│  └──────────────────────────────────────┘  │
+│                                            │
+│  ┌──────────────────────────────────────┐  │
+│  │ 🆘  Deu Ruim: Paguei o mínimo...    │  │
+│  └──────────────────────────────────────┘  │
+└────────────────────────────────────────────┘
+```
+
+### Estados Visuais
+
+- **Normal**: Borda cinza clara (`border`), fundo branco (`bg-card`)
+- **Selecionado (Survey)**: Borda brand color (`border-primary`), fundo levemente colorido (`bg-primary/10`), checkmark azul
+- **Sucesso (Quiz - Acertou)**: Borda verde (`border-success`), fundo verde claro (`bg-success/10`), checkmark verde
+- **Erro (Quiz - Errou)**: Borda vermelha (`border-destructive`), fundo vermelho claro (`bg-destructive/10`), X vermelho, shake animation
+
+---
+
+## 4. `multiple_choice` - Múltipla Escolha (Futuro)
 
 **Objetivo:** Pergunta com múltiplas opções e apenas uma correta.
 
@@ -117,7 +202,7 @@ Este documento define todos os tipos de sessões interativas disponíveis para o
 
 ---
 
-## 4. `drag_drop` - Arrastar e Soltar (Futuro)
+## 5. `drag_drop` - Arrastar e Soltar (Futuro)
 
 **Objetivo:** Organizar itens na ordem correta.
 

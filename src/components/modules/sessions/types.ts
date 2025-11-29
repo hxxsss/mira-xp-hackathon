@@ -16,6 +16,17 @@ export interface CarouselData {
   }>;
 }
 
+// Sessão: Quiz ou Pesquisa de Seleção
+export interface SelectionSessionData {
+  mode: "quiz" | "survey";           // Quiz = tem resposta certa | Survey = coleta opinião
+  question: string;                  // "Como foi o pagamento da sua última fatura?"
+  options: Array<{
+    emoji?: string;                  // "🥷" (opcional)
+    text: string;                    // "Ninja: Paguei o valor total"
+  }>;
+  correctIndex?: number;             // Índice da resposta correta (apenas para modo quiz)
+}
+
 // Futuros tipos de sessão (placeholder)
 export interface MultipleChoiceData {
   question: string;
@@ -29,9 +40,9 @@ export interface DragDropData {
 }
 
 // Tipo união de todas as sessões possíveis
-export type SessionType = "complete_sentence" | "carousel" | "multiple_choice" | "drag_drop" | "slider" | "text_input";
+export type SessionType = "complete_sentence" | "carousel" | "selection" | "multiple_choice" | "drag_drop" | "slider" | "text_input";
 
 export interface SessionData {
   type: SessionType;
-  data: CompleteSentenceData | CarouselData | MultipleChoiceData | DragDropData | any;
+  data: CompleteSentenceData | CarouselData | SelectionSessionData | MultipleChoiceData | DragDropData | any;
 }
