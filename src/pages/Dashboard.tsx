@@ -545,11 +545,11 @@ const Dashboard = () => {
               let hoverClasses = 'hover:bg-indigo-50 border-indigo-200';
               
               if (isOrganizacao) {
-                activeClasses = 'bg-emerald-500 border-emerald-500';
-                hoverClasses = 'hover:bg-emerald-50 border-emerald-200';
-              } else if (isAceleracao) {
                 activeClasses = 'bg-amber-500 border-amber-500';
                 hoverClasses = 'hover:bg-amber-50 border-amber-200';
+              } else if (isAceleracao) {
+                activeClasses = 'bg-emerald-500 border-emerald-500';
+                hoverClasses = 'hover:bg-emerald-50 border-emerald-200';
               }
               
               return (
