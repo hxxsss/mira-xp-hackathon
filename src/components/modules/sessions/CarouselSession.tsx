@@ -25,6 +25,7 @@ export const CarouselSession = ({ slides, onComplete }: CarouselSessionProps) =>
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [canAdvance, setCanAdvance] = useState(false);
   const isLastSlide = current === count - 1;
 
   useEffect(() => {
@@ -35,15 +36,25 @@ export const CarouselSession = ({ slides, onComplete }: CarouselSessionProps) =>
 
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
+      setCanAdvance(false); // Reset quando muda de slide
     });
   }, [api]);
 
+  // Tempo mínimo de 3 segundos em cada slide antes de poder avançar
   useEffect(() => {
-    // Notifica quando chegar no último slide
-    if (isLastSlide && count > 0) {
+    const timer = setTimeout(() => {
+      setCanAdvance(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [current]);
+
+  useEffect(() => {
+    // Notifica quando chegar no último slide E tiver passado o tempo mínimo
+    if (isLastSlide && count > 0 && canAdvance) {
       onComplete();
     }
-  }, [isLastSlide, count, onComplete]);
+  }, [isLastSlide, count, canAdvance, onComplete]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-8 space-y-8">
@@ -55,9 +66,9 @@ export const CarouselSession = ({ slides, onComplete }: CarouselSessionProps) =>
           align: "start",
         }}
       >
-        <CarouselContent>
+        <CarouselContent className="-ml-4">
           {slides.map((slide, index) => (
-            <CarouselItem key={index}>
+            <CarouselItem key={index} className="pl-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -105,8 +116,8 @@ export const CarouselSession = ({ slides, onComplete }: CarouselSessionProps) =>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="-left-12" />
-        <CarouselNext className="-right-12" />
+        <CarouselPrevious className="-left-12" disabled={current === 0} />
+        <CarouselNext className="-right-12" disabled={!canAdvance} />
       </Carousel>
 
       {/* Indicadores de Paginação (Dots) */}
@@ -131,13 +142,24 @@ export const CarouselSession = ({ slides, onComplete }: CarouselSessionProps) =>
       </p>
 
       {/* Feedback quando chegar no último slide */}
-      {isLastSlide && count > 0 && (
+      {isLastSlide && count > 0 && canAdvance && (
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           className="flex items-center gap-2 px-6 py-3 bg-success/10 border-2 border-success rounded-xl text-success font-semibold"
         >
           ✓ Pronto para continuar!
+        </motion.div>
+      )}
+      
+      {/* Indicador de tempo mínimo */}
+      {!canAdvance && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xs text-muted-foreground"
+        >
+          Leia com atenção...
         </motion.div>
       )}
     </div>
