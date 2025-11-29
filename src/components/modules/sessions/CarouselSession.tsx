@@ -1,5 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  CarouselApi,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Slide {
   emoji: string;
@@ -13,113 +22,101 @@ interface CarouselSessionProps {
 }
 
 export const CarouselSession = ({ slides, onComplete }: CarouselSessionProps) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isLastSlide = currentSlide === slides.length - 1;
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+  const isLastSlide = current === count - 1;
 
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
+    if (!api) return;
 
-    const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const slideWidth = container.offsetWidth * 0.88; // 88% = largura do card + gap
-      const newSlide = Math.round(scrollLeft / slideWidth);
-      
-      if (newSlide !== currentSlide) {
-        setCurrentSlide(newSlide);
-      }
-    };
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
 
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [currentSlide]);
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   useEffect(() => {
     // Notifica quando chegar no último slide
-    if (isLastSlide) {
+    if (isLastSlide && count > 0) {
       onComplete();
     }
-  }, [isLastSlide, onComplete]);
+  }, [isLastSlide, count, onComplete]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-0 py-8 space-y-8">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-8 space-y-8">
       {/* Carrossel de Slides */}
-      <div className="w-full overflow-hidden">
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-4 px-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-          }}
-        >
+      <Carousel 
+        setApi={setApi} 
+        className="w-full max-w-2xl"
+        opts={{
+          align: "start",
+        }}
+      >
+        <CarouselContent>
           {slides.map((slide, index) => (
-            <motion.div
-              key={index}
-              className="flex-shrink-0 snap-center"
-              style={{ width: 'calc(100vw - 3rem)' }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <div className="bg-card rounded-2xl shadow-lg p-8 h-[400px] flex flex-col items-center justify-center space-y-6">
-                {/* Emoji/Icon */}
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ 
-                    type: "spring", 
-                    stiffness: 260, 
-                    damping: 20,
-                    delay: index * 0.1 + 0.2 
-                  }}
-                  className="text-6xl md:text-7xl"
-                >
-                  {slide.emoji}
-                </motion.div>
+            <CarouselItem key={index}>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="border-2">
+                  <CardContent className="flex flex-col items-center justify-center p-8 min-h-[400px] space-y-6">
+                    {/* Emoji/Icon */}
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: 260, 
+                        damping: 20,
+                        delay: 0.2 
+                      }}
+                      className="text-6xl md:text-7xl"
+                    >
+                      {slide.emoji}
+                    </motion.div>
 
-                {/* Título */}
-                <motion.h3
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 + 0.3 }}
-                  className="text-2xl md:text-3xl font-bold text-center text-foreground"
-                >
-                  {slide.title}
-                </motion.h3>
+                    {/* Título */}
+                    <motion.h3
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-2xl md:text-3xl font-bold text-center text-foreground"
+                    >
+                      {slide.title}
+                    </motion.h3>
 
-                {/* Texto Explicativo */}
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 + 0.4 }}
-                  className="text-base md:text-lg text-center text-muted-foreground leading-relaxed max-w-md"
-                >
-                  {slide.text}
-                </motion.p>
-              </div>
-            </motion.div>
+                    {/* Texto Explicativo */}
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="text-base md:text-lg text-center text-muted-foreground leading-relaxed"
+                    >
+                      {slide.text}
+                    </motion.p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </CarouselItem>
           ))}
-        </div>
-      </div>
+        </CarouselContent>
+        <CarouselPrevious className="-left-12" />
+        <CarouselNext className="-right-12" />
+      </Carousel>
 
       {/* Indicadores de Paginação (Dots) */}
       <div className="flex items-center justify-center gap-2">
         {slides.map((_, index) => (
           <button
             key={index}
-            onClick={() => {
-              const container = scrollContainerRef.current;
-              if (!container) return;
-              const slideWidth = container.offsetWidth * 0.88;
-              container.scrollTo({
-                left: slideWidth * index,
-                behavior: 'smooth',
-              });
-            }}
+            onClick={() => api?.scrollTo(index)}
             className={`rounded-full transition-all duration-300 ${
-              index === currentSlide
+              index === current
                 ? 'w-8 h-3 bg-primary'
                 : 'w-3 h-3 bg-muted hover:bg-muted-foreground/30'
             }`}
@@ -128,27 +125,13 @@ export const CarouselSession = ({ slides, onComplete }: CarouselSessionProps) =>
         ))}
       </div>
 
-      {/* Indicador Visual de "Deslize" - Aparece apenas no primeiro slide */}
-      {currentSlide === 0 && (
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="flex items-center gap-2 text-sm text-muted-foreground"
-        >
-          <span>Deslize para o lado</span>
-          <motion.span
-            animate={{ x: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-          >
-            👉
-          </motion.span>
-        </motion.div>
-      )}
+      {/* Texto indicador */}
+      <p className="text-center text-sm text-muted-foreground">
+        Slide {current + 1} de {count}
+      </p>
 
       {/* Feedback quando chegar no último slide */}
-      {isLastSlide && (
+      {isLastSlide && count > 0 && (
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
