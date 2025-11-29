@@ -81,6 +81,8 @@ const ModulePage = () => {
         return;
       }
 
+      console.log('🔄 [ModulePage] Carregando módulo:', moduleId);
+
       const { data: moduleData, error } = await supabase
         .from('learning_modules')
         .select('*')
@@ -96,6 +98,14 @@ const ModulePage = () => {
           ? JSON.parse(moduleData.content) 
           : moduleData.content
       };
+
+      console.log('📦 [ModulePage] Módulo carregado:', {
+        id: parsedModule.id,
+        title: parsedModule.title,
+        contentStructure: parsedModule.content,
+        lessonsCount: parsedModule.content?.lessons?.length,
+        firstLesson: parsedModule.content?.lessons?.[0]
+      });
 
       setModule(parsedModule);
 
