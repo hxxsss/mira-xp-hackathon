@@ -6,5 +6,6 @@ export * from "./CuriosityCardSession";
 export * from "./AudioPlayerSession";
 export * from "./ProgressiveTextSession";
 export * from "./SwipeGameSession";
+export * from "./DragDropSession";
 export * from "./SessionNavigator";
 export * from "./types";

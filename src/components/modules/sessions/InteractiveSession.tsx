@@ -5,6 +5,7 @@ import { CuriosityCardSession } from "./CuriosityCardSession";
 import { AudioPlayerSession } from "./AudioPlayerSession";
 import { ProgressiveTextSession } from "./ProgressiveTextSession";
 import { SwipeGameSession } from "./SwipeGameSession";
+import { DragDropSession } from "./DragDropSession";
 import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
@@ -79,6 +80,16 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
         />
       );
     
+    case "drag_drop":
+      return (
+        <DragDropSession
+          title={session.data.title}
+          zones={session.data.zones}
+          items={session.data.items}
+          onComplete={onComplete}
+        />
+      );
+    
     // Futuros tipos de sessões serão adicionados aqui
     // case "multiple_choice":
     //   return <MultipleChoiceSession {...session.data} onComplete={onComplete} />;
@@ -86,7 +97,7 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
     default:
       return (
         <div className="flex items-center justify-center min-h-[60vh] text-muted-foreground">
-          Tipo de sessão não suportado: {session.type}
+          Tipo de sessão não suportado
         </div>
       );
   }

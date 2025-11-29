@@ -445,7 +445,117 @@ O player usa HTML5 Audio, que suporta:
 
 ---
 
-## 8. `multiple_choice` - Múltipla Escolha (Futuro)
+## 8. `drag_drop` - Arrastar e Soltar (Classificação)
+
+**Objetivo:** Minigame de classificação onde o usuário arrasta itens para zonas corretas (ex: Essencial vs Supérfluo).
+
+### Comportamento
+- Itens disponíveis aparecem no topo em uma área destacada
+- Duas ou mais zonas de destino aparecem abaixo (lado a lado ou empilhadas)
+- Usuário arrasta cada item para a zona que considera correta
+- **Acertou**: Item é absorvido pela zona com animação verde + checkmark
+- **Errou**: Zona pisca em vermelho com ícone X, item volta para o topo
+- Jogo só termina quando TODOS os itens estiverem nas zonas corretas
+- Tela de conclusão celebra o sucesso
+
+### Estrutura de Dados
+```typescript
+{
+  type: "drag_drop",
+  data: {
+    title: "Organize seus Gastos",           // Título opcional
+    zones: [
+      {
+        id: 0,
+        label: "Essencial",
+        color: "green"                       // "green" | "red" | "blue" | "yellow"
+      },
+      {
+        id: 1,
+        label: "Supérfluo",
+        color: "red"
+      }
+    ],
+    items: [
+      {
+        id: "aluguel",
+        label: "Aluguel",
+        correctZone: 0                       // ID da zona correta (0 = Essencial)
+      },
+      {
+        id: "spotify",
+        label: "Spotify Premium",
+        correctZone: 1                       // ID da zona correta (1 = Supérfluo)
+      },
+      {
+        id: "mercado",
+        label: "Mercado",
+        correctZone: 0
+      },
+      {
+        id: "videogame",
+        label: "Jogo de Vídeo Game",
+        correctZone: 1
+      }
+    ]
+  }
+}
+```
+
+### Exemplo Visual
+```
+┌────────────────────────────────────────────┐
+│  Organize seus Gastos                      │
+│                                            │
+│  Arraste os itens para a categoria correta│
+│  ┌──────────────────────────────────────┐  │
+│  │  [Aluguel] [Spotify] [Mercado]       │  │
+│  │  [Jogo] [Farmácia] [Delivery]        │  │
+│  └──────────────────────────────────────┘  │
+│                                            │
+│  ┌─────────────────┐  ┌─────────────────┐  │
+│  │   ESSENCIAL     │  │   SUPÉRFLUO     │  │
+│  │   ┌───────────┐ │  │   ┌───────────┐ │  │
+│  │   │ ✓ Aluguel │ │  │   │ ✓ Spotify │ │  │
+│  │   └───────────┘ │  │   └───────────┘ │  │
+│  └─────────────────┘  └─────────────────┘  │
+└────────────────────────────────────────────┘
+```
+
+### Cores das Zonas
+- **Green** (`bg-success/10 border-success`): Escolhas positivas (essencial, necessidade)
+- **Red** (`bg-destructive/10 border-destructive`): Escolhas a evitar (supérfluo, impulso)
+- **Blue** (`bg-primary/10 border-primary`): Neutro/informativo
+- **Yellow** (`bg-yellow-500/10 border-yellow-500`): Atenção/cuidado
+
+### Estados Visuais
+- **Item Disponível**: Background branco, borda primary, sombra, cursor grab
+- **Item Sendo Arrastado**: Scale 1.1, z-index alto, cursor grabbing
+- **Zona Correta**: Pulsação verde + ícone de check
+- **Zona Errada**: Animação de shake + flash vermelho + ícone X
+- **Item Classificado**: Ícone de check + background neutro dentro da zona
+
+### Tela de Conclusão
+```
+┌────────────────────────────────────────────┐
+│              ✓                             │
+│          Parabéns! 🎉                      │
+│                                            │
+│  Você classificou todos os itens          │
+│  corretamente!                            │
+└────────────────────────────────────────────┘
+```
+
+### Dicas de Uso
+- Use 4-8 itens por sessão (não muitos para não cansar)
+- 2 zonas é ideal; 3 zonas para casos mais complexos
+- Labels claros e objetivos (ex: "Necessidade" vs "Desejo")
+- Misture itens óbvios e duvidosos para engajamento
+- Cores contrastantes ajudam na diferenciação visual
+
+---
+
+## 9. `multiple_choice` - Múltipla Escolha (Futuro)
 
 **Objetivo:** Pergunta com múltiplas opções e apenas uma correta.
 
