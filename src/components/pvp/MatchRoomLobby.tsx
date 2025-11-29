@@ -30,6 +30,7 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby,
   const [currentXp, setCurrentXp] = useState(0);
   const [userGroupId, setUserGroupId] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [allPlayersReady, setAllPlayersReady] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -266,46 +267,6 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby,
         description: "Verifique sua conexão e tente de novo.",
         variant: "destructive",
       });
-    }
-  };
-    // Set the group ID first before changing status
-    if (userGroupId) {
-      onGroupSelected(userGroupId);
-    }
-
-    // Call edge function to generate pairings and start match
-    // This will update the match status to 'in_progress' as well
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-group-pairings', {
-        body: { matchId }
-      });
-      
-      if (error) {
-        console.error('[MatchRoomLobby] Error generating pairings:', error);
-        toast({
-          title: "Erro ao iniciar partida",
-          description: error.message,
-          variant: "destructive"
-        });
-        return;
-      }
-      
-      console.log('[MatchRoomLobby] Pairings generated:', data);
-      toast({
-        title: "Partida iniciada!",
-        description: `${data.pairingsCount} batalhas criadas`
-      });
-    } catch (err) {
-      console.error('[MatchRoomLobby] Error:', err);
-      
-      // Fallback: just update status if edge function fails
-      await supabase
-        .from("pvp_matches")
-        .update({ 
-          status: 'in_progress',
-          started_at: new Date().toISOString()
-        })
-        .eq("id", matchId);
     }
   };
 
@@ -565,6 +526,7 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby,
     );
   };
 
+  return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4 md:p-6 relative overflow-hidden">
       <PvPHeader />
       
