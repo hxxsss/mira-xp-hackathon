@@ -25,7 +25,6 @@ export const GroupReadyScreen = ({ matchId, userId, onAllReady }: GroupReadyScre
   const { toast } = useToast();
   const [allMembers, setAllMembers] = useState<GroupMember[]>([]);
   const [myMember, setMyMember] = useState<GroupMember | null>(null);
-  const [countdown, setCountdown] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [countdownStartAt, setCountdownStartAt] = useState<Date | null>(null);
 
@@ -149,26 +148,22 @@ export const GroupReadyScreen = ({ matchId, userId, onAllReady }: GroupReadyScre
     }
   }, [allMembers, countdownStartAt, matchId]);
 
-  // Calcular contagem baseada na timestamp sincronizada
+  // Sincronizar transição para o jogo após countdown
   useEffect(() => {
     if (!countdownStartAt) return;
 
-    const updateCountdown = () => {
+    const checkAndStart = () => {
       const elapsed = (Date.now() - countdownStartAt.getTime()) / 1000;
-      const remaining = Math.ceil(3 - elapsed);
 
-      if (remaining <= 0) {
-        setCountdown(0);
-        // Após 500ms do GO!, ir para o jogo
-        setTimeout(() => onAllReady(), 500);
-      } else {
-        setCountdown(remaining);
+      // Após 3 segundos, ir para o jogo
+      if (elapsed >= 3) {
+        onAllReady();
       }
     };
 
-    // Atualizar a cada 100ms para animação suave
-    const interval = setInterval(updateCountdown, 100);
-    updateCountdown(); // Executar imediatamente
+    // Verificar a cada 100ms
+    const interval = setInterval(checkAndStart, 100);
+    checkAndStart(); // Executar imediatamente
 
     return () => clearInterval(interval);
   }, [countdownStartAt, onAllReady]);
@@ -234,125 +229,8 @@ export const GroupReadyScreen = ({ matchId, userId, onAllReady }: GroupReadyScre
         ))}
       </div>
 
-      {/* Countdown Épico */}
-      <AnimatePresence>
-        {countdown !== null && countdown > 0 && (
-          <motion.div 
-            key={countdown}
-            className="fixed inset-0 flex items-center justify-center z-50 bg-black/95"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              initial={{ scale: 3, opacity: 0, rotate: -15 }}
-              animate={{ 
-                scale: [3, 1.2, 1],
-                opacity: [0, 1, 1],
-                rotate: [15, -5, 0]
-              }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ 
-                duration: 0.8,
-                type: "spring",
-                stiffness: 200
-              }}
-              className="relative"
-            >
-              <motion.div
-                className="absolute inset-0 blur-3xl"
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{
-                  duration: 0.8,
-                  repeat: Infinity
-                }}
-                style={{
-                  background: `radial-gradient(circle, ${
-                    countdown === 3 ? '#ff0000' : 
-                    countdown === 2 ? '#ff8800' : 
-                    '#00ff00'
-                  }, transparent)`
-                }}
-              />
-              
-              <motion.div
-                className="text-[40vh] font-black relative z-10"
-                animate={{
-                  textShadow: [
-                    `0 0 50px ${countdown === 3 ? '#ff0000' : countdown === 2 ? '#ff8800' : '#00ff00'},
-                     0 0 100px ${countdown === 3 ? '#ff0000' : countdown === 2 ? '#ff8800' : '#00ff00'},
-                     0 0 150px ${countdown === 3 ? '#ff0000' : countdown === 2 ? '#ff8800' : '#00ff00'}`,
-                  ]
-                }}
-                style={{
-                  color: '#ffffff',
-                  WebkitTextStroke: '4px rgba(0,0,0,0.8)',
-                }}
-              >
-                {countdown}
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {/* GO! */}
-        {countdown === 0 && (
-          <motion.div 
-            className="fixed inset-0 flex items-center justify-center z-50 bg-black/95"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              initial={{ scale: 5, opacity: 0 }}
-              animate={{ 
-                scale: [5, 0.8, 1],
-                opacity: [0, 1, 1]
-              }}
-              transition={{ 
-                duration: 0.6,
-                type: "spring",
-                stiffness: 300,
-                damping: 20
-              }}
-              className="relative"
-            >
-              <motion.div
-                className="absolute inset-0"
-                initial={{ scale: 0, opacity: 1 }}
-                animate={{ scale: 3, opacity: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <div className="w-full h-full rounded-full bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 blur-3xl" />
-              </motion.div>
-
-              <motion.div
-                className="text-[25vh] font-black relative z-10"
-                animate={{
-                  textShadow: [
-                    '0 0 30px #00ff00, 0 0 60px #00ff00, 0 0 90px #00ff00',
-                    '0 0 60px #00ff00, 0 0 120px #00ff00, 0 0 180px #00ff00',
-                    '0 0 30px #00ff00, 0 0 60px #00ff00, 0 0 90px #00ff00'
-                  ]
-                }}
-                transition={{ duration: 0.5, repeat: Infinity }}
-                style={{
-                  color: '#ffffff',
-                  WebkitTextStroke: '6px rgba(0,0,0,0.9)',
-                }}
-              >
-                GO!
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Ready Screen Content */}
-      {countdown === null && (
+      {countdownStartAt === null && (
         <motion.div 
           className="relative z-10 max-w-6xl mx-auto p-4 sm:p-8 w-full"
           initial={{ opacity: 0, y: 20 }}

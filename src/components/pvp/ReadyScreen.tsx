@@ -17,7 +17,6 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
   const isHost = match.host_user_id === userId;
   const [hostReady, setHostReady] = useState(match.host_ready || false);
   const [opponentReady, setOpponentReady] = useState(match.opponent_ready || false);
-  const [countdown, setCountdown] = useState<number | null>(null);
   const [myReady, setMyReady] = useState(isHost ? match.host_ready : match.opponent_ready);
   const [hostName, setHostName] = useState<string>("Jogador 1");
   const [opponentName, setOpponentName] = useState<string>("Jogador 2");
@@ -106,40 +105,33 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
     }
   }, [match.host_ready, match.opponent_ready, match.status, match.countdown_start_at, isHost, match.id, countdownStartAt]);
 
-  // Calcular contagem baseada na timestamp sincronizada
+  // Sincronizar transição para o jogo após countdown
   useEffect(() => {
     if (!countdownStartAt) return;
 
-    const updateCountdown = () => {
+    const checkAndStart = () => {
       const elapsed = (Date.now() - countdownStartAt.getTime()) / 1000;
-      const remaining = Math.ceil(3 - elapsed);
 
-      if (remaining <= 0) {
-        setCountdown(0);
-        
-        // Após 500ms do GO!, atualizar status e ir para o jogo
+      // Após 3 segundos, atualizar status e ir para o jogo
+      if (elapsed >= 3) {
         if (isHost) {
-          setTimeout(() => {
-            supabase
-              .from('pvp_matches')
-              .update({ 
-                status: 'in_progress',
-                started_at: new Date().toISOString()
-              })
-              .eq('id', match.id)
-              .eq('status', 'waiting');
-          }, 500);
+          supabase
+            .from('pvp_matches')
+            .update({ 
+              status: 'in_progress',
+              started_at: new Date().toISOString()
+            })
+            .eq('id', match.id)
+            .eq('status', 'waiting');
         }
         
-        setTimeout(() => onBothReady(), 500);
-      } else {
-        setCountdown(remaining);
+        onBothReady();
       }
     };
 
-    // Atualizar a cada 100ms para animação suave
-    const interval = setInterval(updateCountdown, 100);
-    updateCountdown(); // Executar imediatamente
+    // Verificar a cada 100ms
+    const interval = setInterval(checkAndStart, 100);
+    checkAndStart(); // Executar imediatamente
 
     return () => clearInterval(interval);
   }, [countdownStartAt, isHost, match.id, onBothReady]);
@@ -173,127 +165,8 @@ export const ReadyScreen = ({ match, userId, onBothReady }: ReadyScreenProps) =>
         ))}
       </div>
 
-      {/* Countdown Épico */}
-      <AnimatePresence>
-        {countdown !== null && countdown > 0 && (
-          <motion.div 
-            key={countdown}
-            className="fixed inset-0 flex items-center justify-center z-50 bg-black/95"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              initial={{ scale: 3, opacity: 0, rotate: -15 }}
-              animate={{ 
-                scale: [3, 1.2, 1],
-                opacity: [0, 1, 1],
-                rotate: [15, -5, 0]
-              }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ 
-                duration: 0.8,
-                type: "spring",
-                stiffness: 200
-              }}
-              className="relative"
-            >
-              {/* Glow effect */}
-              <motion.div
-                className="absolute inset-0 blur-3xl"
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{
-                  duration: 0.8,
-                  repeat: Infinity
-                }}
-                style={{
-                  background: `radial-gradient(circle, ${
-                    countdown === 3 ? '#ff0000' : 
-                    countdown === 2 ? '#ff8800' : 
-                    '#00ff00'
-                  }, transparent)`
-                }}
-              />
-              
-              <motion.div
-                className="text-[40vh] font-black relative z-10"
-                animate={{
-                  textShadow: [
-                    `0 0 50px ${countdown === 3 ? '#ff0000' : countdown === 2 ? '#ff8800' : '#00ff00'},
-                     0 0 100px ${countdown === 3 ? '#ff0000' : countdown === 2 ? '#ff8800' : '#00ff00'},
-                     0 0 150px ${countdown === 3 ? '#ff0000' : countdown === 2 ? '#ff8800' : '#00ff00'}`,
-                  ]
-                }}
-                style={{
-                  color: '#ffffff',
-                  WebkitTextStroke: '4px rgba(0,0,0,0.8)',
-                }}
-              >
-                {countdown}
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {/* GO! */}
-        {countdown === 0 && (
-          <motion.div 
-            className="fixed inset-0 flex items-center justify-center z-50 bg-black/95"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              initial={{ scale: 5, opacity: 0 }}
-              animate={{ 
-                scale: [5, 0.8, 1],
-                opacity: [0, 1, 1]
-              }}
-              transition={{ 
-                duration: 0.6,
-                type: "spring",
-                stiffness: 300,
-                damping: 20
-              }}
-              className="relative"
-            >
-              {/* Explosion effect */}
-              <motion.div
-                className="absolute inset-0"
-                initial={{ scale: 0, opacity: 1 }}
-                animate={{ scale: 3, opacity: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <div className="w-full h-full rounded-full bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 blur-3xl" />
-              </motion.div>
-
-              <motion.div
-                className="text-[25vh] font-black relative z-10"
-                animate={{
-                  textShadow: [
-                    '0 0 30px #00ff00, 0 0 60px #00ff00, 0 0 90px #00ff00',
-                    '0 0 60px #00ff00, 0 0 120px #00ff00, 0 0 180px #00ff00',
-                    '0 0 30px #00ff00, 0 0 60px #00ff00, 0 0 90px #00ff00'
-                  ]
-                }}
-                transition={{ duration: 0.5, repeat: Infinity }}
-                style={{
-                  color: '#ffffff',
-                  WebkitTextStroke: '6px rgba(0,0,0,0.9)',
-                }}
-              >
-                GO!
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Ready Screen Content */}
-      {countdown === null && (
+      {countdownStartAt === null && (
         <motion.div 
           className="relative z-10 max-w-4xl mx-auto p-4 sm:p-8 w-full"
           initial={{ opacity: 0, y: 20 }}
