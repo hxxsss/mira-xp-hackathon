@@ -125,7 +125,7 @@ export const MatchConfirmCard = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Target className="w-5 h-5 text-cyan-400" />
-                    <span className="font-medium text-white text-lg">Nível</span>
+                    <span className="font-medium text-lg text-black">Nível</span>
                   </div>
                   <span className="font-semibold capitalize text-cyan-300">{match.difficulty_level}</span>
                 </div>
