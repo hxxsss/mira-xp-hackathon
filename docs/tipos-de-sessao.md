@@ -247,7 +247,68 @@ Este documento define todos os tipos de sessões interativas disponíveis para o
 
 ---
 
-## 5. `multiple_choice` - Múltipla Escolha (Futuro)
+## 5. `audio_player` - Player de Áudio
+
+**Objetivo:** Reproduzir conteúdo educativo em formato de áudio (mini-podcast) com transcrição disponível.
+
+### Comportamento
+- Player de áudio HTML5 com controles customizados
+- Botão Play/Pause grande e proeminente
+- Barra de progresso interativa (slider)
+- Timestamps mostrando tempo atual e duração total
+- Visualização animada (waveform) que se move com o áudio
+- Botão "Ver Transcrição" que expande/colapsa o texto
+- Auto-complete quando o áudio terminar
+
+### Estrutura de Dados
+```typescript
+{
+  type: "audio_player",
+  data: {
+    title: "Poder de Compra vs. Capacidade",
+    subtitle: "Com Mira • Áudio-Aula",     // Opcional
+    audioUrl: "https://example.com/audio.mp3",  // URL do arquivo de áudio
+    transcript: "Sabe aquela sensação poderosa de passar o cartão? Isso é o poder de compra. Mas o problema é que poder de compra não é igual a capacidade financeira..."
+  }
+}
+```
+
+### Exemplo Visual
+```
+┌────────────────────────────────────────────┐
+│  Poder de Compra vs. Capacidade           │
+│  Com Mira • Áudio-Aula                     │
+│                                            │
+│  |||│|││||│││|││││|│││││││││|│││|│││││    │ ← Waveform animado
+│                                            │
+│  ▶  ━━━━━━━━━━━━━●━━━━━━━━━━━━           │
+│     0:15                    1:45           │
+│                                            │
+│  [📄 Ver Transcrição]                      │
+└────────────────────────────────────────────┘
+```
+
+### Controles
+- **Play/Pause**: Botão circular grande com brand color
+- **Barra de Progresso**: Slider interativo que permite pular para qualquer parte do áudio
+- **Timestamps**: Formato MM:SS para tempo atual e total
+- **Transcrição**: Collapsible/Accordion que expande suavemente abaixo do player
+
+### Estados Visuais
+- **Pausado**: Ícone de Play, waveform estático em cinza
+- **Tocando**: Ícone de Pause, waveform animado em brand color
+- **Completado**: Checkmark verde com mensagem "Áudio completado!"
+
+### Formatos Suportados
+O player usa HTML5 Audio, que suporta:
+- MP3 (recomendado)
+- WAV
+- OGG
+- AAC/M4A
+
+---
+
+## 6. `multiple_choice` - Múltipla Escolha (Futuro)
 
 **Objetivo:** Pergunta com múltiplas opções e apenas uma correta.
 
@@ -270,7 +331,7 @@ Este documento define todos os tipos de sessões interativas disponíveis para o
 
 ---
 
-## 6. `drag_drop` - Arrastar e Soltar (Futuro)
+## 7. `drag_drop` - Arrastar e Soltar (Futuro)
 
 **Objetivo:** Organizar itens na ordem correta.
 

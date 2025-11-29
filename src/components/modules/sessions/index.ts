@@ -3,5 +3,6 @@ export * from "./CompleteSentenceSession";
 export * from "./CarouselSession";
 export * from "./SelectionSession";
 export * from "./CuriosityCardSession";
+export * from "./AudioPlayerSession";
 export * from "./SessionNavigator";
 export * from "./types";

@@ -2,6 +2,7 @@ import { CompleteSentenceSession } from "./CompleteSentenceSession";
 import { CarouselSession } from "./CarouselSession";
 import { SelectionSession } from "./SelectionSession";
 import { CuriosityCardSession } from "./CuriosityCardSession";
+import { AudioPlayerSession } from "./AudioPlayerSession";
 import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
@@ -44,6 +45,17 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
       return (
         <CuriosityCardSession
           cards={session.data.cards}
+          onComplete={onComplete}
+        />
+      );
+    
+    case "audio_player":
+      return (
+        <AudioPlayerSession
+          title={session.data.title}
+          subtitle={session.data.subtitle}
+          audioUrl={session.data.audioUrl}
+          transcript={session.data.transcript}
           onComplete={onComplete}
         />
       );
