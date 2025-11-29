@@ -26,6 +26,7 @@ export const AudioPlayerSession = ({
   const [duration, setDuration] = useState(0);
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const [hasListened, setHasListened] = useState(false);
+  const [hasCompletedOnce, setHasCompletedOnce] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -36,6 +37,7 @@ export const AudioPlayerSession = ({
     const handleEnded = () => {
       setIsPlaying(false);
       setHasListened(true);
+      setHasCompletedOnce(true);
       onComplete();
     };
 
@@ -63,6 +65,8 @@ export const AudioPlayerSession = ({
   };
 
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!hasCompletedOnce) return; // Bloqueia interação até completar
+    
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -152,19 +156,23 @@ export const AudioPlayerSession = ({
                     max={duration || 0}
                     value={currentTime}
                     onChange={handleProgressChange}
-                    className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer
-                      [&::-webkit-slider-thumb]:appearance-none
-                      [&::-webkit-slider-thumb]:w-4
-                      [&::-webkit-slider-thumb]:h-4
-                      [&::-webkit-slider-thumb]:rounded-full
-                      [&::-webkit-slider-thumb]:bg-primary
-                      [&::-webkit-slider-thumb]:cursor-pointer
-                      [&::-moz-range-thumb]:w-4
-                      [&::-moz-range-thumb]:h-4
-                      [&::-moz-range-thumb]:rounded-full
-                      [&::-moz-range-thumb]:bg-primary
-                      [&::-moz-range-thumb]:border-0
-                      [&::-moz-range-thumb]:cursor-pointer"
+                    disabled={!hasCompletedOnce}
+                    className={cn(
+                      "w-full h-2 bg-muted rounded-full appearance-none transition-opacity",
+                      hasCompletedOnce ? "cursor-pointer" : "cursor-not-allowed opacity-50",
+                      "[&::-webkit-slider-thumb]:appearance-none",
+                      "[&::-webkit-slider-thumb]:w-4",
+                      "[&::-webkit-slider-thumb]:h-4",
+                      "[&::-webkit-slider-thumb]:rounded-full",
+                      "[&::-webkit-slider-thumb]:bg-primary",
+                      hasCompletedOnce ? "[&::-webkit-slider-thumb]:cursor-pointer" : "[&::-webkit-slider-thumb]:cursor-not-allowed",
+                      "[&::-moz-range-thumb]:w-4",
+                      "[&::-moz-range-thumb]:h-4",
+                      "[&::-moz-range-thumb]:rounded-full",
+                      "[&::-moz-range-thumb]:bg-primary",
+                      "[&::-moz-range-thumb]:border-0",
+                      hasCompletedOnce ? "[&::-moz-range-thumb]:cursor-pointer" : "[&::-moz-range-thumb]:cursor-not-allowed"
+                    )}
                     style={{
                       background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${progress}%, hsl(var(--muted)) ${progress}%, hsl(var(--muted)) 100%)`
                     }}
