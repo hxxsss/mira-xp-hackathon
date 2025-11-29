@@ -179,7 +179,63 @@ Este documento define todos os tipos de sessões interativas disponíveis para o
 
 ---
 
-## 4. `multiple_choice` - Múltipla Escolha (Futuro)
+## 4. `curiosity_card` - Card de Curiosidade
+
+**Objetivo:** Exibir fatos interessantes em um formato visual de destaque, quebrando o ritmo da navegação com um "Post-it" ou "Card de Insight".
+
+### Comportamento
+- Exibe um card visualmente destacado com cor de fundo suave
+- Animação de entrada suave (fade + slide + scale)
+- Ícone decorativo grande no canto superior
+- Título opcional em uppercase para categorizar
+- Barra de progresso na parte inferior indica tempo de leitura
+- Auto-complete após 3 segundos (tempo para ler o conteúdo)
+
+### Estrutura de Dados
+```typescript
+{
+  type: "curiosity_card",
+  data: {
+    icon: "🧠",                      // Emoji que representa o tema
+    title: "CURIOSIDADE",            // Título opcional em uppercase
+    text: "O cérebro humano processa a dor de perder dinheiro na mesma região que processa a dor física (como um soco!). Por isso evitamos olhar a fatura do cartão.",
+    bgColor: "purple"                // "yellow" | "blue" | "purple" | "green"
+  }
+}
+```
+
+### Exemplo Visual
+```
+┌────────────────────────────────────────────┐
+│  🧠  ← Ícone flutuante                     │
+│                                        💡  │
+│  CURIOSIDADE                               │
+│                                            │
+│  O cérebro humano processa a dor de       │
+│  perder dinheiro na mesma região que      │
+│  processa a dor física (como um soco!).   │
+│  Por isso evitamos olhar a fatura do      │
+│  cartão.                                   │
+│                                            │
+│  ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░ (barra de progresso)  │
+└────────────────────────────────────────────┘
+```
+
+### Variações de Cor
+- **Yellow** (`bg-yellow-50`): Atenção, alerta suave
+- **Blue** (`bg-blue-50`): Informação, conhecimento
+- **Purple** (`bg-purple-50`): Insight, descoberta (brand color)
+- **Green** (`bg-green-50`): Dica positiva, ação recomendada
+
+### Estados Visuais
+- Animação de entrada com spring physics
+- Ícone com rotação e scale animado
+- Barra de progresso animada (0-100% em 3s)
+- Hover sutil aumenta a sombra do card
+
+---
+
+## 5. `multiple_choice` - Múltipla Escolha (Futuro)
 
 **Objetivo:** Pergunta com múltiplas opções e apenas uma correta.
 
@@ -202,7 +258,7 @@ Este documento define todos os tipos de sessões interativas disponíveis para o
 
 ---
 
-## 5. `drag_drop` - Arrastar e Soltar (Futuro)
+## 6. `drag_drop` - Arrastar e Soltar (Futuro)
 
 **Objetivo:** Organizar itens na ordem correta.
 

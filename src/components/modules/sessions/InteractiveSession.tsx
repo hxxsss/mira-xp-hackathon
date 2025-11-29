@@ -1,6 +1,7 @@
 import { CompleteSentenceSession } from "./CompleteSentenceSession";
 import { CarouselSession } from "./CarouselSession";
 import { SelectionSession } from "./SelectionSession";
+import { CuriosityCardSession } from "./CuriosityCardSession";
 import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
@@ -35,6 +36,17 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
           question={session.data.question}
           options={session.data.options}
           correctIndex={session.data.correctIndex}
+          onComplete={onComplete}
+        />
+      );
+    
+    case "curiosity_card":
+      return (
+        <CuriosityCardSession
+          icon={session.data.icon}
+          title={session.data.title}
+          text={session.data.text}
+          bgColor={session.data.bgColor}
           onComplete={onComplete}
         />
       );
