@@ -27,7 +27,6 @@ export const MatchConfirmCard = ({
     loadHostName();
   }, [match.host_user_id]);
   const isGroupMode = match.match_mode === 'group';
-
   return <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <motion.div initial={{
       opacity: 0,
@@ -57,19 +56,13 @@ export const MatchConfirmCard = ({
           delay: 0.1
         }} className="text-center mb-6">
             <div className="flex items-center justify-center gap-2 mb-2">
-              {isGroupMode ? (
-                <Trophy className="w-8 h-8 text-purple-400" />
-              ) : (
-                <Target className="w-8 h-8 text-cyan-400" />
-              )}
+              {isGroupMode ? <Trophy className="w-8 h-8 text-purple-400" /> : <Target className="w-8 h-8 text-cyan-400" />}
               <h2 className="text-2xl font-bold text-white drop-shadow-lg">
                 {isGroupMode ? 'Sala de Batalha Épica' : 'Duelo Clássico'}
               </h2>
             </div>
             <p className="text-white/70 text-sm font-medium">
-              {isGroupMode 
-                ? 'Entre na sala e escolha seu grupo!' 
-                : 'Confirme os detalhes antes de entrar'}
+              {isGroupMode ? 'Entre na sala e escolha seu grupo!' : 'Confirme os detalhes antes de entrar'}
             </p>
           </motion.div>
 
@@ -84,21 +77,18 @@ export const MatchConfirmCard = ({
           delay: 0.2
         }} className="space-y-4 mb-6">
             {/* Mode indicator for group */}
-            {isGroupMode && (
-              <div className="glass-card p-4 rounded-xl bg-purple-500/20 backdrop-blur-xl border border-purple-400/30">
+            {isGroupMode && <div className="glass-card p-4 rounded-xl bg-purple-500/20 backdrop-blur-xl border border-purple-400/30">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-purple-400" />
-                    <span className="font-medium text-white text-lg">Modo</span>
+                    <span className="font-medium text-lg text-black">Modo</span>
                   </div>
                   <span className="font-semibold text-purple-300 text-lg">Batalha de Grupos</span>
                 </div>
-              </div>
-            )}
+              </div>}
 
             {/* Host - only for 1v1 */}
-            {!isGroupMode && (
-              <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
+            {!isGroupMode && <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Crown className="w-5 h-5 text-yellow-400" />
@@ -106,28 +96,25 @@ export const MatchConfirmCard = ({
                   </div>
                   <span className="font-semibold text-white/80 text-lg">{hostName}</span>
                 </div>
-              </div>
-            )}
+              </div>}
 
             {/* Max Groups - only for group mode */}
-            {isGroupMode && match.max_groups && (
-              <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
+            {isGroupMode && match.max_groups && <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-green-400" />
-                    <span className="font-medium text-white text-lg">Máx. Grupos</span>
+                    <span className="font-medium text-lg text-black">Máx. Grupos</span>
                   </div>
                   <span className="font-semibold text-green-300 text-lg">{match.max_groups} grupos</span>
                 </div>
-              </div>
-            )}
+              </div>}
 
             {/* Bet */}
             <div className="glass-card p-4 rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Coins className="w-5 h-5 text-yellow-400" />
-                  <span className="font-medium text-white text-lg">Aposta</span>
+                  <span className="font-medium text-lg text-black">Aposta</span>
                 </div>
                 <span className="text-yellow-400 font-bold text-lg">{match.xp_bet} XP</span>
               </div>
@@ -146,18 +133,19 @@ export const MatchConfirmCard = ({
           </motion.div>
 
           {/* Info for group mode */}
-          {isGroupMode && (
-            <motion.div
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.25 }}
-              className="mb-4 p-3 rounded-lg bg-purple-500/20 border border-purple-400/30"
-            >
+          {isGroupMode && <motion.div initial={{
+          y: 10,
+          opacity: 0
+        }} animate={{
+          y: 0,
+          opacity: 1
+        }} transition={{
+          delay: 0.25
+        }} className="mb-4 p-3 rounded-lg bg-purple-500/20 border border-purple-400/30">
               <p className="text-purple-200 text-sm text-center font-medium">
                 💡 O XP será cobrado apenas quando você criar ou entrar em um grupo
               </p>
-            </motion.div>
-          )}
+            </motion.div>}
 
           {/* Action Buttons */}
           <motion.div initial={{
