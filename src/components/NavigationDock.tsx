@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Trophy, Wallet, FileText } from "lucide-react";
+import { Trophy, Wallet } from "lucide-react";
 import { avatars } from "@/components/ui/avatar-picker";
 import { motion } from "framer-motion";
 
@@ -39,11 +39,6 @@ export function NavigationDock({ avatarId = 1 }: NavigationDockProps) {
       title: "Finanças",
       icon: <Wallet className="w-6 h-6" />,
       href: "/financas",
-    },
-    {
-      title: "Docs",
-      icon: <FileText className="w-6 h-6" />,
-      href: "/documentation",
     },
   ];
 
