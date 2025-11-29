@@ -27,9 +27,45 @@ Usuário completa uma lacuna clicando na opção correta.
 - Opção correta: verde + preenche a lacuna + feedback de sucesso
 - Botão "Continuar" só aparece após acerto
 
-### 2. Multiple Choice (Em desenvolvimento)
-### 3. Slider Input (Em desenvolvimento)
-### 4. Text Input (Em desenvolvimento)
+### 2. Carousel (Carrossel Explicativo)
+
+Conjunto de cards horizontais deslizáveis para explicar conceitos em etapas (estilo Instagram Stories).
+
+**Estrutura de Dados:**
+```json
+{
+  "type": "carousel",
+  "data": {
+    "slides": [
+      {
+        "emoji": "😢",
+        "title": "O Gatilho Emocional",
+        "text": "Tudo começa com uma sensação ruim: tédio, tristeza ou cansaço após um dia longo."
+      },
+      {
+        "emoji": "🛒",
+        "title": "A Ação Impulsiva",
+        "text": "Seu cérebro busca alívio rápido. Você abre o app de delivery ou loja online sem pensar."
+      },
+      {
+        "emoji": "😌",
+        "title": "A Recompensa Falsa",
+        "text": "O prazer da compra dura pouco. Logo depois, vem a culpa da fatura. É um ciclo vicioso."
+      }
+    ]
+  }
+}
+```
+
+**Comportamento:**
+- Scroll horizontal com snap (trava no card mais próximo)
+- Indicadores de paginação (dots) abaixo do carrossel
+- Botão "Continuar" só habilita quando chegar no último slide
+- Largura dos cards: 85-90% da tela para mostrar pontinha do próximo
+
+### 3. Multiple Choice (Em desenvolvimento)
+### 4. Slider Input (Em desenvolvimento)
+### 5. Text Input (Em desenvolvimento)
 
 ## Como Usar
 
