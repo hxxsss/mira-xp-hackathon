@@ -196,13 +196,25 @@ Este documento define todos os tipos de sessões interativas disponíveis para o
 {
   type: "curiosity_card",
   data: {
-    icon: "🧠",                      // Emoji que representa o tema
-    title: "CURIOSIDADE",            // Título opcional em uppercase
-    text: "O cérebro humano processa a dor de perder dinheiro na mesma região que processa a dor física (como um soco!). Por isso evitamos olhar a fatura do cartão.",
-    bgColor: "purple"                // "yellow" | "blue" | "purple" | "green"
+    cards: [
+      {
+        icon: "🧠",                    // Emoji que representa o tema
+        title: "CURIOSIDADE",          // Título opcional em uppercase
+        text: "O cérebro humano processa a dor de perder dinheiro na mesma região que processa a dor física (como um soco!). Por isso evitamos olhar a fatura do cartão.",
+        bgColor: "purple"              // "yellow" | "blue" | "purple" | "green"
+      },
+      {
+        icon: "💡",
+        title: "VOCÊ SABIA?",
+        text: "Estudos mostram que apenas visualizar seus gastos em categorias pode reduzir compras impulsivas em até 30%. O primeiro passo é ter consciência!",
+        bgColor: "yellow"
+      }
+    ]
   }
 }
 ```
+
+**Nota:** Você pode colocar 1 ou mais cards no array. Eles serão exibidos empilhados visualmente, aparecendo um após o outro com animação suave.
 
 ### Exemplo Visual
 ```
