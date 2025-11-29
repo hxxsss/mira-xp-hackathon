@@ -6,6 +6,7 @@ import { AudioPlayerSession } from "./AudioPlayerSession";
 import { ProgressiveTextSession } from "./ProgressiveTextSession";
 import { SwipeGameSession } from "./SwipeGameSession";
 import { DragDropSession } from "./DragDropSession";
+import { DualSliderSession } from "./DualSliderSession";
 import { SessionData } from "./types";
 
 interface InteractiveSessionProps {
@@ -90,9 +91,13 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
         />
       );
     
-    // Futuros tipos de sessões serão adicionados aqui
-    // case "multiple_choice":
-    //   return <MultipleChoiceSession {...session.data} onComplete={onComplete} />;
+    case "dual_slider":
+      return (
+        <DualSliderSession
+          sliders={session.data.sliders}
+          onComplete={onComplete}
+        />
+      );
     
     default:
       return (

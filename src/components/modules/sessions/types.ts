@@ -79,6 +79,23 @@ export interface DragDropData {
   }>;
 }
 
+// Sessão: Dual Slider (Coleta de Dados Quantitativos)
+export interface DualSliderData {
+  sliders: [SliderConfig, SliderConfig]; // Exatamente 2 sliders
+}
+
+export interface SliderConfig {
+  question: string;          // "De 0 a 10, qual seu nível de estresse?"
+  min: number;               // 0
+  max: number;               // 10 ou 100
+  step: number;              // 1 ou 5
+  defaultValue: number;      // 5 ou 20
+  minLabel: string;          // "Zen (0)" ou "0%"
+  maxLabel: string;          // "Pânico (10)" ou "100%"
+  unit?: "number" | "percent" | "currency"; // Para formatação do valor
+  prefix?: string;           // "R$" (para currency)
+}
+
 // Tipo união de todas as sessões possíveis
 export type SessionType =
   | "complete_sentence"
@@ -88,7 +105,8 @@ export type SessionType =
   | "audio_player"
   | "progressive_text"
   | "swipe_game"
-  | "drag_drop";
+  | "drag_drop"
+  | "dual_slider";
 
 export type SessionData =
   | { type: "complete_sentence"; data: CompleteSentenceData }
@@ -98,4 +116,5 @@ export type SessionData =
   | { type: "audio_player"; data: AudioPlayerData }
   | { type: "progressive_text"; data: ProgressiveTextData }
   | { type: "swipe_game"; data: SwipeGameData }
-  | { type: "drag_drop"; data: DragDropData };
+  | { type: "drag_drop"; data: DragDropData }
+  | { type: "dual_slider"; data: DualSliderData };
