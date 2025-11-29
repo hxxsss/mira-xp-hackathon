@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Swords, Plus, LogIn, ArrowLeft, Users, Search } from "lucide-react";
+import { Swords, Plus, LogIn, ArrowLeft, Users, Search, Loader2 } from "lucide-react";
 import { CreateMatchDialog } from "@/components/pvp/CreateMatchDialog";
 import { JoinMatchDialog } from "@/components/pvp/JoinMatchDialog";
 import { CreateRoomDialog } from "@/components/pvp/CreateRoomDialog";
@@ -487,10 +487,36 @@ const PvP = () => {
       );
     }
 
-    // Group mode - completed (show results)
+    // Group mode - completed (show results modal)
     if (currentMatch.match_mode === 'group' && currentMatch.status === 'completed') {
-      // Results modal will be shown automatically
-      return null;
+      // Show results modal if we have the data
+      if (showGroupResultsModal && groupResults.length > 0) {
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex items-center justify-center p-4">
+            <GroupResultsModal
+              open={showGroupResultsModal}
+              groups={groupResults}
+              userGroupId={currentGroupId || ''}
+              xpGained={xpGained}
+              onClose={handleCloseResult}
+            />
+          </div>
+        );
+      }
+      
+      // Loading results...
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center"
+          >
+            <Loader2 className="w-16 h-16 text-purple-400 animate-spin mx-auto mb-4" />
+            <p className="text-white text-xl font-semibold">Carregando resultados...</p>
+          </motion.div>
+        </div>
+      );
     }
 
     // 1v1 mode lobby (waiting / starting)

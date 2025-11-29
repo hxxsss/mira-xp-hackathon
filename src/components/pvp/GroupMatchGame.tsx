@@ -46,7 +46,6 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
   const [opponentProfile, setOpponentProfile] = useState<any>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [startTime, setStartTime] = useState(Date.now());
   const [timeRemaining, setTimeRemaining] = useState(30);
   const [myAnswered, setMyAnswered] = useState(false);
   const [opponentAnswered, setOpponentAnswered] = useState(false);
@@ -57,12 +56,16 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
   const [gameFinished, setGameFinished] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hasSubmittedRef = useRef(false);
+  const answerStartTimeRef = useRef<number>(0);
 
   const questions = match.questions_data || [];
   const totalQuestions = questions.length;
   const opponentId = pairing 
     ? (pairing.player1_id === userId ? pairing.player2_id : pairing.player1_id)
     : null;
+
+  // Server timestamp para sincronização
+  const matchStartedAt = match.started_at ? new Date(match.started_at).getTime() : Date.now();
 
   // Load pairing and generate if needed (client-side, sem edge function)
   useEffect(() => {
@@ -223,32 +226,59 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
     }
   };
 
-  // Timer - 30 seconds per question
+  // Timer sincronizado via servidor - atualiza a cada 100ms para precisão
   useEffect(() => {
-    if (!pairing || showCountdown || loading || gameFinished) return;
+    if (!pairing || showCountdown || loading || gameFinished || !match.started_at) return;
     
-    hasSubmittedRef.current = false;
-    setStartTime(Date.now());
-    setTimeRemaining(30);
-    setMyAnswered(false);
-    setOpponentAnswered(false);
-    setSelectedAnswer(null);
-    setShowRoundResult(false);
+    // Calcular pergunta e tempo baseado no timestamp do servidor
+    const updateFromServerTime = () => {
+      const elapsed = Date.now() - matchStartedAt;
+      const calculatedQuestion = Math.floor(elapsed / 30000); // 30 segundos por pergunta
+      const questionElapsed = elapsed % 30000;
+      const calculatedTimeRemaining = Math.max(0, 30 - Math.floor(questionElapsed / 1000));
+      
+      // Atualizar pergunta atual se mudou
+      if (calculatedQuestion !== currentQuestion && calculatedQuestion < totalQuestions) {
+        console.log(`[GroupMatchGame] Server sync: advancing to question ${calculatedQuestion}`);
+        setCurrentQuestion(calculatedQuestion);
+        setMyAnswered(false);
+        setOpponentAnswered(false);
+        setSelectedAnswer(null);
+        setShowRoundResult(false);
+        hasSubmittedRef.current = false;
+        answerStartTimeRef.current = Date.now();
+      }
+      
+      // Atualizar tempo restante
+      if (calculatedTimeRemaining !== timeRemaining) {
+        setTimeRemaining(calculatedTimeRemaining);
+      }
+      
+      // Auto-submit quando tempo acabar
+      if (calculatedTimeRemaining === 0 && !hasSubmittedRef.current && !myAnswered) {
+        handleTimeout();
+      }
+      
+      // Finalizar jogo quando todas as perguntas acabarem
+      if (calculatedQuestion >= totalQuestions && !gameFinished) {
+        console.log('[GroupMatchGame] All questions completed, finishing game...');
+        finishGame();
+      }
+    };
 
-    timerRef.current = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
-          handleTimeout();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    // Inicializar tempo de início da resposta
+    answerStartTimeRef.current = Date.now();
+    
+    // Atualizar imediatamente
+    updateFromServerTime();
+    
+    // Atualizar a cada 100ms para precisão
+    timerRef.current = setInterval(updateFromServerTime, 100);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [currentQuestion, pairing, showCountdown, loading, gameFinished]);
+  }, [pairing, showCountdown, loading, gameFinished, match.started_at, matchStartedAt, currentQuestion]);
 
   // Listen for opponent answers
   useEffect(() => {
@@ -278,14 +308,15 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
     };
   }, [match.id, currentQuestion, opponentId, pairing, loading, gameFinished]);
 
-  // Auto-advance after showing result
+  // Auto-hide result screen after 3 seconds
   useEffect(() => {
     if (showRoundResult && roundResult) {
-      const autoAdvanceTimer = setTimeout(() => {
-        handleNextQuestion();
-      }, 4000);
+      const autoHideTimer = setTimeout(() => {
+        setShowRoundResult(false);
+        setRoundResult(null);
+      }, 3000);
       
-      return () => clearTimeout(autoAdvanceTimer);
+      return () => clearTimeout(autoHideTimer);
     }
   }, [showRoundResult, roundResult]);
 
@@ -407,21 +438,11 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
     if (selectedAnswer === null || myAnswered || hasSubmittedRef.current) return;
     
     hasSubmittedRef.current = true;
-    const timeSeconds = (Date.now() - startTime) / 1000;
+    const timeSeconds = (Date.now() - answerStartTimeRef.current) / 1000;
     await submitAnswer(selectedAnswer, timeSeconds);
   };
 
-  const handleNextQuestion = async () => {
-    setShowRoundResult(false);
-    setRoundResult(null);
-    
-    if (currentQuestion < totalQuestions - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      // Game finished - update pairing scores
-      await finishGame();
-    }
-  };
+  // Removido - avanço de pergunta é automático via timer sincronizado
 
   const finishGame = async () => {
     setGameFinished(true);
@@ -544,19 +565,12 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
                 winner_user_id: null // Group mode doesn't have single winner
               })
               .eq('id', match.id);
+            
+            console.log('[GroupMatchGame] Match marked as completed, results will be shown automatically');
           }
         }
       }
     }
-    
-    toast({
-      title: "Batalha concluída!",
-      description: `Sua pontuação: ${myTotalScore} pts`,
-    });
-
-    setTimeout(() => {
-      onComplete();
-    }, 3000);
   };
 
   const formatTime = (seconds: number) => {
