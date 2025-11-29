@@ -534,31 +534,50 @@ const Dashboard = () => {
       <div className="flex-shrink-0 z-40 mt-2 sm:mt-0">
         <div className="max-w-7xl mx-auto px-2 sm:px-4">
           <div className="flex justify-center gap-1.5 sm:gap-3 md:gap-4 flex-wrap">
-            {tracks.map((track, index) => (
-              <motion.button
-                key={track.id}
-                onClick={() => handleTrackChange(index)}
-                className={`relative px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all border-2 ${
-                  index === currentTrackIndex
-                    ? 'bg-indigo-600 text-white scale-105 sm:scale-110 shadow-xl border-indigo-600'
-                    : track.status === 'locked'
-                    ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 border-gray-200 opacity-60'
-                    : 'bg-white text-gray-700 hover:bg-indigo-50 border-indigo-200 opacity-80'
-                }`}
-                whileHover={{ scale: track.status !== 'locked' ? 1.05 : 1 }}
-                whileTap={{ scale: track.status !== 'locked' ? 0.95 : 1 }}
-              >
-                <span className="mr-1 sm:mr-2 text-sm sm:text-base">{track.icon}</span>
-                <span className="hidden sm:inline">{track.name}</span>
-                <span className="sm:hidden">{track.name.split(' ')[0]}</span>
-                {track.status === 'locked' && (
-                  <Lock className="inline-block ml-1 sm:ml-2 w-3 h-3 sm:w-4 sm:h-4" />
-                )}
-                {track.status === 'completed' && (
-                  <span className="ml-1 sm:ml-2">✓</span>
-                )}
-              </motion.button>
-            ))}
+            {tracks.map((track, index) => {
+              const trackName = track.name.toLowerCase();
+              const isOrganizacao = trackName.includes('organização');
+              const isAceleracao = trackName.includes('aceleração');
+              const isActive = index === currentTrackIndex;
+              
+              // Define cores específicas para cada trilha
+              let activeClasses = 'bg-indigo-600 border-indigo-600';
+              let hoverClasses = 'hover:bg-indigo-50 border-indigo-200';
+              
+              if (isOrganizacao) {
+                activeClasses = 'bg-emerald-600 border-emerald-600';
+                hoverClasses = 'hover:bg-emerald-50 border-emerald-200';
+              } else if (isAceleracao) {
+                activeClasses = 'bg-orange-600 border-orange-600';
+                hoverClasses = 'hover:bg-orange-50 border-orange-200';
+              }
+              
+              return (
+                <motion.button
+                  key={track.id}
+                  onClick={() => handleTrackChange(index)}
+                  className={`relative px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all border-2 ${
+                    isActive
+                      ? `${activeClasses} text-white scale-105 sm:scale-110 shadow-xl`
+                      : track.status === 'locked'
+                      ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 border-gray-200 opacity-60'
+                      : `bg-white text-gray-700 ${hoverClasses} opacity-80`
+                  }`}
+                  whileHover={{ scale: track.status !== 'locked' ? 1.05 : 1 }}
+                  whileTap={{ scale: track.status !== 'locked' ? 0.95 : 1 }}
+                >
+                  <span className="mr-1 sm:mr-2 text-sm sm:text-base">{track.icon}</span>
+                  <span className="hidden sm:inline">{track.name}</span>
+                  <span className="sm:hidden">{track.name.split(' ')[0]}</span>
+                  {track.status === 'locked' && (
+                    <Lock className="inline-block ml-1 sm:ml-2 w-3 h-3 sm:w-4 sm:h-4" />
+                  )}
+                  {track.status === 'completed' && (
+                    <span className="ml-1 sm:ml-2">✓</span>
+                  )}
+                </motion.button>
+              );
+            })}
           </div>
         </div>
       </div>

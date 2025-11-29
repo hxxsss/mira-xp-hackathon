@@ -20,7 +20,7 @@ export function NavigationDock({ avatarId = 1 }: NavigationDockProps) {
       title: "Perfil",
       icon: (
         <motion.div 
-          className="w-8 h-8 flex items-center justify-center rounded-full overflow-hidden"
+          className="w-10 h-10 flex items-center justify-center rounded-full overflow-hidden"
           whileHover={{ scale: 1.15, rotate: 5 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -29,6 +29,7 @@ export function NavigationDock({ avatarId = 1 }: NavigationDockProps) {
         </motion.div>
       ),
       href: "/profile",
+      isProfile: true,
     },
     {
       title: "Ranking",
@@ -46,11 +47,16 @@ export function NavigationDock({ avatarId = 1 }: NavigationDockProps) {
     <div className="flex items-center gap-3">
       {navItems.map((item, idx) => {
         const active = isActive(item.href);
+        const isProfile = 'isProfile' in item && item.isProfile;
         return (
           <button
             key={idx}
             onClick={() => navigate(item.href)}
-            className={`group relative flex items-center justify-center w-12 h-12 rounded-full transition-all ${
+            className={`group relative flex items-center justify-center rounded-full transition-all ${
+              isProfile 
+                ? 'w-16 h-16' 
+                : 'w-12 h-12'
+            } ${
               active 
                 ? 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg ring-2 ring-indigo-300 scale-105' 
                 : 'bg-indigo-100 hover:bg-indigo-200 hover:scale-105'
