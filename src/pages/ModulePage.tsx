@@ -123,11 +123,11 @@ const ModulePage = () => {
   };
 
   const handleNextLesson = () => {
-    if (!module) return;
+    if (!module || !module.content) return;
     
     // Journey module
     if (module.content.type === 'journey') {
-      const totalSteps = module.content.steps.length;
+      const totalSteps = module.content.steps?.length || 0;
       if (currentLessonIndex < totalSteps - 1) {
         setCurrentLessonIndex(currentLessonIndex + 1);
         setSelectedJourneyOption(null);
@@ -153,11 +153,11 @@ const ModulePage = () => {
     if (!module) return;
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user || !module?.content) return;
 
     const totalSteps = module.content.type === 'journey' 
-      ? module.content.steps.length 
-      : module.content.lessons.length;
+      ? module.content.steps?.length || 0
+      : module.content.lessons?.length || 0;
     
     const progressPercent = Math.round(((currentLessonIndex + 1) / totalSteps) * 100);
 
@@ -233,7 +233,7 @@ const ModulePage = () => {
 
   const handleQuizSubmit = async (answers: number[]) => {
     setQuizAnswers(answers);
-    const currentLesson = module?.content.lessons[currentLessonIndex];
+    const currentLesson = module?.content?.lessons?.[currentLessonIndex];
     
     if (currentLesson?.type === 'quiz' && currentLesson.questions) {
       const correctAnswers = currentLesson.questions.filter(
@@ -547,14 +547,28 @@ const ModulePage = () => {
   }
 
   // Check if it's a journey module
+  if (!module.content) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="p-8 max-w-md text-center">
+          <h2 className="text-xl font-bold mb-4">Conteúdo não disponível</h2>
+          <p className="text-gray-600 mb-6">Este módulo não possui conteúdo configurado.</p>
+          <Button onClick={() => navigate('/dashboard')}>
+            Voltar ao Dashboard
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
   const isJourneyModule = module.content.type === 'journey';
   const currentLesson = isJourneyModule 
-    ? module.content.steps[currentLessonIndex]
-    : module.content.lessons[currentLessonIndex];
+    ? module.content.steps?.[currentLessonIndex]
+    : module.content.lessons?.[currentLessonIndex];
   const totalItems = isJourneyModule 
-    ? module.content.steps.length 
-    : module.content.lessons.length;
-  const progressPercent = ((currentLessonIndex + 1) / totalItems) * 100;
+    ? module.content.steps?.length || 0
+    : module.content.lessons?.length || 0;
+  const progressPercent = totalItems > 0 ? ((currentLessonIndex + 1) / totalItems) * 100 : 0;
 
   return (
     <>
