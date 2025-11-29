@@ -30,6 +30,7 @@ export const CompleteSentenceSession = ({
       // Resposta correta
       setIsCorrect(true);
       setShowFeedback(true);
+      onComplete(); // Chama onComplete imediatamente
     } else {
       // Resposta errada
       setIsCorrect(false);
@@ -137,25 +138,6 @@ export const CompleteSentenceSession = ({
             <span className="text-lg font-semibold text-success">
               Perfeito! 🎉
             </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Botão Continuar */}
-      <AnimatePresence>
-        {isCorrect && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="w-full max-w-md"
-          >
-            <Button
-              onClick={onComplete}
-              className="w-full h-14 text-lg font-semibold rounded-2xl bg-primary hover:bg-primary/90 shadow-lg"
-            >
-              Continuar
-            </Button>
           </motion.div>
         )}
       </AnimatePresence>

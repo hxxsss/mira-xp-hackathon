@@ -146,6 +146,17 @@ export const CarouselSession = ({ slides, onComplete }: CarouselSessionProps) =>
           </motion.span>
         </motion.div>
       )}
+
+      {/* Feedback quando chegar no último slide */}
+      {isLastSlide && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="flex items-center gap-2 px-6 py-3 bg-success/10 border-2 border-success rounded-xl text-success font-semibold"
+        >
+          ✓ Pronto para continuar!
+        </motion.div>
+      )}
     </div>
   );
 };

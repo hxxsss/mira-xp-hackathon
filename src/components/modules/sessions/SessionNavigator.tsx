@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { InteractiveSession, SessionData } from './InteractiveSession';
+import { InteractiveSession } from './InteractiveSession';
+import { SessionData } from './types';
 
 interface SessionNavigatorProps {
   sessions: SessionData[];
@@ -74,6 +75,20 @@ export const SessionNavigator = ({ sessions, onAllSessionsComplete }: SessionNav
           />
         </motion.div>
       </AnimatePresence>
+      
+      {/* Indicador de Sessão Completada */}
+      {isCurrentComplete && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-center gap-2 text-success text-sm font-medium"
+        >
+          <div className="w-5 h-5 bg-success rounded-full flex items-center justify-center text-success-foreground text-xs">
+            ✓
+          </div>
+          Sessão completada
+        </motion.div>
+      )}
       
       {/* Navegação */}
       <div className="flex justify-between pt-6">
