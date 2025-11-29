@@ -17,7 +17,6 @@ import NotFound from "./pages/NotFound";
 import Financas from "./pages/Financas";
 import PvP from "./pages/PvP";
 import JourneyStep from "./pages/JourneyStep";
-import Documentation from "./pages/Documentation";
 import AvatarCustomization from "./pages/AvatarCustomization";
 const queryClient = new QueryClient();
 const App = () => <QueryClientProvider client={queryClient}>
@@ -39,7 +38,6 @@ const App = () => <QueryClientProvider client={queryClient}>
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/financas" element={<Financas />} />
           <Route path="/pvp" element={<PvP />} />
-          <Route path="/documentation" element={<Documentation />} />
           <Route path="/avatar-customization" element={<AvatarCustomization />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
