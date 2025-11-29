@@ -19,6 +19,7 @@ import { ReadyScreen } from "@/components/pvp/ReadyScreen";
 import { GroupReadyScreen } from "@/components/pvp/GroupReadyScreen";
 import { MatchResultModal } from "@/components/pvp/MatchResultModal";
 import { PodiumModal } from "@/components/pvp/PodiumModal";
+import { GroupResultsModal } from "@/components/pvp/GroupResultsModal";
 import { ModeSelectionScreen } from "@/components/pvp/ModeSelectionScreen";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
@@ -54,6 +55,7 @@ const PvP = () => {
   const [showUniversalJoinDialog, setShowUniversalJoinDialog] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [showPodiumModal, setShowPodiumModal] = useState(false);
+  const [showGroupResultsModal, setShowGroupResultsModal] = useState(false);
   const [groupResults, setGroupResults] = useState<any[]>([]);
   const [xpGained, setXpGained] = useState(0);
 
@@ -125,9 +127,14 @@ const PvP = () => {
                 });
               }
 
-              // Handle match completion
-              if (newMatch.status === 'completed') {
-                handleMatchCompleted(newMatch);
+              // Handle match completion - IMPORTANT: Show results when status changes to completed
+              if (newMatch.status === 'completed' && currentMatch.status !== 'completed') {
+                console.log('[PvP] Match completed, loading and showing results...');
+                
+                // Delay to allow all database updates to complete
+                setTimeout(() => {
+                  handleMatchCompleted(newMatch);
+                }, 1000);
               }
               
               // Handle opponent disconnect (1v1 only)
@@ -203,10 +210,18 @@ const PvP = () => {
 
   const handleMatchCompleted = async (match: Match) => {
     if (match.match_mode === 'group') {
-      // Load group results for podium
+      // Load group results with members for detailed display
       const { data: groups } = await supabase
         .from("pvp_groups")
-        .select("*")
+        .select(`
+          *,
+          pvp_group_members(
+            id,
+            user_id,
+            score,
+            profiles(name, avatar_id)
+          )
+        `)
         .eq("match_id", match.id)
         .order("total_score", { ascending: false });
 
@@ -214,19 +229,21 @@ const PvP = () => {
         setGroupResults(groups);
         
         // Calculate XP gained
-        const userGroup = groups.find(g => g.leader_user_id === userId || 
-          groups.some(g => g.id === currentGroupId));
+        const userGroup = groups.find(g => 
+          g.pvp_group_members?.some((m: any) => m.user_id === userId)
+        );
         const position = groups.findIndex(g => g.id === userGroup?.id) + 1;
         
-        const totalPot = match.xp_bet * groups.length; // Simplified
+        // Calcular XP baseado na posição
+        const totalPot = match.xp_bet * (groups.reduce((sum, g) => sum + (g.pvp_group_members?.length || 0), 0));
         let xp = 0;
-        if (position === 1) xp = Math.floor(totalPot * 0.6);
-        else if (position === 2) xp = Math.floor(totalPot * 0.25);
-        else if (position === 3) xp = Math.floor(totalPot * 0.15);
-        else xp = -match.xp_bet;
+        if (position === 1) xp = Math.floor(totalPot * 0.4); // 40% para 1º
+        else if (position === 2) xp = Math.floor(totalPot * 0.25); // 25% para 2º
+        else if (position === 3) xp = Math.floor(totalPot * 0.15); // 15% para 3º
+        else xp = -match.xp_bet; // Perde a aposta se não ficou no top 3
         
         setXpGained(xp);
-        setShowPodiumModal(true);
+        setShowGroupResultsModal(true);
       }
     } else {
       setShowResultModal(true);
@@ -385,6 +402,7 @@ const PvP = () => {
   const handleCloseResult = () => {
     setShowResultModal(false);
     setShowPodiumModal(false);
+    setShowGroupResultsModal(false);
     setCurrentMatch(null);
     setCurrentGroupId(null);
     setSelectedMode(null);
@@ -439,11 +457,9 @@ const PvP = () => {
           matchId={currentMatch.id}
           userId={userId}
           onAllReady={() => {
-            // Transition to in_progress
-            supabase
-              .from("pvp_matches")
-              .update({ status: 'in_progress' })
-              .eq("id", currentMatch.id);
+            // A edge function já muda o status para in_progress
+            // Não precisamos fazer nada aqui, o realtime vai detectar a mudança
+            console.log('[PvP] GroupReadyScreen countdown finished, waiting for status change...');
           }}
         />
       );
@@ -459,6 +475,12 @@ const PvP = () => {
           onLeave={handleLeaveMatch}
         />
       );
+    }
+
+    // Group mode - completed (show results)
+    if (currentMatch.match_mode === 'group' && currentMatch.status === 'completed') {
+      // Results modal will be shown automatically
+      return null;
     }
 
     // 1v1 mode lobby (waiting / starting)
@@ -633,13 +655,13 @@ const PvP = () => {
         />
       )}
 
-      {showPodiumModal && currentGroupId && (
-        <PodiumModal
-          open={showPodiumModal}
-          onClose={handleCloseResult}
+      {showGroupResultsModal && currentGroupId && (
+        <GroupResultsModal
+          open={showGroupResultsModal}
           groups={groupResults}
           userGroupId={currentGroupId}
           xpGained={xpGained}
+          onClose={handleCloseResult}
         />
       )}
     </div>

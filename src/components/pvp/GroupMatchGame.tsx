@@ -365,7 +365,7 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
         .update(updateData)
         .eq('id', pairing.id);
       
-      // Update user's group score
+      // Update user's group score and member data
       const { data: member } = await supabase
         .from('pvp_group_members')
         .select('group_id, score')
@@ -395,6 +395,85 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
           .from('pvp_groups')
           .update({ total_score: totalGroupScore })
           .eq('id', member.group_id);
+
+        // Check if ALL pairings are completed
+        const { data: allPairings } = await supabase
+          .from('pvp_group_pairings')
+          .select('status')
+          .eq('match_id', match.id);
+        
+        const allPairingsCompleted = allPairings?.every(p => p.status === 'completed');
+        
+        if (allPairingsCompleted) {
+          console.log('[GroupMatchGame] All pairings completed, finalizing match...');
+          
+          // Get all groups to calculate final positions and distribute XP
+          const { data: finalGroups } = await supabase
+            .from('pvp_groups')
+            .select('id, total_score')
+            .eq('match_id', match.id)
+            .order('total_score', { ascending: false });
+          
+          if (finalGroups && finalGroups.length > 0) {
+            // Winner is the group with highest score
+            const winnerGroupId = finalGroups[0].id;
+            
+            // Distribute XP to all members
+            for (let i = 0; i < finalGroups.length; i++) {
+              const group = finalGroups[i];
+              const position = i + 1;
+              
+              // Get members of this group
+              const { data: groupMembers } = await supabase
+                .from('pvp_group_members')
+                .select('user_id')
+                .eq('group_id', group.id);
+              
+              if (groupMembers) {
+                // Calculate XP for this position
+                const totalPlayers = allPairings?.length || 0;
+                const totalPot = match.xp_bet * totalPlayers * 2; // Each pairing = 2 players
+                let xpPerMember = 0;
+                
+                if (position === 1) xpPerMember = Math.floor((totalPot * 0.4) / groupMembers.length);
+                else if (position === 2) xpPerMember = Math.floor((totalPot * 0.25) / groupMembers.length);
+                else if (position === 3) xpPerMember = Math.floor((totalPot * 0.15) / groupMembers.length);
+                else xpPerMember = -match.xp_bet; // Lost bet
+                
+                // Update XP for each member
+                for (const gm of groupMembers) {
+                  const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('current_xp, total_xp, weekly_xp, monthly_xp')
+                    .eq('id', gm.user_id)
+                    .single();
+                  
+                  if (profile) {
+                    await supabase
+                      .from('profiles')
+                      .update({
+                        current_xp: Math.max(0, profile.current_xp + xpPerMember),
+                        total_xp: profile.total_xp + Math.max(0, xpPerMember),
+                        weekly_xp: profile.weekly_xp + Math.max(0, xpPerMember),
+                        monthly_xp: profile.monthly_xp + Math.max(0, xpPerMember)
+                      })
+                      .eq('id', gm.user_id);
+                  }
+                }
+              }
+            }
+            
+            // Mark match as completed
+            await supabase
+              .from('pvp_matches')
+              .update({ 
+                status: 'completed',
+                completed_at: new Date().toISOString(),
+                winner_user_id: null // Group mode doesn't have single winner
+              })
+              .eq('id', match.id);
+          }
+        }
       }
     }
     
