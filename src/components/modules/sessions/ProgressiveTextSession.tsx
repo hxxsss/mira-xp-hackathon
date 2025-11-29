@@ -15,11 +15,22 @@ export const ProgressiveTextSession = ({
   onComplete,
 }: ProgressiveTextSessionProps) => {
   const [revealedCount, setRevealedCount] = useState(1);
+  const [canContinue, setCanContinue] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastBlockRef = useRef<HTMLDivElement>(null);
 
   const hasMoreBlocks = revealedCount < blocks.length;
   const isComplete = revealedCount === blocks.length;
+
+  // Tempo mínimo de 3 segundos antes de permitir continuar
+  useEffect(() => {
+    setCanContinue(false);
+    const timer = setTimeout(() => {
+      setCanContinue(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [revealedCount]);
 
   useEffect(() => {
     if (isComplete) {
@@ -28,7 +39,7 @@ export const ProgressiveTextSession = ({
   }, [isComplete, onComplete]);
 
   const handleRevealNext = () => {
-    if (hasMoreBlocks) {
+    if (hasMoreBlocks && canContinue) {
       setRevealedCount((prev) => prev + 1);
       
       // Scroll suave para o último bloco após um pequeno delay para a animação iniciar
@@ -93,11 +104,12 @@ export const ProgressiveTextSession = ({
           
           <Button
             onClick={handleRevealNext}
+            disabled={!canContinue}
             variant="outline"
             size="lg"
-            className="text-base font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+            className="text-base font-medium hover:bg-primary hover:text-primary-foreground transition-colors disabled:opacity-50"
           >
-            Toque para continuar
+            {canContinue ? "Toque para continuar" : "Lendo..."}
           </Button>
         </motion.div>
       )}
