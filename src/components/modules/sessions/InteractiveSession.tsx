@@ -1,6 +1,7 @@
 import { CompleteSentenceSession } from "./CompleteSentenceSession";
+import { CarouselSession } from "./CarouselSession";
 
-export type SessionType = "complete_sentence" | "multiple_choice" | "slider" | "text_input";
+export type SessionType = "complete_sentence" | "carousel" | "multiple_choice" | "slider" | "text_input";
 
 export interface SessionData {
   type: SessionType;
@@ -20,6 +21,14 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
           sentence={session.data.sentence}
           options={session.data.options}
           correctIndex={session.data.correctIndex}
+          onComplete={onComplete}
+        />
+      );
+    
+    case "carousel":
+      return (
+        <CarouselSession
+          slides={session.data.slides}
           onComplete={onComplete}
         />
       );
