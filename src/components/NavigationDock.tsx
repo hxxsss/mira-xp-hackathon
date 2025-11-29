@@ -20,7 +20,7 @@ export function NavigationDock({ avatarId = 1 }: NavigationDockProps) {
       title: "Perfil",
       icon: (
         <motion.div 
-          className="w-10 h-10 flex items-center justify-center rounded-full overflow-hidden"
+          className="w-14 h-14 flex items-center justify-center rounded-full overflow-hidden"
           whileHover={{ scale: 1.15, rotate: 5 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
