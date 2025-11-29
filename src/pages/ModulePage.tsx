@@ -668,12 +668,21 @@ const ModulePage = () => {
 
               <Progress value={progressPercent} className="mb-6" />
 
-              <div className="mb-6">
-                <div className="text-sm text-gray-500 mb-2">
-                  Lição {currentLessonIndex + 1} de {totalItems}
+              {!currentLesson ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500">Conteúdo não encontrado.</p>
+                  <Button onClick={() => navigate('/dashboard')} className="mt-4">
+                    Voltar ao Dashboard
+                  </Button>
                 </div>
-                <h2 className="text-2xl font-bold mb-4">{currentLesson.title}</h2>
-              </div>
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <div className="text-sm text-gray-500 mb-2">
+                      Lição {currentLessonIndex + 1} de {totalItems}
+                    </div>
+                    <h2 className="text-2xl font-bold mb-4">{currentLesson.title}</h2>
+                  </div>
 
               {/* Video Type */}
               {currentLesson.type === 'video' && (
@@ -847,6 +856,8 @@ const ModulePage = () => {
                     </Button>
                   )}
                 </div>
+              )}
+                </>
               )}
             </Card>
           )}
