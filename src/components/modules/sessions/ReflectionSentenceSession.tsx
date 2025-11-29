@@ -67,14 +67,14 @@ export const ReflectionSentenceSession = ({
   };
 
   const renderSentenceWithGap = () => {
-    const parts = sentence.split("_");
+    const parts = sentence.split("____");
     
     return (
       <div className="text-2xl md:text-3xl font-bold text-center mb-12 leading-relaxed">
         {parts[0]}
-        <span className="inline-block mx-2 px-6 py-2 border-b-4 border-primary min-w-[200px] text-center">
+        <span className="inline-block mx-2 px-6 py-2 border-b-4 border-blue-400 min-w-[200px] text-center">
           {selectedIndex !== null ? (
-            <span className="text-primary animate-in fade-in duration-300">
+            <span className="text-blue-500 animate-in fade-in duration-300">
               {options[selectedIndex]}
             </span>
           ) : (
@@ -102,7 +102,7 @@ export const ReflectionSentenceSession = ({
                 transition-all duration-300 transform
                 ${
                   selectedIndex === index
-                    ? "bg-primary text-primary-foreground scale-105 shadow-lg"
+                    ? "bg-blue-500 text-white scale-105 shadow-lg"
                     : "bg-card hover:bg-accent hover:scale-105 border-2 border-border"
                 }
                 ${isSubmitting ? "cursor-not-allowed opacity-50" : "hover:shadow-md"}
@@ -115,7 +115,7 @@ export const ReflectionSentenceSession = ({
 
         {selectedIndex !== null && (
           <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <p className="text-xl text-primary font-semibold mb-2">
+            <p className="text-xl text-blue-500 font-semibold mb-2">
               Obrigado por compartilhar! 🎯
             </p>
             <p className="text-muted-foreground">
