@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 interface ReflectionSentenceSessionProps {
   sentence: string;
@@ -21,11 +22,21 @@ export const ReflectionSentenceSession = ({
   const { moduleId } = useParams();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  const handleOptionClick = async (index: number) => {
+  const handleOptionClick = (index: number) => {
     if (isSubmitting) return;
-    
     setSelectedIndex(index);
+    setHasSubmitted(false);
+  };
+
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    if (selectedIndex === null) {
+      toast.error("Selecione uma opção antes de enviar");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -37,7 +48,6 @@ export const ReflectionSentenceSession = ({
         return;
       }
 
-      // Save the response
       const { error } = await supabase
         .from("user_session_responses")
         .insert({
@@ -46,15 +56,16 @@ export const ReflectionSentenceSession = ({
           session_index: sessionIndex,
           session_type: "reflection_sentence",
           response: {
-            selectedOption: options[index],
-            selectedIndex: index,
-            category: category,
+            selectedOption: options[selectedIndex],
+            selectedIndex,
+            category,
           },
         });
 
       if (error) throw error;
 
-      // Show positive feedback
+      setHasSubmitted(true);
+
       setTimeout(() => {
         onComplete();
       }, 1000);
@@ -62,7 +73,6 @@ export const ReflectionSentenceSession = ({
       console.error("Error saving response:", error);
       toast.error("Erro ao salvar sua resposta");
       setIsSubmitting(false);
-      setSelectedIndex(null);
     }
   };
 
@@ -91,7 +101,7 @@ export const ReflectionSentenceSession = ({
       <div className="w-full max-w-3xl">
         {renderSentenceWithGap()}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {options.map((option, index) => (
             <button
               key={index}
@@ -113,7 +123,17 @@ export const ReflectionSentenceSession = ({
           ))}
         </div>
 
-        {selectedIndex !== null && (
+        <div className="flex justify-center mb-4">
+          <Button
+            type="button"
+            disabled={selectedIndex === null || isSubmitting}
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? "Enviando..." : "Confirmar resposta"}
+          </Button>
+        </div>
+
+        {hasSubmitted && (
           <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
             <p className="text-xl text-blue-500 font-semibold mb-2">
               Obrigado por compartilhar! 🎯
