@@ -30,8 +30,6 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby,
   const [currentXp, setCurrentXp] = useState(0);
   const [userGroupId, setUserGroupId] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const [showCountdown, setShowCountdown] = useState(false);
-  const [allPlayersReady, setAllPlayersReady] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -240,11 +238,36 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby,
   };
 
   const handleStartMatch = async () => {
-    // Start countdown
-    setShowCountdown(true);
-  };
+    try {
+      // Atualiza o status da partida para "ready_check" para TODOS os jogadores
+      const { error } = await supabase
+        .from("pvp_matches")
+        .update({ status: "ready_check" })
+        .eq("id", matchId);
 
-  const handleCountdownComplete = async () => {
+      if (error) {
+        console.error("[MatchRoomLobby] Erro ao mudar para ready_check:", error);
+        toast({
+          title: "Erro ao iniciar partida",
+          description: "Tente novamente em instantes",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Todos para a contagem!",
+        description: "Prepare-se, a batalha vai começar.",
+      });
+    } catch (err) {
+      console.error("[MatchRoomLobby] Exceção ao iniciar partida:", err);
+      toast({
+        title: "Erro ao iniciar partida",
+        description: "Verifique sua conexão e tente de novo.",
+        variant: "destructive",
+      });
+    }
+  };
     // Set the group ID first before changing status
     if (userGroupId) {
       onGroupSelected(userGroupId);
@@ -542,11 +565,6 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby,
     );
   };
 
-  if (showCountdown) {
-    return <CountdownAnimation onComplete={handleCountdownComplete} />;
-  }
-
-  return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4 md:p-6 relative overflow-hidden">
       <PvPHeader />
       
