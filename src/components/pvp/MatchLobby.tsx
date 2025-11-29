@@ -154,7 +154,7 @@ export const MatchLobby = ({
               </span>
             </div>
           </div>
-          <div className="glass-card p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
+          <div className="glass-card p-3 sm:p-4 rounded-lg sm:rounded-xl backdrop-blur-xl border border-white/20 bg-blue-700">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" />
