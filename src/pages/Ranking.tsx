@@ -9,22 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-const avatars = [{
-  id: 1,
-  emoji: "🦄"
-}, {
-  id: 2,
-  emoji: "🚀"
-}, {
-  id: 3,
-  emoji: "🎯"
-}, {
-  id: 4,
-  emoji: "⭐"
-}, {
-  id: 5,
-  emoji: "🌈"
-}];
+import { avatars } from "@/components/ui/avatar-picker";
 interface RankingUser {
   id: string;
   name: string;
@@ -85,7 +70,8 @@ export default function Ranking() {
     }
   };
   const getAvatar = (avatarId: number) => {
-    return avatars.find(a => a.id === avatarId)?.emoji || "🦄";
+    const avatar = avatars.find(a => a.id === avatarId) || avatars[0];
+    return <img src={avatar.img} alt={avatar.alt} className="w-full h-full object-contain" />;
   };
   const getPodiumHeight = (position: number) => {
     if (position === 1) return "h-40";
@@ -202,7 +188,7 @@ export default function Ranking() {
                             </motion.div>
                             
                             {/* Avatar */}
-                            <div className={cn("text-4xl md:text-6xl mb-2 md:mb-3 transition-all", user.id === currentUserId && "ring-2 md:ring-4 ring-yellow-400 rounded-full p-1 md:p-2 bg-yellow-400/20")}>
+                            <div className={cn("w-16 h-16 md:w-24 md:h-24 mb-2 md:mb-3 transition-all rounded-full bg-gradient-to-br from-cyan-100 to-cyan-50 flex items-center justify-center p-2", user.id === currentUserId && "ring-2 md:ring-4 ring-yellow-400 bg-yellow-400/20")}>
                               {getAvatar(user.avatar_id)}
                             </div>
                             
@@ -262,7 +248,9 @@ export default function Ranking() {
                                   <div className={cn("flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl font-bold text-sm md:text-lg", user.id === currentUserId ? "bg-yellow-400/30 text-yellow-300" : "bg-white/10 text-white/70")}>
                                     #{user.position}
                                   </div>
-                                  <div className="text-2xl md:text-4xl">{getAvatar(user.avatar_id)}</div>
+                                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-50 flex items-center justify-center p-1.5 md:p-2">
+                                    {getAvatar(user.avatar_id)}
+                                  </div>
                                   <div className="flex-1 min-w-0">
                                     <p className={cn("font-bold text-sm md:text-base truncate", user.id === currentUserId ? "text-yellow-300" : "text-white")}>
                                       {user.name}
