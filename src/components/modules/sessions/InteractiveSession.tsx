@@ -43,10 +43,7 @@ export const InteractiveSession = ({ session, onComplete }: InteractiveSessionPr
     case "curiosity_card":
       return (
         <CuriosityCardSession
-          icon={session.data.icon}
-          title={session.data.title}
-          text={session.data.text}
-          bgColor={session.data.bgColor}
+          cards={session.data.cards}
           onComplete={onComplete}
         />
       );

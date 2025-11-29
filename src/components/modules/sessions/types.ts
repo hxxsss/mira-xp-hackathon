@@ -29,10 +29,12 @@ export interface SelectionSessionData {
 
 // Sessão: Card de Curiosidade
 export interface CuriosityCardData {
-  icon: string;                      // "🧠" ou "💡"
-  title?: string;                    // "CURIOSIDADE" ou "VOCÊ SABIA?" (opcional)
-  text: string;                      // Texto do fato interessante
-  bgColor?: "yellow" | "blue" | "purple" | "green"; // Cor de fundo suave (default: purple)
+  cards: Array<{
+    icon: string;                    // "🧠" ou "💡"
+    title?: string;                  // "CURIOSIDADE" ou "VOCÊ SABIA?" (opcional)
+    text: string;                    // Texto do fato interessante
+    bgColor?: "yellow" | "blue" | "purple" | "green"; // Cor de fundo suave
+  }>;
 }
 
 // Futuros tipos de sessão (placeholder)
