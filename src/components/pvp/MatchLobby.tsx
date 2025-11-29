@@ -55,7 +55,7 @@ export const MatchLobby = ({
       scale: 1
     }} transition={{
       duration: 0.3
-    }} className="glass-card p-4 sm:p-8 max-w-lg w-full relative z-10 rounded-2xl sm:rounded-3xl backdrop-blur-2xl border border-white/20 bg-[#16a6df]">
+    }} className="glass-card p-4 sm:p-8 max-w-lg w-full relative z-10 rounded-2xl sm:rounded-3xl backdrop-blur-2xl border border-white/20 bg-[#318beb]">
         {/* Título Neon */}
         <motion.div className="text-center mb-4 sm:mb-8" initial={{
         y: -20,
