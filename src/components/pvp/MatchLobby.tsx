@@ -143,11 +143,11 @@ export const MatchLobby = ({
       }} transition={{
         delay: 0.3
       }}>
-          <div className="glass-card p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-xl border border-white/20">
+          <div className="glass-card p-3 sm:p-4 rounded-lg sm:rounded-xl backdrop-blur-xl border border-white/20 bg-blue-700">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
-                <span className="text-white/90 text-xs sm:text-sm font-medium">Aposta</span>
+                <span className="text-xs sm:text-sm font-medium text-[#ededed]/90">Aposta</span>
               </div>
               <span className="font-bold text-base sm:text-lg text-yellow-400">
                 {match.xp_bet} XP
