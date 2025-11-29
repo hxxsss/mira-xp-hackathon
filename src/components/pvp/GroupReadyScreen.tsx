@@ -115,30 +115,9 @@ export const GroupReadyScreen = ({ matchId, userId, onAllReady }: GroupReadyScre
       if (count === 0) {
         setCountdown(0);
         clearInterval(interval);
-        setTimeout(async () => {
-          // Gerar pairings e iniciar partida
-          console.log('[GroupReadyScreen] Countdown finished, generating pairings...');
-          
-          try {
-            const { data, error } = await supabase.functions.invoke('generate-group-pairings', {
-              body: { matchId }
-            });
-            
-            if (error) {
-              console.error('[GroupReadyScreen] Error generating pairings:', error);
-              toast({
-                title: "Erro ao iniciar partida",
-                description: error.message,
-                variant: "destructive"
-              });
-              return;
-            }
-            
-            console.log('[GroupReadyScreen] Pairings generated:', data);
-          } catch (err) {
-            console.error('[GroupReadyScreen] Exception:', err);
-          }
-          
+        // Damos um pequeno delay para mostrar o "GO!" e então
+        // deixamos o PvP.tsx mudar o status da partida para in_progress
+        setTimeout(() => {
           onAllReady();
         }, 1000);
       } else {

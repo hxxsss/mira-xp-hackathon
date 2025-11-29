@@ -64,87 +64,159 @@ export const GroupMatchGame = ({ match, userId, onComplete, onLeave }: GroupMatc
     ? (pairing.player1_id === userId ? pairing.player2_id : pairing.player1_id)
     : null;
 
-  // Load pairing and generate if needed
+  // Load pairing and generate if needed (client-side, sem edge function)
   useEffect(() => {
     loadOrGeneratePairing();
   }, [match.id, userId]);
-
+ 
   const loadOrGeneratePairing = async () => {
     try {
-      // First try to fetch existing pairing
+      // 1) Verificar se já existe pareamento para este jogador
       const { data: existingPairing, error } = await supabase
         .from('pvp_group_pairings')
         .select('*')
         .eq('match_id', match.id)
         .or(`player1_id.eq.${userId},player2_id.eq.${userId}`)
         .maybeSingle();
-
+ 
+      if (error) {
+        console.error('[GroupMatchGame] Error fetching existing pairing:', error);
+      }
+ 
       if (existingPairing) {
         console.log('[GroupMatchGame] Found existing pairing:', existingPairing);
-        setPairing(existingPairing);
-        const oppId = existingPairing.player1_id === userId 
-          ? existingPairing.player2_id 
+        setPairing(existingPairing as Pairing);
+        const oppId = existingPairing.player1_id === userId
+          ? existingPairing.player2_id
           : existingPairing.player1_id;
-        
+ 
         const { data: profile } = await supabase
           .from('profiles')
           .select('name, avatar_id')
           .eq('id', oppId)
           .single();
-        
+ 
         setOpponentProfile(profile);
         setLoading(false);
         setShowCountdown(true);
         return;
       }
-
-      // No pairing found - call edge function to generate
-      console.log('[GroupMatchGame] No pairing found, generating...');
-      const { data, error: fnError } = await supabase.functions.invoke('generate-group-pairings', {
-        body: { matchId: match.id }
-      });
-
-      if (fnError) {
-        console.error('[GroupMatchGame] Error generating pairings:', fnError);
-        toast({
-          title: "Erro ao gerar pareamentos",
-          description: fnError.message,
-          variant: "destructive"
-        });
-        return;
+ 
+      // 2) Não existe pareamento ainda: gerar tudo no cliente
+      console.log('[GroupMatchGame] No pairing found, generating on client...');
+ 
+      const { data: groups, error: groupsError } = await supabase
+        .from('pvp_groups')
+        .select('id, name')
+        .eq('match_id', match.id);
+ 
+      if (groupsError) throw groupsError;
+      if (!groups || groups.length === 0) {
+        throw new Error('Nenhum grupo encontrado para esta partida.');
       }
-
-      console.log('[GroupMatchGame] Pairings generated:', data);
-      
-      // Fetch the user's pairing again
+ 
+      const groupIds = groups.map(g => g.id);
+ 
+      const { data: members, error: membersError } = await supabase
+        .from('pvp_group_members')
+        .select('id, user_id, group_id, profiles(name)')
+        .in('group_id', groupIds);
+ 
+      if (membersError) throw membersError;
+      if (!members || members.length === 0) {
+        throw new Error('Nenhum jogador encontrado nos grupos.');
+      }
+ 
+      type PlayerLocal = { id: string; user_id: string; group_id: string; name?: string };
+      const players: PlayerLocal[] = (members as any[]).map(m => ({
+        id: m.id,
+        user_id: m.user_id,
+        group_id: m.group_id,
+        name: m.profiles?.name || 'Jogador',
+      }));
+ 
+      console.log('[GroupMatchGame] Generating pairings for', players.length, 'players');
+ 
+      const pairings: { player1: PlayerLocal; player2: PlayerLocal }[] = [];
+      const playersCopy = [...players];
+      const usedPlayers = new Set<string>();
+ 
+      // Primeira passada: tentar sempre grupos diferentes
+      while (playersCopy.length >= 2) {
+        const player1 = playersCopy.shift()!;
+        usedPlayers.add(player1.user_id);
+ 
+        const opponentIndex = playersCopy.findIndex(
+          p => p.group_id !== player1.group_id && !usedPlayers.has(p.user_id)
+        );
+ 
+        if (opponentIndex !== -1) {
+          const player2 = playersCopy.splice(opponentIndex, 1)[0];
+          usedPlayers.add(player2.user_id);
+          pairings.push({ player1, player2 });
+        } else {
+          if (pairings.length > 0) {
+            const randomPairing = pairings[Math.floor(Math.random() * pairings.length)];
+            const duplicateOpponent = Math.random() > 0.5 ? randomPairing.player1 : randomPairing.player2;
+            pairings.push({ player1, player2: duplicateOpponent });
+          } else {
+            playersCopy.push(player1);
+          }
+        }
+      }
+ 
+      if (playersCopy.length === 1 && pairings.length > 0) {
+        const lastPlayer = playersCopy[0];
+        const randomPairing = pairings[Math.floor(Math.random() * pairings.length)];
+        const duplicateOpponent = Math.random() > 0.5 ? randomPairing.player1 : randomPairing.player2;
+        pairings.push({ player1: lastPlayer, player2: duplicateOpponent });
+      }
+ 
+      const pairingInserts = pairings.map(p => ({
+        match_id: match.id,
+        round_number: 1,
+        player1_id: p.player1.user_id,
+        player1_group_id: p.player1.group_id,
+        player2_id: p.player2.user_id,
+        player2_group_id: p.player2.group_id,
+        status: 'pending',
+      }));
+ 
+      const { error: insertError } = await supabase
+        .from('pvp_group_pairings')
+        .insert(pairingInserts);
+ 
+      if (insertError) throw insertError;
+ 
+      // 3) Buscar novamente o pareamento deste jogador
       const { data: newPairing } = await supabase
         .from('pvp_group_pairings')
         .select('*')
         .eq('match_id', match.id)
         .or(`player1_id.eq.${userId},player2_id.eq.${userId}`)
         .maybeSingle();
-
+ 
       if (newPairing) {
-        setPairing(newPairing);
-        const oppId = newPairing.player1_id === userId 
-          ? newPairing.player2_id 
+        setPairing(newPairing as Pairing);
+        const oppId = newPairing.player1_id === userId
+          ? newPairing.player2_id
           : newPairing.player1_id;
-        
+ 
         const { data: profile } = await supabase
           .from('profiles')
           .select('name, avatar_id')
           .eq('id', oppId)
           .single();
-        
+ 
         setOpponentProfile(profile);
         setShowCountdown(true);
       }
-    } catch (err) {
-      console.error('[GroupMatchGame] Error:', err);
+    } catch (err: any) {
+      console.error('[GroupMatchGame] Error preparing group match:', err);
       toast({
-        title: "Erro ao iniciar partida",
-        description: "Tente novamente",
-        variant: "destructive"
+        title: 'Erro ao iniciar partida',
+        description: err.message || 'Tente novamente',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
