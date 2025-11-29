@@ -139,6 +139,8 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
   const startMatch = async () => {
     if (!isLeader) return;
     
+    console.log('[GroupLobby] 🚀 Líder iniciando partida...', { groupId, matchId, membersCount: members.length });
+    
     if (members.length < 1) {
       toast({ 
         title: "Grupo vazio", 
@@ -148,50 +150,106 @@ export const GroupLobby = ({ matchId, groupId, userId, onStartGame }: GroupLobby
       return;
     }
 
-    // Check if we have at least 2 groups
-    const { data: allGroupsData } = await supabase
-      .from("pvp_groups")
-      .select("id")
-      .eq("match_id", matchId);
-    
-    if (!allGroupsData || allGroupsData.length < 2) {
-      toast({ 
-        title: "Aguarde mais grupos", 
-        description: "É necessário pelo menos 2 grupos para iniciar",
-        variant: "destructive" 
+    try {
+      // Check if we have at least 2 groups
+      const { data: allGroupsData, error: groupsError } = await supabase
+        .from("pvp_groups")
+        .select("id")
+        .eq("match_id", matchId);
+      
+      if (groupsError) {
+        console.error('[GroupLobby] ❌ Erro ao verificar grupos:', groupsError);
+        toast({ 
+          title: "Erro ao iniciar", 
+          description: groupsError.message || "Tente novamente",
+          variant: "destructive" 
+        });
+        return;
+      }
+      
+      if (!allGroupsData || allGroupsData.length < 2) {
+        toast({ 
+          title: "Aguarde mais grupos", 
+          description: "É necessário pelo menos 2 grupos para iniciar",
+          variant: "destructive" 
+        });
+        return;
+      }
+
+      // Mark this group as ready
+      const { error: readyError } = await supabase
+        .from("pvp_groups")
+        .update({ ready_to_start: true })
+        .eq("id", groupId);
+      
+      if (readyError) {
+        console.error('[GroupLobby] ❌ Erro ao marcar grupo pronto:', readyError);
+        toast({ 
+          title: "Erro ao marcar grupo pronto", 
+          description: readyError.message || "Tente novamente",
+          variant: "destructive" 
+        });
+        return;
+      }
+
+      // Check if ALL groups are ready now
+      const { data: updatedGroups, error: checkError } = await supabase
+        .from("pvp_groups")
+        .select("ready_to_start")
+        .eq("match_id", matchId);
+      
+      if (checkError) {
+        console.error('[GroupLobby] ❌ Erro ao verificar grupos prontos:', checkError);
+        return;
+      }
+      
+      const allReady = updatedGroups?.every(g => g.ready_to_start) || false;
+      
+      console.log('[GroupLobby] 📊 Status dos grupos:', { 
+        total: updatedGroups?.length, 
+        allReady,
+        groups: updatedGroups 
       });
-      return;
-    }
-
-    // Mark this group as ready
-    await supabase
-      .from("pvp_groups")
-      .update({ ready_to_start: true })
-      .eq("id", groupId);
-
-    // Check if ALL groups are ready now
-    const { data: updatedGroups } = await supabase
-      .from("pvp_groups")
-      .select("ready_to_start")
-      .eq("match_id", matchId);
-    
-    const allReady = updatedGroups?.every(g => g.ready_to_start) || false;
-    
-    if (allReady) {
-      // Start the match
-      await supabase
-        .from("pvp_matches")
-        .update({ status: 'ready_check', started_at: new Date().toISOString() })
-        .eq("id", matchId);
+      
+      if (allReady) {
+        console.log('[GroupLobby] ✅ Todos prontos! Mudando para ready_check...');
         
+        // Start the match
+        const { data, error: startError } = await supabase
+          .from("pvp_matches")
+          .update({ status: 'ready_check', started_at: new Date().toISOString() })
+          .eq("id", matchId)
+          .select()
+          .single();
+        
+        if (startError) {
+          console.error('[GroupLobby] ❌ Erro ao iniciar partida:', startError);
+          toast({
+            title: "Erro ao iniciar partida",
+            description: startError.message || "Tente novamente",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        console.log('[GroupLobby] ✅ Partida iniciada com sucesso:', data);
+          
+        toast({
+          title: "Todos os grupos estão prontos!",
+          description: "Iniciando contagem regressiva..."
+        });
+      } else {
+        toast({
+          title: "Grupo pronto!",
+          description: "Aguardando outros grupos ficarem prontos..."
+        });
+      }
+    } catch (err: any) {
+      console.error('[GroupLobby] ❌ Exceção ao iniciar partida:', err);
       toast({
-        title: "Todos os grupos estão prontos!",
-        description: "Iniciando contagem regressiva..."
-      });
-    } else {
-      toast({
-        title: "Grupo pronto!",
-        description: "Aguardando outros grupos ficarem prontos..."
+        title: "Erro ao iniciar partida",
+        description: err.message || "Verifique sua conexão",
+        variant: "destructive"
       });
     }
   };

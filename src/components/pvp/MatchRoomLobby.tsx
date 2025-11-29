@@ -239,32 +239,49 @@ export const MatchRoomLobby = ({ matchId, userId, onGroupSelected, onLeaveLobby,
   };
 
   const handleStartMatch = async () => {
+    console.log('[MatchRoomLobby] 🚀 Iniciando partida...', { matchId, allPlayersReady });
+    
     try {
-      // Atualiza o status da partida para "ready_check" para TODOS os jogadores
-      const { error } = await supabase
-        .from("pvp_matches")
-        .update({ status: "ready_check" })
-        .eq("id", matchId);
-
-      if (error) {
-        console.error("[MatchRoomLobby] Erro ao mudar para ready_check:", error);
+      // Verify we have enough players before starting
+      const allMembers = groups.flatMap((g: any) => g.pvp_group_members || []);
+      if (allMembers.length < MIN_PLAYERS_PER_TEAM * 2) {
         toast({
-          title: "Erro ao iniciar partida",
-          description: "Tente novamente em instantes",
+          title: "Jogadores insuficientes",
+          description: `É necessário pelo menos ${MIN_PLAYERS_PER_TEAM * 2} jogadores`,
           variant: "destructive",
         });
         return;
       }
 
+      // Atualiza o status da partida para "ready_check" para TODOS os jogadores
+      const { data, error } = await supabase
+        .from("pvp_matches")
+        .update({ status: "ready_check" })
+        .eq("id", matchId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("[MatchRoomLobby] ❌ Erro ao mudar para ready_check:", error);
+        toast({
+          title: "Erro ao iniciar partida",
+          description: error.message || "Tente novamente em instantes",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('[MatchRoomLobby] ✅ Status atualizado para ready_check:', data);
+      
       toast({
         title: "Todos para a contagem!",
         description: "Prepare-se, a batalha vai começar.",
       });
-    } catch (err) {
-      console.error("[MatchRoomLobby] Exceção ao iniciar partida:", err);
+    } catch (err: any) {
+      console.error("[MatchRoomLobby] ❌ Exceção ao iniciar partida:", err);
       toast({
         title: "Erro ao iniciar partida",
-        description: "Verifique sua conexão e tente de novo.",
+        description: err.message || "Verifique sua conexão e tente de novo.",
         variant: "destructive",
       });
     }
