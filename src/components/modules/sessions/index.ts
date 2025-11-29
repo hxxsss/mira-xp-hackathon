@@ -8,5 +8,6 @@ export * from "./ProgressiveTextSession";
 export * from "./SwipeGameSession";
 export * from "./DragDropSession";
 export * from "./DualSliderSession";
+export * from "./ReflectionSentenceSession";
 export * from "./SessionNavigator";
 export * from "./types";
