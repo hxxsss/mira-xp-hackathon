@@ -87,7 +87,7 @@ export const MatchLobby = ({
         </motion.div>
 
         {/* Código da Sala - Estilo Arcade */}
-        <motion.div className="glass-card p-4 sm:p-6 mb-4 sm:mb-6 relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-xl border border-white/30" initial={{
+        <motion.div initial={{
         opacity: 0,
         y: 20
       }} animate={{
@@ -95,7 +95,7 @@ export const MatchLobby = ({
         y: 0
       }} transition={{
         delay: 0.2
-      }}>
+      }} className="glass-card p-4 sm:p-6 mb-4 sm:mb-6 relative overflow-hidden rounded-xl sm:rounded-2xl backdrop-blur-xl border border-white/30 bg-blue-700">
           {/* Animated border */}
           <motion.div className="absolute inset-0 border-2 border-cyan-400/50 rounded-xl sm:rounded-2xl" animate={{
           boxShadow: ['0 0 20px rgba(6,182,212,0.3)', '0 0 40px rgba(59,130,246,0.5)', '0 0 20px rgba(6,182,212,0.3)']
